@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dx_lime_600">#67a60f</color>
+    <color name="dx_lime_400">#82c91e</color>
+
+    <color name="dx_blue_800">#134a81</color>
+    <color name="dx_blue_600">#1b69b6</color>
+    <color name="dx_blue_400">#418cd8</color>
+
+    <color name="dx_orange_500">#fc9403</color>
+
+    <color name="dx_red_500">#db3b21</color>
+
+    <color name="dx_night_950">#0e171f</color>
+    <color name="dx_night_800">#212d3b</color>
+    <color name="dx_night_700">#2e3d4f</color>
+    <color name="dx_night_500">#435b77</color>
+    <color name="dx_night_50">#ebf3fa</color>
+
+    <color name="dx_gray_900">#2e2e2e</color>
+    <color name="dx_gray_500">#a7a7a7</color>
+    <color name="dx_gray_300">#cccccc</color>
+    <color name="dx_gray_200">#dfdfdf</color>
+    <color name="dx_gray_100">#f2f2f2</color>
+
+    <color name="dx_brand_blue">@color/dx_night_700</color>
+    <color name="dx_brand_green">@color/dx_lime_400</color>
+
+    <color name="dx_primary">@color/dx_brand_blue</color>
+    <color name="dx_primary_dark">@color/dx_night_950</color>
+    <color name="dx_accent">@color/dx_brand_blue</color>
+
+    <color name="window_background">@color/dx_gray_100</color>
+    <color name="card_background">@color/cardview_light_background</color>
+    <color name="item_background_highlight">@color/dx_gray_200</color>
+    <color name="dx_warning_background">@color/dx_red_500</color>
+    <color name="action_bar_text">@android:color/white</color>
+    <color name="private_message_date_inverse">@color/dx_gray_200</color>
+    <color name="forum_avatar_shadow">#99000000</color>
+
+    <color name="color_primary">#dd000000</color>
+
+    <color name="msg_in">@android:color/white</color>
+    <color name="msg_out">@color/dx_blue_400</color>
+    <color name="notice_in">@color/dx_night_50</color>
+    <color name="notice_out">@color/dx_blue_600</color>
+    <color name="msg_stroke_light">@color/dx_gray_300</color>
+    <color name="msg_stroke_dark">@color/dx_gray_900</color>
+    <color name="msg_stroke">@color/msg_stroke_light</color>
+    <color name="msg_status_bubble_background">#66000000</color>
+    <color name="msg_status_bubble_foreground">@android:color/white</color>
+    <color name="msg_selected_background">@color/dx_accent</color>
+
+    <!-- text colors -->
+    <color name="dx_text_link">@color/dx_blue_400</color>
+    <color name="dx_text_primary">#df000000</color>
+    <color name="dx_text_primary_inverse">@android:color/white</color>
+    <color name="dx_text_secondary_inverse">#b4ffffff</color>
+    <color name="dx_text_tertiary_inverse">#80ffffff</color>
+
+    <color name="preference_category">@color/dx_night_500</color>
+    <color name="preference_category_background">@color/window_background</color>
+
+    <color name="dx_button_background_color">@color/dx_accent</color>
+    <color name="dx_button_text_positive">@color/dx_blue_400</color>
+    <color name="dx_button_text_neutral">@color/dx_night_500</color>
+    <color name="dx_button_text_negative">@color/dx_red_500</color>
+    <color name="dx_button_text_disabled">#28000000</color>
+    <color name="dx_button_text">#ffffff</color>
+
+    <color name="thread_indicator">@color/dx_gray_500</color>
+    <color name="thread_item_background">@color/window_background</color>
+    <color name="thread_item_highlight">@android:color/white</color>
+
+    <color name="divider">@color/dx_gray_200</color>
+</resources>
