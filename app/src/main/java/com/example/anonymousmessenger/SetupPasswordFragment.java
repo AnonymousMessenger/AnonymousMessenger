@@ -115,8 +115,6 @@ public class SetupPasswordFragment extends Fragment {
                 strengthMeter
                         .setVisibility(password1.length() > 0 ? VISIBLE : INVISIBLE);
                 float strength = estimatePasswordStrength(password1);
-                Log.w("???????", String.valueOf(strength));
-                Log.w("???????", String.valueOf(QUITE_WEAK));
                 strengthMeter.setStrength(strength);
                 boolean strongEnough = strength > QUITE_WEAK;
 
@@ -151,8 +149,6 @@ public class SetupPasswordFragment extends Fragment {
                 strengthMeter
                         .setVisibility(password1.length() > 0 ? VISIBLE : INVISIBLE);
                 float strength = estimatePasswordStrength(password1);
-                Log.w("???????", String.valueOf(strength));
-                Log.w("???????", String.valueOf(QUITE_WEAK));
                 strengthMeter.setStrength(strength);
                 boolean strongEnough = strength > QUITE_WEAK;
 
@@ -181,7 +177,7 @@ public class SetupPasswordFragment extends Fragment {
                 ((CreateUserActivity)getActivity()).setPassword(passwordEntry.getText().toString());
                     nextButton.setVisibility(INVISIBLE);
                     progressBar.setVisibility(VISIBLE);
-//                    setupController.createAccount();
+                    ((CreateUserActivity)getActivity()).createAccount();
             }
         });
 

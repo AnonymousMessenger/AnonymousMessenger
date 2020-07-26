@@ -4,10 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+
+import net.sqlcipher.database.SQLiteDatabase;
+
+import java.io.File;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,22 +24,29 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_main);
-
+//        InitializeSQLCipher();
         //check if account in storage, then change the next button text to login
         //assume new user for now
 
-//        Button next = (Button)findViewById(R.id.next);
-//        next.setText("Next");
-//        next.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                onNextClick(view);
-//            }
-//        });
+        File file = getDatabasePath("demo.db");
+        if(file.exists()) //here's how to check
+         {
+             switchToAppView();
+         }
+         else{
+            Button next = (Button)findViewById(R.id.next);
+            next.setText("Create Account");
+         }
     }
 
     public void onNextClick(View view){
         Intent intent = new Intent(this, CreateUserActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void switchToAppView(){
+        Intent intent = new Intent(this, AppActivity.class);
         startActivity(intent);
         finish();
     }

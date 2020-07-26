@@ -109,8 +109,8 @@ public class SetupUsernameFragment extends Fragment {
                     txtNickname.setEnabled(false);
                     ((CreateUserActivity)getActivity()).setNickname(txtNickname.getText().toString());
                     ((CreateUserActivity)getActivity()).changeToPasswordActivity();
-                    SetupPasswordFragment secondFragment = new SetupPasswordFragment();
-                    ((CreateUserActivity)getActivity()).showNextFragment(secondFragment);
+//                    SetupPasswordFragment secondFragment = new SetupPasswordFragment();
+//                    ((CreateUserActivity)getActivity()).showNextFragment(secondFragment);
                 }
             }
         });
