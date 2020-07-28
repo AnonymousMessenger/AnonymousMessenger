@@ -3,6 +3,9 @@ package com.example.anonymousmessenger.tor;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.anonymousmessenger.DxApplication;
+import com.example.anonymousmessenger.messages.UserMessage;
+
 import net.sf.controller.network.AndroidTorRelay;
 import net.sf.msopentech.thali.java.toronionproxy.Utilities;
 
@@ -15,33 +18,20 @@ import java.net.Socket;
 public class TorClientSocks4 {
     private Context ctx = null;
 
-    public TorClientSocks4() {
-    }
-
     public TorClientSocks4(Context ctx) {
-
         this.ctx = ctx;
     }
 
-    public String Init() throws IOException, InterruptedException {
-        if(ctx==null){
-            Log.e("TorTest", "Couldn't start Tor!");
-            return "";
-        }
-        String fileLocation = "torfiles";
-        // Start the Tor Onion Proxy
-        AndroidTorRelay node = new AndroidTorRelay(ctx,fileLocation);
-        int hiddenServicePort = 443;
-        int localPort = node.getSocksPort();
-        String OnionAdress = "a.fasicurrency.com";
-        String localhost="127.0.0.1";
+    public String Init(String OnionAddress, DxApplication app, byte[] msg) throws IOException,
+            InterruptedException {
 
-        Socket clientSocket = Utilities.socks4aSocketConnection(OnionAdress, hiddenServicePort, "127.0.0.1", localPort);
+        Socket clientSocket = Utilities.socks4aSocketConnection(OnionAddress, 5780, "127.0.0.1",
+                app.getRport());
 
         ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
         out.flush();
 
-        out.writeObject("i am workingg");
+        out.writeObject(msg);
         out.flush();
 
         BufferedReader in =

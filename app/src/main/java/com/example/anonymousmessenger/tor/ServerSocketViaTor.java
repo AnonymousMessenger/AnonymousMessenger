@@ -13,6 +13,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.example.anonymousmessenger.DxAccount;
 import com.example.anonymousmessenger.DxApplication;
 import com.example.anonymousmessenger.R;
+import com.example.anonymousmessenger.messages.MessageSender;
 
 import net.sf.controller.network.AndroidTorRelay;
 import net.sf.controller.network.TorServerSocket;
@@ -20,7 +21,9 @@ import net.sf.controller.network.TorServerSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -36,9 +39,14 @@ public class ServerSocketViaTor {
     private static final int localport = 5780;
     private static CountDownLatch serverLatch = new CountDownLatch(2);
     private Context ctx;
+    AndroidTorRelay node;
 
     public ServerSocketViaTor(Context ctx) {
         this.ctx = ctx;
+    }
+
+    public AndroidTorRelay getAndroidTorRelay(){
+        return node;
     }
 
     public void init(DxApplication app) throws IOException, InterruptedException {
@@ -46,10 +54,9 @@ public class ServerSocketViaTor {
             return;
         }
         String fileLocation = "torfiles";
-        AndroidTorRelay node = new AndroidTorRelay(ctx, fileLocation);
+        node = new AndroidTorRelay(ctx, fileLocation);
         TorServerSocket torServerSocket = node.createHiddenService(localport, hiddenservicedirport);
         app.setHostname(torServerSocket.getHostname());
-        Log.e("TORRRRRRRRRRRRR",torServerSocket.getHostname());
         app.setLport(torServerSocket.getServicePort());
         app.setRport(node.getSocksPort());
         DxAccount account;
@@ -91,10 +98,24 @@ public class ServerSocketViaTor {
                         this.Date = df.format(Calendar.getInstance().getTime());
                         Log.d("Accepted Client",(count++) + " at Address - " + sock.getRemoteSocketAddress()
                                         + " on port " + sock.getLocalPort() + " at time " + this.Date);
-                        ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
-                        oos.writeBytes("hahahaha u connected to me "+count+" times bh, fak yoo");
-                        oos.flush();
-//                    ObjectInputStream in = new ObjectInputStream(sock.getInputStream());
+                        BufferedReader in =
+                                new BufferedReader(new InputStreamReader(sock.getInputStream()));
+                        String message = "";
+                        int charsRead = 0;
+                        char[] buffer = new char[2048];
+
+                        while ((charsRead = in.read(buffer)) != -1) {
+                            message += new String(buffer).substring(0, charsRead);
+                        }
+                        Log.d("Accepted Client",(count++) + " at Address - " + sock.getRemoteSocketAddress()
+                                        + " on port " + sock.getLocalPort() + " at time " + this.Date);
+                        Log.e("MESSAGE GETTER", "from tor");
+                        app.sendNotification("New Message!","you have a new secret message");
+                        MessageSender.messageReceiver(message,app);
+                            ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
+                            oos.writeBytes("received");
+                            oos.flush();
+
                         app.sendNotification("New Message!","you have a new secret message");
                         sock.close();
                     }catch (IOException e){

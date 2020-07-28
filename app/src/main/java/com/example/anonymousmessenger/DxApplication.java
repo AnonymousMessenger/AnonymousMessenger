@@ -6,11 +6,18 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.StrictMode;
+import android.util.Log;
 
+import com.example.anonymousmessenger.db.DbHelper;
 import com.example.anonymousmessenger.tor.ServerSocketViaTor;
 
+import net.sf.controller.network.AndroidTorRelay;
+import net.sqlcipher.database.SQLiteDatabase;
+
+import java.io.File;
 import java.io.IOException;
 
 public class DxApplication extends Application {
@@ -29,6 +36,11 @@ public class DxApplication extends Application {
 
     public void setAccount(DxAccount account) {
         this.account = account;
+        if(account!=null){
+            this.hostname = account.getAddress();
+            this.rport = account.getPort();
+            this.lport = account.getPort();
+        }
     }
 
     public ServerSocketViaTor getTorSocket() {
@@ -102,6 +114,10 @@ public class DxApplication extends Application {
         mNotificationManager.notify(1 , notification);
     }
 
+    public AndroidTorRelay getAndroidTorRelay(){
+        return torSocket.getAndroidTorRelay();
+    }
+
     public Thread getTorThread() {
         return torThread;
     }
@@ -127,5 +143,28 @@ public class DxApplication extends Application {
         });
         torThread.start();
         setTorThread(torThread);
+    }
+
+    public boolean saveContact(String address) {
+        if(account==null || account.getPassword()==null){
+            return false;
+        }
+        Log.d("Contact Saver","Saving Account");
+        SQLiteDatabase.loadLibs(this);
+        File databaseFile = new File(getFilesDir(), "demo.db");
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,
+                account.getPassword(),
+                null);
+        database.execSQL(DbHelper.getContactTableSqlCreate());
+        Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
+        if(c.moveToFirst())
+        {
+            return false;
+        }
+        else
+        {
+            database.execSQL(DbHelper.getContactSqlInsert(),DbHelper.getContactSqlValues(address));
+            return true;
+        }
     }
 }

@@ -57,7 +57,7 @@ public class CreateUserActivity extends AppCompatActivity {
             secondFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
-                    .replace(R.id.fragment_container, secondFragment).commit();
+                    .add(R.id.fragment_container, secondFragment).commit();
         }
     }
 
@@ -163,7 +163,7 @@ public class CreateUserActivity extends AppCompatActivity {
     }
 
     private void saveAccount(DxAccount account) throws IOException {
-        Log.d("Account Saver","Saving Accout");
+        Log.d("Account Saver","Saving Account");
         SQLiteDatabase.loadLibs(this);
         File databaseFile = new File(this.getFilesDir(), "demo.db");
         databaseFile.mkdirs();

@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         //check if account in storage, then change the next button text to login
         //assume new user for now
 
-        File file = getDatabasePath("demo.db");
+        File file =  new File(this.getFilesDir(), "demo.db");
         if(file.exists()) //here's how to check
          {
              switchToAppView();

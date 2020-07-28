@@ -1,18 +1,24 @@
 package com.example.anonymousmessenger;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
@@ -52,6 +58,36 @@ public class AddContactFragment extends Fragment {
                 ClipData clip = ClipData.newPlainText("label", tv.getText().toString());
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(getContext(),"Copied address",Toast.LENGTH_LONG).show();
+            }
+        });
+        TextInputEditText contact = rootView.findViewById(R.id.txt_contact_address);
+        contact.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.toString().endsWith(".onion") && s.toString().length()>15){
+                    new AlertDialog.Builder(getContext())
+                        .setTitle("Add Contact")
+                        .setMessage("Do you really want to add "+s.toString()+" ?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Toast.makeText(getContext(), "Contact Added", Toast.LENGTH_SHORT).show();
+                                ((DxApplication) getActivity().getApplication()).saveContact(s.toString().trim());
+                                ((AppActivity)getActivity()).showNextFragment(new AppFragment());
+                            }})
+                         .setNegativeButton(android.R.string.no, null).show();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
         return rootView;

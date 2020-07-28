@@ -1,5 +1,6 @@
 package com.example.anonymousmessenger;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.anonymousmessenger.db.DbHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -62,18 +64,17 @@ public class AppFragment extends Fragment {
 //        recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        List<String> lst = new ArrayList<String>();
-        lst.add("fkjgnjkfdgnhkjdjk");
-        lst.add("fkjgnjkfdgnhkjdjk");
-        lst.add("fkjgnjkfdgnhkjdjk");
-        lst.add("fkjgnjkfdgnhkjdjk");
-        lst.add("fkjgnjkfdgnhkjdjk");
-        lst.add("fkjgnjkfdgnhkjdjk");
+        List<String[]> lst = DbHelper.getContactsList((DxApplication) getActivity().getApplication());
         mAdapter = new MyRecyclerViewAdapter(rootView.getContext(),lst);
         mAdapter.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Log.d("Shit's been clicked",mAdapter.getItem(position));
+                Log.d("Shit's been clicked",mAdapter.getItem(position)[0].equals("")?
+                        mAdapter.getItem(position)[1]:mAdapter.getItem(position)[0]);
+                Intent intent = new Intent(getActivity(), MessageListActivity.class);
+                intent.putExtra("nickname",mAdapter.getItem(position)[0]);
+                intent.putExtra("address",mAdapter.getItem(position)[1]);
+                startActivity(intent);
             }
         });
         recyclerView.setAdapter(mAdapter);
