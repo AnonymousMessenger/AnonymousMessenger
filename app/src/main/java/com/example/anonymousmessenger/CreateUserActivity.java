@@ -1,17 +1,9 @@
 package com.example.anonymousmessenger;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -19,12 +11,12 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.example.anonymousmessenger.tor.ServerSocketViaTor;
-import com.example.anonymousmessenger.util.BytesUtil;
 import com.google.android.material.textfield.TextInputLayout;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.*;
+import java.util.Objects;
 
 
 public class CreateUserActivity extends AppCompatActivity {
@@ -52,7 +44,7 @@ public class CreateUserActivity extends AppCompatActivity {
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
-                    .remove(getSupportFragmentManager().findFragmentById(R.id.fragment_container)).commit();
+                    .remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fragment_container))).commit();
             SetupPasswordFragment secondFragment = new SetupPasswordFragment();
             secondFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction()
@@ -66,28 +58,19 @@ public class CreateUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(R.layout.activity_create_user);
 
-        // Check that the activity is using the layout version with
-        // the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null) {
 
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
             if (savedInstanceState != null) {
                 return;
             }
 
-            // Create a new Fragment to be placed in the activity layout
             SetupUsernameFragment firstFragment = new SetupUsernameFragment();
 
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
             firstFragment.setArguments(getIntent().getExtras());
 
-            // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
                     .add(R.id.fragment_container, firstFragment).commit();
@@ -99,7 +82,7 @@ public class CreateUserActivity extends AppCompatActivity {
     }
 
     public void showNextFragment(Fragment f) {
-//        if (!getLifecycle().getCurrentState().isAtLeast(STARTED)) return;
+        //if (!getLifecycle().getCurrentState().isAtLeast(STARTED)) return;
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
                 .replace(R.id.fragment_container, f)
@@ -137,17 +120,17 @@ public class CreateUserActivity extends AppCompatActivity {
         Thread torThread = new Thread(() -> {
             try {
                 startTorFirstTime();
-            } catch (InterruptedException | ClassNotFoundException | CloneNotSupportedException | IOException e) {
+            } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
             }
         });
         torThread.start();
         ((DxApplication) this.getApplication()).setTorThread(torThread);
-        StrictMode.ThreadPolicy tp = StrictMode.allowThreadDiskReads();
+        StrictMode.allowThreadDiskReads();
         StrictMode.allowThreadDiskWrites();
         new Thread(() -> {
             try{
-                Thread.sleep(6000);
+                Thread.sleep(9000);
                 while(account.getNickname()==null | account.getAddress()==null | account.getPort()==0 | account.getIdentity_key()==null){
                     Log.e("STORE ACCOUNT","not yet ready to do so");
                     Thread.sleep(2000);
@@ -162,11 +145,13 @@ public class CreateUserActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void saveAccount(DxAccount account) throws IOException {
+    private void saveAccount(DxAccount account) {
         Log.d("Account Saver","Saving Account");
         SQLiteDatabase.loadLibs(this);
         File databaseFile = new File(this.getFilesDir(), "demo.db");
+        //noinspection ResultOfMethodCallIgnored
         databaseFile.mkdirs();
+        //noinspection ResultOfMethodCallIgnored
         databaseFile.delete();
         SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, password,
                 null);
@@ -174,7 +159,7 @@ public class CreateUserActivity extends AppCompatActivity {
         database.execSQL(account.getSqlInsertString(),account.getSqlInsertValues());
     }
 
-    private void startTorFirstTime() throws InterruptedException, ClassNotFoundException, CloneNotSupportedException, IOException {
+    private void startTorFirstTime() throws InterruptedException, IOException {
         ((DxApplication) this.getApplication()).setTorSocket(new ServerSocketViaTor(getApplicationContext()));
         ((DxApplication) this.getApplication()).enableStrictMode();
         ServerSocketViaTor ssvt = ((DxApplication) this.getApplication()).getTorSocket();

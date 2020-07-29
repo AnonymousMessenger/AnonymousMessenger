@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +19,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class AppFragment extends Fragment {
     private RecyclerView recyclerView;
     private MyRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    public Handler mainThread = new Handler(Looper.getMainLooper());
 
     public AppFragment() {
         // Required empty public constructor
@@ -38,46 +42,41 @@ public class AppFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_app, container, false);
-        if(!((DxApplication)getActivity().getApplication()).getServerReady()){
+        if(!((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).getServerReady()){
             if (((DxApplication) getActivity().getApplication()).getTorThread() != null) {
                 ((DxApplication) getActivity().getApplication()).setTorThread(null);
             }
             ((DxApplication)getActivity().getApplication()).startTor();
         }
-        FloatingActionButton btnAddContact = (FloatingActionButton) rootView.findViewById(R.id.btn_add_contact);
-        btnAddContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((AppActivity)getActivity()).showNextFragment(new AddContactFragment());
-            }
-        });
-        //get contacts from db
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler);
-//        recyclerView.setHasFixedSize(true);
+        FloatingActionButton btnAddContact = rootView.findViewById(R.id.btn_add_contact);
+        btnAddContact.setOnClickListener(v -> ((AppActivity)getActivity()).showNextFragment(new AddContactFragment()));
+
+        recyclerView = rootView.findViewById(R.id.recycler);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        List<String[]> lst = DbHelper.getContactsList((DxApplication) getActivity().getApplication());
-        mAdapter = new MyRecyclerViewAdapter(rootView.getContext(),lst);
-        mAdapter.setClickListener(new MyRecyclerViewAdapter.ItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Log.d("Shit's been clicked",mAdapter.getItem(position)[0].equals("")?
-                        mAdapter.getItem(position)[1]:mAdapter.getItem(position)[0]);
-                Intent intent = new Intent(getActivity(), MessageListActivity.class);
-                intent.putExtra("nickname",mAdapter.getItem(position)[0]);
-                intent.putExtra("address",mAdapter.getItem(position)[1]);
-                startActivity(intent);
-            }
-        });
+        mAdapter = new MyRecyclerViewAdapter(rootView.getContext(),new ArrayList<>());
         recyclerView.setAdapter(mAdapter);
+
+        new Thread(()->{
+            List<String[]> lst = DbHelper.getContactsList((DxApplication) getActivity().getApplication());
+            mainThread.post(()->{
+                mAdapter = new MyRecyclerViewAdapter(rootView.getContext(),lst);
+                mAdapter.setClickListener((view, position) -> {
+                    Intent intent = new Intent(getActivity(), MessageListActivity.class);
+                    intent.putExtra("nickname",mAdapter.getItem(position)[0]);
+                    intent.putExtra("address",mAdapter.getItem(position)[1]);
+                    startActivity(intent);
+                });
+                recyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+            });
+        }).start();
         return rootView;
     }
 }

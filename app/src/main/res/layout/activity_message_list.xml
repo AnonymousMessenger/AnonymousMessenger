@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/military_back"
+    android:background="@color/dx_night_700"
     tools:context="com.example.anonymousmessenger.MessageListActivity">
 
     <!-- A horizontal line between the chatbox and RecyclerView -->
@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></androidx.recyclerview.widget.RecyclerView>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <View
         android:id="@+id/view"
@@ -42,6 +42,8 @@
 
         <EditText
             android:id="@+id/edittext_chatbox"
+            android:inputType="text"
+            android:autofillHints="@string/enter_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -49,9 +51,9 @@
             android:layout_marginRight="16dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:textColor="#ffffff"
             android:hint="@string/enter_message"
-            android:maxLines="6" />
+            android:maxLines="6"
+            android:textColor="#ffffff" />
 
         <Button
             android:id="@+id/button_chatbox_send"
@@ -59,11 +61,12 @@
             android:layout_height="48dp"
             android:layout_gravity="bottom"
             android:background="#197719"
-            android:textColor="#ffffff"
             android:clickable="true"
             android:gravity="center"
-            android:text="SEND"
-            android:textSize="14dp" />
+            android:text="@string/send_button"
+            android:textColor="#ffffff"
+            android:textSize="14sp"
+            android:focusable="true" />
 
     </LinearLayout>
 

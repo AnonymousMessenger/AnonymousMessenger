@@ -5,7 +5,6 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.StrictMode;
@@ -29,6 +28,7 @@ public class DxApplication extends Application {
     private boolean serverReady = false;
     private DxAccount account;
     private Thread torThread;
+    private SQLiteDatabase database;
 
     public DxAccount getAccount() {
         return account;
@@ -90,9 +90,9 @@ public class DxApplication extends Application {
 
     public void sendNotification(String title, String msg){
         String CHANNEL_ID = "somechannel";
-        Notification notification = null;
+        Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notification = new Notification.Builder(this)
+            notification = new Notification.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.drawable.notification)
                     .setContentTitle(title)
                     .setContentText(msg)
@@ -165,6 +165,20 @@ public class DxApplication extends Application {
         {
             database.execSQL(DbHelper.getContactSqlInsert(),DbHelper.getContactSqlValues(address));
             return true;
+        }
+    }
+
+    public SQLiteDatabase getDb(){
+        if(this.database==null){
+            SQLiteDatabase.loadLibs(this);
+            File databaseFile = new File(getFilesDir(), "demo.db");
+            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,
+                    account.getPassword(),
+                    null);
+            this.database = database;
+            return database;
+        }else{
+            return this.database;
         }
     }
 }

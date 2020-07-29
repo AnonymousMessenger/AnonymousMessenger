@@ -1,11 +1,5 @@
 package com.example.anonymousmessenger;
 
-import android.content.Context;
-
-import net.sqlcipher.database.SQLiteDatabase;
-
-import java.io.File;
-
 public class DxAccount {
     private String nickname;
     private byte[] identity_key;
@@ -77,11 +71,11 @@ public class DxAccount {
         return "create table account(nickname,identity_key,address,port,password)";
     }
 
-    public boolean saveAccount(Context ctx){
-        if(nickname==null | address==null | port==0 | identity_key==null){
-            //maybe put more fail logic here
-            return false;
-        }
-        return true;
-    }
+//    public boolean saveAccount(Context ctx){
+//        if(nickname==null | address==null | port==0 | identity_key==null){
+//            //maybe put more fail logic here
+//            return false;
+//        }
+//        return true;
+//    }
 }

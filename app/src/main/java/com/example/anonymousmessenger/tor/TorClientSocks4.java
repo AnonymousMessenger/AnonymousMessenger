@@ -10,39 +10,35 @@ import net.sf.controller.network.AndroidTorRelay;
 import net.sf.msopentech.thali.java.toronionproxy.Utilities;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 public class TorClientSocks4 {
-    private Context ctx = null;
+    private Context ctx;
 
     public TorClientSocks4(Context ctx) {
         this.ctx = ctx;
     }
 
-    public String Init(String OnionAddress, DxApplication app, byte[] msg) throws IOException,
+    public boolean Init(String OnionAddress, DxApplication app, String msg) throws IOException,
             InterruptedException {
-
-        Socket clientSocket = Utilities.socks4aSocketConnection(OnionAddress, 5780, "127.0.0.1",
+        Socket socket;
+        try{
+            socket = Utilities.socks4aSocketConnection(OnionAddress, 5780, "127.0.0.1",
                 app.getRport());
-
-        ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-        out.flush();
-
-        out.writeObject(msg);
-        out.flush();
-
-        BufferedReader in =
-                new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        String message = "";
-        int charsRead = 0;
-        char[] buffer = new char[2048];
-
-        while ((charsRead = in.read(buffer)) != -1) {
-            message += new String(buffer).substring(0, charsRead);
-        }
-        return message;
+        }catch (Exception e){e.printStackTrace();Thread.sleep(200);return Init(OnionAddress,app,msg);}
+        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+        outputStream.writeBytes(msg);
+        outputStream.flush();
+        outputStream.close();
+        return true;
     }
 }

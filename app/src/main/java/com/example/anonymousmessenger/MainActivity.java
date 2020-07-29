@@ -12,6 +12,7 @@ import android.widget.Button;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.File;
+import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -21,22 +22,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setTheme(R.style.AppTheme);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         setContentView(R.layout.activity_main);
 //        InitializeSQLCipher();
         //check if account in storage, then change the next button text to login
         //assume new user for now
 
-        File file =  new File(this.getFilesDir(), "demo.db");
-        if(file.exists()) //here's how to check
-         {
-             switchToAppView();
-         }
-         else{
-            Button next = (Button)findViewById(R.id.next);
-            next.setText("Create Account");
-         }
+        ((DxApplication) getApplication()).enableStrictMode();
+        new Thread(() -> {
+            File file =  new File(getFilesDir(), "demo.db");
+            if(file.exists()) //here's how to check
+            {
+                switchToAppView();
+            }
+            else{
+                Button next = findViewById(R.id.next);
+                next.setText(getString(R.string.create_account_button));
+            }
+        }).start();
+
     }
 
     public void onNextClick(View view){
