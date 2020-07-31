@@ -15,14 +15,14 @@
             android:layout_width="wrap_content"
             android:layout_height="803dp"
             android:clickable="true"
-            android:src="@android:drawable/stat_notify_more"
+            android:focusable="true"
+            android:src="@drawable/baseline_add_black_18dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.839"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.933"
-            android:focusable="true" />
+            app:layout_constraintVertical_bias="0.933" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"

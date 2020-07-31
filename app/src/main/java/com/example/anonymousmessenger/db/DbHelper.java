@@ -1,7 +1,5 @@
 package com.example.anonymousmessenger.db;
 
-import android.util.Log;
-
 import com.example.anonymousmessenger.DxApplication;
 import com.example.anonymousmessenger.messages.UserMessage;
 
@@ -29,7 +27,6 @@ public class DbHelper {
     }
 
     public static List<String[]> getContactsList(DxApplication app){
-        Log.d("Contact Saver","Saving Account");
         while (app.getAccount()==null||app.getAccount().getPassword()==null){
             try {
                 Thread.sleep(150);
@@ -63,7 +60,6 @@ public class DbHelper {
     }
 
     public static List<UserMessage> getMessageList(DxApplication app, String conversation){
-        Log.d("Message Getter","Getting Message");
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getMessageTableSqlCreate());
         Cursor cr = database.rawQuery("select * from message where conversation=?;",new Object[]{conversation});
@@ -71,7 +67,7 @@ public class DbHelper {
         if (cr.moveToFirst()) {
             do {
                 messages.add(new UserMessage(cr.getString(0),cr.getString(3),cr.getString(4),
-                        cr.getLong(5),cr.getString(6).equals("yes"),cr.getString(1)));
+                        cr.getLong(5),cr.getInt(7)>0,cr.getString(1)));
             } while (cr.moveToNext());
         }
         cr.close();
@@ -79,11 +75,9 @@ public class DbHelper {
     }
 
     public static boolean saveMessage(UserMessage msg, DxApplication app, String conversation, boolean received){
-        Log.d("Message Saver","Saving Message");
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getMessageTableSqlCreate());
         database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getMessage(),msg.getSender(),msg.getCreatedAt(),conversation,received));
-        Log.d("Message Saver","Saved Message");
         return true;
     }
 }

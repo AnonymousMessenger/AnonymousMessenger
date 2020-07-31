@@ -23,7 +23,8 @@
     <View
         android:id="@+id/view"
         android:layout_width="0dp"
-        android:layout_height="2dp"
+        android:layout_height="4dp"
+        android:paddingTop="4dp"
         android:background="#dfdfdf"
         app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -55,18 +56,17 @@
             android:maxLines="6"
             android:textColor="#ffffff" />
 
-        <Button
+        <ImageButton
             android:id="@+id/button_chatbox_send"
             android:layout_width="64dp"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
-            android:background="#197719"
+            android:background="#3a2539"
             android:clickable="true"
             android:gravity="center"
-            android:text="@string/send_button"
-            android:textColor="#ffffff"
             android:textSize="14sp"
-            android:focusable="true" />
+            android:focusable="true"
+            app:srcCompat="@android:drawable/ic_menu_send" />
 
     </LinearLayout>
 

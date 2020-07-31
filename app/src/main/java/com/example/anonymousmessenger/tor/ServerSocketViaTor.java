@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
@@ -88,34 +89,33 @@ public class ServerSocketViaTor {
         public void run() {
             app.setServerReady(true);
             try {
-                AtomicReference<BufferedReader> in = new AtomicReference<>();
                 while (true) {
                     Socket sock = socket.accept();
                     try{
                         this.Date = df.format(Calendar.getInstance().getTime());
-                        Log.e("Accepted Client",(count++) + " at Address - " + sock.getRemoteSocketAddress()
+                        Log.d("Accepted Client",(count++) + " at Address - " + sock.getRemoteSocketAddress()
                                         + " on port " + sock.getLocalPort() + " at time " + this.Date);
                         new Thread(()->{
                             try{
-                                in.set(new BufferedReader(new InputStreamReader(sock.getInputStream())));
-                                String line = in.get().readLine();
-                                String msg = "";
-                                while( line != null )
+                                Log.e("RECEIVED OK","SENDING NOW");
+                                DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
+                                DataInputStream in=new DataInputStream(sock.getInputStream());
+                                String msg = in.readUTF();
+                                while(!msg.equals("nuf"))
                                 {
-                                    msg = msg.concat(line);
-                                    System.out.println( line );
-                                    line = in.get().readLine();
+                                    System.out.println( msg );
+                                    final String rec = msg;
+                                    outputStream.writeUTF("ack3");
+                                    outputStream.flush();
+                                    msg = in.readUTF();
+                                    new Thread(()->{MessageSender.messageReceiver(rec,app);}).start();
                                 }
-                                Log.e("RECEIVE STARTED",msg+":::::::::::::::::::::::");
-                                MessageSender.messageReceiver(msg,app);
+                                outputStream.close();
                             }catch (IOException e){
                                 e.printStackTrace();
                             }
                         }).start();
                         app.sendNotification("New Message!","you have a new secret message");
-//                        PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(sock.getOutputStream())), true);
-//                        out.println("received");
-//                        out.flush();
                     }catch (Exception e){
                         Log.d("Server error", Objects.requireNonNull(e.getMessage()));
                     }

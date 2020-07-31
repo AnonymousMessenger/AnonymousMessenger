@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.anonymousmessenger.DxApplication;
+import com.example.anonymousmessenger.messages.MessageSender;
 import com.example.anonymousmessenger.messages.UserMessage;
 
 import net.sf.controller.network.AndroidTorRelay;
@@ -20,25 +21,41 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TorClientSocks4 {
-    private Context ctx;
-
-    public TorClientSocks4(Context ctx) {
-        this.ctx = ctx;
+    public TorClientSocks4() {
     }
 
-    public boolean Init(String OnionAddress, DxApplication app, String msg) throws IOException,
-            InterruptedException {
+    public boolean Init(String OnionAddress, DxApplication app, String msg) {
         Socket socket;
-        try{
-            socket = Utilities.socks4aSocketConnection(OnionAddress, 5780, "127.0.0.1",
-                app.getRport());
-        }catch (Exception e){e.printStackTrace();Thread.sleep(200);return Init(OnionAddress,app,msg);}
-        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-        outputStream.writeBytes(msg);
-        outputStream.flush();
-        outputStream.close();
-        return true;
+            try {
+                socket = Utilities.socks4aSocketConnection(OnionAddress, 5780, "127.0.0.1",
+                        app.getRport());
+
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                DataInputStream in =new DataInputStream(socket.getInputStream());
+                String msg2 = "";
+                boolean result = false;
+
+                while(!msg.equals("nuf"))
+                {
+                    outputStream.writeUTF(msg);
+                    outputStream.flush();
+                    msg2 = in.readUTF();
+                    if(msg2.contains("ack3")){
+                        outputStream.writeUTF("nuf");
+                        outputStream.flush();
+                        msg = "nuf";
+                        result = true;
+                    }
+                }
+                outputStream.close();
+                socket.close();
+                return result;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        return false;
     }
 }

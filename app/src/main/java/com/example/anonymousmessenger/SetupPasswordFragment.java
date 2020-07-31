@@ -168,17 +168,14 @@ public class SetupPasswordFragment extends Fragment {
 
             }
         });
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                IBinder token = passwordEntry.getWindowToken();
-                Object o = getContext().getSystemService(INPUT_METHOD_SERVICE);
-                ((InputMethodManager) o).hideSoftInputFromWindow(token, 0);
-                ((CreateUserActivity)getActivity()).setPassword(passwordEntry.getText().toString());
-                    nextButton.setVisibility(INVISIBLE);
-                    progressBar.setVisibility(VISIBLE);
-                    ((CreateUserActivity)getActivity()).createAccount();
-            }
+        nextButton.setOnClickListener(v1 -> {
+            IBinder token = passwordEntry.getWindowToken();
+            Object o = getContext().getSystemService(INPUT_METHOD_SERVICE);
+            ((InputMethodManager) o).hideSoftInputFromWindow(token, 0);
+            ((CreateUserActivity)getActivity()).setPassword(passwordEntry.getText().toString());
+                nextButton.setVisibility(INVISIBLE);
+                progressBar.setVisibility(VISIBLE);
+                ((CreateUserActivity)getActivity()).createAccount();
         });
 
         return v;

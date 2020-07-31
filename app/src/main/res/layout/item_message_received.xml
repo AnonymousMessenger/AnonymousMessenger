@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
-        android:background="@drawable/rounded_rectangle_orange"
+        android:background="@drawable/rounded_rectangle_steel"
         android:maxWidth="240dp"
         android:padding="8dp"
         android:text="hi man, how are you?"

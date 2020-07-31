@@ -40,4 +40,20 @@
         app:layout_constraintBottom_toBottomOf="@+id/text_message_body"
         app:layout_constraintRight_toLeftOf="@+id/text_message_body" />
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="17dp"
+        android:layout_height="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/img_seen"
+        app:srcCompat="@drawable/baseline_check_24" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="24dp"
+        android:layout_height="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:srcCompat="@drawable/baseline_check_24" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

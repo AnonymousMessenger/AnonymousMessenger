@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="dx_lime_400">#82c91e</color>
+    <color name="dx_lime_400">#FF5722</color>
 
     <color name="dx_night_950">#0e171f</color>
     <color name="dx_night_700">#2e3d4f</color>

@@ -10,25 +10,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/lbl_contact_address"
+        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/txt_container_contact_address"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/txt_container_contact_address"
-        android:layout_width="409dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:errorEnabled="true"
+        app:hintEnabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/txt_contact_address"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/hint_contact_address" />
+            android:layout_height="41dp"
+            android:hint="@string/hint_contact_address"
+            android:imeOptions="actionDone"
+            android:textSize="@dimen/text_size_medium" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -36,6 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/myaddress"
+        android:textSize="@dimen/text_size_large"
         app:layout_constraintBottom_toTopOf="@+id/txt_lbl_contact_address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,6 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/myaddress"
+        android:textSize="@dimen/text_size_large"
         app:layout_constraintBottom_toTopOf="@+id/txt_myaddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

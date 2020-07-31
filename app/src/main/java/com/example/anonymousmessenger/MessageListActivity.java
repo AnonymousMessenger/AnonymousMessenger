@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.example.anonymousmessenger.db.DbHelper;
 import com.example.anonymousmessenger.messages.MessageListAdapter;
@@ -42,7 +43,7 @@ public class MessageListActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setTitle(getIntent().getStringExtra("nickname"));
         getSupportActionBar().setSubtitle(getIntent().getStringExtra("address"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Button send = findViewById(R.id.button_chatbox_send);
+        ImageButton send = findViewById(R.id.button_chatbox_send);
         EditText txt = findViewById(R.id.edittext_chatbox);
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());

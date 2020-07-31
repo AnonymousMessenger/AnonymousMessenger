@@ -1,5 +1,10 @@
 package com.example.anonymousmessenger.messages;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class UserMessage extends Message{
     private String address;
     private  boolean received;
@@ -37,5 +42,31 @@ public class UserMessage extends Message{
         this.setMessage(message);
         this.setSender(sender);
         this.setCreatedAt(createdAt);
+    }
+
+    public JSONObject toJson(){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("type","AM3");
+            json.put("address",getAddress());
+            json.put("sender",getSender());
+            json.put("msg",getMessage());
+            json.put("createdAt",getCreatedAt());
+            json.put("received",isReceived());
+            json.put("to",getTo());
+        } catch (JSONException e) {
+            return null;
+        }
+        return json;
+    }
+
+    public static UserMessage fromJson(JSONObject json){
+        UserMessage um;
+        try {
+            um = new UserMessage(json.getString("address"),json.getString("msg"),json.getString("sender"),json.getLong("createdAt"),json.getBoolean("received"),json.getString("to"));
+        } catch (JSONException e) {
+            return null;
+        }
+        return um;
     }
 }
