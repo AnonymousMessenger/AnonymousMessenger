@@ -11,6 +11,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -25,31 +26,39 @@ public class Utilities {
 
     public static Socket socks4aSocketConnection(String networkHost, int networkPort, String socksHost, int socksPort)
             throws IOException {
-
-        Socket socket = new Socket();
-        socket.setSoTimeout(READ_TIMEOUT_MILLISECONDS);
-        SocketAddress socksAddress = new InetSocketAddress(socksHost, socksPort);
-        socket.connect(socksAddress, CONNECT_TIMEOUT_MILLISECONDS);
-
-        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-        outputStream.write((byte) 0x04);
-        outputStream.write((byte) 0x01);
-        outputStream.writeShort((short) networkPort);
-        outputStream.writeInt(0x01);
-        outputStream.write((byte) 0x00);
-        outputStream.write(networkHost.getBytes());
-        outputStream.write((byte) 0x00);
-
-        DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-        byte firstByte = inputStream.readByte();
-        byte secondByte = inputStream.readByte();
-        if (firstByte != (byte) 0x00 || secondByte != (byte) 0x5a) {
-            socket.close();
-            throw new IOException("SOCKS4a connect failed, got " + firstByte + " - " + secondByte +
-                    ", but expected 0x00 - 0x5a");
-        }
-        inputStream.readShort();
-        inputStream.readInt();
+        //check if tor is in good shape or maybe wait for it
+        SocketAddress proxyaddr = new InetSocketAddress(socksHost,socksPort);
+        SocketAddress hostaddr = new InetSocketAddress(networkHost,networkPort);
+        java.net.Proxy proxy = new java.net.Proxy(Proxy.Type.SOCKS,proxyaddr);
+        Socket socket = new Socket(proxy);
+        socket.connect(hostaddr);
+//        Socket socket = new Socket();
+//        socket.setSoTimeout(READ_TIMEOUT_MILLISECONDS);
+//        SocketAddress socksAddress = new InetSocketAddress(socksHost, socksPort);
+//        socket.connect(socksAddress, CONNECT_TIMEOUT_MILLISECONDS);
+//
+//        DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+//        outputStream.write((byte) 0x04);
+//        outputStream.write((byte) 0x01);
+//        outputStream.writeShort((short) networkPort);
+////        outputStream.writeInt(0x01);
+//        outputStream.write((byte) 0x00);
+//        outputStream.write((byte) 0x00);
+//        outputStream.write((byte) 0x00);
+//        outputStream.write((byte) 0x01);
+//        outputStream.write(networkHost.getBytes());
+//        outputStream.write((byte) 0x00);
+//
+//        DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+//        byte firstByte = inputStream.readByte();
+//        byte secondByte = inputStream.readByte();
+//        if (firstByte != (byte) 0x00 || secondByte != (byte) 0x5a) {
+//            socket.close();
+//            throw new IOException("SOCKS4a connect failed, got " + firstByte + " - " + secondByte +
+//                    ", but expected 0x00 - 0x5a");
+//        }
+//        inputStream.readShort();
+//        inputStream.readInt();
         return socket;
     }
 

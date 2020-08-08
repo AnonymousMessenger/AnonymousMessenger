@@ -53,8 +53,8 @@ public class AndroidOnionProxyContext extends OnionProxyContext {
   @Override
   public void installFiles() throws IOException, InterruptedException {
     super.installFiles();
-    FileUtilities.cleanInstallOneFile(getAssetOrResourceByName(getPathToTorExecutable() + getTorExecutableFileName()),
-            torExecutableFile);
+//    FileUtilities.cleanInstallOneFile(getAssetOrResourceByName(getPathToTorExecutable() + getTorExecutableFileName()),
+//            torExecutableFile);
   }
 
   @Override

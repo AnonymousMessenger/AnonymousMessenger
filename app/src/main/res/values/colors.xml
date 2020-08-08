@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="dx_lime_400">#FF5722</color>
+    <color name="dx_lime_400">#59316B</color>
 
     <color name="dx_night_950">#0e171f</color>
-    <color name="dx_night_700">#2e3d4f</color>
+    <color name="dx_night_700">#333A41</color>
 
     <color name="dx_brand_blue">@color/dx_night_700</color>
     <color name="dx_brand_green">@color/dx_lime_400</color>
@@ -14,5 +14,6 @@
 
     <color name="dx_button_background_color">@color/dx_accent</color>
     <color name="dx_button_text">#ffffff</color>
+    <color name="dx_white">#ffffff</color>
 
 </resources>

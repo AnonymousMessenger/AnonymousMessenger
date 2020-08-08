@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/lbl_contact_address"
-        android:textSize="24sp"
+        android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/txt_container_contact_address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         app:errorEnabled="true"
         app:hintEnabled="false"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -32,6 +33,7 @@
             android:layout_height="41dp"
             android:hint="@string/hint_contact_address"
             android:imeOptions="actionDone"
+            android:padding="8dp"
             android:textSize="@dimen/text_size_medium" />
     </com.google.android.material.textfield.TextInputLayout>
 

@@ -5,8 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dx_night_700"
-    tools:context="com.example.anonymousmessenger.MessageListActivity">
+    tools:context="com.dx.anonymousmessenger.MessageListActivity">
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/message_backgound_02" />
+
 
     <!-- A horizontal line between the chatbox and RecyclerView -->
 
@@ -18,23 +25,66 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
     <View
         android:id="@+id/view"
         android:layout_width="0dp"
-        android:layout_height="4dp"
-        android:paddingTop="4dp"
+        android:layout_height="2dp"
         android:background="#dfdfdf"
+        android:paddingTop="1dp"
         app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:background="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/quote_sender_typing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="#ffffff"
+                app:layout_constraintBottom_toTopOf="@+id/quote_text_typing"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/quote_text_typing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.75"
+                android:background="@drawable/rounded_rectangle_dark"
+                android:maxWidth="300dp"
+                android:padding="8dp"
+                android:text="TextView"
+                android:textColor="#ffffff"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/layout_chatbox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#38515f"
+        android:background="#000000"
         android:minHeight="48dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -43,30 +93,34 @@
 
         <EditText
             android:id="@+id/edittext_chatbox"
-            android:inputType="text"
-            android:autofillHints="@string/enter_message"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"
+            android:autofillHints="@string/enter_message"
             android:background="@android:color/transparent"
             android:hint="@string/enter_message"
+            android:inputType="text"
             android:maxLines="6"
-            android:textColor="#ffffff" />
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:textColor="#ffffff"
+            android:textColorHint="#ffffff" />
 
         <ImageButton
             android:id="@+id/button_chatbox_send"
-            android:layout_width="64dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom"
-            android:background="#3a2539"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:background="#231723"
+            android:backgroundTint="@color/dx_brand_green"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:textSize="14sp"
-            android:focusable="true"
-            app:srcCompat="@android:drawable/ic_menu_send" />
+            app:srcCompat="@drawable/ic_onion" />
 
     </LinearLayout>
 

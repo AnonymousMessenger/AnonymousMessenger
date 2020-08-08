@@ -23,4 +23,8 @@
     <string name="lbl_contact_address">Enter Contact Address To Add One</string>
     <string name="enter_message">Send secure message</string>
     <string name="send_button">SEND</string>
+    <string name="reply">Reply</string>
+    <string name="pin">Pin</string>
+    <string name="copy">Copy</string>
+    <string name="you">you</string>
 </resources>

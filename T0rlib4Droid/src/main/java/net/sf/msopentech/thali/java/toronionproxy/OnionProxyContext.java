@@ -68,11 +68,12 @@ abstract public class OnionProxyContext {
         FileUtilities.cleanInstallOneFile(this.ctx.getAssets().open(DIR+GEO_IPV_6_NAME), geoIpv6File);
         FileUtilities.cleanInstallOneFile(this.ctx.getAssets().open(DIR+TORRC_NAME), torrcFile);
 
+        //added this to save space on android with zipped binaries
+        FileUtilities.extractContentFromZip(torExecutableFile.getParentFile(), getAssetOrResourceByName("tor.zip"));
+
         switch (OsData.getOsType()) {
             case ANDROID:
-                FileUtilities.cleanInstallOneFile(
-                        getAssetOrResourceByName(getPathToTorExecutable() + getTorExecutableFileName()),
-                        torExecutableFile);
+//                FileUtilities.cleanInstallOneFile(torExecutableFile);
                 break;
             case WINDOWS:
             case LINUX_32:

@@ -77,7 +77,7 @@ public class AndroidTorRelay {
         onionProxyManager.attachHiddenServiceReadyListener(serviceDescriptor, listener);
     }
 
-    public void ShutDown() throws IOException {
+    public void shutDown() throws IOException {
         onionProxyManager.stop();
     }
 

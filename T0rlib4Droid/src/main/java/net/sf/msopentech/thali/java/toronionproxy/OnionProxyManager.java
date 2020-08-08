@@ -325,7 +325,7 @@ public abstract class OnionProxyManager {
         WriteObserver cookieObserver = onionProxyContext.generateWriteObserver(cookieFile);
         // Start a new Tor process
         String torPath = onionProxyContext.getTorExecutableFile().getAbsolutePath();
-        String configDir = onionProxyContext.getTorrcFile().getParent();
+        String configDir = onionProxyContext.getTorrcFile().getAbsoluteFile().getParent();
         String configPath = onionProxyContext.getTorrcFile().getAbsolutePath();
         String pid = onionProxyContext.getProcessId();
         String[] cmd = {torPath, "-f", configPath, OWNER, pid};
@@ -456,8 +456,8 @@ public abstract class OnionProxyManager {
             // For some reason the GeoIP's location can only be given as a file name, not a path and it has
             // to be in the data directory so we need to set both
             printWriter.println("DataDirectory " + onionProxyContext.getWorkingDirectory().getAbsolutePath());
-            printWriter.println("GeoIPFile " + onionProxyContext.getGeoIpFile().getName());
-            printWriter.println("GeoIPv6File " + onionProxyContext.getGeoIpv6File().getName());
+            printWriter.println("GeoIPFile " + onionProxyContext.getGeoIpFile().getAbsolutePath());
+            printWriter.println("GeoIPv6File " + onionProxyContext.getGeoIpv6File().getAbsolutePath());
         } finally {
             if (printWriter != null) {
                 printWriter.close();
