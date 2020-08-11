@@ -6,10 +6,12 @@ import org.json.JSONObject;
 public class QuotedUserMessage extends UserMessage {
     private String quotedMessage;
     private String quoteSender;
-    public QuotedUserMessage(String quoteSender,String quotedMessage, String address, String message, String sender, long createdAt, boolean received, String to) {
+    private boolean pinned = false;
+    public QuotedUserMessage(String quoteSender,String quotedMessage, String address, String message, String sender, long createdAt, boolean received, String to, boolean pinned) {
         super(address, message, sender, createdAt, received, to);
         this.quotedMessage = quotedMessage;
         this.quoteSender = quoteSender;
+        this.pinned = pinned;
     }
 
     @Override
@@ -25,6 +27,7 @@ public class QuotedUserMessage extends UserMessage {
             json.put("to",getTo());
             json.put("quote",getQuotedMessage());
             json.put("quoteSender",getQuoteSender());
+            json.put("pinned",isPinned());
         } catch (JSONException e) {
             return null;
         }
@@ -34,7 +37,7 @@ public class QuotedUserMessage extends UserMessage {
     public static QuotedUserMessage fromJson(JSONObject json){
         QuotedUserMessage um;
         try {
-            um = new QuotedUserMessage(json.getString("quoteSender"),json.getString("quote"),json.getString("address"),json.getString("msg"),json.getString("sender"),json.getLong("createdAt"),json.getBoolean("received"),json.getString("to"));
+            um = new QuotedUserMessage(json.getString("quoteSender"),json.getString("quote"),json.getString("address"),json.getString("msg"),json.getString("sender"),json.getLong("createdAt"),json.getBoolean("received"),json.getString("to"),json.getBoolean("pinned"));
         } catch (Exception e) {
             return null;
         }
@@ -55,5 +58,13 @@ public class QuotedUserMessage extends UserMessage {
 
     public void setQuoteSender(String quoteSender) {
         this.quoteSender = quoteSender;
+    }
+
+    public boolean isPinned() {
+        return pinned;
+    }
+
+    public void setPinned(boolean pinned) {
+        this.pinned = pinned;
     }
 }

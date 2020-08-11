@@ -1,30 +1,35 @@
 package com.dx.anonymousmessenger;
 
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.dx.anonymousmessenger.R;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.textfield.TextInputEditText;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteException;
 
-import java.io.File;
 import java.util.Objects;
 
 public class PasswordEntryFragment extends Fragment {
+    TextInputEditText txtPassword;
+    View rootView;
+    ProgressBar progressBar;
+    Button btn_next;
+    DxApplication app;
+    LinearLayout errorBox;
 
     public PasswordEntryFragment() {
         // Required empty public constructor
@@ -40,86 +45,116 @@ public class PasswordEntryFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+//        txtPassword = null;
+//        rootView = null;
+//        progressBar = null;
+//        btn_next = null;
+//        app = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+        txtPassword = null;
+        rootView = null;
+        progressBar = null;
+        btn_next = null;
+        app = null;
+        errorBox = null;
+        super.onDestroyView();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_password_entry, container, false);
-        TextInputEditText txtPassword = rootView.findViewById(R.id.password_entry);
-        ProgressBar progressBar = rootView.findViewById(R.id.progress2);
-        Button btn_next = rootView.findViewById(R.id.next);
-        btn_next.setOnClickListener(v -> new Thread(() -> {
-            try {
-                ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).requestBatteryOptimizationOff();
-                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {btn_next.setEnabled(false); txtPassword.setEnabled(false); btn_next.setVisibility(View.GONE); progressBar.setVisibility(View.VISIBLE);});
-                Log.d("Account Checker","Checking Password");
-                SQLiteDatabase.loadLibs(Objects.requireNonNull(getContext()));
-                File databaseFile = new File(getContext().getFilesDir(), "demo.db");
-                SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,
-                        Objects.requireNonNull(txtPassword.getText()).toString(),
-                        null);
-                Cursor cr = database.rawQuery("select count(*) from account;",null);
-                int data;
-                data = cr.getCount();
-                cr.close();
-                Log.d("Account Checker","Checking made it data:"+data);
-            } catch (SQLiteException e) {
-                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                    txtPassword.setText("");
-                    txtPassword.setError("Wrong password");
-                    btn_next.setEnabled(true);
-                    return;
-                });
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+        rootView = inflater.inflate(R.layout.fragment_password_entry, container, false);
+        txtPassword = rootView.findViewById(R.id.password_entry);
+        progressBar = rootView.findViewById(R.id.progress2);
+        btn_next = rootView.findViewById(R.id.next);
+        errorBox = rootView.findViewById(R.id.error_box);
+        app = ((DxApplication) Objects.requireNonNull(getActivity()).getApplication());
+        btn_next.setOnClickListener(v -> {
 
-            try{
-                SQLiteDatabase.loadLibs(Objects.requireNonNull(getContext()));
-                File databaseFile = new File(getContext().getFilesDir(), "demo.db");
-                SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,
-                        Objects.requireNonNull(txtPassword.getText()).toString(),
-                        null);
-                Cursor cr = database.rawQuery("select * from account;",null);
-                if( cr != null && cr.moveToFirst() ) {
-                    DxAccount account = new DxAccount(cr.getString(0),cr.getBlob(1),
-                            cr.getString(2),cr.getType(3));
-                    account.setPassword(txtPassword.getText().toString());
-                    ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).setAccount(account);
+            btn_next.setEnabled(false);
+            txtPassword.setEnabled(false);
+            btn_next.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
 
-                    if(!((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).getServerReady()){
-                        if (((DxApplication) getActivity().getApplication()).getTorThread() != null) {
-                            ((DxApplication) getActivity().getApplication()).setTorThread(null);
-                        }
-                        ((DxApplication)getActivity().getApplication()).startTor();
+            new Thread(() -> {
+                try {
+                    SQLiteDatabase database = isPasswordCorrect(Objects.requireNonNull(txtPassword.getText()).toString());
+
+                    if (getActivity() != null) {
+                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> ((AppActivity) getActivity()).showNextFragment(new StartTorFragment()));
                     }
 
-                    while (!((DxApplication)rootView.getContext().getApplicationContext()).isServerReady()){
-                        try{
-                            Thread.sleep(2000);
-                        }catch (Exception e){
-                            break;
+                    String pass = txtPassword.getText().toString();
+
+                    txtPassword = null;
+                    btn_next = null;
+                    progressBar = null;
+                    rootView = null;
+
+                    app.lockTorStart();
+
+                    Cursor cr = database.rawQuery("select * from account;", null);
+                    if (cr != null && cr.moveToFirst()) {
+                        DxAccount account = new DxAccount(cr.getString(0), cr.getBlob(1),
+                                cr.getString(2), cr.getType(3));
+                        cr.close();
+                        account.setPassword(pass);
+                        app.setAccount(account);
+
+                        if (!app.isServerReady()) {
+                            if (app.getTorThread() != null) {
+                                app.getTorThread().interrupt();
+                                app.setTorThread(null);
+                            }
+                            app.startTor();
                         }
+
+                    } else {
+                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                            txtPassword.setEnabled(true);
+                            btn_next.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                            txtPassword.setError("An unexpected error happened");
+                        });
                     }
-                    ((AppActivity)getActivity()).showNextFragment(new AppFragment());
-                }else{
-                    Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                        btn_next.setEnabled(true);
-                        txtPassword.setError("An unexpected error happened");
-                    });
+                    if (!cr.isClosed()) {
+                        cr.close();
+                    }
+                } catch (SQLiteException e) {
+                    if (getActivity() != null) {
+                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                            txtPassword.setText("");
+                            txtPassword.setEnabled(true);
+                            txtPassword.setError("Wrong password");
+                            errorBox.setVisibility(View.VISIBLE);
+                            Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.animation1);
+                            errorBox.startAnimation(hyperspaceJumpAnimation);
+                            btn_next.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                        });
+                    }
+                } catch (Exception e) {
+                    if (getActivity() != null) {
+                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                            txtPassword.setEnabled(true);
+                            btn_next.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                            txtPassword.setError("An unexpected error happened");
+                        });
+                    }
+                    e.printStackTrace();
                 }
-            }catch(Exception e){
-                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                    btn_next.setEnabled(true);
-                    txtPassword.setError("An unexpected error happened");
-                });
-                e.printStackTrace();
-            }
-        }).start());
+            }).start();
+        });
 
         txtPassword.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -128,10 +163,20 @@ public class PasswordEntryFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
+
         return rootView;
+    }
+
+    public SQLiteDatabase isPasswordCorrect(String password) throws SQLiteException{
+        Log.d("Account Checker","Checking Password");
+        SQLiteDatabase database = app.getDb(password);
+        Cursor cr2 = database.rawQuery("select count(*) from account;",null);
+        int data;
+        data = cr2.getCount();
+        cr2.close();
+        Log.d("Account Checker","Checking made it data:"+data);
+        return database;
     }
 }

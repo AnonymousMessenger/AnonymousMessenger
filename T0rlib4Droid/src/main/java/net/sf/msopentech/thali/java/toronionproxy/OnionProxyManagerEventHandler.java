@@ -29,6 +29,10 @@ See the Apache 2 License for the specific language governing permissions and lim
 
 package net.sf.msopentech.thali.java.toronionproxy;
 
+import android.content.Intent;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import net.sf.controller.network.NetLayerStatus;
 import net.sf.controller.network.ServiceDescriptor;
 import net.sf.freehaven.tor.control.EventHandler;
@@ -40,6 +44,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Intent.FLAG_RECEIVER_FOREGROUND;
+
 /**
  * Logs the data we get from notifications from the Tor OP. This is really just meant for debugging.
  */
@@ -48,6 +54,11 @@ public class OnionProxyManagerEventHandler implements EventHandler {
     private ServiceDescriptor hs;
     private NetLayerStatus listener;
     private boolean hsPublished;
+    private OnionProxyContext onionProxyContext;
+
+    public OnionProxyManagerEventHandler(OnionProxyContext onionProxyContext) {
+        this.onionProxyContext = onionProxyContext;
+    }
 
     public void setHStoWatchFor(ServiceDescriptor hs, NetLayerStatus listener) {
         if (hs == this.hs && hsPublished) {
@@ -69,23 +80,43 @@ public class OnionProxyManagerEventHandler implements EventHandler {
         if (rendQuery != null) msg += ", service: " + rendQuery;
         if (!path.isEmpty()) msg += ", path: " + shortenPath(path);
         LOG.info(msg);
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status",msg);
+        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     @Override
     public void circuitStatus(String status, String circID, String path) {
         LOG.info("streamStatus: status: " + status + ", circID: " + circID + ", path: " + path);
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","streamStatus: status: " + status + ", circID: " + circID + ", path: " + path);
+        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void streamStatus(String status, String id, String target) {
         LOG.info("streamStatus: status: " + status + ", id: " + id + ", target: " + target);
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","streamStatus: status: " + status + ", id: " + id + ", target: " + target);
+        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void orConnStatus(String status, String orName) {
         LOG.info("OR connection: status: " + status + ", orName: " + orName);
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","OR connection: status: " + status + ", orName: " + orName);
+        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void bandwidthUsed(long read, long written) {
         LOG.info("bandwidthUsed: read: " + read + ", written: " + written);
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","bandwidthUsed: read: " + read + ", written: " + written);
+        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void newDescriptors(List<String> orList) {
@@ -95,15 +126,27 @@ public class OnionProxyManagerEventHandler implements EventHandler {
             stringBuilder.append(iterator.next());
         }
         LOG.info("newDescriptors: " + stringBuilder.toString());
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","newDescriptors: " + stringBuilder.toString());
+        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     //fetch Exit Node
     public void message(String severity, String msg) {
         LOG.info("message: severity: " + severity + ", msg: " + msg);
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","message: severity: " + severity + ", msg: " + msg);
+        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void unrecognized(String type, String msg) {
         LOG.info("unrecognized: type: " + type + ", msg: " + msg);
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","unrecognized: type: " + type + ", msg: " + msg);
+        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     private String shortenPath(List<String> path) {

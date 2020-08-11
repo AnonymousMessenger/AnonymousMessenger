@@ -1,16 +1,11 @@
 package com.dx.anonymousmessenger;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
@@ -18,10 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -33,13 +34,15 @@ public class AppFragment extends Fragment {
     private RecyclerView recyclerView;
     private MyRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    public Handler mainThread = new Handler(Looper.getMainLooper());
+    public Handler mainThread = null;
     private BroadcastReceiver mMyBroadcastReceiver;
     private View rootView;
     private ImageView onlineImg;
     private ImageView offlineImg;
-    private TextView onlineTxt;
+    private TextView onlineTxt,torOutput;
     private Toolbar onlineToolbar;
+    List<String[]> lst;
+    private Thread messageChecker = null;
 
     public AppFragment() {
         // Required empty public constructor
@@ -53,6 +56,85 @@ public class AppFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        stopCheckingMessages();
+        LocalBroadcastManager.getInstance(rootView.getContext()).unregisterReceiver(mMyBroadcastReceiver);
+        super.onPause();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        stopCheckingMessages();
+        LocalBroadcastManager.getInstance(rootView.getContext()).unregisterReceiver(mMyBroadcastReceiver);
+    }
+
+    @Override
+    public void onDestroyView() {
+        stopCheckingMessages();
+        LocalBroadcastManager.getInstance(rootView.getContext()).unregisterReceiver(mMyBroadcastReceiver);
+        recyclerView = null;
+        mAdapter = null;
+        layoutManager = null;
+        mainThread = null;
+        mMyBroadcastReceiver = null;
+        rootView = null;
+        onlineImg = null;
+        offlineImg = null;
+        onlineTxt = null;
+        torOutput = null;
+        onlineToolbar = null;
+        lst = null;
+        messageChecker = null;
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMyBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                if(intent.getStringExtra("tor_status")!=null){
+                    updateTorOutput(Objects.requireNonNull(intent.getStringExtra("tor_status")));
+                }else{
+                    updateUi();
+                }
+            }
+        };
+
+        checkMessages();
+        checkConnectivity();
+        updateUi();
+        new Thread(()->{
+            int tries = 0;
+            while(!isOnline()){
+                tries++;
+                if(tries>4)break;
+            }
+            if(tries>4) {
+                if (getActivity()!=null && ((getActivity()).getApplication()) != null && ((DxApplication) (getActivity()).getApplication()).getTorThread() != null) {
+                    ((DxApplication) getActivity().getApplication()).getTorThread().interrupt();
+                    ((DxApplication) getActivity().getApplication()).setTorThread(null);
+                    ((DxApplication) getActivity().getApplication()).setServerReady(false);
+                }
+                if(getActivity()!=null && ((getActivity()).getApplication()) != null){
+                    ((DxApplication) getActivity().getApplication()).startTor();
+                }
+            }
+        }).start();
+
+        try {
+            LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("your_action"));
+            LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -61,7 +143,7 @@ public class AppFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_app, container, false);
-
+        mainThread = new Handler(Looper.getMainLooper());
         FloatingActionButton btnAddContact = rootView.findViewById(R.id.btn_add_contact);
         btnAddContact.setOnClickListener(v -> ((AppActivity) Objects.requireNonNull(getActivity())).showNextFragment(new AddContactFragment()));
 
@@ -70,85 +152,151 @@ public class AppFragment extends Fragment {
         onlineTxt = rootView.findViewById(R.id.online_text);
         onlineToolbar = rootView.findViewById(R.id.online_toolbar);
         onlineToolbar.setOnClickListener(v -> checkConnectivity());
+        torOutput = rootView.findViewById(R.id.status_text);
         recyclerView = rootView.findViewById(R.id.recycler);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new MyRecyclerViewAdapter(rootView.getContext(),new ArrayList<>());
+        lst = new ArrayList<>();
+        mAdapter = new MyRecyclerViewAdapter((DxApplication) Objects.requireNonNull(getActivity()).getApplication(),lst,this);
         recyclerView.setAdapter(mAdapter);
+
+        checkConnectivity();
         updateUi();
+        checkMessages();
+
+        if(!((DxApplication)getActivity().getApplication()).isWeAsked()){
+            new Thread(()->{
+                try{
+                    Thread.sleep(700);
+                }catch (Exception ignored){}
+                if(!((DxApplication)getActivity().getApplication()).isIgnoringBatteryOptimizations()){
+                    getActivity().runOnUiThread(()->{
+                        new AlertDialog.Builder(getContext())
+                            .setTitle("Turn off battery optimization?")
+                            .setMessage("allow Anonymous Messenger to keep working in the background?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                                ((DxApplication)getActivity().getApplication()).requestBatteryOptimizationOff();
+                                ((DxApplication)getActivity().getApplication()).setWeAsked(true);
+                            })
+                            .setNegativeButton(android.R.string.no, (dialog, whichButton)->{
+                                ((DxApplication)getActivity().getApplication()).setWeAsked(true);
+                            }).show();
+                    });
+                }
+            }).start();
+        }
+
         return rootView;
+    }
+
+    public void checkMessages(){
+        if(messageChecker!=null){
+            return;
+        }
+        messageChecker = new Thread(()->{
+            while (true){
+                try{
+                    Thread.sleep(5000);
+                    if(getActivity()==null) break;
+                    List<String[]> tmp = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
+                    if(tmp==null || lst==null)break;
+                    if(!Utils.arrayListEquals(lst,tmp)){
+                        updateUi(tmp);
+                    }
+                }catch (Exception ignored){break;}
+            }
+        });
+        messageChecker.start();
+    }
+
+    public void stopCheckingMessages(){
+        if(messageChecker==null){
+            return;
+        }
+        if(messageChecker.isAlive()){
+            messageChecker.interrupt();
+            messageChecker = null;
+        }else{
+
+        }
     }
 
     public void updateUi(){
         new Thread(()->{
-            List<String[]> lst = DbHelper.getContactsList((DxApplication) Objects.requireNonNull(getActivity()).getApplication());
+            if(getActivity()==null || mainThread==null){
+                return;
+            }
+            lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
             mainThread.post(()->{
-                mAdapter = new MyRecyclerViewAdapter(rootView.getContext(),lst);
+                mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
                 recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
             });
-            checkConnectivity();
         }).start();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateUi();
+    public void updateUi(List<String[]> tmp){
         new Thread(()->{
-            if(!((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).getServerReady()){
-                if (((DxApplication) getActivity().getApplication()).getTorThread() != null) {
-                    ((DxApplication) getActivity().getApplication()).setTorThread(null);
-                }
-                ((DxApplication)getActivity().getApplication()).startTor();
+            if(getActivity()==null || mainThread==null){
+                return;
             }
+            lst = tmp;
+            mainThread.post(()->{
+                mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
+                recyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+            });
         }).start();
-        mMyBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                updateUi();
-            }
-        };
-        try {
-            LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("your_action"));
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(rootView.getContext()).unregisterReceiver(mMyBroadcastReceiver);
+    public boolean isOnline() {
+        if(getActivity() !=null) {
+            return new TorClientSocks4().test((DxApplication) Objects.requireNonNull(getActivity()).getApplication());
+        }
+        return false;
     }
 
     public void checkConnectivity(){
-        mainThread.post(()->{
-            onlineImg.setVisibility(View.GONE);
-            offlineImg.setVisibility(View.GONE);
-            onlineTxt.setText("Checking");
-            onlineToolbar.setVisibility(View.VISIBLE);
-        });
-        new Thread(()->{
-            boolean online = new TorClientSocks4().test((DxApplication) Objects.requireNonNull(getActivity()).getApplication());
-            if(online){
-                mainThread.post(()->{
-                    onlineTxt.setText("Online");
-                    onlineImg.setVisibility(View.VISIBLE);
-                    offlineImg.setVisibility(View.GONE);
-                    onlineToolbar.setVisibility(View.VISIBLE);
+        if(getActivity()==null || mainThread==null){
+                return;
+        }
+        try{
+            mainThread.post(()->{
+                onlineImg.setVisibility(View.GONE);
+                offlineImg.setVisibility(View.GONE);
+                onlineTxt.setText("Checking");
+                onlineToolbar.setVisibility(View.VISIBLE);
+            });
+        }catch (Exception ignored){}
 
-                });
-            }else{
-                mainThread.post(()->{
-                    onlineTxt.setText("Offline");
-                    onlineImg.setVisibility(View.GONE);
-                    offlineImg.setVisibility(View.VISIBLE);
-                    onlineToolbar.setVisibility(View.VISIBLE);
-                });
+        new Thread(()->{
+            if(getActivity()==null || mainThread==null){
+                return;
             }
+            try{
+                if(isOnline()){
+                    mainThread.post(()->{
+                        onlineTxt.setText("Online");
+                        onlineImg.setVisibility(View.VISIBLE);
+                        offlineImg.setVisibility(View.GONE);
+                        onlineToolbar.setVisibility(View.VISIBLE);
+
+                    });
+                }else{
+                    mainThread.post(()->{
+                        onlineTxt.setText("Offline");
+                        onlineImg.setVisibility(View.GONE);
+                        offlineImg.setVisibility(View.VISIBLE);
+                        onlineToolbar.setVisibility(View.VISIBLE);
+                    });
+                }
+            }catch (Exception ignored){}
         }).start();
     }
+
+    private void updateTorOutput(String tor_status) {
+        torOutput.setText(tor_status);
+    }
+
 }

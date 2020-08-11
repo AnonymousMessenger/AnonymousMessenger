@@ -1,20 +1,20 @@
 package com.dx.anonymousmessenger;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.dx.anonymousmessenger.R;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import com.dx.anonymousmessenger.tor.ServerSocketViaTor;
 import com.google.android.material.textfield.TextInputLayout;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 
@@ -115,7 +115,7 @@ public class CreateUserActivity extends AppCompatActivity {
 
                 Thread.sleep(9000);
                 while(account.getNickname()==null | account.getAddress()==null | account.getPort()==0 | account.getIdentity_key()==null){
-                    Log.e("STORE ACCOUNT","not yet ready to do so");
+                    //Log.e("STORE ACCOUNT","not yet ready to do so");
                     Thread.sleep(2000);
                 }
                 saveAccount(account);

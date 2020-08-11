@@ -48,7 +48,7 @@
         <activity android:name=".CreateUserActivity" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/splashScreenTheme">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

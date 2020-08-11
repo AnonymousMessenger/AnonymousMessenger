@@ -2,10 +2,6 @@ package com.dx.anonymousmessenger;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +12,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.dx.anonymousmessenger.R;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.dx.anonymousmessenger.login.StrengthMeter;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -144,8 +142,8 @@ public class SetupPasswordFragment extends Fragment {
             }
         });
         nextButton.setOnClickListener(v1 -> {
-            ((DxApplication)getActivity().getApplication()).requestBatteryOptimizationOff();
 //            ((CreateUserActivity)getActivity()).setOkayToBack(false);
+            ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).lockTorStart();
             IBinder token = passwordEntry.getWindowToken();
             Object o = getContext().getSystemService(INPUT_METHOD_SERVICE);
             ((InputMethodManager) o).hideSoftInputFromWindow(token, 0);

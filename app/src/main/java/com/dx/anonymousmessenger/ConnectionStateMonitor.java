@@ -35,6 +35,10 @@ public class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback 
         connectivityManager.registerNetworkCallback(networkRequest, this);
     }
 
+    public void disable(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        connectivityManager.unregisterNetworkCallback(this);
+    }
     // Likewise, you can have a disable method that simply calls ConnectivityManager.unregisterNetworkCallback(NetworkCallback) too.
 
     @Override
@@ -54,8 +58,8 @@ public class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback 
                     Intent gcm_rec = new Intent("your_action");
                     LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(gcm_rec);
                 }).start();
-
             }
+
             if(isServiceRunningInForeground(context,MyService.class)){
                 Intent serviceIntent = new Intent(context, MyService.class);
                 serviceIntent.putExtra("inputExtra", "reconnect now");

@@ -4,9 +4,9 @@ import android.content.Intent;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.dx.anonymousmessenger.tor.TorClientSocks4;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.tor.TorClientSocks4;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,9 +14,12 @@ import org.json.JSONObject;
 public class MessageSender {
     public static void sendMessage(QuotedUserMessage msg, DxApplication app, String to){
         try {
-            boolean b = new TorClientSocks4().Init(to,app,
-                    msg.toJson().toString());
-            DbHelper.saveMessage(msg,app,to,b);
+            try {
+                boolean b = new TorClientSocks4().Init(to,app,msg.toJson().toString());
+                DbHelper.saveMessage(msg,app,to,b);
+            }catch (Exception ignored){
+                DbHelper.saveMessage(msg,app,to,false);
+            }
             Intent gcm_rec = new Intent("your_action");  LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,5 +61,13 @@ public class MessageSender {
 //            Log.e("BAD MESSAGE","SOOOOOOOO MFKNG BAD");
 //        }
 //        return false;
+    }
+
+    public static void pinMessage(QuotedUserMessage message, DxApplication app) {
+        DbHelper.pinMessage(message,app);
+    }
+
+    public static void unPinMessage(QuotedUserMessage message, DxApplication app) {
+        DbHelper.unPinMessage(message,app);
     }
 }

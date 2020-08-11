@@ -4,7 +4,6 @@ package net.sf.msopentech.thali.java.toronionproxy.android;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import net.sf.msopentech.thali.java.toronionproxy.FileUtilities;
 import net.sf.msopentech.thali.java.toronionproxy.OnionProxyContext;
 import net.sf.msopentech.thali.java.toronionproxy.WriteObserver;
 

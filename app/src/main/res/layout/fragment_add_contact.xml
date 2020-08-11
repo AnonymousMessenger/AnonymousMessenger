@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -34,6 +33,7 @@
             android:hint="@string/hint_contact_address"
             android:imeOptions="actionDone"
             android:padding="8dp"
+            android:layout_margin="8dp"
             android:textSize="@dimen/text_size_medium" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -43,6 +43,8 @@
         android:layout_height="wrap_content"
         android:text="@string/myaddress"
         android:textSize="@dimen/text_size_large"
+        android:padding="4dp"
+        android:layout_margin="4dp"
         app:layout_constraintBottom_toTopOf="@+id/txt_lbl_contact_address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -1,26 +1,33 @@
 package com.dx.anonymousmessenger;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import com.dx.anonymousmessenger.R;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 public class AppActivity extends AppCompatActivity {
     private String fragmentName = "";
+
+    @Override
+    protected void onDestroy() {
+        fragmentName = null;
+        super.onDestroy();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_app);
 
-        DxAccount account = ((DxApplication) this.getApplication()).getAccount();
-        if(account!=null){
-            String password = ((DxApplication) this.getApplication()).getAccount().getPassword();
-            if(password!=null){
-                loadAppFragment();
+        if(((DxApplication) this.getApplication()).getAccount()!=null){
+            if(((DxApplication) this.getApplication()).getAccount().getPassword()!=null){
+                if(((DxApplication) getApplication()).isTorStartLocked()){
+                    showNextFragment(new StartTorFragment());
+                }else{
+                    loadAppFragment();
+                }
             }else{
                 loadPasswordEntryFragment();
             }
@@ -49,10 +56,20 @@ public class AppActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(fragmentName.contains("Contact")){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setTitle(getString(R.string.app_name));
             fragmentName = "";
-            super.onBackPressed();
-        }else{
-            finish();
+            showNextFragment(new AppFragment());
+        }else {
+            if (!fragmentName.contains("StartTor")) {
+                finish();
+            }
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

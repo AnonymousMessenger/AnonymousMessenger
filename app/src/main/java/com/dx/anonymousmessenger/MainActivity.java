@@ -1,45 +1,48 @@
 package com.dx.anonymousmessenger;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
-import com.dx.anonymousmessenger.R;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 import java.util.Objects;
-
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        setTheme(R.style.AppTheme);
-        Objects.requireNonNull(getSupportActionBar()).hide();
+        try{
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+            Objects.requireNonNull(getSupportActionBar()).hide();
+        }catch (Exception ignored){}
 
         setContentView(R.layout.activity_main);
 
-        //if service running we wait
-
-        //check if account in storage, then change the next button text to login
         ((DxApplication) getApplication()).enableStrictMode();
         new Thread(() -> {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             File file =  new File(getFilesDir(), "demo.db");
             if(file.exists()) //here's how to check
             {
                 switchToAppView();
             }else{
                 if(((DxApplication)getApplication()).isServiceRunningInForeground(this, MyService.class)&&(((DxApplication) getApplication()).getHostname()==null)&&!(((DxApplication) getApplication()).isServerReady())){
-                    Intent intent = new Intent(this, SetupInProcess.class);
-                    startActivity(intent);
-                    finish();
+                    switchToSetupInProcess();
+                }else{
+                    runOnUiThread(()->{
+                        Button next = findViewById(R.id.next);
+                        next.setVisibility(View.VISIBLE);
+                        next.setEnabled(true);
+                    });
                 }
             }
         }).start();
@@ -53,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void switchToAppView(){
         Intent intent = new Intent(this, AppActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void switchToSetupInProcess(){
+        Intent intent = new Intent(this, SetupInProcess.class);
         startActivity(intent);
         finish();
     }

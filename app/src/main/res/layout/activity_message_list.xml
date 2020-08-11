@@ -7,13 +7,6 @@
     android:layout_height="match_parent"
     tools:context="com.dx.anonymousmessenger.MessageListActivity">
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/message_backgound_02" />
-
 
     <!-- A horizontal line between the chatbox and RecyclerView -->
 
@@ -21,7 +14,7 @@
         android:id="@+id/reyclerview_message_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -109,18 +102,12 @@
             android:textColor="#ffffff"
             android:textColorHint="#ffffff" />
 
-        <ImageButton
+        <Button
             android:id="@+id/button_chatbox_send"
+            style="@style/DXButton"
             android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_gravity="center"
-            android:background="#231723"
-            android:backgroundTint="@color/dx_brand_green"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:textSize="14sp"
-            app:srcCompat="@drawable/ic_onion" />
+            android:layout_height="wrap_content"
+            android:text="SEND" />
 
     </LinearLayout>
 

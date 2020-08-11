@@ -1,3 +1,11 @@
+include ':Signal'
+include ':Signal'
+include ':java'
+include ':tests'
+include ':android'
 include ':T0rlib4Droid'
 include ':app'
+project(':android').projectDir = new File(rootDir, 'libsignal-protocol-java/android/')
+project(':tests').projectDir = new File(rootDir, 'libsignal-protocol-java/tests/')
+project(':java').projectDir = new File(rootDir, 'libsignal-protocol-java/java/')
 rootProject.name = "Anonymous Messenger"

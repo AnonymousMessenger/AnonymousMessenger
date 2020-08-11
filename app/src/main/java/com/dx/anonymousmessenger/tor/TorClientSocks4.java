@@ -1,7 +1,5 @@
 package com.dx.anonymousmessenger.tor;
 
-import android.util.Log;
-
 import com.dx.anonymousmessenger.DxApplication;
 
 import net.sf.msopentech.thali.java.toronionproxy.Utilities;

@@ -4,6 +4,7 @@
 
     <color name="dx_night_950">#0e171f</color>
     <color name="dx_night_700">#333A41</color>
+    <color name="green_tor">#68B030</color>
 
     <color name="dx_brand_blue">@color/dx_night_700</color>
     <color name="dx_brand_green">@color/dx_lime_400</color>

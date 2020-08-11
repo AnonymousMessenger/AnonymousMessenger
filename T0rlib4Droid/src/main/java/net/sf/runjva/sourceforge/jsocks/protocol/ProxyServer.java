@@ -164,7 +164,7 @@ public class ProxyServer implements Runnable {
 				final Socket s = ss.accept();
 				final String hostName = s.getInetAddress().getHostName();
 				final int port2 = s.getPort();
-				log.info("Accepted from:{}:{}", hostName, port2);
+				log.info("Accepted from:[]:{}", port2);
 
 				final ProxyServer ps = new ProxyServer(auth, s);
 				(new Thread(ps)).start();
@@ -336,7 +336,7 @@ public class ProxyServer implements Runnable {
 			s = new SocksSocket(proxy, msg.ip, msg.port);
 		}
 
-		log.info("Connected to " + s.getInetAddress() + ":" + s.getPort());
+		log.info("Connected to []:" + s.getPort());
 
 		ProxyMessage response = null;
 		final InetAddress localAddress = s.getLocalAddress();
@@ -367,7 +367,7 @@ public class ProxyServer implements Runnable {
 
 		final InetAddress inetAddress = ss.getInetAddress();
 		final int localPort = ss.getLocalPort();
-		log.info("Trying accept on {}:{}", inetAddress, localPort);
+		log.info("Trying accept on []:{}", localPort);
 
 		if (msg.version == 5) {
 			final int cmd = SocksProxyBase.SOCKS_SUCCESS;
@@ -425,7 +425,7 @@ public class ProxyServer implements Runnable {
 		if (msg.ip.getHostAddress().equals("0.0.0.0")) {
 			msg.ip = sock.getInetAddress();
 		}
-		log.info("Creating UDP relay server for {}:{}", msg.ip, msg.port);
+		log.info("Creating UDP relay server for []:{}", msg.port);
 
 		relayServer = new UDPRelayServer(msg.ip, msg.port,
 				Thread.currentThread(), sock, auth);
@@ -493,7 +493,7 @@ public class ProxyServer implements Runnable {
 
 		final InetAddress inetAddress = s.getInetAddress();
 		final int port = s.getPort();
-		log.info("Accepted from {}:{}", s.getInetAddress(), port);
+		log.info("Accepted from []:{}", port);
 
 		ProxyMessage response;
 
@@ -591,7 +591,7 @@ public class ProxyServer implements Runnable {
 				command2String(msg.command));
 
 		final String user = msg.version == 4 ? ", User:" + msg.user : "";
-		log.debug("IP:" + msg.ip + ", Port:" + msg.port + user);
+		log.debug("IP:, Port:" + msg.port + user);
 	}
 
 	private void pipe(final InputStream in, final OutputStream out)

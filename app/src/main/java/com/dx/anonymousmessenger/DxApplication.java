@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.Notification;
@@ -12,11 +13,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.os.StrictMode;
+import android.util.Log;
 
 import androidx.core.app.TaskStackBuilder;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.tor.ServerSocketViaTor;
-import com.dx.anonymousmessenger.R;
 
 import net.sf.controller.network.AndroidTorRelay;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -30,10 +32,13 @@ public class DxApplication extends Application {
 
     private ServerSocketViaTor torSocket;
     private String hostname;
-    private boolean serverReady = false;
     private DxAccount account;
     private Thread torThread;
     private SQLiteDatabase database;
+    private long time2delete = 86400000;
+    private boolean serverReady = false;
+    private boolean lockTorStart = false;
+    private boolean weAsked = false;
 
     public DxAccount getAccount() {
         return account;
@@ -73,6 +78,12 @@ public class DxApplication extends Application {
 
     public void setServerReady(boolean serverReady) {
         this.serverReady = serverReady;
+        if(serverReady){
+            this.lockTorStart = false;
+            Intent gcm_rec = new Intent("tor_status");
+            gcm_rec.putExtra("tor_status","ALL GOOD");
+            LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+        }
     }
 
     public void sendNotification(String title, String msg){
@@ -181,6 +192,9 @@ public class DxApplication extends Application {
     }
 
     public AndroidTorRelay getAndroidTorRelay(){
+        if(torSocket==null){
+            return null;
+        }
         return torSocket.getAndroidTorRelay();
     }
 
@@ -190,10 +204,6 @@ public class DxApplication extends Application {
 
     public void setTorThread(Thread torThread) {
         this.torThread = torThread;
-    }
-
-    public boolean getServerReady() {
-        return serverReady;
     }
 
     public void startTor(){
@@ -215,13 +225,14 @@ public class DxApplication extends Application {
                 new Thread(()->{
                     try {
                         torSocket.getAndroidTorRelay().shutDown();
-                        Thread.sleep(600);
+                        Thread.sleep(1000);
                         torSocket.getAndroidTorRelay().initTor();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }).start();
             }
+
             return torThread;
         }
         enableStrictMode();
@@ -240,6 +251,7 @@ public class DxApplication extends Application {
     }
 
     public SQLiteDatabase getDb(){
+        Log.e("SOMEONE ASKED FOR DB","YES INDEED");
         if(this.database==null){
             SQLiteDatabase.loadLibs(this);
             File databaseFile = new File(getFilesDir(), "demo.db");
@@ -253,10 +265,25 @@ public class DxApplication extends Application {
         }
     }
 
+    public SQLiteDatabase getDb(String password){
+        if(this.database==null){
+            SQLiteDatabase.loadLibs(this);
+            File databaseFile = new File(getFilesDir(), "demo.db");
+            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,
+                    password,
+                    null);
+            this.database = database;
+            return database;
+        }else{
+            return this.database;
+        }
+    }
+
     public void setDb(SQLiteDatabase database){
         this.database = database;
     }
 
+    @SuppressLint("BatteryLife")
     public void requestBatteryOptimizationOff(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             String packageName = getApplicationContext().getPackageName();
@@ -267,8 +294,18 @@ public class DxApplication extends Application {
                 intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                 intent.setData(Uri.parse("package:" + packageName));
                 getApplicationContext().startActivity(intent);
+                this.weAsked = true;
             }
         }
+    }
+
+    public boolean isIgnoringBatteryOptimizations(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String packageName = getApplicationContext().getPackageName();
+            PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+            return pm.isIgnoringBatteryOptimizations(packageName);
+        }
+        return false;
     }
 
     public boolean isServiceRunningInForeground(Context context, Class<?> serviceClass) {
@@ -282,4 +319,66 @@ public class DxApplication extends Application {
         }
         return false;
     }
+
+    public long getTime2delete() {
+        return time2delete;
+    }
+
+    public void setTime2delete(long time2delete) {
+        this.time2delete = time2delete;
+    }
+
+    public void lockTorStart() {
+        this.lockTorStart = true;
+    }
+
+    public boolean isTorStartLocked(){
+        return this.lockTorStart;
+    }
+
+    public void setWeAsked(boolean b){
+        this.weAsked = b;
+    }
+
+    public boolean isWeAsked() {
+        return weAsked;
+    }
+
+    public void emptyVars() {
+        if(database!=null){
+            database.close();
+        }
+        database = null;
+        account.setPassword("");
+        account.setPassword(null);
+        account.setAddress("");
+        account.setAddress(null);
+        account.setIdentity_key(new byte[]{0x00,0x00});
+        account.setIdentity_key(null);
+        account.setNickname(null);
+        account.setPort(0);
+        account = null;
+        hostname = "";
+        hostname = null;
+        serverReady = false;
+        lockTorStart = false;
+        weAsked = false;
+        getAndroidTorRelay();
+        torSocket = null;
+        if(torThread.isAlive()){
+            torThread.interrupt();
+        }
+        torThread = null;
+        System.gc();
+    }
+
+    public void shutdown(int status){
+        System.exit(status);
+    }
+
+    public void shutdown(){
+        Intent serviceIntent = new Intent(this, MyService.class);
+        serviceIntent.putExtra("inputExtra", "reconnect now");
+    }
+
 }

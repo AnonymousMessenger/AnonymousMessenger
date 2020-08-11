@@ -11,8 +11,12 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Signal" />
             <option value="$PROJECT_DIR$/T0rlib4Droid" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/libsignal-protocol-java/android" />
+            <option value="$PROJECT_DIR$/libsignal-protocol-java/java" />
+            <option value="$PROJECT_DIR$/libsignal-protocol-java/tests" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

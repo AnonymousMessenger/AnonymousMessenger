@@ -1,6 +1,10 @@
 
 package net.sf.msopentech.thali.java.toronionproxy;
 
+import android.content.Intent;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import net.sf.controller.network.NetLayerStatus;
 import net.sf.controller.network.ServiceDescriptor;
 import net.sf.freehaven.tor.control.ConfigEntry;
@@ -64,7 +68,7 @@ public abstract class OnionProxyManager {
 
     public OnionProxyManager(OnionProxyContext onionProxyContext) {
         this.onionProxyContext = onionProxyContext;
-        eventHandler = new OnionProxyManagerEventHandler();
+        eventHandler = new OnionProxyManagerEventHandler(onionProxyContext);
     }
 
 
@@ -148,6 +152,9 @@ public abstract class OnionProxyManager {
         }*/
 
         LOG.info("Creating hidden service");
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","Creating hidden service");
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         File hostnameFile = onionProxyContext.getHostNameFile();
 
         if (!hostnameFile.getParentFile().exists()
@@ -176,7 +183,9 @@ public abstract class OnionProxyManager {
         // Publish the hidden service's onion hostname in transport properties
         String hostname = new String(FileUtilities.read(hostnameFile), "UTF-8").trim();
         LOG.info("Hidden service config has completed.");
-
+        gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","Hidden service config has completed.");
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         return hostname;
     }
 
@@ -214,6 +223,9 @@ public abstract class OnionProxyManager {
             throw new RuntimeException("Tor is not running!");
         }
         LOG.info("Enabling network: " + enable);
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","Enabling network: " + enable);
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         controlConnection.setConf("DisableNetwork", enable ? "0" : "1");
     }
 
@@ -264,6 +276,9 @@ public abstract class OnionProxyManager {
         ServiceDescriptor serviceDescriptor = null;
         try {
             LOG.info("Publishing Hidden Service. This will at least take half a minute...");
+            Intent gcm_rec = new Intent("tor_status");
+            gcm_rec.putExtra("tor_status","Publishing Hidden Service. This will at least take half a minute...");
+            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
             final OnionProxyManager onionProxyManager = (OnionProxyManager) clone();
             final String hiddenServiceName;
 
@@ -307,6 +322,9 @@ public abstract class OnionProxyManager {
         installAndConfigureFiles();
 
         LOG.info("Starting Tor");
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","Starting Tor");
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         File cookieFile = onionProxyContext.getCookieFile();
         if (!cookieFile.getParentFile().exists()
                 && !cookieFile.getParentFile().mkdirs()) {
@@ -329,7 +347,7 @@ public abstract class OnionProxyManager {
         String configPath = onionProxyContext.getTorrcFile().getAbsolutePath();
         String pid = onionProxyContext.getProcessId();
         String[] cmd = {torPath, "-f", configPath, OWNER, pid};
-        String[] env = onionProxyContext.getEnvironmentArgsForExec();
+//        String[] env = onionProxyContext.getEnvironmentArgsForExec();
         ProcessBuilder processBuilder = new ProcessBuilder(cmd);
         processBuilder.directory(new File(configDir));
         processBuilder.redirectErrorStream(true);
@@ -366,7 +384,7 @@ public abstract class OnionProxyManager {
             }
 
             // Now we should be able to connect to the new process
-            controlPortCountDownLatch.await();
+//            controlPortCountDownLatch.await();
             controlSocket = new Socket("127.0.0.1", control_port);
 
             // Open a control connection and authenticate using the cookie file
@@ -376,7 +394,7 @@ public abstract class OnionProxyManager {
             controlConnection.takeOwnership();
             controlConnection.resetConf(Collections.singletonList(OWNER));
             // Register to receive events from the Tor process
-            controlConnection.setEventHandler(new OnionProxyManagerEventHandler());
+            controlConnection.setEventHandler(new OnionProxyManagerEventHandler(onionProxyContext));
             controlConnection.setEvents(Arrays.asList(EVENTS));
             // We only set the class property once the connection is in a known good state
             this.controlConnection = controlConnection;
@@ -425,6 +443,30 @@ public abstract class OnionProxyManager {
                                 countDownLatch.countDown();
                             }
                             LOG.info(nextLine);
+                            Intent gcm_rec = new Intent("tor_status");
+                            gcm_rec.putExtra("tor_status",nextLine);
+                            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//                            try {
+//                                if(controlConnection==null){
+//                                    new Thread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            while (controlConnection==null){
+//                                                LOG.debug("waiting for control");
+//                                            }
+//                                            try {
+//                                                enableNetwork(true);
+//                                            } catch (IOException e) {
+//                                                e.printStackTrace();
+//                                            }
+//                                        }
+//                                    }).start();
+//                                }else{
+//                                    enableNetwork(true);
+//                                }
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
                         }
                     }
                 } finally {

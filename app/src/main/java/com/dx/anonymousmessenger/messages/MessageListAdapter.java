@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.MessageListActivity;
-import com.dx.anonymousmessenger.util.Utils;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.util.Utils;
 
 import java.util.List;
 import java.util.Objects;
@@ -138,158 +138,111 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
     }
 
-    private class SentMessageHolder extends RecyclerView.ViewHolder {
+    public class ListItemOnClickListener implements View.OnClickListener {
+        QuotedUserMessage message;
+        View itemView;
+        TextView messageText;
+
+        ListItemOnClickListener(QuotedUserMessage message,View itemView,TextView messageText){
+            this.itemView = itemView;
+            this.message = message;
+            this.messageText = messageText;
+        }
+
+        @Override
+        public void onClick(View v) {
+            PopupMenu popup = new PopupMenu(mContext, messageText);
+            popup.inflate(R.menu.options_menu);
+            if(message.isPinned()){
+                MenuItem pinButton = popup.getMenu().findItem(R.id.navigation_drawer_item2);
+                pinButton.setTitle("Unpin");
+            }
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.navigation_drawer_item1:
+                        //handle reply click
+                        TextView quoteTextTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_text_typing);
+                        TextView quoteSenderTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_sender_typing);
+                        quoteTextTyping.setText(message.getMessage());
+                        quoteSenderTyping.setText("You");
+                        quoteTextTyping.setVisibility(View.VISIBLE);
+                        quoteSenderTyping.setVisibility(View.VISIBLE);
+                        RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);
+                        rv.scrollToPosition(mMessageList.size() - 1);
+                        return true;
+                    case R.id.navigation_drawer_item2:
+                        //handle pin click
+                        try{
+                            if(message.isPinned()){
+                                MessageSender.unPinMessage(message,app);
+                                message.setPinned(false);
+                            }else{
+                                MessageSender.pinMessage(message,app);
+                                message.setPinned(true);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        return true;
+                    case R.id.navigation_drawer_item3:
+                        //handle copy click
+                        ClipboardManager clipboard = getSystemService(Objects.requireNonNull(mContext), ClipboardManager.class);
+                        ClipData clip = ClipData.newPlainText("label", messageText.getText().toString());
+                        Objects.requireNonNull(clipboard).setPrimaryClip(clip);
+                        return true;
+                    default:
+                        return false;
+                }
+            });
+            //displaying the popup
+            popup.show();
+        }
+    }
+
+    private class MessageHolder extends RecyclerView.ViewHolder {
         TextView messageText, timeText;
+
+        MessageHolder(View itemView) {
+            super(itemView);
+            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
+            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
+        }
+
+        void bind(QuotedUserMessage message) {
+            messageText.setText(message.getMessage());
+            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
+            messageText.setOnClickListener(new ListItemOnClickListener(message,itemView,messageText));
+        }
+    }
+
+    private class SentMessageHolder extends MessageHolder {
 
         SentMessageHolder(View itemView) {
             super(itemView);
-            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
-            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
-        }
-
-        void bind(QuotedUserMessage message) {
-            messageText.setText(message.getMessage());
-            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
-            messageText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PopupMenu popup = new PopupMenu(mContext, messageText);
-                    popup.inflate(R.menu.options_menu);
-                    popup.setOnMenuItemClickListener(item -> {
-                        switch (item.getItemId()) {
-                            case R.id.navigation_drawer_item1:
-                                //handle reply click
-                                TextView quoteTextTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_text_typing);
-                                TextView quoteSenderTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_sender_typing);
-                                quoteTextTyping.setText(message.getMessage());
-                                quoteSenderTyping.setText("You");
-                                quoteTextTyping.setVisibility(View.VISIBLE);
-                                quoteSenderTyping.setVisibility(View.VISIBLE);
-                                return true;
-                            case R.id.navigation_drawer_item2:
-                                //handle pin click
-                                return true;
-                            case R.id.navigation_drawer_item3:
-                                //handle menu3 click
-                                ClipboardManager clipboard = getSystemService(Objects.requireNonNull(mContext), ClipboardManager.class);
-                                ClipData clip = ClipData.newPlainText("label", messageText.getText().toString());
-                                Objects.requireNonNull(clipboard).setPrimaryClip(clip);
-                                return true;
-                            default:
-                                return false;
-                        }
-                    });
-                    //displaying the popup
-                    popup.show();
-                }
-            });
         }
     }
 
-    private class SentOkMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText;
+    private class SentOkMessageHolder extends SentMessageHolder {
 
         SentOkMessageHolder(View itemView) {
             super(itemView);
-            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
-            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
-        }
-
-        void bind(QuotedUserMessage message) {
-            messageText.setText(message.getMessage());
-            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
-            messageText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PopupMenu popup = new PopupMenu(mContext, messageText);
-                    popup.inflate(R.menu.options_menu);
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.navigation_drawer_item1:
-                                    //handle reply click
-                                    TextView quoteTextTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_text_typing);
-                                    TextView quoteSenderTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_sender_typing);
-                                    quoteTextTyping.setText(messageText.getText());
-                                    quoteSenderTyping.setText("You");
-                                    quoteTextTyping.setVisibility(View.VISIBLE);
-                                    quoteSenderTyping.setVisibility(View.VISIBLE);
-                                    return true;
-                                case R.id.navigation_drawer_item2:
-                                    //handle pin click
-                                    return true;
-                                case R.id.navigation_drawer_item3:
-                                    //handle menu3 click
-                                    ClipboardManager clipboard = getSystemService(Objects.requireNonNull(mContext), ClipboardManager.class);
-                                    ClipData clip = ClipData.newPlainText("label", messageText.getText().toString());
-                                    Objects.requireNonNull(clipboard).setPrimaryClip(clip);
-                                    return true;
-                                default:
-                                    return false;
-                            }
-                        }
-                    });
-                    //displaying the popup
-                    popup.show();
-                }
-            });
         }
     }
 
-    private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText, nameText;
+    private class ReceivedMessageHolder extends MessageHolder {
+        TextView nameText;
         ImageView profileImage;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
-
-            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
-            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
             nameText = (TextView) itemView.findViewById(R.id.text_message_name);
             profileImage = (ImageView) itemView.findViewById(R.id.image_message_profile);
         }
 
+        @Override
         void bind(QuotedUserMessage message) {
-            messageText.setText(message.getMessage());
-            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
+            super.bind(message);
             nameText.setText(message.getSender());
-            messageText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PopupMenu popup = new PopupMenu(mContext, messageText);
-                    popup.inflate(R.menu.options_menu);
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.navigation_drawer_item1:
-                                    //handle reply click
-                                    TextView quoteTextTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_text_typing);
-                                    TextView quoteSenderTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_sender_typing);
-                                    quoteTextTyping.setText(messageText.getText());
-                                    quoteSenderTyping.setText(message.getSender());
-                                    quoteTextTyping.setVisibility(View.VISIBLE);
-                                    quoteSenderTyping.setVisibility(View.VISIBLE);
-                                    return true;
-                                case R.id.navigation_drawer_item2:
-                                    //handle pin click
-                                    return true;
-                                case R.id.navigation_drawer_item3:
-                                    //handle menu3 click
-                                    ClipboardManager clipboard = getSystemService(Objects.requireNonNull(mContext), ClipboardManager.class);
-                                    ClipData clip = ClipData.newPlainText("label", messageText.getText().toString());
-                                    Objects.requireNonNull(clipboard).setPrimaryClip(clip);
-                                    return true;
-                                default:
-                                    return false;
-                            }
-                        }
-                    });
-                    //displaying the popup
-                    popup.show();
-                }
-            });
             // Insert the profile image from the URL into the ImageView.util
             // .displayRoundImageFromUrl(mContext, util.Utils.getInitials(message.getSender()), profileImage);
         }
