@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_my_identity"
+        android:title="@string/action_my_identity"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_restart_tor"
+        android:title="@string/action_restart_tor"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_shutdown"
+        android:title="@string/action_shutdown"
+        app:showAsAction="never"/>
+</menu>

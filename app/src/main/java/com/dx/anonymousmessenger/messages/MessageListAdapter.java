@@ -164,7 +164,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         TextView quoteTextTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_text_typing);
                         TextView quoteSenderTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_sender_typing);
                         quoteTextTyping.setText(message.getMessage());
-                        quoteSenderTyping.setText("You");
+                        quoteSenderTyping.setText(message.getTo().equals(app.getHostname())?message.getSender():"You");
                         quoteTextTyping.setVisibility(View.VISIBLE);
                         quoteSenderTyping.setVisibility(View.VISIBLE);
                         RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);

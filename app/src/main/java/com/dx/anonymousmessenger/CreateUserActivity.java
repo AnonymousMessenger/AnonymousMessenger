@@ -2,34 +2,21 @@ package com.dx.anonymousmessenger;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.transition.Explode;
+import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.dx.anonymousmessenger.tor.ServerSocketViaTor;
 import com.google.android.material.textfield.TextInputLayout;
 
-import net.sqlcipher.database.SQLiteDatabase;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 
 
 public class CreateUserActivity extends AppCompatActivity {
     private String nickname;
-    private String password;
     private boolean noBack = false;
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getNickname() {
         return nickname;
@@ -48,6 +35,8 @@ public class CreateUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         Objects.requireNonNull(getSupportActionBar()).hide();
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_create_user);
         showNextFragment(new SetupUsernameFragment());
     }
@@ -83,7 +72,7 @@ public class CreateUserActivity extends AppCompatActivity {
 		}
 	}
 
-    protected void createAccount(){
+    protected void createAccount(String password){
         new Thread(() -> {
             try{
                 if(nickname==null || password==null){
@@ -100,54 +89,21 @@ public class CreateUserActivity extends AppCompatActivity {
                 }
                 account.setNickname(nickname);
                 account.setPassword(password);
-                account.setIdentity_key("sdgfsdfsda".getBytes());
-                ((DxApplication) this.getApplication()).setAccount(account);
-                ((DxApplication) this.getApplication()).enableStrictMode();
-                Thread torThread = new Thread(() -> {
-                    try {
-                        startTorFirstTime();
-                    } catch (InterruptedException | IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-                torThread.start();
-                ((DxApplication) this.getApplication()).setTorThread(torThread);
 
-                Thread.sleep(9000);
-                while(account.getNickname()==null | account.getAddress()==null | account.getPort()==0 | account.getIdentity_key()==null){
-                    //Log.e("STORE ACCOUNT","not yet ready to do so");
-                    Thread.sleep(2000);
+                ((DxApplication) this.getApplication()).setAccount(account);
+
+                if (!((DxApplication) this.getApplication()).isServerReady()) {
+                    if (((DxApplication) this.getApplication()).getTorThread() != null) {
+                        ((DxApplication) this.getApplication()).getTorThread().interrupt();
+                        ((DxApplication) this.getApplication()).setTorThread(null);
+                    }
+                    ((DxApplication) this.getApplication()).startTor();
                 }
-                saveAccount(account);
-                ((DxApplication) this.getApplication()).sendNotification("Ready to chat securely!",
-                        "You got all you need to chat securely with your friends!",false);
-                switchToAppView();
+
             }catch(Exception e){
                 e.printStackTrace();
             }
         }).start();
-    }
-
-    private void saveAccount(DxAccount account) {
-        Log.d("Account Saver","Saving Account");
-        SQLiteDatabase.loadLibs(this);
-        File databaseFile = new File(this.getFilesDir(), "demo.db");
-        //noinspection ResultOfMethodCallIgnored
-        databaseFile.mkdirs();
-        //noinspection ResultOfMethodCallIgnored
-        databaseFile.delete();
-        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, password,
-                null);
-        database.execSQL(account.getSqlCreateTableString());
-        database.execSQL(account.getSqlInsertString(),account.getSqlInsertValues());
-        ((DxApplication)getApplication()).setDb(database);
-    }
-
-    private void startTorFirstTime() throws InterruptedException, IOException {
-        ((DxApplication) this.getApplication()).setTorSocket(new ServerSocketViaTor(getApplicationContext()));
-        ((DxApplication) this.getApplication()).enableStrictMode();
-        ServerSocketViaTor ssvt = ((DxApplication) this.getApplication()).getTorSocket();
-        ssvt.init(((DxApplication) this.getApplication()));
     }
 
     public void switchToAppView(){

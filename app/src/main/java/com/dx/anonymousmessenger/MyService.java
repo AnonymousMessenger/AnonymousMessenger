@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -18,7 +19,7 @@ public class MyService extends Service {
 //    private String kj;
     private int count = 0;
     public final static String SERVICE_NOTIFICATION_CHANNEL = "service_running";
-    private Thread torThread;
+//    private Thread torThread;
     private ConnectionStateMonitor csm = new ConnectionStateMonitor();
     private DxApplication app;
 
@@ -38,7 +39,7 @@ public class MyService extends Service {
 
         super.onCreate();
 
-        Notification ntf = app.sendNotification("Service running", "click here to hide notification", SERVICE_NOTIFICATION_CHANNEL);
+        Notification ntf = app.sendNotification("Still running in background", "click here to hide notification", SERVICE_NOTIFICATION_CHANNEL);
         startForeground(3, ntf);
         csm.enable(this.getApplication());
         startTor();
@@ -59,12 +60,14 @@ public class MyService extends Service {
     }
 
     public void startTor(){
-        torThread = app.startTor(1);
+        app.startTor(1);
+//        torThread = app.getTorThread();
     }
 
     public void startTor(int force){
         if(force>0){
-            torThread = app.startTor(2);
+            app.startTor(2);
+//            torThread = app.getTorThread();
         }
     }
 
@@ -80,8 +83,6 @@ public class MyService extends Service {
     }
 
     private void shutdownFromBackground() {
-        // Stop the service
-        stopSelf();
         // Hide the UI
         //hideUi();
         // Wait for shutdown to complete, then exit
@@ -95,7 +96,11 @@ public class MyService extends Service {
                     app.emptyVars();
                     app.shutdown(0);
                 }
-            } catch (IOException ignored) {}
+                stopSelf();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("SHUTDOWN ERROR","ya");
+            }
         }).start();
     }
 }

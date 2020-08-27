@@ -18,7 +18,6 @@ public class AndroidTorRelay {
 
     private static final String PROXY_LOCALHOST = "127.0.0.1";
 
-
     private static final Logger LOG = LoggerFactory.getLogger(AndroidTorRelay.class);
 
     public AndroidTorRelay(Context ctx, String torDirectory) throws IOException {

@@ -1,13 +1,22 @@
 package com.dx.anonymousmessenger.tor;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
-import com.dx.anonymousmessenger.DxAccount;
+import androidx.core.app.NotificationCompat;
+
 import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.call.CallMaker;
+import com.dx.anonymousmessenger.crypto.Entity;
 import com.dx.anonymousmessenger.messages.MessageSender;
+import com.example.anonymousmessenger.CallActivity;
 
 import net.sf.controller.network.AndroidTorRelay;
+import net.sf.controller.network.ServiceDescriptor;
 import net.sf.controller.network.TorServerSocket;
 
 import org.slf4j.Logger;
@@ -31,6 +40,9 @@ public class ServerSocketViaTor {
     private static CountDownLatch serverLatch = new CountDownLatch(2);
     private Context ctx;
     AndroidTorRelay node;
+    Thread serverThread;
+    private TorServerSocket torServerSocket;
+    private Server server;
 
     public ServerSocketViaTor(Context ctx) {
         this.ctx = ctx;
@@ -40,6 +52,12 @@ public class ServerSocketViaTor {
         return node;
     }
 
+    public void setAndroidTorRelay(AndroidTorRelay atr) {this.node = atr;}
+
+    public void setServerThread(Thread thread) {this.serverThread = thread;}
+
+    public Thread getServerThread() {return serverThread;}
+
     public void init(DxApplication app) throws IOException, InterruptedException {
         if (ctx == null) {
             return;
@@ -47,6 +65,16 @@ public class ServerSocketViaTor {
 
         if(node!=null){
             boolean exit = false;
+            if(serverThread!=null){
+                try{
+                    serverThread.interrupt();
+                    serverThread = null;
+                }catch (Exception ignored){}
+            }
+            if(torServerSocket!=null){
+                torServerSocket.getServerSocket().close();
+                torServerSocket = null;
+            }
             while (!exit){
                 try {
                     node.shutDown();
@@ -55,7 +83,7 @@ public class ServerSocketViaTor {
                     e.printStackTrace();
                 }
                 try {
-                    node.initTor();
+                    node = null;
                     exit = true;
                 }catch (Exception e){
                     e.printStackTrace();
@@ -74,29 +102,58 @@ public class ServerSocketViaTor {
                 }catch (InterruptedException ie){ie.printStackTrace();}
             }
         }
-        TorServerSocket torServerSocket = node.createHiddenService(localport, hiddenservicedirport);
+
+        this.torServerSocket = node.createHiddenService(localport, hiddenservicedirport);
         app.setHostname(torServerSocket.getHostname());
-        DxAccount account;
-        if(app.getAccount()==null){
-            account = new DxAccount();
-        }else{
-            account = app.getAccount();
-        }
-        account.setAddress(torServerSocket.getHostname());
-        account.setPort(node.getSocksPort());
-        app.setAccount(account);
+        Entity myEntity = new Entity(app);
+        app.setEntity(myEntity);
+
         ServerSocket ssocks = torServerSocket.getServerSocket();
-        Server server = new Server(ssocks,app);
+        this.server = new Server(ssocks,app);
 
-        new Thread(server).start();
+        this.serverThread = new Thread(server);
+        serverThread.start();
 
-        serverLatch.await();
+//        serverLatch.await();
+    }
+
+    public void tryKill(){
+        if(node!=null){
+            boolean exit = false;
+            if(serverThread!=null){
+                try{
+                    serverThread.interrupt();
+                    serverThread = null;
+                }catch (Exception ignored){}
+            }
+            if(torServerSocket!=null){
+                try {
+                    torServerSocket.getServerSocket().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                torServerSocket = null;
+            }
+            while (!exit){
+                try {
+                    node.shutDown();
+                    Thread.sleep(1000);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                try {
+                    node = null;
+                    exit = true;
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private static class Server implements Runnable {
         private final ServerSocket socket;
         private static final DateFormat df = new SimpleDateFormat("K:mm a, z", Locale.ENGLISH);
-        private String Date;
         private DxApplication app;
 
         private Server(ServerSocket socket, DxApplication app) {
@@ -111,19 +168,45 @@ public class ServerSocketViaTor {
             try {
                 while (true) {
                     Socket sock = socket.accept();
+                    Log.e("SERVER CONNECTION", "SOMETHING IS HAPPENING");
                     try{
-//                        this.Date = df.format(Calendar.getInstance().getTime());
-//                        Log.d("Accepted Client"," at Address - " + sock.getRemoteSocketAddress()
-//                                        + " on port " + sock.getLocalPort() + " at time " + this.Date);
                         new Thread(()->{
                             try{
                                 DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
                                 DataInputStream in=new DataInputStream(sock.getInputStream());
                                 String msg = in.readUTF();
+                                if(msg.equals("call")){
+                                    //todo do call checks see if busy or some shit
+                                    Log.e("SERVER CONNECTION", "its a call");
+                                    outputStream.writeUTF("ok");
+                                    outputStream.flush();
+                                    msg = in.readUTF();
+                                    if(msg.trim().endsWith(".onion")){
+                                        //todo check if we want this guy calling us
+                                        Log.e("SERVER CONNECTION", "they sent an onion address");
+                                        outputStream.writeUTF("ok");
+                                        outputStream.flush();
+                                        //send socket to call maker with address
+                                        Log.e("SERVER CONNECTION", "sent to call maker");
+                                        sock.setKeepAlive(true);
+                                        app.startIncomingCall(msg,sock);
+
+//                                        new CallMaker(msg.trim(),app,sock).start();
+                                        return;
+                                    }else{
+                                        outputStream.writeUTF("nuf");
+                                        outputStream.flush();
+                                    }
+                                    outputStream.close();
+                                    return;
+                                }
                                 while(!msg.equals("nuf"))
                                 {
                                     final String rec = msg;
-                                    new Thread(()->{MessageSender.messageReceiver(rec,app);}).start();
+                                    new Thread(()->{
+                                        MessageSender.messageReceiver(rec,app);
+                                        app.sendNotification("New Message!","you have a new secret message");
+                                    }).start();
                                     outputStream.writeUTF("ack3");
                                     outputStream.flush();
                                     msg = in.readUTF();
@@ -133,9 +216,10 @@ public class ServerSocketViaTor {
                                 e.printStackTrace();
                             }
                         }).start();
-                        app.sendNotification("New Message!","you have a new secret message");
+
                     }catch (Exception e){
-                        Log.d("Server error", Objects.requireNonNull(e.getMessage()));
+                        Log.e("SERVER ERRORRRRR", "EROROROROROROROR");
+                        Log.e("Server error", Objects.requireNonNull(e.getMessage()));
                     }
                 }
             } catch (Exception  e) {

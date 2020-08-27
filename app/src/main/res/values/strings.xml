@@ -27,4 +27,24 @@
     <string name="pin">Pin</string>
     <string name="copy">Copy</string>
     <string name="you">you</string>
+    <string name="action_settings">Reset Session</string>
+    <string name="action_verify_identity">Verify Identity</string>
+    <string name="action_clear_conversation">Clear Conversation</string>
+    <string name="action_search">Search</string>
+    <string name="action_shutdown">Shutdown</string>
+    <string name="action_my_identity">My Identity</string>
+    <string name="action_restart_tor">Restart Tor</string>
+    <string name="my_identity_explanation">Public key used to verify identity</string>
+    <string name="verify_identity_explanation">Both public keys together to verify both identities</string>
+    <string name="action_call">Call</string>
+    <string name="ask_me_again">Ask again</string>
+    <string name="no_thanks">No thanks</string>
+    <string name="why_need_mic">the app needs this in order to make or receive calls</string>
+    <string name="mic_perm_ask_title">Microphone Permission</string>
+    <string name="ask_for_mic_btn">OK</string>
+    <string name="accept_call">Accept</string>
+    <string name="dx_call">TOR CALL</string>
+    <string name="call_picture_description">call screen picture</string>
+    <string name="end_call">Hang up</string>
+    <string name="connecting">Connecting...</string>
 </resources>

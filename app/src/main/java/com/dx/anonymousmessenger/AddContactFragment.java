@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,7 @@ public class AddContactFragment extends Fragment {
         }catch (Exception ignored){}
 
         tv = rootView.findViewById(R.id.txt_myaddress);
-        tv.setText(((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).getAccount().getAddress());
+        tv.setText(((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).getHostname());
         tv.setOnClickListener(v -> {
             ClipboardManager clipboard = getSystemService(Objects.requireNonNull(getContext()), ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", tv.getText().toString());
@@ -90,7 +91,19 @@ public class AddContactFragment extends Fragment {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                new Thread(() -> DbHelper.saveContact(s.toString().trim(), ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()))).start();
+                                new Thread(() ->
+                                {
+                                    try{
+                                        boolean b = DbHelper.saveContact(s.toString().trim(), ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()));
+                                        if(!b){
+                                            Log.e("FAILED TO SAVE CONTACT", "SAME " );
+                                        }
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                        Log.e("FAILED TO SAVE CONTACT", "SAME " );
+                                    }
+                                }
+                                ).start();
                                 ((AppActivity) Objects.requireNonNull(getActivity())).showNextFragment(new AppFragment());
                             }
                         })

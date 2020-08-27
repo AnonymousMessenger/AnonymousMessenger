@@ -21,20 +21,17 @@
 
             <ImageView
                 android:id="@+id/img_seen"
-                android:layout_width="13dp"
-                android:layout_height="9dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:elevation="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0"
                 app:srcCompat="@android:drawable/ic_lock_lock" />
 
             <TextView
                 android:id="@+id/quote_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
                 android:alpha="0.75"
                 android:background="@drawable/rounded_rectangle_dark"
                 android:maxWidth="240dp"
@@ -43,14 +40,13 @@
 
                 android:textColor="#ffffff"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/img_seen"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/text_message_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
                 android:background="@drawable/rounded_rectangle_dark"
                 android:maxWidth="240dp"
                 android:padding="8dp"
@@ -58,6 +54,7 @@
                 android:textColor="#ffffff"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/img_seen"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote_text" />
 

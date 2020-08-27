@@ -1,0 +1,34 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_call"
+        android:icon="@drawable/ic_baseline_call_24"
+        android:title="@string/action_call"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/action_search"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_verify_identity"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/action_verify_identity"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_clear_conversation"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/action_clear_conversation"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+
+</menu>

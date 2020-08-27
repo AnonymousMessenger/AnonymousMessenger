@@ -147,15 +147,16 @@ public class SetupPasswordFragment extends Fragment {
             IBinder token = passwordEntry.getWindowToken();
             Object o = getContext().getSystemService(INPUT_METHOD_SERVICE);
             ((InputMethodManager) o).hideSoftInputFromWindow(token, 0);
-            ((CreateUserActivity)getActivity()).setPassword(passwordEntry.getText().toString());
             passwordEntry.setEnabled(false);
             passwordConfirmation.setEnabled(false);
             nextButton.setVisibility(INVISIBLE);
             progressBar.setVisibility(VISIBLE);
-            new Thread(()->{((CreateUserActivity)getActivity()).createAccount();}).start();
+            ((CreateUserActivity)getActivity()).createAccount(passwordEntry.getText().toString());
             Intent intent = new Intent(getActivity(), SetupInProcess.class);
             startActivity(intent);
-            Objects.requireNonNull(getActivity()).finish();
+            if(getActivity()!=null){
+                getActivity().finish();
+            }
         });
 
         return v;

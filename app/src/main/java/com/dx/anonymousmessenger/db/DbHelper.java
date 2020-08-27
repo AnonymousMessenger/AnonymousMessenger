@@ -10,6 +10,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class DbHelper {
     public static final String CONTACT_COLUMNS = "(nickname,address,unread)";
     public static final String CONTACT_SQL_UPDATE = "UPDATE contact SET nickname=? WHERE address=?";
     public static final String CONTACT_SQL_UPDATE_UNREAD = "UPDATE contact SET unread=? WHERE address=?";
-    public static final String CONTACT_TABLE_SQL_CREATE = "CREATE TABLE IF NOT EXISTS contact (nickname,address,unread);";
+    public static final String CONTACT_TABLE_SQL_CREATE = "CREATE TABLE IF NOT EXISTS contact (nickname,address,unread)";
 
     public static Object[] getContactSqlValuesUnread(String address){ return new Object[]{true,address}; }
 
@@ -68,10 +69,39 @@ public class DbHelper {
             } while (cr.moveToNext());
         }
         cr.close();
+        java.util.Collections.sort(contacts, new Comparator<String[]>() {
+            @Override
+            public int compare(String[] o1, String[] o2) {
+
+                if(o1[2].equals("unread")){
+                    if(!o2[2].equals("unread")){
+                        return -1;
+                    }
+                }else if(o2[2].equals("unread")){
+                        return 1;
+                }
+
+                if(o1[5].equals("")){
+                    if(!o2[5].equals("")){
+                        return 1;
+                    }else{
+                        return 0;
+                    }
+                }else if(o2[5].equals("")){ return -1; }
+
+                if(Long.parseLong(o1[5]) > Long.parseLong(o2[5])){
+                    return -1;
+                }else if(Long.parseLong(o1[5]) < Long.parseLong(o2[5])){
+                    return 1;
+                }
+
+                return 0;
+            }
+        });
         return contacts;
     }
 
-    public static boolean saveContact(String address, DxApplication app) {
+    public static boolean saveContact(String address, DxApplication app) throws Exception {
         while (app.getAccount()==null||app.getAccount().getPassword()==null){
             try {
                 Thread.sleep(150);
@@ -89,8 +119,10 @@ public class DbHelper {
         }
         else
         {
-            database.execSQL(DbHelper.CONTACT_SQL_INSERT,DbHelper.getContactSqlValues(address));
             c.close();
+            c = null;
+//            database.execSQL(DbHelper.CONTACT_SQL_INSERT,DbHelper.getContactSqlValues(address));
+            database.execSQL(CONTACT_SQL_INSERT,getContactSqlValues(address));
             return true;
         }
     }
@@ -291,11 +323,24 @@ public class DbHelper {
 //        return true;
 //    }
 
+    public static void updateReceivedMessage(QuotedUserMessage msg, DxApplication app, String conversation, boolean received){
+//        SQLiteDatabase database = app.getDb();
+//        database.execSQL(DbHelper.getMessageTableSqlCreate());
+//        database.execSQL(DbHelper.getMessageSqlUpdate(),DbHelper.getMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getMessage(),msg.getSender(),msg.getCreatedAt(),conversation,received,msg.getQuotedMessage(),msg.getQuoteSender()));
+    }
+
     public static boolean saveMessage(QuotedUserMessage msg, DxApplication app, String conversation, boolean received){
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getMessageTableSqlCreate());
         database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getMessage(),msg.getSender(),msg.getCreatedAt(),conversation,received,msg.getQuotedMessage(),msg.getQuoteSender()));
         return true;
+    }
+
+    public static void saveMessage(QuotedUserMessage msg, DxApplication app){
+        String conversation = !msg.getAddress().equals(app.getHostname()) ?msg.getTo():app.getHostname();
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getMessageTableSqlCreate());
+        database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getMessage(),msg.getSender(),msg.getCreatedAt(),conversation,false,msg.getQuotedMessage(),msg.getQuoteSender()));
     }
 
     private static void deleteMessage(QuotedUserMessage msg, DxApplication app) {
@@ -329,6 +374,11 @@ public class DbHelper {
         return nulls;
     }
 
+    public static void setMessageReceived(QuotedUserMessage msg, DxApplication app, String conversation, boolean received){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL("UPDATE message SET received=? WHERE send_to=? AND created_at=? AND send_from=? AND msg=? AND conversation=?", new Object[]{received,msg.getTo(),msg.getCreatedAt(),msg.getAddress(),msg.getMessage(),conversation});
+    }
+
     public static void pinMessage(QuotedUserMessage msg, DxApplication app){
         SQLiteDatabase database = app.getDb();
         database.execSQL("UPDATE message SET pinned = 1 WHERE send_to=? AND sender=? AND msg=? AND created_at=? AND send_from=? AND received=? AND quote=? AND quote_sender=?", new Object[]{msg.getTo(),msg.getSender(),msg.getMessage(),msg.getCreatedAt(),msg.getAddress(),msg.isReceived(),msg.getQuotedMessage(),msg.getQuoteSender()});
@@ -338,4 +388,5 @@ public class DbHelper {
         SQLiteDatabase database = app.getDb();
         database.execSQL("UPDATE message SET pinned = 0 WHERE send_to=? AND sender=? AND msg=? AND created_at=? AND send_from=? AND received=? AND quote=? AND quote_sender=?", new Object[]{msg.getTo(),msg.getSender(),msg.getMessage(),msg.getCreatedAt(),msg.getAddress(),msg.isReceived(),msg.getQuotedMessage(),msg.getQuoteSender()});
     }
+
 }

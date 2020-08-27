@@ -15,16 +15,21 @@ import android.os.PowerManager;
 import android.os.StrictMode;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.dx.anonymousmessenger.call.CallMaker;
+import com.dx.anonymousmessenger.crypto.Entity;
 import com.dx.anonymousmessenger.tor.ServerSocketViaTor;
+import com.example.anonymousmessenger.CallActivity;
 
 import net.sf.controller.network.AndroidTorRelay;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Socket;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -39,6 +44,29 @@ public class DxApplication extends Application {
     private boolean serverReady = false;
     private boolean lockTorStart = false;
     private boolean weAsked = false;
+    private Entity entity;
+
+    public CallMaker getCm() {
+        return cm;
+    }
+
+    public boolean isInCall(){
+        return cm!=null;
+    }
+
+    public String getCallAddress(){
+        if(cm!=null){
+            return cm.getAddress();
+        }else{
+            return "";
+        }
+    }
+
+    public void setCm(CallMaker cm) {
+        this.cm = cm;
+    }
+
+    private CallMaker cm;
 
     public DxAccount getAccount() {
         return account;
@@ -47,7 +75,14 @@ public class DxApplication extends Application {
     public void setAccount(DxAccount account) {
         this.account = account;
         if(account!=null){
-            this.hostname = account.getAddress();
+            DxAccount.saveAccount(account,this);
+        }
+    }
+
+    public void setAccount(DxAccount account, boolean b) {
+        this.account = account;
+        if(account!=null && b){
+            DxAccount.saveAccount(account,this);
         }
     }
 
@@ -87,7 +122,7 @@ public class DxApplication extends Application {
     }
 
     public void sendNotification(String title, String msg){
-        Intent resultIntent = new Intent(this, AppActivity.class);
+        Intent resultIntent = new Intent(this, MainActivity.class);
         // Create the TaskStackBuilder and add the intent, which inflates the back stack
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
@@ -128,12 +163,17 @@ public class DxApplication extends Application {
             return;
         }
         String CHANNEL_ID = "status_messages";
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification = new Notification.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.drawable.notification)
                     .setContentTitle(title)
                     .setContentText(msg)
+                    .setContentIntent(resultPendingIntent)
                     .setAutoCancel(true)
                     .setChannelId(CHANNEL_ID).build();
         }else{
@@ -141,6 +181,7 @@ public class DxApplication extends Application {
                     .setSmallIcon(R.drawable.notification)
                     .setContentTitle(title)
                     .setContentText(msg)
+                    .setContentIntent(resultPendingIntent)
                     .setAutoCancel(true)
                     .build();
         }
@@ -210,6 +251,10 @@ public class DxApplication extends Application {
         if(isServiceRunningInForeground(this,MyService.class)){
             return;
         }
+        if(lockTorStart){
+            return;
+        }
+        lockTorStart();
         Intent serviceIntent = new Intent(this, MyService.class);
         serviceIntent.putExtra("inputExtra", "wtf bitch");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -219,39 +264,101 @@ public class DxApplication extends Application {
         }
     }
 
-    public Thread startTor(int num){
+    public void restartTor(){
+        if(lockTorStart){
+            return;
+        }
+        Intent serviceIntent = new Intent(this, MyService.class);
+        serviceIntent.putExtra("inputExtra", "reconnect now");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        }else{
+            startService(serviceIntent);
+        }
+    }
+
+    public void startTor(int num){
         if(num==2&&torThread!=null){
             if(torSocket!=null&&torSocket.getAndroidTorRelay()!=null){
                 new Thread(()->{
                     try {
                         torSocket.getAndroidTorRelay().shutDown();
+                        torSocket.tryKill();
                         Thread.sleep(1000);
-                        torSocket.getAndroidTorRelay().initTor();
+                        startTor(1);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }).start();
             }
-
-            return torThread;
+            return;
         }
+        lockTorStart();
         enableStrictMode();
         Thread torThread = new Thread(() -> {
             try {
                 setTorSocket(new ServerSocketViaTor(getApplicationContext()));
-                ServerSocketViaTor ssvt = getTorSocket();
-                ssvt.init(this);
+                getTorSocket().init(this);
+                lockTorStart = false;
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
             }
         });
         torThread.start();
         setTorThread(torThread);
-        return torThread;
+        return;
+//        System.out.println("beautiful day");
+//        if(lockTorStart){
+//            return;
+//        }
+//        System.out.println("locking it");
+//        lockTorStart();
+//        if(num==2&&torThread!=null){
+//            Log.e("RESTART","doing it");
+//            if (getTorThread() != null) {
+//                getTorThread().interrupt();
+//                setTorThread(null);
+//            }
+//            lockTorStart = false;
+//            startTor(1);
+//            return;
+//            if(torSocket!=null&&torSocket.getAndroidTorRelay()!=null){
+//                new Thread(()->{
+//                    try {
+//                        torSocket.getAndroidTorRelay().shutDown();
+//                        torSocket.getServerThread().interrupt();
+//                        torThread.interrupt();
+//                        torThread = null;
+//                        torSocket.setServerThread(null);
+//                        torSocket.setAndroidTorRelay(null);
+//                        torSocket = null;
+//                        Thread.sleep(1000);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }).start();
+//            }
+//            return null;
+//        }
+//        Log.e("AGAIN","doing it");
+//        enableStrictMode();
+//        Thread torThread = new Thread(() -> {
+//            try {
+//                setTorSocket(new ServerSocketViaTor(getApplicationContext()));
+//                ServerSocketViaTor ssvt = getTorSocket();
+//                ssvt.init(this);
+//            } catch (InterruptedException | IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
+//        torThread.start();
+//        setTorThread(torThread);
+//        lockTorStart = false;
+//        return;
     }
 
     public SQLiteDatabase getDb(){
-        Log.e("SOMEONE ASKED FOR DB","YES INDEED");
+        //Log.e("SOMEONE ASKED FOR DB","YES INDEED");
         if(this.database==null){
             SQLiteDatabase.loadLibs(this);
             File databaseFile = new File(getFilesDir(), "demo.db");
@@ -266,17 +373,19 @@ public class DxApplication extends Application {
     }
 
     public SQLiteDatabase getDb(String password){
-        if(this.database==null){
-            SQLiteDatabase.loadLibs(this);
-            File databaseFile = new File(getFilesDir(), "demo.db");
-            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,
-                    password,
-                    null);
-            this.database = database;
-            return database;
-        }else{
-            return this.database;
+        if(database!=null){
+            database.close();
+            database = null;
         }
+        SQLiteDatabase.loadLibs(this);
+        File databaseFile = new File(getFilesDir(), "demo.db");
+        if(!databaseFile.exists()){
+            databaseFile.mkdirs();
+            databaseFile.delete();
+        }
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,password,null);
+        this.database = database;
+        return database;
     }
 
     public void setDb(SQLiteDatabase database){
@@ -349,23 +458,19 @@ public class DxApplication extends Application {
             database.close();
         }
         database = null;
-        account.setPassword("");
-        account.setPassword(null);
-        account.setAddress("");
-        account.setAddress(null);
-        account.setIdentity_key(new byte[]{0x00,0x00});
-        account.setIdentity_key(null);
-        account.setNickname(null);
-        account.setPort(0);
+        if(account!=null){
+            account.setPassword("");
+            account.setPassword(null);
+            account.setNickname(null);
+        }
         account = null;
         hostname = "";
         hostname = null;
         serverReady = false;
         lockTorStart = false;
         weAsked = false;
-        getAndroidTorRelay();
         torSocket = null;
-        if(torThread.isAlive()){
+        if(torThread!=null && torThread.isAlive()){
             torThread.interrupt();
         }
         torThread = null;
@@ -378,7 +483,43 @@ public class DxApplication extends Application {
 
     public void shutdown(){
         Intent serviceIntent = new Intent(this, MyService.class);
-        serviceIntent.putExtra("inputExtra", "reconnect now");
+        serviceIntent.putExtra("inputExtra", "shutdown now");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        }else{
+            startService(serviceIntent);
+        }
     }
 
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
+    public void startIncomingCall(String address, Socket socket) {
+        if(isServiceRunningInForeground(this,CallService.class)){
+            this.setCm(new CallMaker(address, this, socket));
+            Intent serviceIntent = new Intent(this, CallService.class);
+            serviceIntent.setAction(CallService.ACTION_START_OUTGOING_CALL_RESPONSE);
+            serviceIntent.putExtra("address", address);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            }else{
+                startService(serviceIntent);
+            }
+            return;
+        }
+        this.setCm(new CallMaker(address, this, socket));
+        Intent serviceIntent = new Intent(this, CallService.class);
+        serviceIntent.setAction(CallService.ACTION_START_INCOMING_CALL);
+        serviceIntent.putExtra("address", address);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        }else{
+            startService(serviceIntent);
+        }
+    }
 }

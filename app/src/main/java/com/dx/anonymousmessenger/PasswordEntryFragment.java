@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -96,15 +97,12 @@ public class PasswordEntryFragment extends Fragment {
                     progressBar = null;
                     rootView = null;
 
-                    app.lockTorStart();
-
                     Cursor cr = database.rawQuery("select * from account;", null);
                     if (cr != null && cr.moveToFirst()) {
-                        DxAccount account = new DxAccount(cr.getString(0), cr.getBlob(1),
-                                cr.getString(2), cr.getType(3));
+                        DxAccount account = new DxAccount(cr.getString(0), cr.getString(1));
                         cr.close();
                         account.setPassword(pass);
-                        app.setAccount(account);
+                        app.setAccount(account,false);
 
                         if (!app.isServerReady()) {
                             if (app.getTorThread() != null) {
@@ -115,12 +113,15 @@ public class PasswordEntryFragment extends Fragment {
                         }
 
                     } else {
-                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                            txtPassword.setEnabled(true);
-                            btn_next.setVisibility(View.VISIBLE);
-                            progressBar.setVisibility(View.GONE);
-                            txtPassword.setError("An unexpected error happened");
-                        });
+//                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+//                            txtPassword.setEnabled(true);
+//                            btn_next.setVisibility(View.VISIBLE);
+//                            progressBar.setVisibility(View.GONE);
+//                            txtPassword.setError("An unexpected error happened");
+//                        });
+                        Intent intent = new Intent(getActivity(), AppActivity.class);
+                        startActivity(intent);
+                        getActivity().finish();
                     }
                     if (!cr.isClosed()) {
                         cr.close();
@@ -140,12 +141,15 @@ public class PasswordEntryFragment extends Fragment {
                     }
                 } catch (Exception e) {
                     if (getActivity() != null) {
-                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                            txtPassword.setEnabled(true);
-                            btn_next.setVisibility(View.VISIBLE);
-                            progressBar.setVisibility(View.GONE);
-                            txtPassword.setError("An unexpected error happened");
-                        });
+//                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+//                            txtPassword.setEnabled(true);
+//                            btn_next.setVisibility(View.VISIBLE);
+//                            progressBar.setVisibility(View.GONE);
+//                            txtPassword.setError("An unexpected error happened");
+//                        });
+                        Intent intent = new Intent(getActivity(), AppActivity.class);
+                        startActivity(intent);
+                        getActivity().finish();
                     }
                     e.printStackTrace();
                 }

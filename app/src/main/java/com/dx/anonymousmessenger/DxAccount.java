@@ -1,11 +1,15 @@
 package com.dx.anonymousmessenger;
 
+import android.util.Log;
+
+import net.sqlcipher.database.SQLiteDatabase;
+
 public class DxAccount {
     private String nickname;
-    private byte[] identity_key;
-    private String address;
-    private int port = 0;
     private String password;
+
+    public static final String CREATE_ACCOUNT_TABLE_SQL = "CREATE TABLE IF NOT EXISTS account(nickname,password)";
+    public static final String INSERT_ACCOUNT_SQL = "INSERT INTO account(nickname,password) values(?,?)";
 
     public String getPassword() {
         return password;
@@ -23,52 +27,34 @@ public class DxAccount {
         this.nickname = nickname;
     }
 
-    public byte[] getIdentity_key() {
-        return identity_key;
-    }
-
-    public void setIdentity_key(byte[] identity_key) {
-        this.identity_key = identity_key;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    //    nickname,identity_key,address,port,
-    // signal store,
-    public DxAccount(String nickname, byte[] identity_key,String address,int port){
-
+    public DxAccount(String nickname){
         this.nickname = nickname;
-        this.identity_key = identity_key;
-        this.address = address;
-        this.port = port;
+    }
+
+    public DxAccount(String nickname, String password){
+        this.nickname = nickname;
+        this.password = password;
     }
 
     public DxAccount(){}
 
-    public String getSqlInsertString(){
-        return "insert into account(nickname,identity_key,address,port,password) values(?,?,?,?,?)";
-    }
-
     public Object[] getSqlInsertValues(){
-        return new Object[]{nickname,identity_key,address,port,password};
+        return new Object[]{nickname,password};
     }
 
-    public String getSqlCreateTableString(){
-        return "create table account(nickname,identity_key,address,port,password)";
+    public static void saveAccount(DxAccount account, DxApplication app) {
+        Log.d("Account Saver","Saving Account");
+        SQLiteDatabase database = app.getDb(account.getPassword());
+        while (database.isDbLockedByOtherThreads()||database.isDbLockedByCurrentThread()||database.isReadOnly()){
+            try{
+                Thread.sleep(200);
+                Log.e("ACCOUNT SAVER", "WAITING FOR DB database.isDbLockedByOtherThreads()||database.isDbLockedByCurrentThread()||database.isReadOnly()");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        database.execSQL(DxAccount.CREATE_ACCOUNT_TABLE_SQL);
+        database.execSQL(DxAccount.INSERT_ACCOUNT_SQL,account.getSqlInsertValues());
     }
 
 //    public boolean saveAccount(Context ctx){

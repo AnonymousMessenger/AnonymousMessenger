@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +21,9 @@ public class SetupInProcess extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_setup_in_process);
         statusText = findViewById(R.id.status_text);
     }
@@ -53,10 +59,16 @@ public class SetupInProcess extends AppCompatActivity {
 
     public void updateUi(String torStatus){
         if(torStatus.contains("ALL GOOD")){
+            LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
+            ((DxApplication) this.getApplication()).sendNotification("Ready to chat securely!",
+                    "You got all you need to chat securely with your friends!",false);
             Intent intent = new Intent(this, AppActivity.class);
             startActivity(intent);
             finish();
+        }else{
+            try {
+                statusText.setText(torStatus);
+            }catch (Exception ignored){}
         }
-        statusText.setText(torStatus);
     }
 }

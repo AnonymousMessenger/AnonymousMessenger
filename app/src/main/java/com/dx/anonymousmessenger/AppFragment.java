@@ -9,11 +9,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -62,12 +66,12 @@ public class AppFragment extends Fragment {
         super.onPause();
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        stopCheckingMessages();
-        LocalBroadcastManager.getInstance(rootView.getContext()).unregisterReceiver(mMyBroadcastReceiver);
-    }
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        stopCheckingMessages();
+//        LocalBroadcastManager.getInstance(rootView.getContext()).unregisterReceiver(mMyBroadcastReceiver);
+//    }
 
     @Override
     public void onDestroyView() {
@@ -137,6 +141,7 @@ public class AppFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -145,7 +150,10 @@ public class AppFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_app, container, false);
         mainThread = new Handler(Looper.getMainLooper());
         FloatingActionButton btnAddContact = rootView.findViewById(R.id.btn_add_contact);
-        btnAddContact.setOnClickListener(v -> ((AppActivity) Objects.requireNonNull(getActivity())).showNextFragment(new AddContactFragment()));
+        btnAddContact.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), AddContactActivity.class);
+            v.getContext().startActivity(intent);
+        });
 
         onlineImg = rootView.findViewById(R.id.online_image);
         offlineImg = rootView.findViewById(R.id.offline_image);
@@ -167,7 +175,7 @@ public class AppFragment extends Fragment {
         if(!((DxApplication)getActivity().getApplication()).isWeAsked()){
             new Thread(()->{
                 try{
-                    Thread.sleep(700);
+                    Thread.sleep(1000);
                 }catch (Exception ignored){}
                 if(!((DxApplication)getActivity().getApplication()).isIgnoringBatteryOptimizations()){
                     getActivity().runOnUiThread(()->{
@@ -227,12 +235,14 @@ public class AppFragment extends Fragment {
             if(getActivity()==null || mainThread==null){
                 return;
             }
-            lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
-            mainThread.post(()->{
-                mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
-                recyclerView.setAdapter(mAdapter);
-                mAdapter.notifyDataSetChanged();
-            });
+            try{
+                lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
+                mainThread.post(()->{
+                    mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
+                    recyclerView.setAdapter(mAdapter);
+                    mAdapter.notifyDataSetChanged();
+                });
+            }catch (Exception ignored){}
         }).start();
     }
 
@@ -241,12 +251,14 @@ public class AppFragment extends Fragment {
             if(getActivity()==null || mainThread==null){
                 return;
             }
-            lst = tmp;
-            mainThread.post(()->{
-                mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
-                recyclerView.setAdapter(mAdapter);
-                mAdapter.notifyDataSetChanged();
-            });
+            try{
+                lst = tmp;
+                mainThread.post(()->{
+                    mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
+                    recyclerView.setAdapter(mAdapter);
+                    mAdapter.notifyDataSetChanged();
+                });
+            }catch (Exception ignored){}
         }).start();
     }
 
@@ -258,16 +270,14 @@ public class AppFragment extends Fragment {
     }
 
     public void checkConnectivity(){
-        if(getActivity()==null || mainThread==null){
+        if(getActivity()==null || mainThread==null || onlineToolbar==null || onlineImg==null || onlineTxt==null || offlineImg==null){
                 return;
         }
         try{
-            mainThread.post(()->{
-                onlineImg.setVisibility(View.GONE);
-                offlineImg.setVisibility(View.GONE);
-                onlineTxt.setText("Checking");
-                onlineToolbar.setVisibility(View.VISIBLE);
-            });
+            onlineImg.setVisibility(View.GONE);
+            offlineImg.setVisibility(View.GONE);
+            onlineTxt.setText("Checking");
+            onlineToolbar.setVisibility(View.VISIBLE);
         }catch (Exception ignored){}
 
         new Thread(()->{
@@ -299,4 +309,33 @@ public class AppFragment extends Fragment {
         torOutput.setText(tor_status);
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.app_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_restart_tor:
+                ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).restartTor();
+                mainThread.post(()->{
+                    onlineTxt.setText("Offline");
+                    onlineImg.setVisibility(View.GONE);
+                    offlineImg.setVisibility(View.VISIBLE);
+                    onlineToolbar.setVisibility(View.VISIBLE);
+                });
+                break;
+            case R.id.action_shutdown:
+                ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).shutdown();
+                break;
+            case R.id.action_my_identity:
+                stopCheckingMessages();
+                Intent intent = new Intent(getContext(), MyIdentityActivity.class);
+                Objects.requireNonNull(getContext()).startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

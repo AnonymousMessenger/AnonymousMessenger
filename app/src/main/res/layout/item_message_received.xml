@@ -41,11 +41,11 @@
 
             <ImageView
                 android:id="@+id/img_seen2"
-                android:layout_width="13dp"
-                android:layout_height="17dp"
+                android:layout_width="16dp"
+                android:layout_height="19dp"
                 android:elevation="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/image_message_profile"
                 app:srcCompat="@android:drawable/ic_lock_lock" />
 
             <TextView

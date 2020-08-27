@@ -3,6 +3,8 @@ package com.dx.anonymousmessenger.messages;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 public class QuotedUserMessage extends UserMessage {
     private String quotedMessage;
     private String quoteSender;
@@ -12,6 +14,14 @@ public class QuotedUserMessage extends UserMessage {
         this.quotedMessage = quotedMessage;
         this.quoteSender = quoteSender;
         this.pinned = pinned;
+    }
+
+    //for key exchanges to have shorter lines
+    public QuotedUserMessage(String address, String message, String to) {
+        super(address, message, address, new Date().getTime(), false, to);
+        this.quotedMessage = "";
+        this.quoteSender = "";
+        this.pinned = false;
     }
 
     @Override

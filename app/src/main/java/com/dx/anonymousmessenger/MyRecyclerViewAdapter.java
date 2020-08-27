@@ -164,7 +164,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
             imageView.setVisibility(View.INVISIBLE);
             msgText.setText(msg);
             timeText.setText(createdAt>0?Utils.formatDateTime(createdAt):"");
-            seen.setVisibility(send_to.equals(app.getAccount().getAddress())?View.GONE:received?View.VISIBLE:View.GONE);
+            seen.setVisibility(send_to.equals(app.getHostname())?View.GONE:received?View.VISIBLE:View.GONE);
         }
     }
 

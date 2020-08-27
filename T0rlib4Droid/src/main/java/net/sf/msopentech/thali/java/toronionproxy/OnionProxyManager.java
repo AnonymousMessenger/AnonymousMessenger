@@ -222,11 +222,11 @@ public abstract class OnionProxyManager {
         if (controlConnection == null) {
             throw new RuntimeException("Tor is not running!");
         }
+        controlConnection.setConf("DisableNetwork", enable ? "0" : "1");
         LOG.info("Enabling network: " + enable);
         Intent gcm_rec = new Intent("tor_status");
         gcm_rec.putExtra("tor_status","Enabling network: " + enable);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
-        controlConnection.setConf("DisableNetwork", enable ? "0" : "1");
     }
 
 

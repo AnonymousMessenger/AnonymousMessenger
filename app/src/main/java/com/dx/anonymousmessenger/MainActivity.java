@@ -2,14 +2,15 @@ package com.dx.anonymousmessenger;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.Explode;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,9 +19,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         try{
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-            Objects.requireNonNull(getSupportActionBar()).hide();
+//            Objects.requireNonNull(getSupportActionBar()).hide();
         }catch (Exception ignored){}
 
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_main);
 
         ((DxApplication) getApplication()).enableStrictMode();
@@ -35,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 switchToAppView();
             }else{
-                if(((DxApplication)getApplication()).isServiceRunningInForeground(this, MyService.class)&&(((DxApplication) getApplication()).getHostname()==null)&&!(((DxApplication) getApplication()).isServerReady())){
+                if(((DxApplication)getApplication()).isServiceRunningInForeground(this, MyService.class)){
                     switchToSetupInProcess();
                 }else{
                     runOnUiThread(()->{
