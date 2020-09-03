@@ -9,17 +9,7 @@ import android.util.Log;
 import java.io.IOException;
 
 public class MyService extends Service {
-//    private final String DB_FILE_NAME = "dxam.db";//future name, maybe
-//    private String signalProtocolStore;
-//    private String messageAdapter;
-//    private String dbAdapter;
-//    private String netAdapter;
-//    private String torAdapter;
-//    private String webAdapter;
-//    private String kj;
-    private int count = 0;
     public final static String SERVICE_NOTIFICATION_CHANNEL = "service_running";
-//    private Thread torThread;
     private ConnectionStateMonitor csm = new ConnectionStateMonitor();
     private DxApplication app;
 
@@ -39,7 +29,7 @@ public class MyService extends Service {
 
         super.onCreate();
 
-        Notification ntf = app.sendNotification("Still running in background", "click here to hide notification", SERVICE_NOTIFICATION_CHANNEL);
+        Notification ntf = app.getServiceNotification("Still running in background", "click here to hide notification", SERVICE_NOTIFICATION_CHANNEL);
         startForeground(3, ntf);
         csm.enable(this.getApplication());
         startTor();
@@ -61,13 +51,11 @@ public class MyService extends Service {
 
     public void startTor(){
         app.startTor(1);
-//        torThread = app.getTorThread();
     }
 
     public void startTor(int force){
         if(force>0){
             app.startTor(2);
-//            torThread = app.getTorThread();
         }
     }
 

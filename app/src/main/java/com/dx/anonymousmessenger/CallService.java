@@ -1,17 +1,13 @@
 package com.dx.anonymousmessenger;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 
 import com.dx.anonymousmessenger.call.CallMaker;
-import com.example.anonymousmessenger.CallActivity;
 
 public class CallService extends Service {
 
@@ -56,9 +52,9 @@ public class CallService extends Service {
 //        else if (intent.getAction().equals(ACTION_DENY_CALL))                   handleDenyCall(intent);
 //        else if (intent.getAction().equals(ACTION_LOCAL_HANGUP))                handleLocalHangup(intent);
 //        else if (intent.getAction().equals(ACTION_SET_MUTE_AUDIO))              handleSetMuteAudio(intent);
-        else if (intent.getAction().equals(ACTION_START_OUTGOING_CALL))         handleStartOutgoingCall(intent);
+//        else if (intent.getAction().equals(ACTION_START_OUTGOING_CALL))         handleStartOutgoingCall(intent);
         else if (intent.getAction().equals(ACTION_START_OUTGOING_CALL_RESPONSE)) handleOutgoingCallResponse(intent);
-        else if (intent.getAction().equals(ACTION_START_INCOMING_CALL))         handleStartIncomingCall(intent);
+//        else if (intent.getAction().equals(ACTION_START_INCOMING_CALL))         handleStartIncomingCall(intent);
         else if (intent.getAction().equals(ACTION_ACCEPT_CALL))                 handleAcceptCall(intent);
 //        else if (intent.getAction().equals(ACTION_LOCAL_RINGING))               handleLocalRinging(intent);
 //        else if (intent.getAction().equals(ACTION_REMOTE_RINGING))              handleRemoteRinging(intent);
@@ -77,7 +73,6 @@ public class CallService extends Service {
             cmi.stop();
             cmi = null;
         }
-        cmi = ((DxApplication)getApplication()).getCm();
         handleAcceptCall(intent);
     }
 
@@ -86,42 +81,47 @@ public class CallService extends Service {
         cmo.start();
     }
 
-    private void handleStartIncomingCall(Intent intent) {
-        startForeground(1,getCallNotification(intent.getStringExtra("address"),"Incoming call"));
-        if(cmi!=null){
-            cmi.stop();
-            cmi = null;
-        }
-        if(cmo!=null){
-            cmo.stop();
-            cmo = null;
-        }
-        cmi = ((DxApplication)getApplication()).getCm();
-        cmo = new CallMaker(intent.getStringExtra("address"),((DxApplication)getApplication()));
-    }
+//    private void handleStartIncomingCall(Intent intent) {
+//        startForeground(1,getCallNotification(intent.getStringExtra("address"),"Incoming call"));
+//        if(cmi!=null){
+//            cmi.stop();
+//            cmi = null;
+//        }
+//        if(cmo!=null){
+//            cmo.stop();
+//            cmo = null;
+//        }
+//        cmo = new CallMaker(intent.getStringExtra("address"),((DxApplication)getApplication()));
+//    }
 
-    private void handleStartOutgoingCall(Intent intent) {
-        startForeground(1,getCallNotification(intent.getStringExtra("address"),"Outgoing call"));
-        if(cmo!=null){
-            cmo.stop();
-            cmo = null;
-        }
-        cmo = new CallMaker(intent.getStringExtra("address"),((DxApplication)getApplication()));
-    }
+//    private void handleStartOutgoingCall(Intent intent) {
+//        startForeground(1,getCallNotification(intent.getStringExtra("address"),"Outgoing call"));
+//        if(cmo!=null){
+//            cmo.stop();
+//            cmo = null;
+//        }
+//        cmo = new CallMaker(intent.getStringExtra("address"),((DxApplication)getApplication()));
+//    }
 
-    public Notification getCallNotification(String address, String type){
-        Intent fullScreenIntent = new Intent(this, CallActivity.class);
-        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
-                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//    public Notification getCallNotification(String address, String type){
+//        Intent fullScreenIntent = new Intent(this, CallActivity.class);
+//        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
+//                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "call")
-            .setSmallIcon(R.drawable.notification)
-            .setContentTitle(type)
-            .setContentText(address)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_CALL)
-            .setFullScreenIntent(fullScreenPendingIntent, true);
-         return notificationBuilder.build();
-    }
+//        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "call")
+//            .setSmallIcon(R.drawable.notification)
+//            .setContentTitle(type)
+//            .setContentText(address)
+//            .setPriority(NotificationCompat.PRIORITY_HIGH)
+//            .setCategory(NotificationCompat.CATEGORY_CALL)
+//            .setFullScreenIntent(fullScreenPendingIntent, true);
+
+        //todo dbhelper.getnickanmefromaddress(Address) ok?
+
+//        Notification ntf = ((DxApplication)getApplication()).sendNotification(type, address, "calls");
+//        Notification ntf = DxApplication.getCallInProgressNotification(this,DxApplication.TYPE_INCOMING_RINGING,address);
+//        startForeground(9, ntf);
+//         return ntf;
+//    }
 
 }

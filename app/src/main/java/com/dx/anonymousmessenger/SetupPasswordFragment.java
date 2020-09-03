@@ -1,6 +1,5 @@
 package com.dx.anonymousmessenger;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
@@ -145,18 +144,18 @@ public class SetupPasswordFragment extends Fragment {
 //            ((CreateUserActivity)getActivity()).setOkayToBack(false);
             ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).lockTorStart();
             IBinder token = passwordEntry.getWindowToken();
-            Object o = getContext().getSystemService(INPUT_METHOD_SERVICE);
+            Object o = Objects.requireNonNull(getContext()).getSystemService(INPUT_METHOD_SERVICE);
             ((InputMethodManager) o).hideSoftInputFromWindow(token, 0);
             passwordEntry.setEnabled(false);
             passwordConfirmation.setEnabled(false);
             nextButton.setVisibility(INVISIBLE);
             progressBar.setVisibility(VISIBLE);
-            ((CreateUserActivity)getActivity()).createAccount(passwordEntry.getText().toString());
-            Intent intent = new Intent(getActivity(), SetupInProcess.class);
-            startActivity(intent);
-            if(getActivity()!=null){
-                getActivity().finish();
-            }
+            ((CreateUserActivity)getActivity()).createAccount(Objects.requireNonNull(passwordEntry.getText()).toString());
+//            Intent intent = new Intent(getActivity(), SetupInProcess.class);
+//            startActivity(intent);
+//            if(getActivity()!=null){
+//                getActivity().finish();
+//            }
         });
 
         return v;

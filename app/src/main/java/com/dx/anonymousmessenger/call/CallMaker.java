@@ -8,9 +8,12 @@ import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import com.dx.anonymousmessenger.CallService;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.tor.TorClientSocks4;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -68,7 +71,6 @@ public class CallMaker {
         if(recorder!=null){
             recorder.release();
         }
-        app.setCm(null);
         Log.d("Call MAKER","Recorder released");
     }
 
@@ -76,7 +78,8 @@ public class CallMaker {
         Thread streamThread = new Thread(() -> {
             try {
                 if(weCalled&&socket==null){
-                    socket = new TorClientSocks4().getCallSocket(address,app);
+                    // to them its incoming
+                    socket = new TorClientSocks4().getCallSocket(address,app,CallService.ACTION_START_INCOMING_CALL);
                     if(socket==null){
                         stop();
                         return;
@@ -183,5 +186,46 @@ public class CallMaker {
     }
 
     public boolean getStatus() {return status;}
+
+    public static void callReceiveHandler(Socket sock, String msg, DxApplication app) throws IOException {
+        DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
+        DataInputStream in=new DataInputStream(sock.getInputStream());
+        //todo do call checks see if busy or some shit
+        Log.e("SERVER CONNECTION", "its a call");
+        outputStream.writeUTF("ok");
+        outputStream.flush();
+        msg = in.readUTF();
+        if(msg.trim().endsWith(".onion")){
+            //todo check if we want this guy calling us
+            Log.e("SERVER CONNECTION", "they sent an onion address");
+            outputStream.writeUTF("ok");
+            outputStream.flush();
+            msg = in.readUTF();
+            if(msg.equals(CallService.ACTION_START_OUTGOING_CALL_RESPONSE)){
+                // tell user its ringing
+
+                // completecall(socket, same instance of call maker).startbothways();
+            }else if(msg.equals(CallService.ACTION_START_INCOMING_CALL)){
+                // tell user n get response ready
+                //ring(address,nickname);
+                //if(!ring.answered()){ say not ok; return; }
+                //ok means call answered
+
+                // startcall(socket, new instance of call maker).startbothways();
+            }
+            //send socket to call maker with address
+//            Log.e("SERVER CONNECTION", "sent to call maker");
+//            sock.setKeepAlive(true);
+//            app.startIncomingCall(msg,sock);
+
+//          new CallMaker(msg.trim(),app,sock).start();
+            return;
+        }else{
+            outputStream.writeUTF("nuf");
+            outputStream.flush();
+        }
+        outputStream.close();
+        return;
+    }
 
 }

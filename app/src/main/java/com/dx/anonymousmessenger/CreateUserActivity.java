@@ -2,8 +2,6 @@ package com.dx.anonymousmessenger;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.transition.Explode;
-import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,8 +33,8 @@ public class CreateUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        getWindow().setExitTransition(new Explode());
+//        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+//        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_create_user);
         showNextFragment(new SetupUsernameFragment());
     }
@@ -72,34 +70,16 @@ public class CreateUserActivity extends AppCompatActivity {
 		}
 	}
 
-    protected void createAccount(String password){
+    public void createAccount(String password){
         new Thread(() -> {
             try{
                 if(nickname==null || password==null){
                     throw new IllegalStateException();
                 }
-
-                ((DxApplication) this.getApplication()).sendNotification("Almost Ready!","Starting tor and warming up to get all we need to connect!",false);
-
-                DxAccount account;
-                if(((DxApplication) this.getApplication()).getAccount()==null){
-                    account = new DxAccount();
-                }else{
-                    account = ((DxApplication) this.getApplication()).getAccount();
-                }
-                account.setNickname(nickname);
-                account.setPassword(password);
-
-                ((DxApplication) this.getApplication()).setAccount(account);
-
-                if (!((DxApplication) this.getApplication()).isServerReady()) {
-                    if (((DxApplication) this.getApplication()).getTorThread() != null) {
-                        ((DxApplication) this.getApplication()).getTorThread().interrupt();
-                        ((DxApplication) this.getApplication()).setTorThread(null);
-                    }
-                    ((DxApplication) this.getApplication()).startTor();
-                }
-
+                ((DxApplication)getApplication()).createAccount(password,nickname);
+                Intent intent = new Intent(this, SetupInProcess.class);
+                startActivity(intent);
+                finish();
             }catch(Exception e){
                 e.printStackTrace();
             }

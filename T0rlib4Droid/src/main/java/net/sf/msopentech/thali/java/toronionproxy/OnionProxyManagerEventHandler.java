@@ -88,17 +88,17 @@ public class OnionProxyManagerEventHandler implements EventHandler {
 
     @Override
     public void circuitStatus(String status, String circID, String path) {
-        LOG.info("streamStatus: status: " + status + ", circID: " + circID + ", path: " + path);
+        LOG.info("status: " + status + ", circID: " + circID + ", path: " + path);
         Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","streamStatus: status: " + status + ", circID: " + circID + ", path: " + path);
+        gcm_rec.putExtra("tor_status","status: " + status + ", circID: " + circID + ", path: " + path);
         gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void streamStatus(String status, String id, String target) {
-        LOG.info("streamStatus: status: " + status + ", id: " + id + ", target: " + target);
+        LOG.info("status: " + status + ", id: " + id + ", target: " + target);
         Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","streamStatus: status: " + status + ", id: " + id + ", target: " + target);
+        gcm_rec.putExtra("tor_status","status: " + status + ", id: " + id + ", target: " + target);
         gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }

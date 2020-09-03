@@ -13,7 +13,7 @@ public class TorClientSocks4 {
     public TorClientSocks4() {
     }
 
-    public Socket getCallSocket(String OnionAddress, DxApplication app){
+    public Socket getCallSocket(String OnionAddress, DxApplication app, String type){
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection(OnionAddress, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
@@ -28,7 +28,10 @@ public class TorClientSocks4 {
             if(msg2.contains("ok")){
                 outputStream.writeUTF(app.getHostname());
                 outputStream.flush();
+                msg2 = in.readUTF();
                 if(msg2.contains("ok")){
+                    outputStream.writeUTF(type);
+                    outputStream.flush();
                     return socket;
                 }else{
                     return null;

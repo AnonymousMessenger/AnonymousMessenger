@@ -1,14 +1,11 @@
 package com.dx.anonymousmessenger;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.transition.Explode;
-import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-
-import java.util.Objects;
 
 public class AppActivity extends AppCompatActivity {
     private String fragmentName = "";
@@ -23,14 +20,13 @@ public class AppActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_app);
 
         if(((DxApplication) this.getApplication()).getAccount()!=null){
             if(((DxApplication) this.getApplication()).getAccount().getPassword()!=null){
                 if(((DxApplication) getApplication()).isTorStartLocked()){
                     showNextFragment(new StartTorFragment());
+                    goToTorActivity();
                 }else{
                     loadAppFragment();
                 }
@@ -40,6 +36,12 @@ public class AppActivity extends AppCompatActivity {
         }else{
             loadPasswordEntryFragment();
         }
+    }
+
+    public void goToTorActivity() {
+        Intent tor = new Intent(this, SetupInProcess.class);
+        startActivity(tor);
+        finish();
     }
 
     private void loadAppFragment(){

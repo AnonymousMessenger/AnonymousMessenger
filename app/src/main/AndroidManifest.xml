@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dx.anonymousmessenger">
+
     <!-- <uses-feature -->
     <!-- android:name="android.hardware.camera" -->
     <!-- android:required="false" /> -->
@@ -27,8 +28,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RingingActivity"></activity>
-        <activity android:name="com.example.anonymousmessenger.CallActivity" />
+
+        <activity android:name=".RingingActivity" />
+        <activity android:name=".CallActivity" />
         <activity android:name=".AddContactActivity" />
         <activity android:name=".VerifyIdentityActivity" />
         <activity android:name=".MyIdentityActivity" />
@@ -50,9 +52,12 @@
             android:name=".MyService"
             android:enabled="true"
             android:exported="false" />
-
         <service
             android:name=".CallService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".DxCallService"
             android:enabled="true"
             android:exported="false" />
 

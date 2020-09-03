@@ -45,16 +45,18 @@ public class DxAccount {
     public static void saveAccount(DxAccount account, DxApplication app) {
         Log.d("Account Saver","Saving Account");
         SQLiteDatabase database = app.getDb(account.getPassword());
-        while (database.isDbLockedByOtherThreads()||database.isDbLockedByCurrentThread()||database.isReadOnly()){
-            try{
-                Thread.sleep(200);
-                Log.e("ACCOUNT SAVER", "WAITING FOR DB database.isDbLockedByOtherThreads()||database.isDbLockedByCurrentThread()||database.isReadOnly()");
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+//        while (database.isDbLockedByOtherThreads()||database.isDbLockedByCurrentThread()||database.isReadOnly()){
+        try{
+//            Thread.sleep(200);
+//            Log.e("ACCOUNT SAVER", "WAITING FOR DB database.isDbLockedByOtherThreads()||database.isDbLockedByCurrentThread()||database.isReadOnly()");
+            database.execSQL(DxAccount.CREATE_ACCOUNT_TABLE_SQL);
+            database.execSQL(DxAccount.INSERT_ACCOUNT_SQL,account.getSqlInsertValues());
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        database.execSQL(DxAccount.CREATE_ACCOUNT_TABLE_SQL);
-        database.execSQL(DxAccount.INSERT_ACCOUNT_SQL,account.getSqlInsertValues());
+//        }
+//        database.execSQL(DxAccount.CREATE_ACCOUNT_TABLE_SQL);
+//        database.execSQL(DxAccount.INSERT_ACCOUNT_SQL,account.getSqlInsertValues());
     }
 
 //    public boolean saveAccount(Context ctx){

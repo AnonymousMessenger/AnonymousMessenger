@@ -31,12 +31,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dx.anonymousmessenger.call.CallMaker;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageListAdapter;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
-import com.example.anonymousmessenger.CallActivity;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
 
@@ -157,9 +155,11 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
             mMessageRecycler.setAdapter(mMessageAdapter);
             mMessageAdapter.notifyDataSetChanged();
-            mMessageRecycler.scrollToPosition(messageList.size() - 1);
-            String newName = messageList.get(messageList.size()-1).getSender();
-            Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
+            if(!messageList.isEmpty()){
+                mMessageRecycler.scrollToPosition(messageList.size() - 1);
+            }
+//            String newName = messageList.get(messageList.size()-1).getSender();
+//            Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
         });
     }
 
@@ -248,24 +248,23 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_call:
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-
-                    if(((DxApplication)getApplication()).isInCall()){
-                        Toast.makeText(this,"Already in a call",Toast.LENGTH_SHORT).show();
-                        return true;
+                new Thread(()->{
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                        if(((DxApplication)getApplication()).isInCall()){
+                            runOnUiThread(()->{
+                                Toast.makeText(this,"Already in a call",Toast.LENGTH_SHORT).show();
+                            });
+                            return;
+                        }
+                        Intent intent = new Intent(this, CallActivity.class);
+                        intent.setAction("start_out_call");
+                        intent.putExtra("address",getIntent().getStringExtra("address"));
+                        intent.putExtra("nickname",getIntent().getStringExtra("nickname"));
+                        startActivity(intent);
+                    }else{
+                        requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
                     }
-                    ((DxApplication)getApplication()).setCm(new CallMaker(getIntent().getStringExtra("address"),((DxApplication)getApplication())));
-                    ((DxApplication)getApplication()).getCm().start();
-                    Intent intent = new Intent(this, CallActivity.class);
-                    intent.putExtra("address",getIntent().getStringExtra("address"));
-                    intent.putExtra("nickname",getIntent().getStringExtra("nickname"));
-                    startActivity(intent);
-
-                }else{
-                    requestPermissions(
-                            new String[] { Manifest.permission.RECORD_AUDIO },
-                            REQUEST_CODE);
-                }
+                }).start();
                 break;
             case R.id.action_settings:
                 //add the function to perform here
@@ -310,7 +309,6 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     // system settings in an effort to convince the user to change
                     // their decision.
                 }
-                return;
         }
         // Other 'case' lines to check for other
         // permissions this app might request.
@@ -331,12 +329,12 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 .setTitle(R.string.mic_perm_ask_title)
                 .setMessage(R.string.why_need_mic)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(R.string.ask_for_mic_btn, (DialogInterface.OnClickListener) (dialog, which) -> {
+                .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> {
                     requestPermissions(
                             new String[] { Manifest.permission.RECORD_AUDIO },
                             REQUEST_CODE);
                 })
-                .setNegativeButton(R.string.no_thanks, (DialogInterface.OnClickListener) (dialog, which) -> {
+                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
 
                 });
         } else {

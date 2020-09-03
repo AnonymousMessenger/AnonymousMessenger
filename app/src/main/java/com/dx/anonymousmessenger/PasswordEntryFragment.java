@@ -87,7 +87,7 @@ public class PasswordEntryFragment extends Fragment {
                     SQLiteDatabase database = isPasswordCorrect(Objects.requireNonNull(txtPassword.getText()).toString());
 
                     if (getActivity() != null) {
-                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> ((AppActivity) getActivity()).showNextFragment(new StartTorFragment()));
+                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> ((AppActivity) getActivity()).goToTorActivity());
                     }
 
                     String pass = txtPassword.getText().toString();

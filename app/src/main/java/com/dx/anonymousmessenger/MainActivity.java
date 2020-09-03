@@ -2,9 +2,7 @@ package com.dx.anonymousmessenger;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.transition.Explode;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
@@ -22,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
 //            Objects.requireNonNull(getSupportActionBar()).hide();
         }catch (Exception ignored){}
 
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        getWindow().setExitTransition(new Explode());
+//        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+//        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_main);
 
         ((DxApplication) getApplication()).enableStrictMode();

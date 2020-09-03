@@ -9,9 +9,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_rectangle_dark"
         android:padding="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
 
@@ -40,19 +39,18 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/imageView"
-                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote_text" />
 
             <TextView
                 android:id="@+id/text_message_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
                 android:text="11:40"
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/text_message_body"
-                app:layout_constraintRight_toLeftOf="@+id/text_message_body" />
+                app:layout_constraintEnd_toStartOf="@+id/text_message_body" />
 
             <ImageView
                 android:id="@+id/imageView"

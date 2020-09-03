@@ -13,6 +13,12 @@ public class Utils {
         return new SimpleDateFormat("MM/dd HH:mm").format(new Date(datetime));
     }
 
+    public static String getMinutesAndSecondsFromSeconds(int seconds){
+        int mins = seconds / 60;
+        seconds = seconds - mins * 60;
+        return (mins<10?"0"+mins:mins)+":"+(seconds<10?"0"+seconds:seconds);
+    }
+
     public static boolean arrayListEquals(List<String[]> one, List<String[]> two){
         if(one==null){
             if(two==null){

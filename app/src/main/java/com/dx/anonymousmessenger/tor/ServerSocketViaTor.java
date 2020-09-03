@@ -1,22 +1,14 @@
 package com.dx.anonymousmessenger.tor;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
-import androidx.core.app.NotificationCompat;
-
 import com.dx.anonymousmessenger.DxApplication;
-import com.dx.anonymousmessenger.R;
-import com.dx.anonymousmessenger.call.CallMaker;
+import com.dx.anonymousmessenger.call.CallController;
 import com.dx.anonymousmessenger.crypto.Entity;
 import com.dx.anonymousmessenger.messages.MessageSender;
-import com.example.anonymousmessenger.CallActivity;
 
 import net.sf.controller.network.AndroidTorRelay;
-import net.sf.controller.network.ServiceDescriptor;
 import net.sf.controller.network.TorServerSocket;
 
 import org.slf4j.Logger;
@@ -27,9 +19,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
@@ -153,7 +142,7 @@ public class ServerSocketViaTor {
 
     private static class Server implements Runnable {
         private final ServerSocket socket;
-        private static final DateFormat df = new SimpleDateFormat("K:mm a, z", Locale.ENGLISH);
+//        private static final DateFormat df = new SimpleDateFormat("K:mm a, z", Locale.ENGLISH);
         private DxApplication app;
 
         private Server(ServerSocket socket, DxApplication app) {
@@ -176,28 +165,11 @@ public class ServerSocketViaTor {
                                 DataInputStream in=new DataInputStream(sock.getInputStream());
                                 String msg = in.readUTF();
                                 if(msg.equals("call")){
-                                    //todo do call checks see if busy or some shit
-                                    Log.e("SERVER CONNECTION", "its a call");
-                                    outputStream.writeUTF("ok");
-                                    outputStream.flush();
-                                    msg = in.readUTF();
-                                    if(msg.trim().endsWith(".onion")){
-                                        //todo check if we want this guy calling us
-                                        Log.e("SERVER CONNECTION", "they sent an onion address");
-                                        outputStream.writeUTF("ok");
-                                        outputStream.flush();
-                                        //send socket to call maker with address
-                                        Log.e("SERVER CONNECTION", "sent to call maker");
-                                        sock.setKeepAlive(true);
-                                        app.startIncomingCall(msg,sock);
-
-//                                        new CallMaker(msg.trim(),app,sock).start();
-                                        return;
-                                    }else{
-                                        outputStream.writeUTF("nuf");
-                                        outputStream.flush();
+                                    try {
+                                        CallController.callReceiveHandler(sock,app);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
-                                    outputStream.close();
                                     return;
                                 }
                                 while(!msg.equals("nuf"))

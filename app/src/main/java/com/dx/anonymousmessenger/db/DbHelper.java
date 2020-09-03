@@ -175,6 +175,30 @@ public class DbHelper {
         }
     }
 
+    public static String getContactNickname(String address, DxApplication app) {
+        while (app.getAccount()==null||app.getAccount().getPassword()==null){
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
+        android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
+        if(c.moveToFirst())
+        {
+            String nn = c.getString(c.getColumnIndex("nickname"));
+            c.close();
+            return nn;
+        }
+        else
+        {
+            c.close();
+            return null;
+        }
+    }
+
     public static boolean setContactUnread(String address, DxApplication app) {
 
         while (app.getAccount()==null||app.getAccount().getPassword()==null){
@@ -388,5 +412,4 @@ public class DbHelper {
         SQLiteDatabase database = app.getDb();
         database.execSQL("UPDATE message SET pinned = 0 WHERE send_to=? AND sender=? AND msg=? AND created_at=? AND send_from=? AND received=? AND quote=? AND quote_sender=?", new Object[]{msg.getTo(),msg.getSender(),msg.getMessage(),msg.getCreatedAt(),msg.getAddress(),msg.isReceived(),msg.getQuotedMessage(),msg.getQuoteSender()});
     }
-
 }
