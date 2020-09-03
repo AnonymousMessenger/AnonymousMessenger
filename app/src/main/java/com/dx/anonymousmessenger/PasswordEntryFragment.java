@@ -76,34 +76,27 @@ public class PasswordEntryFragment extends Fragment {
         errorBox = rootView.findViewById(R.id.error_box);
         app = ((DxApplication) Objects.requireNonNull(getActivity()).getApplication());
         btn_next.setOnClickListener(v -> {
-
             btn_next.setEnabled(false);
             txtPassword.setEnabled(false);
             btn_next.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
-
             new Thread(() -> {
                 try {
                     SQLiteDatabase database = isPasswordCorrect(Objects.requireNonNull(txtPassword.getText()).toString());
-
                     if (getActivity() != null) {
                         Objects.requireNonNull(getActivity()).runOnUiThread(() -> ((AppActivity) getActivity()).goToTorActivity());
                     }
-
                     String pass = txtPassword.getText().toString();
-
                     txtPassword = null;
                     btn_next = null;
                     progressBar = null;
                     rootView = null;
-
                     Cursor cr = database.rawQuery("select * from account;", null);
                     if (cr != null && cr.moveToFirst()) {
                         DxAccount account = new DxAccount(cr.getString(0), cr.getString(1));
                         cr.close();
                         account.setPassword(pass);
                         app.setAccount(account,false);
-
                         if (!app.isServerReady()) {
                             if (app.getTorThread() != null) {
                                 app.getTorThread().interrupt();
@@ -111,7 +104,6 @@ public class PasswordEntryFragment extends Fragment {
                             }
                             app.startTor();
                         }
-
                     } else {
 //                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
 //                            txtPassword.setEnabled(true);
@@ -123,7 +115,7 @@ public class PasswordEntryFragment extends Fragment {
                         startActivity(intent);
                         getActivity().finish();
                     }
-                    if (!cr.isClosed()) {
+                    if (cr!=null && !cr.isClosed()) {
                         cr.close();
                     }
                 } catch (SQLiteException e) {
@@ -149,7 +141,9 @@ public class PasswordEntryFragment extends Fragment {
 //                        });
                         Intent intent = new Intent(getActivity(), AppActivity.class);
                         startActivity(intent);
-                        getActivity().finish();
+                        try{
+                            Objects.requireNonNull(getActivity()).finish();
+                        }catch (Exception ignored) {}
                     }
                     e.printStackTrace();
                 }

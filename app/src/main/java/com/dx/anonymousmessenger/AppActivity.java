@@ -25,7 +25,7 @@ public class AppActivity extends AppCompatActivity {
         if(((DxApplication) this.getApplication()).getAccount()!=null){
             if(((DxApplication) this.getApplication()).getAccount().getPassword()!=null){
                 if(((DxApplication) getApplication()).isTorStartLocked()){
-                    showNextFragment(new StartTorFragment());
+//                    showNextFragment(new StartTorFragment());
                     goToTorActivity();
                 }else{
                     loadAppFragment();

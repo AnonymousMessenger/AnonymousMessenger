@@ -15,7 +15,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class SetupInProcess extends AppCompatActivity {
 
-    private BroadcastReceiver mMyBroadcastReceiver;
+    private BroadcastReceiver mMyBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            updateUi(intent.getStringExtra("tor_status"));
+        }
+    };
     private TextView statusText;
 
     @Override
@@ -36,13 +42,6 @@ public class SetupInProcess extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        mMyBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                updateUi(intent.getStringExtra("tor_status"));
-            }
-        };
         try {
             LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
         } catch (Exception e)
@@ -58,6 +57,9 @@ public class SetupInProcess extends AppCompatActivity {
     }
 
     public void updateUi(String torStatus){
+        if (torStatus==null){
+            return;
+        }
         if(torStatus.contains("ALL GOOD") || torStatus.contains("message") || torStatus.contains("status")){
             statusText.setText(torStatus);
             LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
