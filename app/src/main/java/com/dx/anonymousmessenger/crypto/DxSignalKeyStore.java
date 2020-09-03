@@ -196,7 +196,7 @@ public class DxSignalKeyStore implements SignalProtocolStore {
     @Override
     public IdentityKey getIdentity(SignalProtocolAddress address) {
 
-        String serializedIdentity=""; //get this from the database
+        String serializedIdentity; //get this from the database
 
         String addressName=address.getName();
         //use addressName to get the serialized Identity from the database
@@ -214,7 +214,7 @@ public class DxSignalKeyStore implements SignalProtocolStore {
         }
 
 
-        IdentityKey identityKey=null;
+        IdentityKey identityKey;
         try {
             identityKey=new IdentityKey(Base64.decode(serializedIdentity), 0);
         } catch (InvalidKeyException | IOException e) {
@@ -311,11 +311,11 @@ public class DxSignalKeyStore implements SignalProtocolStore {
 
     @Override
     public void storeSignedPreKey(int signedPreKeyId, SignedPreKeyRecord record) {
-        int keyId=signedPreKeyId;
-        String publicKey= Base64.encodeBytes(record.getKeyPair().getPublicKey().serialize());
-        String privateKey= Base64.encodeBytes(record.getKeyPair().getPrivateKey().serialize());
-        String signature= Base64.encodeBytes(record.getSignature());
-        long timestamp=record.getTimestamp();
+//        int keyId=signedPreKeyId;
+//        String publicKey= Base64.encodeBytes(record.getKeyPair().getPublicKey().serialize());
+//        String privateKey= Base64.encodeBytes(record.getKeyPair().getPrivateKey().serialize());
+//        String signature= Base64.encodeBytes(record.getSignature());
+//        long timestamp=record.getTimestamp();
         Log.e("same", "PreKey: " );
         //store all these in the database
     }

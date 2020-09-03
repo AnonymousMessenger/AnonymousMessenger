@@ -66,7 +66,7 @@ public class Utilities {
     public static Socket socks5rawSocketConnection(String networkHost, int networkPort, String socksHost, int socksPort)
             throws IOException {
 
-        int bytesRead = 0;
+        int bytesRead;
         boolean end = false;
         String messageString = "";
         final byte[] messageByte = new byte[1000];

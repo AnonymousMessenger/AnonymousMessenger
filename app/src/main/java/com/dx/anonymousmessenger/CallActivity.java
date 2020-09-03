@@ -101,9 +101,7 @@ public class CallActivity extends AppCompatActivity {
     private void setNameFromAddress(String address) {
         new Thread(()->{
             String nickname = DbHelper.getContactNickname(address,((DxApplication)getApplication()));
-            runOnUiThread(()->{
-                name.setText(nickname);
-            });
+            runOnUiThread(()-> name.setText(nickname));
         }).start();
     }
 
@@ -111,9 +109,7 @@ public class CallActivity extends AppCompatActivity {
         if(action!=null){
             switch (action){
                 case "timer":
-                    runOnUiThread(()->{
-                        timer.setText(Utils.getMinutesAndSecondsFromSeconds(intent.getIntExtra("time",0)));
-                    });
+                    runOnUiThread(()-> timer.setText(Utils.getMinutesAndSecondsFromSeconds(intent.getIntExtra("time",0))));
                     break;
                 case CallService.ACTION_START_INCOMING_CALL:
                     runOnUiThread(()->{
@@ -122,31 +118,23 @@ public class CallActivity extends AppCompatActivity {
                     });
                     break;
                 case CallService.ACTION_START_OUTGOING_CALL_RESPONSE:
-                    runOnUiThread(()-> {
-                        state.setText(R.string.ringing);
-                    });
+                    runOnUiThread(()-> state.setText(R.string.ringing));
                     break;
                 case "hangup":
                     runOnUiThread(this::hangupCall);
                     break;
                 case "answer":
                 case "running":
-                    runOnUiThread(()-> {
-                        state.setText(R.string.connected);
-                    });
+                    runOnUiThread(()-> state.setText(R.string.connected));
                     break;
                 case "trying":
                 case "ringing":
                 case "connecting":
                 case "connected":
-                    runOnUiThread(()-> {
-                        state.setText(action);
-                    });
+                    runOnUiThread(()-> state.setText(action));
                     break;
                 case "start_out_call":
-                    runOnUiThread(()-> {
-                        state.setText(R.string.trying);
-                    });
+                    runOnUiThread(()-> state.setText(R.string.trying));
                     Intent serviceIntent = new Intent(this, DxCallService.class);
                     serviceIntent.setAction("start_out_call");
                     serviceIntent.putExtra("address",getIntent().getStringExtra("address"));

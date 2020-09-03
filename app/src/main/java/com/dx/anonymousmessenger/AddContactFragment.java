@@ -33,13 +33,6 @@ public class AddContactFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static AddContactFragment newInstance(String param1, String param2) {
-        AddContactFragment fragment = new AddContactFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,8 +54,8 @@ public class AddContactFragment extends Fragment {
 
         try{
             if(getActivity()!=null && getActivity() instanceof AppActivity && ((AppActivity) getActivity()).getSupportActionBar()!=null){
-                ((AppActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                ((AppActivity) getActivity()).getSupportActionBar().setTitle("Add Contact");
+                Objects.requireNonNull(((AppActivity) getActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+                Objects.requireNonNull(((AppActivity) getActivity()).getSupportActionBar()).setTitle("Add Contact");
             }
         }catch (Exception ignored){}
 
@@ -88,24 +81,21 @@ public class AddContactFragment extends Fragment {
                         .setTitle("Add Contact")
                         .setMessage("Do you really want to add "+s.toString()+" ?")
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                new Thread(() ->
-                                {
-                                    try{
-                                        boolean b = DbHelper.saveContact(s.toString().trim(), ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()));
-                                        if(!b){
-                                            Log.e("FAILED TO SAVE CONTACT", "SAME " );
-                                        }
-                                    }catch (Exception e){
-                                        e.printStackTrace();
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            new Thread(() ->
+                            {
+                                try{
+                                    boolean b = DbHelper.saveContact(s.toString().trim(), ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()));
+                                    if(!b){
                                         Log.e("FAILED TO SAVE CONTACT", "SAME " );
                                     }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    Log.e("FAILED TO SAVE CONTACT", "SAME " );
                                 }
-                                ).start();
-                                ((AppActivity) Objects.requireNonNull(getActivity())).showNextFragment(new AppFragment());
                             }
+                            ).start();
+                            ((AppActivity) Objects.requireNonNull(getActivity())).showNextFragment(new AppFragment());
                         })
                          .setNegativeButton(android.R.string.no, null).show();
                 }

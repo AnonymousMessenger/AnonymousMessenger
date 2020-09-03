@@ -97,7 +97,7 @@ public class Entity {
                 .setOurIdentityKey(identityKeyPair)
 //                .setOurSignedPreKey(this.signedPreKeyPair)
 //                .setOurRatchetKey(this.getEphemeralKey())
-                .setOurOneTimePreKey(Optional.<ECKeyPair>absent())
+                .setOurOneTimePreKey(Optional.absent())
                 .setTheirIdentityKey(aliceIdentityPublicKey)
                 .setTheirBaseKey(aliceBasePublicKey)
                 .create();

@@ -27,10 +27,10 @@ public class CallController {
 
     private AudioTrack at;
     AudioRecord recorder;
-    private int sampleRate = 16000 ; // 44100 for music
-    private int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_MONO;
-    private int audioFormat = AudioFormat.ENCODING_PCM_8BIT;
-    int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
+    private final int sampleRate = 16000 ; // 44100 for music
+    private final int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_MONO;
+    private final int audioFormat = AudioFormat.ENCODING_PCM_8BIT;
+    private final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
     private boolean status = true;
     AudioManager audioManager;
     byte[] receiveData = new byte[minBufSize];
@@ -71,7 +71,7 @@ public class CallController {
     }
 
     //for responses to new outgoing calls
-    public void setIncoming(Socket incoming, String address) throws Exception {
+    public void setIncoming(Socket incoming, String address) {
         if(!this.address.equals(address)){
             //service.tell user about bad address for incoming
             return;

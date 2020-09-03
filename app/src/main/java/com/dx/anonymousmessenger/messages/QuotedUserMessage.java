@@ -8,7 +8,7 @@ import java.util.Date;
 public class QuotedUserMessage extends UserMessage {
     private String quotedMessage;
     private String quoteSender;
-    private boolean pinned = false;
+    private boolean pinned;
     public QuotedUserMessage(String quoteSender,String quotedMessage, String address, String message, String sender, long createdAt, boolean received, String to, boolean pinned) {
         super(address, message, sender, createdAt, received, to);
         this.quotedMessage = quotedMessage;

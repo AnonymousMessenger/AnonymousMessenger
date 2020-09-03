@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class MyService extends Service {
     public final static String SERVICE_NOTIFICATION_CHANNEL = "service_running";
-    private ConnectionStateMonitor csm = new ConnectionStateMonitor();
+    private final ConnectionStateMonitor csm = new ConnectionStateMonitor();
     private DxApplication app;
 
     public MyService() {

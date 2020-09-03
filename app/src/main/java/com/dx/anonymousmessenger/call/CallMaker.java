@@ -187,14 +187,14 @@ public class CallMaker {
 
     public boolean getStatus() {return status;}
 
-    public static void callReceiveHandler(Socket sock, String msg, DxApplication app) throws IOException {
+    public static void callReceiveHandler(Socket sock, DxApplication app) throws IOException {
         DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
         DataInputStream in=new DataInputStream(sock.getInputStream());
         //todo do call checks see if busy or some shit
         Log.e("SERVER CONNECTION", "its a call");
         outputStream.writeUTF("ok");
         outputStream.flush();
-        msg = in.readUTF();
+        String msg = in.readUTF();
         if(msg.trim().endsWith(".onion")){
             //todo check if we want this guy calling us
             Log.e("SERVER CONNECTION", "they sent an onion address");
@@ -225,7 +225,6 @@ public class CallMaker {
             outputStream.flush();
         }
         outputStream.close();
-        return;
     }
 
 }

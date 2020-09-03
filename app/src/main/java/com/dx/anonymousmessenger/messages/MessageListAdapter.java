@@ -50,7 +50,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     // Determines the appropriate ViewType according to the sender of the message.
     @Override
     public int getItemViewType(int position) {
-        QuotedUserMessage message = (QuotedUserMessage) mMessageList.get(position);
+        QuotedUserMessage message = mMessageList.get(position);
         if (message.getAddress().equals(app.getHostname())) {
             // If the current user is the sender of the message
             if(message.isReceived()){
@@ -116,7 +116,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        QuotedUserMessage message = (QuotedUserMessage) mMessageList.get(position);
+        QuotedUserMessage message = mMessageList.get(position);
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
                 ((SentMessageHolder) holder).bind(message);
@@ -204,8 +204,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         MessageHolder(View itemView) {
             super(itemView);
-            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
-            timeText = (TextView) itemView.findViewById(R.id.text_message_time);
+            messageText = itemView.findViewById(R.id.text_message_body);
+            timeText = itemView.findViewById(R.id.text_message_time);
         }
 
         void bind(QuotedUserMessage message) {
@@ -235,8 +235,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
-            nameText = (TextView) itemView.findViewById(R.id.text_message_name);
-            profileImage = (ImageView) itemView.findViewById(R.id.image_message_profile);
+            nameText = itemView.findViewById(R.id.text_message_name);
+            profileImage = itemView.findViewById(R.id.image_message_profile);
         }
 
         @Override

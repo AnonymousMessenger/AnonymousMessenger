@@ -178,19 +178,17 @@ public class AppFragment extends Fragment {
                     Thread.sleep(1000);
                 }catch (Exception ignored){}
                 if(!((DxApplication)getActivity().getApplication()).isIgnoringBatteryOptimizations()){
-                    getActivity().runOnUiThread(()->{
-                        new AlertDialog.Builder(getContext())
-                            .setTitle("Turn off battery optimization?")
-                            .setMessage("allow Anonymous Messenger to keep working in the background?")
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                                ((DxApplication)getActivity().getApplication()).requestBatteryOptimizationOff();
-                                ((DxApplication)getActivity().getApplication()).setWeAsked(true);
-                            })
-                            .setNegativeButton(android.R.string.no, (dialog, whichButton)->{
-                                ((DxApplication)getActivity().getApplication()).setWeAsked(true);
-                            }).show();
-                    });
+                    getActivity().runOnUiThread(()-> new AlertDialog.Builder(getContext())
+                        .setTitle("Turn off battery optimization?")
+                        .setMessage("allow Anonymous Messenger to keep working in the background?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            ((DxApplication)getActivity().getApplication()).requestBatteryOptimizationOff();
+                            ((DxApplication)getActivity().getApplication()).setWeAsked(true);
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog, whichButton)->{
+                            ((DxApplication)getActivity().getApplication()).setWeAsked(true);
+                        }).show());
                 }
             }).start();
         }
@@ -226,7 +224,7 @@ public class AppFragment extends Fragment {
             messageChecker.interrupt();
             messageChecker = null;
         }else{
-
+            messageChecker = null;
         }
     }
 

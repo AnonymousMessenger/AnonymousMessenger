@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.util.Utils;
@@ -44,6 +45,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
     }
 
     // inflates the row layout from xml when needed
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
@@ -75,30 +77,24 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_READ://String msg, String send_to, long createdAt, boolean received
                 ((MyRecyclerViewAdapter.ReadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"));
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        appFragment.stopCheckingMessages();
-                        int position = holder.getAdapterPosition();
-                        Intent intent = new Intent(v.getContext(), MessageListActivity.class);
-                        intent.putExtra("nickname",mData.get(position)[0]);
-                        intent.putExtra("address",mData.get(position)[1]);
-                        v.getContext().startActivity(intent);
-                    }
+                holder.itemView.setOnClickListener(v -> {
+                    appFragment.stopCheckingMessages();
+                    int position1 = holder.getAdapterPosition();
+                    Intent intent = new Intent(v.getContext(), MessageListActivity.class);
+                    intent.putExtra("nickname",mData.get(position1)[0]);
+                    intent.putExtra("address",mData.get(position1)[1]);
+                    v.getContext().startActivity(intent);
                 });
                 break;
             case VIEW_TYPE_UNREAD:
                 ((MyRecyclerViewAdapter.UnreadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"));
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        appFragment.stopCheckingMessages();
-                        int position = holder.getAdapterPosition();
-                        Intent intent = new Intent(v.getContext(), MessageListActivity.class);
-                        intent.putExtra("nickname",mData.get(position)[0]);
-                        intent.putExtra("address",mData.get(position)[1]);
-                        v.getContext().startActivity(intent);
-                    }
+                holder.itemView.setOnClickListener(v -> {
+                    appFragment.stopCheckingMessages();
+                    int position12 = holder.getAdapterPosition();
+                    Intent intent = new Intent(v.getContext(), MessageListActivity.class);
+                    intent.putExtra("nickname",mData.get(position12)[0]);
+                    intent.putExtra("address",mData.get(position12)[1]);
+                    v.getContext().startActivity(intent);
                 });
                 break;
         }
@@ -151,8 +147,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
 
         ReadContactHolder(View itemView) {
             super(itemView);
-            contactName = (TextView) itemView.findViewById(R.id.contact_name);
-            imageView = (ImageView) itemView.findViewById(R.id.contact_unread_circle);
+            contactName = itemView.findViewById(R.id.contact_name);
+            imageView = itemView.findViewById(R.id.contact_unread_circle);
             timeText = itemView.findViewById(R.id.time_text);
             msgText = itemView.findViewById(R.id.message_text);
             seen = itemView.findViewById(R.id.seen);

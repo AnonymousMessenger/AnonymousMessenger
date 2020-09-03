@@ -34,8 +34,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         TextView v = (TextView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.my_text_view, parent, false);
 
-        MyViewHolder vh = new MyViewHolder(v);
-        return vh;
+        return new MyViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)

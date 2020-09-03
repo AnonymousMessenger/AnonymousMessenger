@@ -27,6 +27,7 @@ import org.whispersystems.libsignal.UntrustedIdentityException;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 public class MessageSender {
     public static void sendMessage(QuotedUserMessage msg, DxApplication app, String to){
@@ -118,7 +119,7 @@ public class MessageSender {
 //                }
                 AddressedKeyExchangeMessage akem = AddressedKeyExchangeMessage.fromJson(json);
 
-                if(!akem.getKem().isInitiate()){
+                if(!Objects.requireNonNull(akem).getKem().isInitiate()){
                     try {
                         Log.d("KEM RESPONSE", "messageReceiver: "+ Arrays.toString(akem.getKem().serialize()));
                         Log.d("KEM RESPONSE", "FROM: "+ akem.getAddress());
@@ -143,7 +144,6 @@ public class MessageSender {
                     sendKeyExchangeMessage(app,akem.getAddress(),akem.getKem());
                     Log.e("MESSAGE RECEIVER", "GOT KEM: SENDING KEM BACK TO : "+json.getString("address"));
                 }
-                return;
             }else{
                 try {
                     AddressedEncryptedMessage aem = AddressedEncryptedMessage.fromJson(json);
@@ -157,8 +157,8 @@ public class MessageSender {
 
                     QuotedUserMessage um = QuotedUserMessage.fromJson(json);
                     if(um == null){return;}
-                    new Thread(()->{DbHelper.setContactNickname(um.getSender(),um.getAddress(),app);}).start();
-                    new Thread(()->{DbHelper.setContactUnread(um.getAddress(),app);}).start();
+                    new Thread(()-> DbHelper.setContactNickname(um.getSender(),um.getAddress(),app)).start();
+                    new Thread(()-> DbHelper.setContactUnread(um.getAddress(),app)).start();
                     DbHelper.saveMessage(um,app,um.getAddress(),true);
                     Intent gcm_rec = new Intent("your_action");
                     LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);

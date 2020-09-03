@@ -14,7 +14,7 @@ import java.util.Objects;
 
 public class CreateUserActivity extends AppCompatActivity {
     private String nickname;
-    private boolean noBack = false;
+//    private boolean noBack = false;
 
     public String getNickname() {
         return nickname;
@@ -46,9 +46,9 @@ public class CreateUserActivity extends AppCompatActivity {
             finish();
         }
         else {
-            if(!noBack){
+//            if(!noBack){
                 super.onBackPressed();
-            }
+//            }
         }
     }
 

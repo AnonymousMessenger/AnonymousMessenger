@@ -283,10 +283,9 @@ class Socks5Message extends ProxyMessage {
 	 */
 	public String toString() {
 		// FIXME: Single line version, please.
-		final String s = "Socks5Message:" + "\n" + "VN   " + version + "\n"
+		return "Socks5Message:" + "\n" + "VN   " + version + "\n"
 				+ "CMD  " + command + "\n" + "ATYP " + addrType + "\n"
 				+ "ADDR " + host + "\n" + "PORT " + port + "\n";
-		return s;
 	}
 
 	/**

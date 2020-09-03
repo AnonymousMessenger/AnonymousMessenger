@@ -122,7 +122,7 @@ public class SessionBuilder {
         if (message.getPreKeyId().isPresent()) {
             parameters.setOurOneTimePreKey(Optional.of(preKeyStore.loadPreKey(message.getPreKeyId().get()).getKeyPair()));
         } else {
-            parameters.setOurOneTimePreKey(Optional.<ECKeyPair>absent());
+            parameters.setOurOneTimePreKey(Optional.absent());
         }
 
         if (!sessionRecord.isFresh()) sessionRecord.archiveCurrentState();
@@ -174,7 +174,7 @@ public class SessionBuilder {
             ECPublicKey           theirSignedPreKey    = preKey.getSignedPreKey();
             Optional<ECPublicKey> theirOneTimePreKey   = Optional.fromNullable(preKey.getPreKey());
             Optional<Integer>     theirOneTimePreKeyId = theirOneTimePreKey.isPresent() ? Optional.of(preKey.getPreKeyId()) :
-                    Optional.<Integer>absent();
+                    Optional.absent();
 
             AliceSignalProtocolParameters.Builder parameters = AliceSignalProtocolParameters.newBuilder();
 

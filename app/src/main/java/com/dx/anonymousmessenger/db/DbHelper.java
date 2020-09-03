@@ -69,39 +69,36 @@ public class DbHelper {
             } while (cr.moveToNext());
         }
         cr.close();
-        java.util.Collections.sort(contacts, new Comparator<String[]>() {
-            @Override
-            public int compare(String[] o1, String[] o2) {
+        java.util.Collections.sort(contacts, (o1, o2) -> {
 
-                if(o1[2].equals("unread")){
-                    if(!o2[2].equals("unread")){
-                        return -1;
-                    }
-                }else if(o2[2].equals("unread")){
-                        return 1;
-                }
-
-                if(o1[5].equals("")){
-                    if(!o2[5].equals("")){
-                        return 1;
-                    }else{
-                        return 0;
-                    }
-                }else if(o2[5].equals("")){ return -1; }
-
-                if(Long.parseLong(o1[5]) > Long.parseLong(o2[5])){
+            if(o1[2].equals("unread")){
+                if(!o2[2].equals("unread")){
                     return -1;
-                }else if(Long.parseLong(o1[5]) < Long.parseLong(o2[5])){
-                    return 1;
                 }
-
-                return 0;
+            }else if(o2[2].equals("unread")){
+                    return 1;
             }
+
+            if(o1[5].equals("")){
+                if(!o2[5].equals("")){
+                    return 1;
+                }else{
+                    return 0;
+                }
+            }else if(o2[5].equals("")){ return -1; }
+
+            if(Long.parseLong(o1[5]) > Long.parseLong(o2[5])){
+                return -1;
+            }else if(Long.parseLong(o1[5]) < Long.parseLong(o2[5])){
+                return 1;
+            }
+
+            return 0;
         });
         return contacts;
     }
 
-    public static boolean saveContact(String address, DxApplication app) throws Exception {
+    public static boolean saveContact(String address, DxApplication app) {
         while (app.getAccount()==null||app.getAccount().getPassword()==null){
             try {
                 Thread.sleep(150);
@@ -316,7 +313,9 @@ public class DbHelper {
     private static void updateDbSchema(SQLiteDatabase database) {
         int tries = 0;
         while(tries<3){
+            tries++;
             try{
+                database.beginTransaction();
                 String tmpName = "temp_message";
                 String createTemp = getMessageTableSqlCreate().replace("message",tmpName);
                 database.execSQL(createTemp);
@@ -336,6 +335,7 @@ public class DbHelper {
                 database.execSQL("INSERT INTO "+tmpName+CONTACT_COLUMNS+" SELECT *"+emptyCols+" FROM contact;");
                 database.execSQL("DROP TABLE contact;");
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO contact");
+                database.endTransaction();
             }catch (SQLiteException ignored){}
         }
     }
@@ -384,7 +384,6 @@ public class DbHelper {
                 return 0;
             }
         } else {
-            cursor.close();
             return 0;
         }
     }

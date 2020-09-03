@@ -86,8 +86,8 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 new Thread(()-> MessageSender.sendKeyExchangeMessage(((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
                 return;
             }
-            TextView quoteSenderTyping = (TextView)findViewById(R.id.quote_sender_typing);
-            TextView quoteTextTyping = ((TextView)findViewById(R.id.quote_text_typing));
+            TextView quoteSenderTyping = findViewById(R.id.quote_sender_typing);
+            TextView quoteTextTyping = findViewById(R.id.quote_text_typing);
             QuotedUserMessage msg = new QuotedUserMessage(quoteSenderTyping.getText().toString().equals("You")?((DxApplication)getApplication()).getAccount().getNickname():getIntent().getStringExtra("nickname"),quoteTextTyping.getText().toString(),((DxApplication)getApplication()).getHostname(),txt.getText().toString(),((DxApplication)getApplication()).getAccount().getNickname(),new Date().getTime(),false,getIntent().getStringExtra("address"),false);
             messageList.add(msg);
             new Thread(()-> MessageSender.sendMessage(msg,((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
@@ -251,9 +251,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 new Thread(()->{
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                         if(((DxApplication)getApplication()).isInCall()){
-                            runOnUiThread(()->{
-                                Toast.makeText(this,"Already in a call",Toast.LENGTH_SHORT).show();
-                            });
+                            runOnUiThread(()-> Toast.makeText(this,"Already in a call",Toast.LENGTH_SHORT).show());
                             return;
                         }
                         Intent intent = new Intent(this, CallActivity.class);
@@ -285,30 +283,28 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE:
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission is granted. Continue the action or workflow
-                    // in your app.
-                }  else {
-                    new AlertDialog.Builder(getApplicationContext())
-                            .setTitle("Denied Microphone Permission")
-                            .setMessage("this way you can't make or receive calls")
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(R.string.ask_me_again, (DialogInterface.OnClickListener) (dialog, which) -> {
-                                getMicrophonePerms();
-                            })
-                            .setNegativeButton(R.string.no_thanks, (DialogInterface.OnClickListener) (dialog, which) -> {
+        if (requestCode == REQUEST_CODE) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted. Continue the action or workflow
+                // in your app.
+            } else {
+                new AlertDialog.Builder(getApplicationContext())
+                        .setTitle("Denied Microphone Permission")
+                        .setMessage("this way you can't make or receive calls")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(R.string.ask_me_again, (dialog, which) -> {
+                            getMicrophonePerms();
+                        })
+                        .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
 
-                            });
-                    // Explain to the user that the feature is unavailable because
-                    // the features requires a permission that the user has denied.
-                    // At the same time, respect the user's decision. Don't link to
-                    // system settings in an effort to convince the user to change
-                    // their decision.
-                }
+                        });
+                // Explain to the user that the feature is unavailable because
+                // the features requires a permission that the user has denied.
+                // At the same time, respect the user's decision. Don't link to
+                // system settings in an effort to convince the user to change
+                // their decision.
+            }
         }
         // Other 'case' lines to check for other
         // permissions this app might request.
@@ -329,11 +325,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 .setTitle(R.string.mic_perm_ask_title)
                 .setMessage(R.string.why_need_mic)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> {
-                    requestPermissions(
-                            new String[] { Manifest.permission.RECORD_AUDIO },
-                            REQUEST_CODE);
-                })
+                .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> requestPermissions(
+                        new String[] { Manifest.permission.RECORD_AUDIO },
+                        REQUEST_CODE))
                 .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
 
                 });

@@ -139,12 +139,13 @@ public class DxApplication extends Application {
 
     public void setServerReady(boolean serverReady) {
         this.serverReady = serverReady;
-        if(serverReady){
-            this.lockTorStart = false;
-            Intent gcm_rec = new Intent("tor_status");
-            gcm_rec.putExtra("tor_status","ALL GOOD");
-            LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+        if (!serverReady) {
+            return;
         }
+        this.lockTorStart = false;
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","ALL GOOD");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
     }
 
     public void sendNotification(String title, String msg){

@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Paint.Style.FILL;
@@ -46,7 +47,7 @@ public class StrengthMeter extends ProgressBar {
         ShapeDrawable background = new ShapeDrawable();
         Paint p = background.getPaint();
         p.setStyle(FILL);
-        p.setColor(getResources().getColor(android.R.color.transparent));
+        p.setColor(ContextCompat.getColor(context,android.R.color.transparent));
         p.setStyle(STROKE);
         p.setStrokeWidth(1);
         p.setColor(BLACK);

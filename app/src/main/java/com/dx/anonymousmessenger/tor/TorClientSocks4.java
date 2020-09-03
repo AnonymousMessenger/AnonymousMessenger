@@ -20,7 +20,7 @@ public class TorClientSocks4 {
 
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             DataInputStream in =new DataInputStream(socket.getInputStream());
-            String msg2 = "";
+            String msg2;
 
             outputStream.writeUTF("call");
             outputStream.flush();
@@ -53,7 +53,7 @@ public class TorClientSocks4 {
 
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             DataInputStream in =new DataInputStream(socket.getInputStream());
-            String msg2 = "";
+            String msg2;
             boolean result = false;
 
             while(!msg.equals("nuf"))
@@ -80,11 +80,7 @@ public class TorClientSocks4 {
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection("nraswjtnyrvywxk7.onion", 80, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
-            if(socket.isConnected()&&!socket.isClosed()){
-                return true;
-            }else{
-                return false;
-            }
+            return socket.isConnected() && !socket.isClosed();
 //            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
 //            DataInputStream in =new DataInputStream(socket.getInputStream());
 //            outputStream.writeUTF("hello");

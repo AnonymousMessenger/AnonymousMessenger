@@ -47,7 +47,7 @@ public class ServerSocketViaTor {
 
     public Thread getServerThread() {return serverThread;}
 
-    public void init(DxApplication app) throws IOException, InterruptedException {
+    public void init(DxApplication app) throws IOException {
         if (ctx == null) {
             return;
         }

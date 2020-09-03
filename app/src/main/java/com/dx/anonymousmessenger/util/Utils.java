@@ -21,11 +21,7 @@ public class Utils {
 
     public static boolean arrayListEquals(List<String[]> one, List<String[]> two){
         if(one==null){
-            if(two==null){
-                return true;
-            }else{
-                return false;
-            }
+            return two == null;
         }
         if(one.size()!=two.size()){
             return false;
