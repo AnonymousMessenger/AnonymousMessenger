@@ -42,6 +42,7 @@ public class CallController {
     private Socket outgoing;
     private String address;
     private boolean answered;
+    private boolean mute;
 
     private MediaPlayer player;
 
@@ -57,6 +58,10 @@ public class CallController {
 
     public boolean isAnswered(){
         return answered;
+    }
+
+    public void setMuteMic(boolean mute){
+        this.mute = mute;
     }
 
     public void setSpeakerPhoneOn(boolean on){
@@ -237,6 +242,9 @@ public class CallController {
         recorder.startRecording();
         try{
             while(status) {
+                if(mute){
+                    continue;
+                }
                 //reading data from MIC into buffer
                 recorder.read(buffer, 0, buffer.length);
                 outgoing.getOutputStream().write(buffer,0,buffer.length);

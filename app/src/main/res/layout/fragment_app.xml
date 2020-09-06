@@ -21,7 +21,7 @@
             android:padding="4dp"
             android:paddingBottom="0dp"
             android:shadowColor="@color/dx_button_background_color"
-            android:text="tor output"
+            android:text="@string/tor_output"
             android:textColor="@color/green_tor"
             android:textColorHint="@color/dx_button_text"
             android:textSize="12sp"
@@ -64,7 +64,7 @@
                 android:id="@+id/online_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Online"
+                android:text="@string/online"
                 tools:layout_editor_absoluteX="51dp"
                 tools:layout_editor_absoluteY="18dp" />
         </androidx.appcompat.widget.Toolbar>
@@ -92,6 +92,36 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/online_toolbar" />
+
+        <LinearLayout
+            android:id="@+id/no_contacts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="40dp"
+            android:background="@drawable/rounded_rectangle_dark"
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="350dp"
+                android:layout_height="350dp"
+                android:src="@drawable/ic_baseline_contacts_24" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:text="@string/no_contacts"
+                android:textColor="@color/dx_brand_green"
+                android:textSize="90px"
+                android:textStyle="bold" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

@@ -1,16 +1,22 @@
 package com.dx.anonymousmessenger;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.db.DbHelper;
@@ -21,12 +27,15 @@ import java.util.Objects;
 
 public class CallActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CODE = 1;
     TextView name;
     TextView phone;
     TextView state;
     TextView timer;
     FloatingActionButton hangup;
     FloatingActionButton answer;
+    FloatingActionButton speaker;
+    FloatingActionButton mute;
 
     String address;
     BroadcastReceiver br;
@@ -64,20 +73,70 @@ public class CallActivity extends AppCompatActivity {
         });
         answer = findViewById(R.id.answer_fab);
         answer.setOnClickListener(v -> {
-            answerCall(true);
-            Intent serviceIntent = new Intent(this, DxCallService.class);
-            serviceIntent.setAction("answer");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(serviceIntent);
-            }else {
-                startService(serviceIntent);
+            new Thread(()->{
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                    if(((DxApplication)getApplication()).isInCall()){
+                        runOnUiThread(()-> Toast.makeText(this,"Already in a call",Toast.LENGTH_SHORT).show());
+                        return;
+                    }
+                    answerCall(true);
+                    Intent serviceIntent = new Intent(this, DxCallService.class);
+                    serviceIntent.setAction("answer");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(serviceIntent);
+                    }else {
+                        startService(serviceIntent);
+                    }
+                }else{
+                    requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
+                }
+            }).start();
+//            answerCall(true);
+//            Intent serviceIntent = new Intent(this, DxCallService.class);
+//            serviceIntent.setAction("answer");
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                startForegroundService(serviceIntent);
+//            }else {
+//                startService(serviceIntent);
+//            }
+        });
+        speaker = findViewById(R.id.speaker_fab);
+        speaker.setOnClickListener(v -> {
+            try {
+                if(((DxApplication)getApplication()).isInCall()){
+                    if(speaker.getAlpha()<0.8){
+                        speaker.setAlpha(1);
+                        ((DxApplication)getApplication()).getCc().setSpeakerPhoneOn(true);
+                    }else{
+                        speaker.setAlpha((float)0.26);
+                        ((DxApplication)getApplication()).getCc().setSpeakerPhoneOn(false);
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        });
+        mute = findViewById(R.id.mute_fab);
+        mute.setOnClickListener(v -> {
+            try {
+                if(((DxApplication)getApplication()).isInCall()){
+                    if(mute.getAlpha()<0.8){
+                        mute.setAlpha(1);
+                        ((DxApplication)getApplication()).getCc().setMuteMic(true);
+                    }else{
+                        mute.setAlpha((float)0.26);
+                        ((DxApplication)getApplication()).getCc().setMuteMic(false);
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
         });
 
         ((DxApplication)getApplication()).enableStrictMode();
         new Thread(()->{
             try{
-                Thread.sleep(250);
+                Thread.sleep(200);
             }catch (Exception ignored) {}
             handleAction(action,getIntent());
         }).start();
@@ -165,6 +224,65 @@ public class CallActivity extends AppCompatActivity {
         answerCall();
         if(forReal){
             ((DxApplication)getApplication()).commandCallService(address,"answer");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CODE) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted. Continue the action or workflow
+                // in your app.
+            } else {
+                new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
+                        .setTitle("Denied Microphone Permission")
+                        .setMessage("this way you can't make or receive calls")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(R.string.ask_me_again, (dialog, which) -> {
+                            getMicrophonePerms();
+                        })
+                        .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+
+                        });
+                // Explain to the user that the feature is unavailable because
+                // the features requires a permission that the user has denied.
+                // At the same time, respect the user's decision. Don't link to
+                // system settings in an effort to convince the user to change
+                // their decision.
+            }
+        }
+        // Other 'case' lines to check for other
+        // permissions this app might request.
+    }
+
+    public void getMicrophonePerms(){
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.RECORD_AUDIO) ==
+                PackageManager.PERMISSION_GRANTED) {
+            // You can use the API that requires the permission.
+
+        } else if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+            // In an educational UI, explain to the user why your app requires this
+            // permission for a specific feature to behave as expected. In this UI,
+            // include a "cancel" or "no thanks" button that allows the user to
+            // continue using your app without granting the permission.
+            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
+                    .setTitle(R.string.mic_perm_ask_title)
+                    .setMessage(R.string.why_need_mic)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> requestPermissions(
+                            new String[] { Manifest.permission.RECORD_AUDIO },
+                            REQUEST_CODE))
+                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+
+                    });
+        } else {
+            // You can directly ask for the permission.
+            // The registered ActivityResultCallback gets the result of this request.
+            requestPermissions(
+                    new String[] { Manifest.permission.RECORD_AUDIO },
+                    REQUEST_CODE);
         }
     }
 }

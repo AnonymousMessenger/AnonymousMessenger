@@ -1,7 +1,9 @@
 package com.dx.anonymousmessenger;
 
+import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,7 +35,28 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         // create a new view
         TextView v = (TextView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.my_text_view, parent, false);
+        v.setOnLongClickListener(v1 -> {
+            PopupMenu popup = new PopupMenu(parent.getContext(), v);
+            popup.inflate(R.menu.contact_menu);
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.delete_contact:
+                        new AlertDialog.Builder(parent.getContext())
+                            .setTitle("Delete this contact?")
+                            .setMessage("this can't be undone and will also delete this contact's session and conversation")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
 
+                            })
+                            .setNegativeButton(android.R.string.no, (dialog, whichButton)->{
+
+                            }).show();
+                        return true;
+                }
+                return false;
+            });
+            return true;
+        });
         return new MyViewHolder(v);
     }
 

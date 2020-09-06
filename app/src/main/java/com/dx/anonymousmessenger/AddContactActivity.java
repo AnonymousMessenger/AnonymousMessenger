@@ -71,7 +71,7 @@ public class AddContactActivity extends AppCompatActivity {
                     return;
                 }
                 if(s.toString().endsWith(".onion") && s.toString().length()>15){
-                    new AlertDialog.Builder(context)
+                    new AlertDialog.Builder(context,R.style.AppAlertDialog)
                         .setTitle("Add Contact")
                         .setMessage("Do you really want to add "+s.toString()+" ?")
                         .setIcon(android.R.drawable.ic_dialog_alert)

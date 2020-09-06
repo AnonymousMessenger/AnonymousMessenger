@@ -72,11 +72,13 @@ public class SetupInProcess extends AppCompatActivity {
         }
         if(torStatus.contains("ALL GOOD") || torStatus.contains("message") || torStatus.contains("status")){
             statusText.setText(torStatus);
-            LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
-            if(getIntent().getBooleanExtra("first_time",true)){
-                ((DxApplication) this.getApplication()).sendNotification("Ready to chat securely!",
-                        "You got all you need to chat securely with your friends!",false);
-            }
+            new Thread(()->{
+                LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
+                if(getIntent().getBooleanExtra("first_time",true)){
+                    ((DxApplication) this.getApplication()).sendNotification("Ready to chat securely!",
+                            "You got all you need to chat securely with your friends!",false);
+                }
+            }).start();
             Intent intent = new Intent(this, AppActivity.class);
             startActivity(intent);
             finish();

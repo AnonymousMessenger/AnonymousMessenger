@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,6 +36,7 @@ import java.util.Objects;
 
 
 public class AppFragment extends Fragment {
+    private LinearLayout noContacts;
     private RecyclerView recyclerView;
     private MyRecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -101,6 +103,9 @@ public class AppFragment extends Fragment {
             public void onReceive(Context context, Intent intent)
             {
                 if(intent.getStringExtra("tor_status")!=null){
+                    if(Objects.requireNonNull(intent.getStringExtra("tor_status")).equals("ALL GOOD")){
+                        checkConnectivity();
+                    }
                     updateTorOutput(Objects.requireNonNull(intent.getStringExtra("tor_status")));
                 }else{
                     updateUi();
@@ -161,6 +166,7 @@ public class AppFragment extends Fragment {
         onlineToolbar = rootView.findViewById(R.id.online_toolbar);
         onlineToolbar.setOnClickListener(v -> checkConnectivity());
         torOutput = rootView.findViewById(R.id.status_text);
+        noContacts = rootView.findViewById(R.id.no_contacts);
         recyclerView = rootView.findViewById(R.id.recycler);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -178,7 +184,7 @@ public class AppFragment extends Fragment {
                     Thread.sleep(1000);
                 }catch (Exception ignored){}
                 if(!((DxApplication)getActivity().getApplication()).isIgnoringBatteryOptimizations()){
-                    getActivity().runOnUiThread(()-> new AlertDialog.Builder(getContext())
+                    getActivity().runOnUiThread(()-> new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
                         .setTitle("Turn off battery optimization?")
                         .setMessage("allow Anonymous Messenger to keep working in the background?")
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -236,6 +242,11 @@ public class AppFragment extends Fragment {
             try{
                 lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
                 mainThread.post(()->{
+                    if(lst.isEmpty()){
+                        noContacts.setVisibility(View.VISIBLE);
+                    }else{
+                        noContacts.setVisibility(View.GONE);
+                    }
                     mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
                     recyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
@@ -252,6 +263,11 @@ public class AppFragment extends Fragment {
             try{
                 lst = tmp;
                 mainThread.post(()->{
+                    if(lst.isEmpty()){
+                        noContacts.setVisibility(View.VISIBLE);
+                    }else{
+                        noContacts.setVisibility(View.GONE);
+                    }
                     mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
                     recyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();

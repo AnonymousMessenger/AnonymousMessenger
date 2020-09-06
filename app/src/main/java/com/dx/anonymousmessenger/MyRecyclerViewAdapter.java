@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.util.Log;
@@ -7,11 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.util.Utils;
 
 import java.util.List;
@@ -85,6 +88,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
                     intent.putExtra("address",mData.get(position1)[1]);
                     v.getContext().startActivity(intent);
                 });
+                holder.itemView.setOnLongClickListener(new ListItemOnClickListener(holder.itemView,mData.get(holder.getAdapterPosition())[1]));
                 break;
             case VIEW_TYPE_UNREAD:
                 ((MyRecyclerViewAdapter.UnreadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"));
@@ -141,6 +145,45 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
         void onItemClick(View view, int position);
     }
 
+    public class ListItemOnClickListener implements View.OnLongClickListener {
+        View itemView;
+        String address;
+
+        ListItemOnClickListener(View itemView, String address){
+            this.itemView = itemView;
+            this.address = address;
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            PopupMenu popup = new PopupMenu(v.getContext(), itemView);
+            popup.inflate(R.menu.contact_menu);
+
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.delete_contact:
+                        new AlertDialog.Builder(itemView.getContext(),R.style.AppAlertDialog)
+                            .setTitle("Delete this contact?")
+                            .setMessage("this can't be undone and will also delete this contact's session and conversation")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                                DbHelper.deleteContact(address, app);
+                                Intent intent = new Intent("your_action");
+                                itemView.getContext().sendBroadcast(intent);
+                            })
+                            .setNegativeButton(android.R.string.no, (dialog, whichButton)->{
+
+                            }).show();
+                        return true;
+                    default:
+                        return false;
+                }
+            });
+            popup.show();
+            return true;
+        }
+    }
+
     private class ReadContactHolder extends RecyclerView.ViewHolder {
         TextView contactName,msgText,timeText;
         ImageView imageView,seen;
@@ -168,7 +211,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
 
         UnreadContactHolder(View itemView) {
             super(itemView);
-            itemView.setBackgroundColor(itemView.getResources().getColor(R.color.dx_night_700,itemView.getResources().newTheme()));
+            itemView.setBackgroundColor(itemView.getResources().getColor(R.color.dx_night_950,itemView.getResources().newTheme()));
         }
 
         void bind(String title, String msg, String send_to, long createdAt, boolean received) {

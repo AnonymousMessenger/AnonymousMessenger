@@ -58,4 +58,8 @@
     <string name="incoming_call">Incoming Call</string>
     <string name="identity_verification_fail">Couldn\'t fetch identity keys</string>
     <string name="identity_key_fail">Can\'t find your identity key</string>
+    <string name="delete_contact">Delete Contact</string>
+    <string name="no_contacts">No Contacts Found</string>
+    <string name="online">Online</string>
+    <string name="tor_output">tor output</string>
 </resources>

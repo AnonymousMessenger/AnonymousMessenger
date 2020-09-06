@@ -3,11 +3,14 @@ package com.dx.anonymousmessenger.db;
 import android.util.Log;
 
 import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.crypto.DxSignalKeyStore;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteException;
+
+import org.whispersystems.libsignal.SignalProtocolAddress;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +53,7 @@ public class DbHelper {
                 String address = cr.getString(1);
                 database.execSQL(DbHelper.getMessageTableSqlCreate());
                 //delete old messages
-                database.execSQL("DELETE FROM message WHERE conversation=? AND created_at<?", new Object[]{address,new Date().getTime() - app.getTime2delete()});
+                database.execSQL("DELETE FROM message WHERE conversation=? AND pinned=? AND created_at<?", new Object[]{address,0,new Date().getTime() - app.getTime2delete()});
                 Cursor cr2 = database.rawQuery("SELECT * FROM message WHERE conversation=? ORDER BY created_at DESC LIMIT 1;",new Object[]{address});
 
                 if (cr2.moveToFirst()) {
@@ -150,6 +153,21 @@ public class DbHelper {
             c.close();
             return true;
         }
+    }
+
+    public static void deleteContact(String address, DxApplication app) {
+        while (app.getAccount()==null||app.getAccount().getPassword()==null){
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
+        database.execSQL("DELETE FROM contact WHERE address=?",new Object[]{address});
+        app.getEntity().getStore().deleteSession(new SignalProtocolAddress(address,1));
+        ((DxSignalKeyStore)app.getEntity().getStore()).removeIdentity(new SignalProtocolAddress(address,1));
     }
 
     public static boolean setContactNickname(String nickname, String address, DxApplication app){

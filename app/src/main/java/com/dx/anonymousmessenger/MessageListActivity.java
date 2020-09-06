@@ -292,7 +292,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 // Permission is granted. Continue the action or workflow
                 // in your app.
             } else {
-                new AlertDialog.Builder(getApplicationContext())
+                new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
                         .setTitle("Denied Microphone Permission")
                         .setMessage("this way you can't make or receive calls")
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -324,7 +324,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             // permission for a specific feature to behave as expected. In this UI,
             // include a "cancel" or "no thanks" button that allows the user to
             // continue using your app without granting the permission.
-            new AlertDialog.Builder(getApplicationContext())
+            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
                 .setTitle(R.string.mic_perm_ask_title)
                 .setMessage(R.string.why_need_mic)
                 .setIcon(android.R.drawable.ic_dialog_alert)

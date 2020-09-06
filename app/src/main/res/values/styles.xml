@@ -27,19 +27,24 @@
         <item name="android:textColor">@color/dx_button_text</item>
     </style>
 
-    <style name="AppAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="AppAlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/dx_white</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">@color/dx_white</item>
+        <!-- Used for the background -->
+        <item name="android:background">@color/dx_brand_green</item>
+
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
     </style>
 
     <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/dx_button_text</item>
-        <item name="android:backgroundTint">@color/dx_night_700</item>
     </style>
 
     <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/dx_button_text</item>
-        <item name="android:backgroundTint">@color/dx_night_700</item>
     </style>
 
 </resources>
