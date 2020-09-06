@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -270,12 +269,16 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 app.getEntity().getStore().deleteSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
                 //((DxSignalKeyStore)app.getEntity().getStore()).removeIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
                 Log.e("RESET SESSION","RESET SESSION with : "+getIntent().getStringExtra("address"));
-                return true;
+                break;
             case R.id.action_verify_identity:
                 stopCheckingMessages();
                 Intent intent = new Intent(this, VerifyIdentityActivity.class);
                 intent.putExtra("address",getIntent().getStringExtra("address"));
                 startActivity(intent);
+                break;
+            case R.id.action_clear_conversation:
+                DbHelper.clearConversation(getIntent().getStringExtra("address"),(DxApplication)getApplication());
+                updateUi();
                 break;
         }
         return super.onOptionsItemSelected(item);

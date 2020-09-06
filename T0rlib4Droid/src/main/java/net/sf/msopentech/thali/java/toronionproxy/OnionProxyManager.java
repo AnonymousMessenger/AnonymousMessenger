@@ -2,6 +2,7 @@
 package net.sf.msopentech.thali.java.toronionproxy;
 
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -106,7 +107,12 @@ public abstract class OnionProxyManager {
             }
 
             return false;
-        } finally {
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("TOR ERROR","TOR CANNOT START");
+            return false;
+        }
+        finally {
             // Make sure we return the Tor OP in some kind of consistent state, even if it's 'off'.
             if (!isRunning()) {
                 stop();

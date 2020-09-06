@@ -39,7 +39,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/imageView"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote_text" />
 
             <TextView
@@ -49,13 +48,14 @@
                 android:text="11:40"
                 android:textColor="#ffffff"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/text_message_body"
-                app:layout_constraintEnd_toStartOf="@+id/text_message_body" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="20dp"
+                android:layout_height="17dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_launcher_foreground" />

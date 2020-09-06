@@ -17,6 +17,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.dx.anonymousmessenger.CallService;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.tor.TorClientSocks4;
 
 import java.io.DataInputStream;
@@ -91,8 +92,6 @@ public class CallController {
         if(outgoing==null){
             stopCall(true);
         }
-//        setAudioDefaults();
-
 //        Uri notification = RingtoneManager.getDefaultUri();
 //        player = MediaPlayer.create(app, notification);
 //        player.setLooping(false);
@@ -112,6 +111,9 @@ public class CallController {
         app.commandCallService(address,CallService.ACTION_START_INCOMING_CALL);
 
         //add a ringtone here that plays for 45 seconds then hangs up the call
+        audioManager = (AudioManager)app.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE);
+        audioManager.setMode(AudioManager.RINGER_MODE_NORMAL);
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         player = MediaPlayer.create(app, notification);
         player.setLooping(false);
@@ -128,6 +130,7 @@ public class CallController {
                         count++;
                     }else{
                         player.release();
+                        audioManager.setMode(AudioManager.MODE_NORMAL);
                         player = null;
                         stopCall(true);
                     }
@@ -167,6 +170,7 @@ public class CallController {
                     LocalBroadcastManager.getInstance(app).sendBroadcast(gcm_rec);
                 }else{
                     player.release();
+                    audioManager.setMode(AudioManager.MODE_NORMAL);
                     iOut.writeUTF("ok");
                     iOut.flush();
                     //wait only like 5 secs?
@@ -190,6 +194,7 @@ public class CallController {
             } catch (Exception e) {
                 if(player!=null){
                     player.release();
+                    audioManager.setMode(AudioManager.MODE_NORMAL);
                 }
                 stopCall(true);
                 e.printStackTrace();
@@ -198,6 +203,7 @@ public class CallController {
     }
 
     public void stopCall(){
+        audioManager.setMode(AudioManager.MODE_NORMAL);
         if(player!=null){
             player.release();
         }
@@ -290,16 +296,23 @@ public class CallController {
     }
 
     public static void callReceiveHandler(Socket sock, DxApplication app) throws Exception {
+        Log.e("SERVER CONNECTION", "its a call");
         DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
         DataInputStream in=new DataInputStream(sock.getInputStream());
-        //todo do call checks see if busy or some shit
-        Log.e("SERVER CONNECTION", "its a call");
+        //todo check to see if busy or some shit
         outputStream.writeUTF("ok");
         outputStream.flush();
         String msg = in.readUTF();
         if(msg.trim().endsWith(".onion")){
             String address= msg.trim();
-            //todo check if we want this guy calling us
+            //check if we want this guy calling us
+            if(!DbHelper.contactExists(address,app)){
+                //send hangup
+                outputStream.writeUTF("nuf");
+                outputStream.flush();
+                sock.close();
+                return;
+            }
             outputStream.writeUTF("ok");
             outputStream.flush();
             msg = in.readUTF();

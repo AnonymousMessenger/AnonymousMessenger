@@ -40,9 +40,6 @@ public class AddContactActivity extends AppCompatActivity {
         getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_add_contact);
 
-
-
-
         try{
             if(getSupportActionBar()!=null){
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -68,6 +65,11 @@ public class AddContactActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.toString().equals(((DxApplication)getApplication()).getHostname())){
+                    Toast.makeText(context, "You can't add yourself!",Toast.LENGTH_SHORT).show();
+                    contact.setText("");
+                    return;
+                }
                 if(s.toString().endsWith(".onion") && s.toString().length()>15){
                     new AlertDialog.Builder(context)
                         .setTitle("Add Contact")
@@ -77,19 +79,33 @@ public class AddContactActivity extends AppCompatActivity {
                             new Thread(() ->
                             {
                                 try{
+                                    if(DbHelper.contactExists(s.toString(),(DxApplication)getApplication())){
+                                        runOnUiThread(()->{
+                                            Toast.makeText(context, "Contact already exists!",Toast.LENGTH_SHORT).show();
+                                            contact.setText("");
+                                        });
+                                        return;
+                                    }
                                     boolean b = DbHelper.saveContact(s.toString().trim(), ((DxApplication) getApplication()));
                                     if(!b){
                                         Log.e("FAILED TO SAVE CONTACT", "SAME " );
+                                        runOnUiThread(()->{
+                                            Toast.makeText(context, "can't add contact!",Toast.LENGTH_SHORT).show();
+                                            contact.setText("");
+                                        });
+                                        return;
                                     }
+                                    finish();
                                 }catch (Exception e){
                                     e.printStackTrace();
                                     Log.e("FAILED TO SAVE CONTACT", "SAME " );
-                                }finally {
-                                    finish();
+                                    runOnUiThread(()->{
+                                        Toast.makeText(context, "can't add contact!",Toast.LENGTH_SHORT).show();
+                                        contact.setText("");
+                                    });
                                 }
                             }
                             ).start();
-//                            finish();
                         })
                         .setNegativeButton(android.R.string.no, null).show();
                 }

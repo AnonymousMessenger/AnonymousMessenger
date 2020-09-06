@@ -26,7 +26,6 @@ import net.sf.controller.network.AndroidTorRelay;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.File;
-import java.io.IOException;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -134,6 +133,7 @@ public class DxApplication extends Application {
     }
 
     public boolean isServerReady() {
+        System.out.println("isServerReady: "+serverReady);
         return serverReady;
     }
 
@@ -152,7 +152,7 @@ public class DxApplication extends Application {
         Intent resultIntent = new Intent(this, MainActivity.class);
         // Create the TaskStackBuilder and add the intent, which inflates the back stack
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        //todo change this to not add to stack but delete it
+        //change this to not add to stack but delete it
         stackBuilder.addNextIntentWithParentStack(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -441,7 +441,7 @@ public class DxApplication extends Application {
                 setTorSocket(new ServerSocketViaTor(getApplicationContext()));
                 getTorSocket().init(this);
                 lockTorStart = false;
-            } catch (InterruptedException | IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

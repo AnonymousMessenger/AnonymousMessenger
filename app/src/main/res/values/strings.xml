@@ -56,4 +56,6 @@
     <string name="connected">Connected</string>
     <string name="answer">answer</string>
     <string name="incoming_call">Incoming Call</string>
+    <string name="identity_verification_fail">Couldn\'t fetch identity keys</string>
+    <string name="identity_key_fail">Can\'t find your identity key</string>
 </resources>

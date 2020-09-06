@@ -87,8 +87,10 @@ public class AndroidTorRelay {
             LOG.debug("Cannot Establish socks port");
             throw new IOException(e);
         }
-
     }
 
+    public OnionProxyManager getOnionProxyManager() {
+        return onionProxyManager;
+    }
 
 }

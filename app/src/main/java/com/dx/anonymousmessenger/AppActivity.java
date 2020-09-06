@@ -24,7 +24,7 @@ public class AppActivity extends AppCompatActivity {
 
         if(((DxApplication) this.getApplication()).getAccount()!=null){
             if(((DxApplication) this.getApplication()).getAccount().getPassword()!=null){
-                if(((DxApplication) getApplication()).isTorStartLocked()){
+                if(!((DxApplication) getApplication()).isServerReady()){
 //                    showNextFragment(new StartTorFragment());
                     goToTorActivity();
                 }else{
@@ -40,6 +40,7 @@ public class AppActivity extends AppCompatActivity {
 
     public void goToTorActivity() {
         Intent tor = new Intent(this, SetupInProcess.class);
+        tor.putExtra("first_time",false);
         startActivity(tor);
         finish();
     }

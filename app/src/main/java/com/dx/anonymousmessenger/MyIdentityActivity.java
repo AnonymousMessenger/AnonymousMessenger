@@ -25,8 +25,18 @@ public class MyIdentityActivity extends AppCompatActivity {
         getSupportActionBar().setSubtitle(R.string.my_identity_explanation);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView tv = findViewById(R.id.txt_identity_key);
-        //todo thread this shit
-        tv.setText(Hex.toString(((DxApplication) getApplication()).getEntity().getStore().getIdentityKeyPair().getPublicKey().serialize()));
+        new Thread(()->{
+            try{
+                String identity = Hex.toString(((DxApplication) getApplication()).getEntity().getStore().getIdentityKeyPair().getPublicKey().serialize());
+                runOnUiThread(()->{
+                    tv.setText(identity);
+                });
+            }catch (Exception ignored) {
+                runOnUiThread(()->{
+                    tv.setText(R.string.identity_key_fail);
+                });
+            }
+        }).start();
     }
 
     @Override

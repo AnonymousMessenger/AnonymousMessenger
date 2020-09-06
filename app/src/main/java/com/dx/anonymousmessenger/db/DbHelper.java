@@ -10,7 +10,6 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteException;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +49,8 @@ public class DbHelper {
             do {
                 String address = cr.getString(1);
                 database.execSQL(DbHelper.getMessageTableSqlCreate());
+                //delete old messages
+                database.execSQL("DELETE FROM message WHERE conversation=? AND created_at<?", new Object[]{address,new Date().getTime() - app.getTime2delete()});
                 Cursor cr2 = database.rawQuery("SELECT * FROM message WHERE conversation=? ORDER BY created_at DESC LIMIT 1;",new Object[]{address});
 
                 if (cr2.moveToFirst()) {
@@ -58,6 +59,9 @@ public class DbHelper {
                     if ((new Date().getTime() - message.getCreatedAt()) >= app.getTime2delete()) {
                         if(!message.isPinned()) {
                             deleteMessage(message, app);
+//                            cr2.close();
+//                            cr.close();
+//                            return getContactsList(app);
                         }
                     }
                     cr2.close();
@@ -262,7 +266,22 @@ public class DbHelper {
             c.close();
             return false;
         }
+    }
 
+    public static boolean contactExists(String address, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
+        android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
+        if(c.moveToFirst())
+        {
+            c.close();
+            return true;
+        }
+        else
+        {
+            c.close();
+            return false;
+        }
     }
 
     public static String getMessageTableSqlCreate(){
@@ -367,9 +386,15 @@ public class DbHelper {
         database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getMessage(),msg.getSender(),msg.getCreatedAt(),conversation,false,msg.getQuotedMessage(),msg.getQuoteSender()));
     }
 
-    private static void deleteMessage(QuotedUserMessage msg, DxApplication app) {
+    public static void deleteMessage(QuotedUserMessage msg, DxApplication app) {
         SQLiteDatabase database = app.getDb();
         database.execSQL("DELETE FROM message WHERE send_to=? AND sender=? AND msg=? AND created_at=? AND send_from=? AND received=? AND quote=? AND quote_sender=?", new Object[]{msg.getTo(),msg.getSender(),msg.getMessage(),msg.getCreatedAt(),msg.getAddress(),msg.isReceived(),msg.getQuotedMessage(),msg.getQuoteSender()});
+    }
+
+    public static void clearConversation(String address, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getMessageTableSqlCreate());
+        database.execSQL("DELETE FROM message WHERE conversation=?", new Object[]{address});
     }
 
     public static int getNumberOfColumns(String tableName, SQLiteDatabase database) {

@@ -135,7 +135,7 @@ public class AndroidOnionProxyManager extends OnionProxyManager {
             LOG.info("Online: " + online);
             try {
                 enableNetwork(online);
-            } catch(IOException e) {
+            } catch(Exception e) {
                 LOG.warn(e.toString(), e);
             }
         }

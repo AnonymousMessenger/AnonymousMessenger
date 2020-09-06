@@ -7,8 +7,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.dx.anonymousmessenger.call.CallMaker;
-
 public class CallService extends Service {
 
     public static final String ACTION_RECEIVE_OFFER = "1";
@@ -26,9 +24,6 @@ public class CallService extends Service {
     public static final String ACTION_RECEIVE_HANGUP = "13";
     public static final String ACTION_ENDED = "14";
     public static final String ACTION_START_OUTGOING_CALL_RESPONSE = "15";
-
-    private CallMaker cmo;
-    private CallMaker cmi;
 
     @Nullable
     @Override
@@ -66,19 +61,10 @@ public class CallService extends Service {
     }
 
     private void handleOutgoingCallResponse(Intent intent) {
-        if(cmo==null){
-            return;
-        }
-        if(cmi!=null){
-            cmi.stop();
-            cmi = null;
-        }
         handleAcceptCall(intent);
     }
 
     private void handleAcceptCall(Intent intent) {
-        cmi.start();
-        cmo.start();
     }
 
 //    private void handleStartIncomingCall(Intent intent) {
@@ -116,7 +102,7 @@ public class CallService extends Service {
 //            .setCategory(NotificationCompat.CATEGORY_CALL)
 //            .setFullScreenIntent(fullScreenPendingIntent, true);
 
-        //todo dbhelper.getnickanmefromaddress(Address) ok?
+        //dbhelper.getnickanmefromaddress(Address) ok?
 
 //        Notification ntf = ((DxApplication)getApplication()).sendNotification(type, address, "calls");
 //        Notification ntf = DxApplication.getCallInProgressNotification(this,DxApplication.TYPE_INCOMING_RINGING,address);

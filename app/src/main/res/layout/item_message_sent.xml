@@ -46,8 +46,9 @@
                 android:text="11:40"
                 android:textColor="#ffffff"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/text_message_body"
-                app:layout_constraintEnd_toStartOf="@+id/text_message_body" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 

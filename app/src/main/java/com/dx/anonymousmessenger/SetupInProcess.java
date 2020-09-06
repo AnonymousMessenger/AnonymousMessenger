@@ -32,6 +32,11 @@ public class SetupInProcess extends AppCompatActivity {
         getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_setup_in_process);
         statusText = findViewById(R.id.status_text);
+        if(((DxApplication) getApplication()).isServerReady()){
+            Intent intent = new Intent(this, AppActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @Override
@@ -42,6 +47,11 @@ public class SetupInProcess extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        if(((DxApplication) getApplication()).isServerReady()){
+            Intent intent = new Intent(this, AppActivity.class);
+            startActivity(intent);
+            finish();
+        }
         try {
             LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
         } catch (Exception e)
@@ -63,8 +73,10 @@ public class SetupInProcess extends AppCompatActivity {
         if(torStatus.contains("ALL GOOD") || torStatus.contains("message") || torStatus.contains("status")){
             statusText.setText(torStatus);
             LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
-            ((DxApplication) this.getApplication()).sendNotification("Ready to chat securely!",
-                    "You got all you need to chat securely with your friends!",false);
+            if(getIntent().getBooleanExtra("first_time",true)){
+                ((DxApplication) this.getApplication()).sendNotification("Ready to chat securely!",
+                        "You got all you need to chat securely with your friends!",false);
+            }
             Intent intent = new Intent(this, AppActivity.class);
             startActivity(intent);
             finish();
