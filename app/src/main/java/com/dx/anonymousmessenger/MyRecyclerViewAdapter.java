@@ -213,13 +213,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
 
         UnreadContactHolder(View itemView) {
             super(itemView);
-//            itemView.setBackgroundColor(itemView.getResources().getColor(R.color.dx_night_950,itemView.getResources().newTheme()));
-            itemView.setBackground(ContextCompat.getDrawable(app,R.drawable.rounded_rectangle_steel));
         }
 
         void bind(String title, String msg, String send_to, long createdAt, boolean received) {
-            imageView.setVisibility(View.VISIBLE);
+//            imageView.setVisibility(View.VISIBLE);
             super.bind(title,msg,send_to,createdAt,received);
+            itemView.setBackground(ContextCompat.getDrawable(app,R.drawable.rounded_rectangle_steel));
+            imageView.setVisibility(View.VISIBLE);
+            seen.setVisibility(View.INVISIBLE);
         }
     }
 }

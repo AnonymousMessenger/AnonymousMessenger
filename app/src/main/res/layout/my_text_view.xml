@@ -22,7 +22,8 @@
             android:layout_height="12dp"
             android:background="@color/dx_night_950"
             android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/message_text"
+            app:layout_constraintEnd_toEndOf="@+id/time_text"
+            app:layout_constraintStart_toStartOf="@+id/time_text"
             app:layout_constraintTop_toBottomOf="@+id/contact_unread_circle"
             app:srcCompat="@drawable/ic_launcher_foreground" />
 
@@ -35,7 +36,7 @@
             android:maxLines="1"
             android:text="dude forgot to remind you about that thing over there"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/contact_unread_circle" />
+            app:layout_constraintStart_toEndOf="@+id/image_message_profile2" />
 
         <ImageView
             android:id="@+id/image_message_profile2"
@@ -61,9 +62,10 @@
 
         <ImageView
             android:id="@+id/contact_unread_circle"
-            android:layout_width="14dp"
+            android:layout_width="24dp"
             android:layout_height="14dp"
             android:background="@drawable/unread_circle"
+            android:contentDescription="@string/to_show_when_it_is_unread"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

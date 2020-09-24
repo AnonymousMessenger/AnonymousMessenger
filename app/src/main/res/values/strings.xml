@@ -69,4 +69,5 @@
     <string name="send">SEND</string>
     <string name="textview">TextView</string>
     <string name="_00_00">00:00</string>
+    <string name="to_show_when_it_is_unread">to show when it is unread</string>
 </resources>
