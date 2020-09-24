@@ -1,5 +1,8 @@
 package com.dx.anonymousmessenger.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -37,5 +40,36 @@ public class Utils {
 
         }
         return true;
+    }
+
+    public static byte[] getSecretBytes(int size) {
+        byte[] secret = new byte[size];
+        new SecureRandom().nextBytes(secret);
+        return secret;
+    }
+
+    public static byte[] join(byte[]... input) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            for (byte[] part : input) {
+                baos.write(part);
+            }
+
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    public static byte[][] split(byte[] input, int firstLength, int secondLength) {
+        byte[][] parts = new byte[2][];
+
+        parts[0] = new byte[firstLength];
+        System.arraycopy(input, 0, parts[0], 0, firstLength);
+
+        parts[1] = new byte[secondLength];
+        System.arraycopy(input, firstLength, parts[1], 0, secondLength);
+
+        return parts;
     }
 }

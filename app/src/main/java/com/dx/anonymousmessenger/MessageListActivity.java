@@ -1,6 +1,7 @@
 package com.dx.anonymousmessenger;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,17 +9,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.transition.Explode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageListAdapter;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
 
@@ -50,12 +54,17 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     private RecyclerView mMessageRecycler;
     private MessageListAdapter mMessageAdapter;
     List<QuotedUserMessage> messageList = new ArrayList<>();
-    public Handler mainThread = new Handler(Looper.getMainLooper());
+//    public Handler mainThread = new Handler(Looper.getMainLooper());
     private BroadcastReceiver mMyBroadcastReceiver;
     private Thread messageChecker = null;
     private Button send = null;
     private EditText txt = null;
+    private TextView txtAudioTimer = null;
+    private FloatingActionButton audio;
+    private LinearLayout audioLayout;
+    BroadcastReceiver timeBroadcastReceiver;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +83,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         quoteSenderTyping.setText("");
         send = findViewById(R.id.button_chatbox_send);
         txt = findViewById(R.id.edittext_chatbox);
+        audio = findViewById(R.id.fab_audio);
+        audioLayout = findViewById(R.id.layout_audio);
+        txtAudioTimer = findViewById(R.id.txt_audio_timer);
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
@@ -85,6 +97,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 new Thread(()-> MessageSender.sendKeyExchangeMessage(((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
                 return;
             }
+            //todo check if waiting for key exchange response
             TextView quoteSenderTyping = findViewById(R.id.quote_sender_typing);
             TextView quoteTextTyping = findViewById(R.id.quote_text_typing);
             QuotedUserMessage msg = new QuotedUserMessage(quoteSenderTyping.getText().toString().equals("You")?((DxApplication)getApplication()).getAccount().getNickname():getIntent().getStringExtra("nickname"),quoteTextTyping.getText().toString(),((DxApplication)getApplication()).getHostname(),txt.getText().toString(),((DxApplication)getApplication()).getAccount().getNickname(),new Date().getTime(),false,getIntent().getStringExtra("address"),false);
@@ -95,6 +108,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             quoteTextTyping.setText("");
             quoteSenderTyping.setVisibility(View.GONE);
             quoteTextTyping.setVisibility(View.GONE);
+            audio.setVisibility(View.VISIBLE);
             mMessageAdapter.notifyItemInserted(messageList.size()-1);
             mMessageRecycler.scrollToPosition(messageList.size() - 1);
         });
@@ -110,6 +124,76 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             quoteSenderTyping.setVisibility(View.GONE);
             quoteSenderTyping.setText("");
         });
+        txt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()==0){
+                    audio.setVisibility(View.VISIBLE);
+                }else{
+                    audio.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        audio.setOnTouchListener((arg0, arg1) -> {
+            if (arg1.getAction()== MotionEvent.ACTION_DOWN){
+                txt.setVisibility(View.GONE);
+                audioLayout.setVisibility(View.VISIBLE);
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(this, AudioRecordingService.class);
+                    intent.setAction("start_recording");
+                    intent.putExtra("address",getIntent().getStringExtra("address"));
+                    intent.putExtra("nickname",getIntent().getStringExtra("nickname"));
+                    startService(intent);
+                    timeBroadcastReceiver = new BroadcastReceiver() {
+                        @Override
+                        public void onReceive(Context context, Intent intent) {
+                        try{
+                            txtAudioTimer.setText(intent.getStringExtra("time"));
+                        }catch (Exception ignored) {}
+                        }
+                    };
+                    try {
+                        LocalBroadcastManager.getInstance(this).registerReceiver(timeBroadcastReceiver,new IntentFilter("recording_action"));
+                    } catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }else{
+                    requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
+                }
+            }else if(arg1.getAction()== MotionEvent.ACTION_UP){
+                audioLayout.setVisibility(View.GONE);
+                txt.setVisibility(View.VISIBLE);
+                Intent intent = new Intent(this, AudioRecordingService.class);
+                stopService(intent);
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
+                timeBroadcastReceiver = null;
+                txtAudioTimer.setText(getString(R.string._00_00));
+            }else if(arg1.getAction()== MotionEvent.ACTION_CANCEL){
+                audioLayout.setVisibility(View.GONE);
+                txt.setVisibility(View.VISIBLE);
+                Intent intent = new Intent(this, AudioRecordingService.class);
+                stopService(intent);
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
+                timeBroadcastReceiver = null;
+                txtAudioTimer.setText(getString(R.string._00_00));
+            }
+            return true;
+        });
+//        audio.setOnClickListener(v -> {
+//            txt.setVisibility(View.GONE);
+//            audioLayout.setVisibility(View.VISIBLE);
+//        });
         updateUi();
 
         //run db message checker to delete any old messages then tell us to update ui
@@ -148,18 +232,23 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     }
 
     public void updateUi(){
-        messageList = DbHelper.getMessageList(((DxApplication) getApplication()) ,
-                getIntent().getStringExtra("address"));
-        runOnUiThread(()->{
-            mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
-            mMessageRecycler.setAdapter(mMessageAdapter);
-            mMessageAdapter.notifyDataSetChanged();
-            if(!messageList.isEmpty()){
-                mMessageRecycler.scrollToPosition(messageList.size() - 1);
-            }
-//            String newName = messageList.get(messageList.size()-1).getSender();
-//            Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
-        });
+        try{
+            messageList = DbHelper.getMessageList(((DxApplication) getApplication()) ,
+                    getIntent().getStringExtra("address"));
+            runOnUiThread(()->{
+                try{
+                    mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
+                    mMessageRecycler.setAdapter(mMessageAdapter);
+                    mMessageAdapter.notifyDataSetChanged();
+                    if(!messageList.isEmpty()){
+                        mMessageRecycler.scrollToPosition(messageList.size() - 1);
+                        String newName = messageList.get(messageList.size()-1).getSender();
+                        Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
+                    }
+                }catch (Exception ignored) {}
+            });
+        }catch (Exception ignored) {}
+
     }
 
     public void updateUi(List<QuotedUserMessage> tmp){
@@ -202,13 +291,17 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     @Override
     public boolean onSupportNavigateUp(){
         stopCheckingMessages();
+        if(mMessageAdapter!=null && mMessageAdapter.ap!=null){
+            mMessageAdapter.ap.stop();
+            mMessageAdapter.ap = null;
+        }
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMyBroadcastReceiver);
         quoteTextTyping = null;
         quoteSenderTyping = null;
         mMessageRecycler = null;
         mMessageAdapter = null;
         messageList = null;
-        mainThread = null;
+//        mainThread = null;
         mMyBroadcastReceiver = null;
         messageChecker = null;
         send = null;

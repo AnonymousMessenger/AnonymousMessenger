@@ -33,7 +33,7 @@ public class CallController {
     private final int audioFormat = AudioFormat.ENCODING_PCM_8BIT;
     private final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
     private boolean status = true;
-    AudioManager audioManager;
+    private AudioManager audioManager;
     byte[] receiveData = new byte[minBufSize];
     private int callTimer = 0;
     private boolean timerOn;
@@ -65,6 +65,7 @@ public class CallController {
     }
 
     public void setSpeakerPhoneOn(boolean on){
+        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
         audioManager.setSpeakerphoneOn(on);
     }
 
@@ -118,7 +119,8 @@ public class CallController {
         //add a ringtone here that plays for 45 seconds then hangs up the call
         audioManager = (AudioManager)app.getSystemService(Context.AUDIO_SERVICE);
         audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE);
-        audioManager.setMode(AudioManager.RINGER_MODE_NORMAL);
+        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+        audioManager.setSpeakerphoneOn(true);
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         player = MediaPlayer.create(app, notification);
         player.setLooping(false);
@@ -242,13 +244,12 @@ public class CallController {
         recorder.startRecording();
         try{
             while(status) {
-                if(mute){
-                    continue;
+                if(!mute){
+                    //reading data from MIC into buffer
+                    recorder.read(buffer, 0, buffer.length);
+                    outgoing.getOutputStream().write(buffer,0,buffer.length);
+                    System.out.println("sent size: " +buffer.length);
                 }
-                //reading data from MIC into buffer
-                recorder.read(buffer, 0, buffer.length);
-                outgoing.getOutputStream().write(buffer,0,buffer.length);
-                System.out.println("sent size: " +buffer.length);
             }
         }catch (Exception ignored){
             recorder.release();

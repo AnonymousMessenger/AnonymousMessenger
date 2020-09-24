@@ -53,8 +53,8 @@ public class AddressedEncryptedMessage {
             String address = input.getString("address");
             byte[] msg = Base64.decodeWithoutPadding(input.getString("msg"));
             return new AddressedEncryptedMessage(msg, address);
-        } catch (Exception i) {
-            i.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             Log.e("FROM JSON", "fromJson: EROREOROOROROROEOROERORO");
         }
         return null;

@@ -43,7 +43,8 @@
                 android:id="@+id/txt_nickname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/nickname" />
+                android:hint="@string/nickname"
+                android:imeOptions="actionDone" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView

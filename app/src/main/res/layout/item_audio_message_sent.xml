@@ -17,28 +17,23 @@
             android:layout_height="wrap_content">
 
             <ImageView
+                android:id="@+id/btn_play_pause"
+                android:layout_width="51dp"
+                android:layout_height="42dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_play_arrow_24" />
+
+            <ImageView
                 android:id="@+id/img_seen"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:elevation="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_message_body"
+                app:layout_constraintTop_toBottomOf="@+id/btn_play_pause"
                 app:srcCompat="@android:drawable/ic_lock_lock" />
-
-            <TextView
-                android:id="@+id/text_message_body"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_rectangle_dark"
-                android:maxWidth="240dp"
-                android:padding="8dp"
-                android:text="hello, hello!"
-                android:textColor="#ffffff"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/text_message_time"
@@ -48,8 +43,9 @@
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/img_seen"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
+                app:layout_constraintTop_toBottomOf="@+id/btn_play_pause" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 

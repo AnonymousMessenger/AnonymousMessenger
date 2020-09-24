@@ -4,6 +4,7 @@ import com.dx.anonymousmessenger.DxApplication;
 
 import net.sf.msopentech.thali.java.toronionproxy.Utilities;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -41,6 +42,57 @@ public class TorClientSocks4 {
             }
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public boolean sendMedia(String onion, DxApplication app, String msg, byte[] media){
+        Socket socket;
+        try {
+            socket = Utilities.socks4aSocketConnection(onion, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
+
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            DataInputStream in =new DataInputStream(socket.getInputStream());
+            String msg2;
+
+            outputStream.writeUTF("media");
+            outputStream.flush();
+            msg2 = in.readUTF();
+            if(msg2.contains("ok")){
+                outputStream.writeUTF(app.getHostname());
+                outputStream.flush();
+                msg2 = in.readUTF();
+                if(msg2.contains("ok")){
+                    outputStream.writeUTF(msg);
+                    outputStream.flush();
+                    msg2 = in.readUTF();
+                    if(msg2.contains("ok")){
+                        outputStream.writeInt(media.length);
+                        outputStream.flush();
+                        msg2 = in.readUTF();
+                        if(msg2.contains("ok")){
+                            ByteArrayInputStream bais = new ByteArrayInputStream(media);
+                            byte[] buffer;
+                            while(bais.available()>0){
+                                System.out.println("sending part");
+                                if(bais.available()<1024){
+                                    buffer = new byte[bais.available()];
+                                }else{
+                                    buffer = new byte[1024];
+                                }
+                                bais.read(buffer,0,buffer.length);
+                                outputStream.write(buffer,0,buffer.length);
+                            }
+                            outputStream.flush();
+                            outputStream.close();
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

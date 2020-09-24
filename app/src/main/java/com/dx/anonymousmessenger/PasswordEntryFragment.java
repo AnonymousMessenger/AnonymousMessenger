@@ -121,14 +121,16 @@ public class PasswordEntryFragment extends Fragment {
                 } catch (SQLiteException e) {
                     if (getActivity() != null) {
                         Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                            txtPassword.setText("");
-                            txtPassword.setEnabled(true);
-                            txtPassword.setError("Wrong password");
-                            errorBox.setVisibility(View.VISIBLE);
-                            Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.animation1);
-                            errorBox.startAnimation(hyperspaceJumpAnimation);
-                            btn_next.setVisibility(View.VISIBLE);
-                            progressBar.setVisibility(View.GONE);
+                            try{
+                                txtPassword.setText("");
+                                txtPassword.setEnabled(true);
+                                txtPassword.setError("Wrong password");
+                                errorBox.setVisibility(View.VISIBLE);
+                                Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.animation1);
+                                errorBox.startAnimation(hyperspaceJumpAnimation);
+                                btn_next.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
+                            }catch (Exception ignored) {}
                         });
                     }
                 } catch (Exception e) {
@@ -156,8 +158,11 @@ public class PasswordEntryFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()>6)
-                    btn_next.setEnabled(true);
+                if(s.length()>6){
+                    try{
+                        btn_next.setEnabled(true);
+                    }catch (Exception ignored) {}
+                }
             }
 
             @Override

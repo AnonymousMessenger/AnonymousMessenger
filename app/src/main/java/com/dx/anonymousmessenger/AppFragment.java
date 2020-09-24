@@ -116,23 +116,24 @@ public class AppFragment extends Fragment {
         checkMessages();
         checkConnectivity();
         updateUi();
-        new Thread(()->{
-            int tries = 0;
-            while(!isOnline()){
-                tries++;
-                if(tries>4)break;
-            }
-            if(tries>4) {
-                if (getActivity()!=null && ((getActivity()).getApplication()) != null && ((DxApplication) (getActivity()).getApplication()).getTorThread() != null) {
-                    ((DxApplication) getActivity().getApplication()).getTorThread().interrupt();
-                    ((DxApplication) getActivity().getApplication()).setTorThread(null);
-                    ((DxApplication) getActivity().getApplication()).setServerReady(false);
-                }
-                if(getActivity()!=null && ((getActivity()).getApplication()) != null){
-                    ((DxApplication) getActivity().getApplication()).startTor();
-                }
-            }
-        }).start();
+        //I don't think we need to restart tor when offline
+//        new Thread(()->{
+//            int tries = 0;
+//            while(!isOnline()){
+//                tries++;
+//                if(tries>4)break;
+//            }
+//            if(tries>4) {
+//                if (getActivity()!=null && ((getActivity()).getApplication()) != null && ((DxApplication) (getActivity()).getApplication()).getTorThread() != null) {
+//                    ((DxApplication) getActivity().getApplication()).getTorThread().interrupt();
+//                    ((DxApplication) getActivity().getApplication()).setTorThread(null);
+//                    ((DxApplication) getActivity().getApplication()).setServerReady(false);
+//                }
+//                if(getActivity()!=null && ((getActivity()).getApplication()) != null){
+//                    ((DxApplication) getActivity().getApplication()).startTor();
+//                }
+//            }
+//        }).start();
 
         try {
             LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("your_action"));
@@ -242,14 +243,16 @@ public class AppFragment extends Fragment {
             try{
                 lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
                 mainThread.post(()->{
-                    if(lst.isEmpty()){
-                        noContacts.setVisibility(View.VISIBLE);
-                    }else{
-                        noContacts.setVisibility(View.GONE);
-                    }
-                    mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
-                    recyclerView.setAdapter(mAdapter);
-                    mAdapter.notifyDataSetChanged();
+                    try{
+                        if(lst.isEmpty()){
+                            noContacts.setVisibility(View.VISIBLE);
+                        }else{
+                            noContacts.setVisibility(View.GONE);
+                        }
+                        mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
+                        recyclerView.setAdapter(mAdapter);
+                        mAdapter.notifyDataSetChanged();
+                    } catch (Exception ignored) {}
                 });
             }catch (Exception ignored){}
         }).start();
@@ -301,18 +304,21 @@ public class AppFragment extends Fragment {
             try{
                 if(isOnline()){
                     mainThread.post(()->{
-                        onlineTxt.setText("Online");
-                        onlineImg.setVisibility(View.VISIBLE);
-                        offlineImg.setVisibility(View.GONE);
-                        onlineToolbar.setVisibility(View.VISIBLE);
-
+                        try{
+                            onlineTxt.setText("Online");
+                            onlineImg.setVisibility(View.VISIBLE);
+                            offlineImg.setVisibility(View.GONE);
+                            onlineToolbar.setVisibility(View.VISIBLE);
+                        }catch (Exception ignored) {}
                     });
                 }else{
                     mainThread.post(()->{
-                        onlineTxt.setText("Offline");
-                        onlineImg.setVisibility(View.GONE);
-                        offlineImg.setVisibility(View.VISIBLE);
-                        onlineToolbar.setVisibility(View.VISIBLE);
+                        try{
+                            onlineTxt.setText("Offline");
+                            onlineImg.setVisibility(View.GONE);
+                            offlineImg.setVisibility(View.VISIBLE);
+                            onlineToolbar.setVisibility(View.VISIBLE);
+                        }catch (Exception ignored) {}
                     });
                 }
             }catch (Exception ignored){}
@@ -335,10 +341,12 @@ public class AppFragment extends Fragment {
             case R.id.action_restart_tor:
                 ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).restartTor();
                 mainThread.post(()->{
-                    onlineTxt.setText("Offline");
-                    onlineImg.setVisibility(View.GONE);
-                    offlineImg.setVisibility(View.VISIBLE);
-                    onlineToolbar.setVisibility(View.VISIBLE);
+                    try{
+                        onlineTxt.setText("Offline");
+                        onlineImg.setVisibility(View.GONE);
+                        offlineImg.setVisibility(View.VISIBLE);
+                        onlineToolbar.setVisibility(View.VISIBLE);
+                    } catch (Exception ignored) {}
                 });
                 break;
             case R.id.action_shutdown:

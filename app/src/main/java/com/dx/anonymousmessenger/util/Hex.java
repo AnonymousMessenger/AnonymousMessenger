@@ -34,6 +34,9 @@ public class Hex {
     }
 
     public static String toStringCondensed(byte[] bytes) {
+        if(bytes==null){
+            return "";
+        }
         StringBuffer buf = new StringBuffer();
         for (int i=0;i<bytes.length;i++) {
             appendHexChar(buf, bytes[i]);

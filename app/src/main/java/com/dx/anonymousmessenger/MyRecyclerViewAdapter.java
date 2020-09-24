@@ -12,6 +12,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.db.DbHelper;
@@ -168,6 +169,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
                                 DbHelper.deleteContact(address, app);
+                                DbHelper.clearConversation(address,app);
                                 Intent intent = new Intent("your_action");
                                 itemView.getContext().sendBroadcast(intent);
                             })
@@ -211,7 +213,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
 
         UnreadContactHolder(View itemView) {
             super(itemView);
-            itemView.setBackgroundColor(itemView.getResources().getColor(R.color.dx_night_950,itemView.getResources().newTheme()));
+//            itemView.setBackgroundColor(itemView.getResources().getColor(R.color.dx_night_950,itemView.getResources().newTheme()));
+            itemView.setBackground(ContextCompat.getDrawable(app,R.drawable.rounded_rectangle_steel));
         }
 
         void bind(String title, String msg, String send_to, long createdAt, boolean received) {

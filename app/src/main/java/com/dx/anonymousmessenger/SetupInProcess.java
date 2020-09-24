@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.transition.Explode;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -15,27 +13,35 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class SetupInProcess extends AppCompatActivity {
 
-    private BroadcastReceiver mMyBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            updateUi(intent.getStringExtra("tor_status"));
-        }
-    };
+    private BroadcastReceiver mMyBroadcastReceiver;
     private TextView statusText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_setup_in_process);
+        new Thread(()->{
+            if(((DxApplication) getApplication()).isServerReady()){
+                Intent intent = new Intent(this, AppActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }).start();
         statusText = findViewById(R.id.status_text);
-        if(((DxApplication) getApplication()).isServerReady()){
-            Intent intent = new Intent(this, AppActivity.class);
-            startActivity(intent);
-            finish();
+        mMyBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                new Thread(()->{
+                    updateUi(intent.getStringExtra("tor_status"));
+                }).start();
+            }
+        };
+        try {
+            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -54,8 +60,7 @@ public class SetupInProcess extends AppCompatActivity {
         }
         try {
             LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
-        } catch (Exception e)
-        {
+        } catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -63,7 +68,11 @@ public class SetupInProcess extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
+        try {
+            LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void updateUi(String torStatus){
@@ -84,7 +93,9 @@ public class SetupInProcess extends AppCompatActivity {
             finish();
         }else{
             try {
-                statusText.setText(torStatus);
+                runOnUiThread(()->{
+                    statusText.setText(torStatus);
+                });
             }catch (Exception ignored){}
         }
     }

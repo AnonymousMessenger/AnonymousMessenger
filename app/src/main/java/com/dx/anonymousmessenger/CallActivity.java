@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -75,10 +74,6 @@ public class CallActivity extends AppCompatActivity {
         answer.setOnClickListener(v -> {
             new Thread(()->{
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-                    if(((DxApplication)getApplication()).isInCall()){
-                        runOnUiThread(()-> Toast.makeText(this,"Already in a call",Toast.LENGTH_SHORT).show());
-                        return;
-                    }
                     answerCall(true);
                     Intent serviceIntent = new Intent(this, DxCallService.class);
                     serviceIntent.setAction("answer");
@@ -91,24 +86,16 @@ public class CallActivity extends AppCompatActivity {
                     requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
                 }
             }).start();
-//            answerCall(true);
-//            Intent serviceIntent = new Intent(this, DxCallService.class);
-//            serviceIntent.setAction("answer");
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                startForegroundService(serviceIntent);
-//            }else {
-//                startService(serviceIntent);
-//            }
         });
         speaker = findViewById(R.id.speaker_fab);
         speaker.setOnClickListener(v -> {
             try {
                 if(((DxApplication)getApplication()).isInCall()){
                     if(speaker.getAlpha()<0.8){
-                        speaker.setAlpha(1);
+                        speaker.setAlpha((float) 1.0);
                         ((DxApplication)getApplication()).getCc().setSpeakerPhoneOn(true);
                     }else{
-                        speaker.setAlpha((float)0.26);
+                        speaker.setAlpha((float) 0.26);
                         ((DxApplication)getApplication()).getCc().setSpeakerPhoneOn(false);
                     }
                 }
@@ -121,10 +108,10 @@ public class CallActivity extends AppCompatActivity {
             try {
                 if(((DxApplication)getApplication()).isInCall()){
                     if(mute.getAlpha()<0.8){
-                        mute.setAlpha(1);
+                        mute.setAlpha((float) 1.0);
                         ((DxApplication)getApplication()).getCc().setMuteMic(true);
                     }else{
-                        mute.setAlpha((float)0.26);
+                        mute.setAlpha((float) 0.26);
                         ((DxApplication)getApplication()).getCc().setMuteMic(false);
                     }
                 }
@@ -217,7 +204,9 @@ public class CallActivity extends AppCompatActivity {
     }
 
     public void answerCall(){
-        answer.setVisibility(View.GONE);
+        runOnUiThread(()->{
+            answer.setVisibility(View.GONE);
+        });
     }
 
     public void answerCall(boolean forReal){

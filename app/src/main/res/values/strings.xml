@@ -21,7 +21,7 @@
     <string name="myaddress">My Address</string>
     <string name="hint_contact_address">Enter Contact Address (.onion)</string>
     <string name="lbl_contact_address">Enter Contact Address To Add One</string>
-    <string name="enter_message">Send secure message</string>
+    <string name="enter_message">Send secure message...</string>
     <string name="send_button">SEND</string>
     <string name="reply">Reply</string>
     <string name="pin">Pin</string>
@@ -62,4 +62,11 @@
     <string name="no_contacts">No Contacts Found</string>
     <string name="online">Online</string>
     <string name="tor_output">tor output</string>
+    <string name="anonymous_messenger">Anonymous Messenger</string>
+    <string name="by_drxtreme">by DrXtreme</string>
+    <string name="welcome_to">welcome to</string>
+    <string name="recording">Recording</string>
+    <string name="send">SEND</string>
+    <string name="textview">TextView</string>
+    <string name="_00_00">00:00</string>
 </resources>

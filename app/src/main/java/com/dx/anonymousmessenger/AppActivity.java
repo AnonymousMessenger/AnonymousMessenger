@@ -22,20 +22,23 @@ public class AppActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_app);
 
-        if(((DxApplication) this.getApplication()).getAccount()!=null){
-            if(((DxApplication) this.getApplication()).getAccount().getPassword()!=null){
-                if(!((DxApplication) getApplication()).isServerReady()){
-//                    showNextFragment(new StartTorFragment());
-                    goToTorActivity();
+        new Thread(()->{
+            if(((DxApplication) this.getApplication()).getAccount()!=null){
+                if(((DxApplication) this.getApplication()).getAccount().getPassword()!=null){
+                    if(!((DxApplication) getApplication()).isServerReady()){
+                        //showNextFragment(new StartTorFragment());
+                        goToTorActivity();
+                    }else{
+                        loadAppFragment();
+                    }
                 }else{
-                    loadAppFragment();
+                    loadPasswordEntryFragment();
                 }
             }else{
                 loadPasswordEntryFragment();
             }
-        }else{
-            loadPasswordEntryFragment();
-        }
+        }).start();
+
     }
 
     public void goToTorActivity() {

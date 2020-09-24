@@ -306,16 +306,20 @@ public class DbHelper {
         return "CREATE TABLE IF NOT EXISTS message "+getMessageColumns()+";";
     }
 
-    public static String getMessageSqlInsert(){
-        return "INSERT INTO message "+getMessageColumns()+" VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+    public static String getMessageSqlInsert(){//todo change ?'s to columns.split.length*?
+        return "INSERT INTO message "+getMessageColumns()+" VALUES(?"+giveMeQMarks(getMessageColumns().split(",").length-1)+")";
     }
 
     public static String getMessageColumns(){
-        return "(send_from,send_to,number,msg,sender,created_at,conversation,received,quote,quote_sender,pinned)";
+        return "(send_from,send_to,number,msg,sender,created_at,conversation,received,quote,quote_sender,pinned,filename,path,type)";
     }
 
     public static Object[] getMessageSqlValues(String from, String to, String number, String msg, String sender, long createdAt, String conversation, boolean received, String quote, String quoteSender){
-        return new Object[]{from,to,number,msg,sender,createdAt,conversation,received,quote,quoteSender,false};
+        return new Object[]{from,to,number,msg,sender,createdAt,conversation,received,quote,quoteSender,false,null,null,null};
+    }
+
+    public static Object[] getMediaMessageSqlValues(String from, String to, String number, String sender, long createdAt, String conversation, boolean received, String filename, String path, String type){
+        return new Object[]{from,to,number,"",sender,createdAt,conversation,received,"","",false,filename,path,type};
     }
 
     public static List<QuotedUserMessage> getMessageList(DxApplication app, String conversation){
@@ -323,8 +327,10 @@ public class DbHelper {
         database.execSQL(DbHelper.getMessageTableSqlCreate());
         try{
             database.query("SELECT "+DbHelper.getMessageColumns().trim().substring(1,getMessageColumns().length()-1)+" FROM message");
+//            database.query("SELECT "+DbHelper.getMessageColumns()+" FROM message");
         }catch (Exception e){
-            Log.e("getMessageList", "updateDbSchema");
+            Log.w("getMessageList", "updating DbSchema");
+            e.printStackTrace();
             updateDbSchema(database);
         }
         Cursor cr = database.rawQuery("SELECT * FROM message WHERE conversation=?;",new Object[]{conversation});
@@ -332,7 +338,7 @@ public class DbHelper {
         if (cr.moveToFirst()) {
             do {
                 QuotedUserMessage message = new QuotedUserMessage(cr.getString(9),cr.getString(8),cr.getString(0),cr.getString(3),cr.getString(4),
-                        cr.getLong(5),cr.getInt(7)>0,cr.getString(1),cr.getInt(10)>0);
+                        cr.getLong(5),cr.getInt(7)>0,cr.getString(1),cr.getInt(10)>0,cr.getString(11),cr.getString(12),cr.getString(13));
 
                 if ((new Date().getTime() - message.getCreatedAt()) < app.getTime2delete()) {
                     messages.add(message);
@@ -349,11 +355,12 @@ public class DbHelper {
 
     private static void updateDbSchema(SQLiteDatabase database) {
         int tries = 0;
-        while(tries<3){
+        Log.e("starting the db update","same");
+        while(tries<2){
             tries++;
             try{
                 database.beginTransaction();
-                String tmpName = "temp_message";
+                String tmpName = "temp_message ";
                 String createTemp = getMessageTableSqlCreate().replace("message",tmpName);
                 database.execSQL(createTemp);
                 int tmpColNum = getNumberOfColumns(tmpName,database);
@@ -362,8 +369,11 @@ public class DbHelper {
                 database.execSQL("INSERT INTO "+tmpName+getMessageColumns()+" SELECT *"+emptyCols+" FROM message;");
                 database.execSQL("DROP TABLE message;");
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO message");
+                database.setTransactionSuccessful();
+                database.endTransaction();
 
-                tmpName = "temp_contact";
+                database.beginTransaction();
+                tmpName = "temp_contact ";
                 createTemp = CONTACT_TABLE_SQL_CREATE.replace("contact",tmpName);
                 database.execSQL(createTemp);
                 tmpColNum = getNumberOfColumns(tmpName,database);
@@ -372,8 +382,13 @@ public class DbHelper {
                 database.execSQL("INSERT INTO "+tmpName+CONTACT_COLUMNS+" SELECT *"+emptyCols+" FROM contact;");
                 database.execSQL("DROP TABLE contact;");
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO contact");
+                database.setTransactionSuccessful();
                 database.endTransaction();
-            }catch (SQLiteException ignored){}
+                Log.e("finishing the db update","good bye");
+            }catch (SQLiteException e){
+                Log.e("ERROR UPDATING DB","THERE WAS AN ERROR UPDATING THE D B YO!");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -384,16 +399,21 @@ public class DbHelper {
 //        return true;
 //    }
 
-    public static void updateReceivedMessage(QuotedUserMessage msg, DxApplication app, String conversation, boolean received){
+//    public static void updateReceivedMessage(QuotedUserMessage msg, DxApplication app, String conversation, boolean received){
 //        SQLiteDatabase database = app.getDb();
 //        database.execSQL(DbHelper.getMessageTableSqlCreate());
 //        database.execSQL(DbHelper.getMessageSqlUpdate(),DbHelper.getMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getMessage(),msg.getSender(),msg.getCreatedAt(),conversation,received,msg.getQuotedMessage(),msg.getQuoteSender()));
-    }
+//    }
 
     public static boolean saveMessage(QuotedUserMessage msg, DxApplication app, String conversation, boolean received){
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getMessageTableSqlCreate());
-        database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getMessage(),msg.getSender(),msg.getCreatedAt(),conversation,received,msg.getQuotedMessage(),msg.getQuoteSender()));
+        if(msg.getType()==null || msg.getType().equals("")){
+            database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getMessage(),msg.getSender(),msg.getCreatedAt(),conversation,received,msg.getQuotedMessage(),msg.getQuoteSender()));
+        }else{
+            database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getMediaMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getSender(),msg.getCreatedAt(),conversation,received,msg.getFilename(),msg.getPath(),msg.getType()));
+        }
+
         return true;
     }
 
@@ -407,6 +427,13 @@ public class DbHelper {
     public static void deleteMessage(QuotedUserMessage msg, DxApplication app) {
         SQLiteDatabase database = app.getDb();
         database.execSQL("DELETE FROM message WHERE send_to=? AND sender=? AND msg=? AND created_at=? AND send_from=? AND received=? AND quote=? AND quote_sender=?", new Object[]{msg.getTo(),msg.getSender(),msg.getMessage(),msg.getCreatedAt(),msg.getAddress(),msg.isReceived(),msg.getQuotedMessage(),msg.getQuoteSender()});
+        try{
+            //todo make deleting files possible!
+            //todo then do network stuff
+//            FileHelper.deleteFile(msg.getPath);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public static void clearConversation(String address, DxApplication app){
@@ -438,6 +465,15 @@ public class DbHelper {
             nulls = nulls.concat(",null");
         }
         return nulls;
+    }
+
+    public static String giveMeQMarks(int qty){
+        String marks = "";
+        if(qty==0){return marks;}
+        for (int i=0;i<qty;i++){
+            marks = marks.concat(",?");
+        }
+        return marks;
     }
 
     public static void setMessageReceived(QuotedUserMessage msg, DxApplication app, String conversation, boolean received){

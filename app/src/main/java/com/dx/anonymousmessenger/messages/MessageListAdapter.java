@@ -3,6 +3,7 @@ package com.dx.anonymousmessenger.messages;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -17,11 +18,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.MessageListActivity;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.media.AudioPlayer;
+import com.dx.anonymousmessenger.util.CallBack;
 import com.dx.anonymousmessenger.util.Utils;
 
 import java.util.List;
 import java.util.Objects;
 
+import static androidx.core.content.ContextCompat.getDrawable;
 import static androidx.core.content.ContextCompat.getSystemService;
 
 public class MessageListAdapter extends RecyclerView.Adapter {
@@ -31,10 +35,15 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_SENT_QUOTE = 4;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED_QUOTE = 5;
     private static final int VIEW_TYPE_MESSAGE_SENT_OK_QUOTE = 6;
+    private static final int VIEW_TYPE_AUDIO_MESSAGE_SENT = 7;
+    private static final int VIEW_TYPE_AUDIO_MESSAGE_SENT_OK = 8;
+    private static final int VIEW_TYPE_AUDIO_MESSAGE_RECEIVED = 9;
 
     private Context mContext;
     private List<QuotedUserMessage> mMessageList;
     private DxApplication app;
+    private String nowPlaying;
+    public AudioPlayer ap;
 
     public MessageListAdapter(Context context, List<QuotedUserMessage> messageList, DxApplication app) {
         this.app = app;
@@ -51,17 +60,21 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         QuotedUserMessage message = mMessageList.get(position);
+        // If the current user is the sender of the message
         if (message.getAddress().equals(app.getHostname())) {
-            // If the current user is the sender of the message
             if(message.isReceived()){
-                if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
+                if(message.getType()!=null && message.getType().equals("audio")){
+                    return VIEW_TYPE_AUDIO_MESSAGE_SENT_OK;
+                }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                     return VIEW_TYPE_MESSAGE_SENT_OK;
                 }else if(message.getQuotedMessage()!=null){
                     return VIEW_TYPE_MESSAGE_SENT_OK_QUOTE;
                 }
                 return VIEW_TYPE_MESSAGE_SENT_OK;
             }else{
-                if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
+                if(message.getType()!=null && message.getType().equals("audio")){
+                    return VIEW_TYPE_AUDIO_MESSAGE_SENT;
+                }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                     return VIEW_TYPE_MESSAGE_SENT;
                 }else if(message.getQuotedMessage()!=null){
                     return VIEW_TYPE_MESSAGE_SENT_QUOTE;
@@ -70,7 +83,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             }
         } else {
             // If some other user sent the message
-            if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
+            if(message.getType()!=null && message.getType().equals("audio")){
+                    return VIEW_TYPE_AUDIO_MESSAGE_RECEIVED;
+            }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                 return VIEW_TYPE_MESSAGE_RECEIVED;
             }else if(message.getQuotedMessage()!=null){
                 return VIEW_TYPE_MESSAGE_RECEIVED_QUOTE;
@@ -108,6 +123,18 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent_quote, parent, false);
             return new QuoteSentMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_AUDIO_MESSAGE_SENT){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_audio_message_sent, parent, false);
+            return new AudioMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_AUDIO_MESSAGE_SENT_OK){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_audio_message_sent_ok, parent, false);
+            return new AudioMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_AUDIO_MESSAGE_RECEIVED){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_audio_message_received, parent, false);
+            return new AudioMessageHolder(view);
         }
         Log.e("finding message type","something went wrong");
         return null;
@@ -135,6 +162,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 break;
             case VIEW_TYPE_MESSAGE_RECEIVED_QUOTE:
                 ((QuoteReceivedMessageHolder) holder).bind(message);
+                break;
+            case VIEW_TYPE_AUDIO_MESSAGE_SENT:
+            case VIEW_TYPE_AUDIO_MESSAGE_SENT_OK:
+            case VIEW_TYPE_AUDIO_MESSAGE_RECEIVED:
+                ((AudioMessageHolder) holder).bind(message);
+                break;
         }
     }
 
@@ -196,6 +229,99 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             });
             //displaying the popup
             popup.show();
+        }
+    }
+
+    public class AudioItemOnClickListener implements View.OnClickListener, CallBack {
+        QuotedUserMessage message;
+        View itemView;
+        ImageView playPauseButton;
+
+        AudioItemOnClickListener(QuotedUserMessage message,View itemView,ImageView playPauseButton){
+            this.itemView = itemView;
+            this.message = message;
+            this.playPauseButton = playPauseButton;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(nowPlaying!=null && nowPlaying.equals(message.getPath())){
+                playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_play_arrow_24));
+                nowPlaying = null;
+                //stop playing
+                if(ap!=null){
+                    ap.stop();
+                    ap = null;
+                }
+                notifyItemChanged(mMessageList.indexOf(message));
+                return;
+            }
+            // if np not null stop first one
+            if(ap!=null){
+                ap.stop();
+                ap = null;
+            }
+            if(nowPlaying!=null){
+                //stop playing
+                for (QuotedUserMessage msg : mMessageList) {
+                    if(msg.getPath()!=null && msg.getPath().equals(nowPlaying)){
+                        nowPlaying = null;
+                        notifyItemChanged(mMessageList.indexOf(msg));
+                        break;
+                    }
+                }
+            }
+
+            nowPlaying = message.getPath();
+            playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_pause_24));
+            notifyItemChanged(mMessageList.indexOf(message));
+            //start playing
+            ap = new AudioPlayer(app,message.getPath());
+            ap.registerCallBack(this);
+            new Thread(ap::play).start();
+        }
+
+        @Override
+        public void doStuff() {
+            try{
+                Handler mainHandler = new Handler(app.getMainLooper());
+                Runnable myRunnable = () -> {
+                    playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_play_arrow_24));
+                    notifyItemChanged(mMessageList.indexOf(message));
+                    nowPlaying = null;
+                    //stop playing
+                    if(ap!=null){
+                        ap = null;
+                    }
+                };
+                mainHandler.post(myRunnable);
+            }catch (Exception ignored) {}
+        }
+
+    }
+
+    private class AudioMessageHolder extends RecyclerView.ViewHolder {
+        TextView timeText,nameText;
+        ImageView playPauseButton;
+
+        AudioMessageHolder(View itemView){
+            super(itemView);
+            timeText = itemView.findViewById(R.id.text_message_time);
+            playPauseButton = itemView.findViewById(R.id.btn_play_pause);
+            nameText = itemView.findViewById(R.id.text_message_name);
+        }
+
+        void bind(QuotedUserMessage message) {
+            if(nameText!=null){
+                nameText.setText(message.getSender());
+            }
+            if(nowPlaying!=null && nowPlaying.equals(message.getPath())){
+                playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_pause_24));
+            }else {
+                playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_play_arrow_24));
+            }
+            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
+            playPauseButton.setOnClickListener(new AudioItemOnClickListener(message,itemView,playPauseButton));
         }
     }
 

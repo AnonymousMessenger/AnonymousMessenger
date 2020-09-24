@@ -114,7 +114,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:alpha="@dimen/material_emphasis_disabled"
+                android:alpha="0.26"
                 android:clickable="true"
                 android:focusable="true"
                 app:srcCompat="@android:drawable/stat_notify_call_mute" />
@@ -137,7 +137,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:alpha="?android:attr/disabledAlpha"
+                android:alpha="0.26"
                 android:clickable="true"
                 android:focusable="true"
                 app:srcCompat="@android:drawable/stat_sys_speakerphone" />

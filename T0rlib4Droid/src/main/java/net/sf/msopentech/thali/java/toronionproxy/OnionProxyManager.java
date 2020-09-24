@@ -90,6 +90,11 @@ public abstract class OnionProxyManager {
                 for (int secondsWaited = 0; secondsWaited < secondsBeforeTimeOut; ++secondsWaited) {
                     if (!isBootstrapped()) {
                         Thread.sleep(1000, 0);
+//                        if(controlConnection!=null){
+//                            Intent gcm_rec = new Intent("tor_status");
+//                            gcm_rec.putExtra("tor_status","Bootstrapped: "+controlConnection.getInfo("status/bootstrap-phase"));
+//                            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//                        }
                     } else {
                         return true;
                     }
@@ -264,6 +269,9 @@ public abstract class OnionProxyManager {
         String phase = null;
         try {
             phase = controlConnection.getInfo("status/bootstrap-phase");
+            Intent gcm_rec = new Intent("tor_status");
+            gcm_rec.putExtra("tor_status","Bootstrapped: "+phase);
+            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         } catch (IOException e) {
             LOG.warn("Control connection is not responding properly to getInfo", e);
         }

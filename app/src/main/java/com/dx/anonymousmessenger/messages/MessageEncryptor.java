@@ -36,11 +36,25 @@ public class MessageEncryptor {
         return new AddressedKeyExchangeMessage(kem,akem.getAddress(),true);
     }
 
+    //encrypt for bytes
+    public static byte[] encrypt(byte[] msg, SignalProtocolStore store, SignalProtocolAddress address) throws UntrustedIdentityException {
+        SessionCipher asc = new SessionCipher(store, address);
+        return asc.encrypt(msg).serialize();
+    }
+
+    //encrypt for strings (the original)
     public static byte[] encrypt(String msg, SignalProtocolStore store, SignalProtocolAddress address) throws UntrustedIdentityException {
         SessionCipher asc = new SessionCipher(store, address);
         return asc.encrypt(msg.getBytes(StandardCharsets.UTF_8)).serialize();
     }
 
+    //decrypt for bytes
+    public static byte[] decrypt(byte[] msg, SignalProtocolStore store, SignalProtocolAddress address) throws LegacyMessageException, InvalidMessageException, DuplicateMessageException, NoSessionException, UntrustedIdentityException {
+        SessionCipher asc = new SessionCipher(store, address);
+        return asc.decrypt(new SignalMessage(msg));
+    }
+
+    //decrypt for strings
     public static String decrypt(AddressedEncryptedMessage msg, SignalProtocolStore store, SignalProtocolAddress address) throws LegacyMessageException, InvalidMessageException, DuplicateMessageException, NoSessionException, UntrustedIdentityException {
         SessionCipher asc = new SessionCipher(store, address);
         return new String(asc.decrypt(new SignalMessage(msg.getMsg())), StandardCharsets.UTF_8);

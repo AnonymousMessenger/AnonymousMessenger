@@ -6,6 +6,7 @@ import android.util.Log;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.call.CallController;
 import com.dx.anonymousmessenger.crypto.Entity;
+import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 
 import net.sf.controller.network.AndroidTorRelay;
@@ -14,12 +15,12 @@ import net.sf.controller.network.TorServerSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
 public class ServerSocketViaTor {
@@ -171,6 +172,64 @@ public class ServerSocketViaTor {
                                         e.printStackTrace();
                                     }
                                     return;
+                                }else if(msg.equals("media")){
+                                    try {
+                                        outputStream.writeUTF("ok");
+                                        outputStream.flush();
+                                        msg = in.readUTF();
+                                        if(!msg.trim().endsWith(".onion")){
+                                            //no bueno
+                                            outputStream.writeUTF("nuf");
+                                            outputStream.flush();
+                                            sock.close();
+                                            return;
+                                        }
+                                        String address= msg.trim();
+                                        if(!DbHelper.contactExists(address,app)){
+                                            //no bueno
+                                            outputStream.writeUTF("nuf");
+                                            outputStream.flush();
+                                            sock.close();
+                                            return;
+                                        }
+                                        outputStream.writeUTF("ok");
+                                        outputStream.flush();
+                                        msg = in.readUTF();
+                                        String recMsg = msg;
+                                        //MessageSender.messageReceiver(recMsg,app);
+                                        outputStream.writeUTF("ok");
+                                        outputStream.flush();
+                                        int fileSize = in.readInt();
+                                        //todo set maximum file size
+                                        outputStream.writeUTF("ok");
+                                        outputStream.flush();
+                                        byte[] buffer;
+                                        ByteArrayOutputStream cache = new ByteArrayOutputStream();
+                                        int total_read = 0;
+                                        int read;
+                                        while(total_read < fileSize){
+                                            if(in.available() < 1024){
+                                                if(in.available() == 0){
+                                                    continue;
+                                                }
+                                                buffer = new byte[in.available()];
+                                            }else{
+                                                buffer = new byte[1024];
+                                            }
+                                            read = in.read(buffer,0,buffer.length);
+                                            total_read += read;
+                                            System.out.println("READ BYTES : "+read);
+                                            cache.write(buffer,0,buffer.length);
+                                        }
+                                        in.close();
+                                        System.out.println("TOTAL BYTES READ : "+total_read);
+                                        System.out.println("FILE SIZE : "+fileSize);
+                                        MessageSender.mediaMessageReceiver(cache.toByteArray(),recMsg,app);
+                                    } catch (Exception e) {
+                                        Log.e("RECEIVING MEDIA MESSAGE","ERROR BELOW");
+                                        e.printStackTrace();
+                                    }
+                                    return;
                                 }
                                 while(!msg.equals("nuf"))
                                 {
@@ -191,7 +250,7 @@ public class ServerSocketViaTor {
 
                     }catch (Exception e){
                         Log.e("SERVER ERRORRRRR", "EROROROROROROROR");
-                        Log.e("Server error", Objects.requireNonNull(e.getMessage()));
+                        e.printStackTrace();
                     }
                 }
             } catch (Exception  e) {
