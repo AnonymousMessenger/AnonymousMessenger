@@ -23,12 +23,15 @@ public class AppActivity extends AppCompatActivity {
         setContentView(R.layout.activity_app);
 
         new Thread(()->{
+            //has logged in?
             if(((DxApplication) this.getApplication()).getAccount()!=null){
+                //has logged in?
                 if(((DxApplication) this.getApplication()).getAccount().getPassword()!=null){
+                    //still starting up tor?
                     if(!((DxApplication) getApplication()).isServerReady()){
-                        //showNextFragment(new StartTorFragment());
                         goToTorActivity();
                     }else{
+                        //all set
                         loadAppFragment();
                     }
                 }else{

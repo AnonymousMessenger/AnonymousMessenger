@@ -85,7 +85,7 @@ public class AudioRecordingService extends Service {
         }).start();
     }
 
-    public void stopRecording() throws NoSuchAlgorithmException {
+    public void stopRecording() {
         timerOn = false;
         status = false;
         recorder.stop();
@@ -98,7 +98,12 @@ public class AudioRecordingService extends Service {
         long time = new Date().getTime();
         //save bytes encrypted into a file and get path
         String filename = String.valueOf(time);
-        String path = FileHelper.saveFile(recorded,app,filename);
+        String path = null;
+        try {
+            path = FileHelper.saveFile(recorded,app,filename);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
         if(path==null){
             return;
         }

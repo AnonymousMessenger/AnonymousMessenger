@@ -19,9 +19,6 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 //            Objects.requireNonNull(getSupportActionBar()).hide();
         }catch (Exception ignored){}
-
-//        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-//        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_main);
 
         ((DxApplication) getApplication()).enableStrictMode();
@@ -31,20 +28,27 @@ public class MainActivity extends AppCompatActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            File file =  new File(getFilesDir(), "demo.db");
-            if(file.exists()) //here's how to check
-            {
-                switchToAppView();
-            }else{
-                if(((DxApplication)getApplication()).isServiceRunningInForeground(this, MyService.class)){
-                    switchToSetupInProcess();
+            try{
+                File file =  new File(getFilesDir(), "demo.db");
+                //already has an account
+                if(file.exists()) //here's how to check
+                {
+                    switchToAppView();
                 }else{
-                    runOnUiThread(()->{
-                        Button next = findViewById(R.id.next);
-                        next.setVisibility(View.VISIBLE);
-                        next.setEnabled(true);
-                    });
+                    //still setting up account
+                    if(((DxApplication)getApplication()).isServiceRunningInForeground(this, MyService.class)){
+                        switchToSetupInProcess();
+                    }else{
+                        //first time user
+                        runOnUiThread(()->{
+                            Button next = findViewById(R.id.next);
+                            next.setVisibility(View.VISIBLE);
+                            next.setEnabled(true);
+                        });
+                    }
                 }
+            }catch (Exception ignored) {
+                switchToAppView();
             }
         }).start();
     }

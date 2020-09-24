@@ -24,7 +24,8 @@
         <item name="colorAccent">@color/dx_brand_green</item>
     </style>
     <style name="DXButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:theme">@style/ButtonTheme</item>
+<!--        <item name="android:theme">@style/ButtonTheme</item>-->
+        <item name="android:background">@drawable/button_ripple</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/text_size_medium</item>

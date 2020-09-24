@@ -87,10 +87,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         audioLayout = findViewById(R.id.layout_audio);
         txtAudioTimer = findViewById(R.id.txt_audio_timer);
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
-        mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
+        mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication(), mMessageRecycler);
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
         mMessageRecycler.setAdapter(mMessageAdapter);
-        mMessageRecycler.scrollToPosition(messageList.size() - 1);
+//        mMessageRecycler.scrollToPosition(messageList.size() - 1);
         send.setOnClickListener(v -> {
             if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1))){
                 Toast.makeText(this,"Session doesn't exist, not sending message",Toast.LENGTH_SHORT).show();
@@ -149,6 +149,15 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 txt.setVisibility(View.GONE);
                 audioLayout.setVisibility(View.VISIBLE);
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                    new Thread(()->{
+                        try{
+                            if(mMessageAdapter!=null && mMessageAdapter.ap!=null){
+                                mMessageAdapter.ap.stop(1);
+                                mMessageAdapter.ap = null;
+                            }
+                        }catch (Exception ignored) {}
+                    }).start();
+
                     Intent intent = new Intent(this, AudioRecordingService.class);
                     intent.setAction("start_recording");
                     intent.putExtra("address",getIntent().getStringExtra("address"));
@@ -216,6 +225,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     }
                 }catch (Exception ignored){messageList=null;break;}
             }
+            //maybe remove this line?
             messageList = null;
         });
         messageChecker.start();
@@ -237,8 +247,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     getIntent().getStringExtra("address"));
             runOnUiThread(()->{
                 try{
-                    mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
-                    mMessageRecycler.setAdapter(mMessageAdapter);
+//                    mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
+//                    mMessageRecycler.setAdapter(mMessageAdapter);
+                    mMessageAdapter.setMessageList(messageList);
                     mMessageAdapter.notifyDataSetChanged();
                     if(!messageList.isEmpty()){
                         mMessageRecycler.scrollToPosition(messageList.size() - 1);
@@ -261,8 +272,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             messageList = tmp;
             runOnUiThread(()->{
                 try{
-                    mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
-                    mMessageRecycler.setAdapter(mMessageAdapter);
+//                    mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
+//                    mMessageRecycler.setAdapter(mMessageAdapter);
+                    mMessageAdapter.setMessageList(messageList);
                     mMessageAdapter.notifyDataSetChanged();
                     mMessageRecycler.scrollToPosition(messageList.size() - 1);
                 }catch (Exception ignored){}

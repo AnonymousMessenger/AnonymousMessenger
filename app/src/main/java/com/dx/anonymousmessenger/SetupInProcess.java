@@ -29,20 +29,11 @@ public class SetupInProcess extends AppCompatActivity {
             }
         }).start();
         statusText = findViewById(R.id.status_text);
-        mMyBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                new Thread(()->{
-                    updateUi(intent.getStringExtra("tor_status"));
-                }).start();
-            }
-        };
-        try {
-            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+//        try {
+//            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -58,6 +49,17 @@ public class SetupInProcess extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        mMyBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                new Thread(()->{
+                    try{
+                        updateUi(intent.getStringExtra("tor_status"));
+                    }catch (Exception ignored) {}
+                }).start();
+            }
+        };
         try {
             LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
         } catch (Exception e){
@@ -80,7 +82,14 @@ public class SetupInProcess extends AppCompatActivity {
             return;
         }
         if(torStatus.contains("ALL GOOD") || torStatus.contains("message") || torStatus.contains("status")){
-            statusText.setText(torStatus);
+            runOnUiThread(()->{
+                try {
+                    statusText.setText(torStatus);
+                }catch (Exception ignored) {}
+                Intent intent = new Intent(this, AppActivity.class);
+                startActivity(intent);
+                finish();
+            });
             new Thread(()->{
                 LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
                 if(getIntent().getBooleanExtra("first_time",true)){
@@ -88,9 +97,6 @@ public class SetupInProcess extends AppCompatActivity {
                             "You got all you need to chat securely with your friends!",false);
                 }
             }).start();
-            Intent intent = new Intent(this, AppActivity.class);
-            startActivity(intent);
-            finish();
         }else{
             try {
                 runOnUiThread(()->{

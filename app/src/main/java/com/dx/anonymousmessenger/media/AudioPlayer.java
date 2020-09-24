@@ -58,8 +58,11 @@ public class AudioPlayer {
 
     public void stop(int n){
         play = false;
+        path = null;
         try{
+            System.out.println("checking for callback");
             if(callBack!=null){
+                System.out.println("found callback");
                 callBack.doStuff();
             }
         }catch (Exception e) {
@@ -69,6 +72,7 @@ public class AudioPlayer {
 
     public void stop(){
         play = false;
+        path = null;
     }
 
     public void setAudioDefaults(){

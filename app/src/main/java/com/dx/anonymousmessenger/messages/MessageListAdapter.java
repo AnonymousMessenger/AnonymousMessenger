@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -12,8 +13,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.MessageListActivity;
@@ -28,7 +32,7 @@ import java.util.Objects;
 import static androidx.core.content.ContextCompat.getDrawable;
 import static androidx.core.content.ContextCompat.getSystemService;
 
-public class MessageListAdapter extends RecyclerView.Adapter {
+public class MessageListAdapter extends Adapter {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
     private static final int VIEW_TYPE_MESSAGE_SENT_OK = 3;
@@ -40,15 +44,21 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_AUDIO_MESSAGE_RECEIVED = 9;
 
     private Context mContext;
+    private RecyclerView mMessageRecycler;
     private List<QuotedUserMessage> mMessageList;
     private DxApplication app;
     private String nowPlaying;
     public AudioPlayer ap;
 
-    public MessageListAdapter(Context context, List<QuotedUserMessage> messageList, DxApplication app) {
+    public MessageListAdapter(Context context, List<QuotedUserMessage> messageList, DxApplication app, RecyclerView mMessageRecycler) {
         this.app = app;
         mContext = context;
         mMessageList = messageList;
+        this.mMessageRecycler = mMessageRecycler;
+    }
+
+    public void setMessageList(List<QuotedUserMessage> mMessageList) {
+        this.mMessageList = mMessageList;
     }
 
     @Override
@@ -95,8 +105,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     }
 
     // Inflates the appropriate layout according to the ViewType.
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
 
         if (viewType == VIEW_TYPE_MESSAGE_SENT_OK) {
@@ -137,7 +148,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             return new AudioMessageHolder(view);
         }
         Log.e("finding message type","something went wrong");
-        return null;
+        view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_message_sent, parent, false);
+        return new SentMessageHolder(view);
     }
 
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
@@ -232,6 +245,44 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
     }
 
+    public class QuoteItemOnClickListener implements View.OnClickListener {
+        QuotedUserMessage message;
+        View itemView;
+        TextView messageText;
+
+        QuoteItemOnClickListener(QuotedUserMessage message,View itemView,TextView messageText){
+            this.itemView = itemView;
+            this.message = message;
+            this.messageText = messageText;
+        }
+
+        @Override
+        public void onClick(View v) {
+            new Thread(()->{
+                for (QuotedUserMessage msg : mMessageList) {
+                    if(msg.getMessage().equals(message.getQuotedMessage())
+                            && msg.getSender().equals(message.getQuoteSender())){
+                        Handler h = new Handler(Looper.getMainLooper());
+                        h.post(()->{
+                            mMessageRecycler.scrollToPosition(mMessageList.indexOf(msg));
+                        });
+                        try{
+                            Thread.sleep(350);
+                        }catch (Exception ignored) {}
+                        h.post(()->{
+                            notifyItemChanged(mMessageList.indexOf(msg));
+                        });
+                        return;
+                    }
+                }
+                Handler h = new Handler(Looper.getMainLooper());
+                h.post(()->{
+                    Toast.makeText(app, "can't find original message", Toast.LENGTH_SHORT).show();
+                });
+            }).start();
+        }
+    }
+
     public class AudioItemOnClickListener implements View.OnClickListener, CallBack {
         QuotedUserMessage message;
         View itemView;
@@ -286,18 +337,20 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             try{
                 Handler mainHandler = new Handler(app.getMainLooper());
                 Runnable myRunnable = () -> {
-                    playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_play_arrow_24));
-                    notifyItemChanged(mMessageList.indexOf(message));
-                    nowPlaying = null;
-                    //stop playing
-                    if(ap!=null){
-                        ap = null;
-                    }
+                    try{
+                        //stop playing
+                        if(ap!=null){
+                            ap = null;
+                        }
+                        nowPlaying = null;
+                        notifyDataSetChanged();
+                        notifyItemChanged(mMessageList.indexOf(message));
+                        playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_play_arrow_24));
+                    }catch (Exception e) {e.printStackTrace();}
                 };
                 mainHandler.post(myRunnable);
-            }catch (Exception ignored) {}
+            }catch (Exception e) {e.printStackTrace();}
         }
-
     }
 
     private class AudioMessageHolder extends RecyclerView.ViewHolder {
@@ -388,6 +441,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             super.bind(message);
             quote.setText(message.getQuotedMessage());
             quoteSender.setText(message.getQuoteSender().equals(app.getAccount().getNickname())?"You":message.getQuoteSender());
+            quote.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
+            quoteSender.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
         }
     }
 
@@ -405,6 +460,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             super.bind(message);
             quote.setText(message.getQuotedMessage());
             quoteSender.setText(message.getQuoteSender().equals(app.getAccount().getNickname())?"You":message.getQuoteSender());
+            quote.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
+            quoteSender.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
         }
     }
 
@@ -422,6 +479,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             super.bind(message);
             quote.setText(message.getQuotedMessage());
             quoteSender.setText(message.getQuoteSender().equals(app.getAccount().getNickname())?"You":message.getQuoteSender());
+            quote.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
+            quoteSender.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
         }
     }
 

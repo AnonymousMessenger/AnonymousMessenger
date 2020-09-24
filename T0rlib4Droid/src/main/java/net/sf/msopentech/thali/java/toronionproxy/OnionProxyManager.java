@@ -269,9 +269,9 @@ public abstract class OnionProxyManager {
         String phase = null;
         try {
             phase = controlConnection.getInfo("status/bootstrap-phase");
-            Intent gcm_rec = new Intent("tor_status");
-            gcm_rec.putExtra("tor_status","Bootstrapped: "+phase);
-            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//            Intent gcm_rec = new Intent("tor_status");
+//            gcm_rec.putExtra("tor_status","Bootstrapped: "+phase);
+//            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         } catch (IOException e) {
             LOG.warn("Control connection is not responding properly to getInfo", e);
         }

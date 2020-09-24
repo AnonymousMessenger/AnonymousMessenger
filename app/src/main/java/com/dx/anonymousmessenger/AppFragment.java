@@ -102,14 +102,14 @@ public class AppFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                if(intent.getStringExtra("tor_status")!=null){
-                    if(Objects.requireNonNull(intent.getStringExtra("tor_status")).equals("ALL GOOD")){
-                        checkConnectivity();
-                    }
-                    updateTorOutput(Objects.requireNonNull(intent.getStringExtra("tor_status")));
-                }else{
-                    updateUi();
+            if(intent.getStringExtra("tor_status")!=null){
+                if(Objects.requireNonNull(intent.getStringExtra("tor_status")).equals("ALL GOOD")){
+                    checkConnectivity();
                 }
+                updateTorOutput(Objects.requireNonNull(intent.getStringExtra("tor_status")));
+            }else{
+                updateUi();
+            }
             }
         };
 
@@ -175,6 +175,7 @@ public class AppFragment extends Fragment {
         mAdapter = new MyRecyclerViewAdapter((DxApplication) Objects.requireNonNull(getActivity()).getApplication(),lst,this);
         recyclerView.setAdapter(mAdapter);
 
+
         checkConnectivity();
         updateUi();
         checkMessages();
@@ -229,10 +230,8 @@ public class AppFragment extends Fragment {
         }
         if(messageChecker.isAlive()){
             messageChecker.interrupt();
-            messageChecker = null;
-        }else{
-            messageChecker = null;
         }
+        messageChecker = null;
     }
 
     public void updateUi(){
