@@ -24,8 +24,9 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:elevation="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_message_body"
                 app:srcCompat="@android:drawable/ic_lock_lock" />
 
             <TextView
@@ -66,7 +67,7 @@
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/img_seen"
                 app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
 
             <TextView

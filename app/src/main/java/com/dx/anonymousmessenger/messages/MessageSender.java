@@ -61,11 +61,13 @@ public class MessageSender {
                     return;
                 }
                 DbHelper.saveMessage(msg,app,to, false);
+                Intent gcm_rec = new Intent("your_action");
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 //split message to file and metadata (msg is metadata)
                 byte[] file = FileHelper.getFile(msg.getPath(),app);
 
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
-                
+
                 received = new TorClientSocks4().sendMedia(to,app,aem.toJson().toString(),MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
             }catch (Exception e){
 //                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
@@ -108,7 +110,7 @@ public class MessageSender {
             KeyExchangeMessage kem = MessageEncryptor.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1),ikem);
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),true);
             boolean received = new TorClientSocks4().Init(to,app,akem.toJson().toString());
-            DbHelper.saveMessage(msg,app,to,received);
+            DbHelper.setMessageReceived(msg,app,to,received);
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         }catch (Exception | StaleKeyExchangeException e){
             Log.e("SENDER MESSAGE EXCHANGE", "FAIL" );
@@ -147,8 +149,8 @@ public class MessageSender {
 
                 if(!Objects.requireNonNull(akem).getKem().isInitiate()){
                     try {
-                        Log.d("KEM RESPONSE", "messageReceiver: "+ Arrays.toString(akem.getKem().serialize()));
-                        Log.d("KEM RESPONSE", "FROM: "+ akem.getAddress());
+//                        Log.d("KEM RESPONSE", "messageReceiver: "+ Arrays.toString(akem.getKem().serialize()));
+//                        Log.d("KEM RESPONSE", "FROM: "+ akem.getAddress());
 
                         SessionBuilder sb = new SessionBuilder(app.getEntity().getStore(), new SignalProtocolAddress(akem.getAddress(),1));
                         sb.process(akem.getKem());

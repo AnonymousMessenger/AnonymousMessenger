@@ -242,8 +242,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     mMessageAdapter.notifyDataSetChanged();
                     if(!messageList.isEmpty()){
                         mMessageRecycler.scrollToPosition(messageList.size() - 1);
-                        String newName = messageList.get(messageList.size()-1).getSender();
-                        Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
+                        if(messageList.get(messageList.size()-1).getAddress()!=((DxApplication) getApplication()).getHostname()){
+                            String newName = messageList.get(messageList.size()-1).getSender();
+                            Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
+                        }
                     }
                 }catch (Exception ignored) {}
             });
