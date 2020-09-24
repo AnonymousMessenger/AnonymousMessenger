@@ -242,7 +242,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     mMessageAdapter.notifyDataSetChanged();
                     if(!messageList.isEmpty()){
                         mMessageRecycler.scrollToPosition(messageList.size() - 1);
-                        if(messageList.get(messageList.size()-1).getAddress()!=((DxApplication) getApplication()).getHostname()){
+                        if(messageList.get(messageList.size()-1).getAddress().equals(((DxApplication)getApplication()).getHostname())){
                             String newName = messageList.get(messageList.size()-1).getSender();
                             Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
                         }
@@ -278,6 +278,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             @Override
             public void onReceive(Context context, Intent intent)
             {
+                if(intent.getStringExtra("error")!=null){
+                    Toast.makeText(getApplication(),intent.getStringExtra("error"),Toast.LENGTH_SHORT).show();
+                }
                 updateUi();
             }
         };

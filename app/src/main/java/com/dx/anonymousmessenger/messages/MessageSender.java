@@ -34,11 +34,13 @@ public class MessageSender {
                     Log.e("MESSAGE SENDER", "sendMessage: session isn't contained nigga!!!" );
                     return;
                 }
-                DbHelper.saveMessage(msg,app,to,false);
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
+                DbHelper.saveMessage(msg,app,to,false);
                 received = new TorClientSocks4().Init(to,app,aem.toJson().toString());
             }catch (Exception e){
-//                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
+                Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("error","Couldn't encrypt message");
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 e.printStackTrace();
                 Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
             }finally {

@@ -32,6 +32,16 @@
         <item name="android:textColor">@color/dx_button_text</item>
     </style>
 
+
+    <style name="DXSendButton" parent="Widget.AppCompat.Button.Colored">
+<!--        <item name="colorAccent">@color/dx_brand_green</item>-->
+<!--        <item name="android:layout_width">match_parent</item>-->
+<!--        <item name="android:layout_height">wrap_content</item>-->
+<!--        <item name="android:textSize">@dimen/text_size_medium</item>-->
+<!--        <item name="android:padding">@dimen/margin_large</item>-->
+<!--        <item name="android:textColor">@color/dx_button_text</item>-->
+    </style>
+
     <style name="AppAlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <!-- Used for the buttons -->
         <item name="colorAccent">@color/dx_white</item>
