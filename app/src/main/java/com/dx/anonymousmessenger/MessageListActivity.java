@@ -19,6 +19,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -29,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,7 +65,8 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     private TextView txtAudioTimer = null;
     private FloatingActionButton audio;
     private LinearLayout audioLayout;
-    BroadcastReceiver timeBroadcastReceiver;
+    private FloatingActionButton scrollDownFab;
+    private BroadcastReceiver timeBroadcastReceiver;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -86,18 +90,79 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         audio = findViewById(R.id.fab_audio);
         audioLayout = findViewById(R.id.layout_audio);
         txtAudioTimer = findViewById(R.id.txt_audio_timer);
+        scrollDownFab = findViewById(R.id.fab_scroll_down);
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication(), mMessageRecycler);
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
         mMessageRecycler.setAdapter(mMessageAdapter);
-//        mMessageRecycler.scrollToPosition(messageList.size() - 1);
+        mMessageRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if(messageList==null){
+                    scrollDownFab.setVisibility(View.GONE);
+                    return;
+                }
+                if (dy > 0
+                        && ((LinearLayoutManager)recyclerView.getLayoutManager())!=null
+                        && ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition()!=(messageList.size()-1)) { // scrolling down
+                    if(scrollDownFab.getVisibility()==View.VISIBLE){
+                        return;
+                    }
+                    scrollDownFab.clearAnimation();
+                    final Animation animation = new AlphaAnimation(0f, 1f);
+                    animation.setInterpolator(new FastOutSlowInInterpolator());
+                    animation.setDuration(150);
+                    animation.reset();
+                    animation.setStartTime(0);
+                    scrollDownFab.setVisibility(View.VISIBLE);
+                    scrollDownFab.startAnimation(animation);
+                } else if (dy < 0
+                        && ((LinearLayoutManager)recyclerView.getLayoutManager())!=null
+                        && ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition()!=(messageList.size()-1)) { // scrolling up
+                    if(scrollDownFab.getVisibility()==View.VISIBLE){
+                        return;
+                    }
+                    scrollDownFab.clearAnimation();
+                    final Animation animation = new AlphaAnimation(0f, 1f);
+                    animation.setInterpolator(new FastOutSlowInInterpolator());
+                    animation.setDuration(150);
+                    animation.reset();
+                    animation.setStartTime(0);
+                    scrollDownFab.setVisibility(View.VISIBLE);
+                    scrollDownFab.startAnimation(animation);
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if(messageList==null){
+                    scrollDownFab.setVisibility(View.GONE);
+                    return;
+                }
+                if(scrollDownFab.getVisibility()==View.GONE){
+                    return;
+                }
+                if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && ((LinearLayoutManager)recyclerView.getLayoutManager())!=null
+                        && ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition()==(messageList.size()-1)) { // No scrolling
+                    scrollDownFab.clearAnimation();
+                    final Animation animation = new AlphaAnimation(1f, 0f);
+                    animation.setInterpolator(new FastOutSlowInInterpolator());
+                    animation.setDuration(150);
+                    animation.reset();
+                    animation.setStartTime(0);
+                    scrollDownFab.setVisibility(View.GONE);
+                    scrollDownFab.startAnimation(animation);
+                }
+            }
+        });
+        scrollDownFab.setOnClickListener(v -> mMessageRecycler.smoothScrollToPosition(messageList.size()-1));
         send.setOnClickListener(v -> {
             if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1))){
                 Toast.makeText(this,"Session doesn't exist, not sending message",Toast.LENGTH_SHORT).show();
                 new Thread(()-> MessageSender.sendKeyExchangeMessage(((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
                 return;
             }
-            //todo check if waiting for key exchange response
             TextView quoteSenderTyping = findViewById(R.id.quote_sender_typing);
             TextView quoteTextTyping = findViewById(R.id.quote_text_typing);
             QuotedUserMessage msg = new QuotedUserMessage(quoteSenderTyping.getText().toString().equals("You")?((DxApplication)getApplication()).getAccount().getNickname():getIntent().getStringExtra("nickname"),quoteTextTyping.getText().toString(),((DxApplication)getApplication()).getHostname(),txt.getText().toString(),((DxApplication)getApplication()).getAccount().getNickname(),new Date().getTime(),false,getIntent().getStringExtra("address"),false);
@@ -110,7 +175,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             quoteTextTyping.setVisibility(View.GONE);
             audio.setVisibility(View.VISIBLE);
             mMessageAdapter.notifyItemInserted(messageList.size()-1);
-            mMessageRecycler.scrollToPosition(messageList.size() - 1);
+            mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
         });
         quoteTextTyping.setOnClickListener(v -> {
             quoteTextTyping.setVisibility(View.GONE);
@@ -276,7 +341,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 //                    mMessageRecycler.setAdapter(mMessageAdapter);
                     mMessageAdapter.setMessageList(messageList);
                     mMessageAdapter.notifyDataSetChanged();
-                    mMessageRecycler.scrollToPosition(messageList.size() - 1);
+                    mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
                 }catch (Exception ignored){}
             });
         }).start();
@@ -397,18 +462,16 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CODE) {// If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission is granted. Continue the action or workflow
-                // in your app.
-            } else {
+//            if (grantResults.length > 0 &&
+//                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // Permission is granted. Continue the action or workflow
+//                // in your app.
+//            } else {
                 new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
                         .setTitle("Denied Microphone Permission")
                         .setMessage("this way you can't make or receive calls")
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(R.string.ask_me_again, (dialog, which) -> {
-                            getMicrophonePerms();
-                        })
+                        .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getMicrophonePerms())
                         .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
 
                         });
@@ -417,19 +480,20 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 // At the same time, respect the user's decision. Don't link to
                 // system settings in an effort to convince the user to change
                 // their decision.
-            }
+//            }
         }
         // Other 'case' lines to check for other
         // permissions this app might request.
     }
 
     public void getMicrophonePerms(){
-        if (ContextCompat.checkSelfPermission(
-                this, Manifest.permission.RECORD_AUDIO) ==
-                PackageManager.PERMISSION_GRANTED) {
-            // You can use the API that requires the permission.
-
-        } else if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+//        if (ContextCompat.checkSelfPermission(
+//                this, Manifest.permission.RECORD_AUDIO) ==
+//                PackageManager.PERMISSION_GRANTED) {
+//            // You can use the API that requires the permission.
+//
+//        } else
+            if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
             // In an educational UI, explain to the user why your app requires this
             // permission for a specific feature to behave as expected. In this UI,
             // include a "cancel" or "no thanks" button that allows the user to

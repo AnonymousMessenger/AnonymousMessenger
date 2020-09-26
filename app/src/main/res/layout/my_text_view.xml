@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/contact_item_back"
     android:layout_margin="5dp"
-    android:padding="5dp"
+    android:background="@drawable/button_ripple"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:padding="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,23 +18,25 @@
 
         <ImageView
             android:id="@+id/seen"
-            android:layout_width="14dp"
-            android:layout_height="12dp"
-            android:background="@color/dx_night_950"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/seen_image"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/time_text"
             app:layout_constraintStart_toStartOf="@+id/time_text"
-            app:layout_constraintTop_toBottomOf="@+id/contact_unread_circle"
+            app:layout_constraintTop_toBottomOf="@+id/time_text"
             app:srcCompat="@drawable/ic_launcher_foreground" />
 
         <TextView
             android:id="@+id/message_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:ellipsize="end"
             android:maxLength="25"
             android:maxLines="1"
-            android:text="dude forgot to remind you about that thing over there"
+            android:text="@string/text_msg_placeholder"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/image_message_profile2" />
 
@@ -42,7 +44,9 @@
             android:id="@+id/image_message_profile2"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_margin="4dp"
             android:background="@drawable/circle"
+            android:contentDescription="@string/profile_image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -51,19 +55,20 @@
             android:id="@+id/contact_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:ellipsize="end"
             android:maxLength="25"
             android:maxLines="1"
-            android:text="sfsdfdgsdhfdghfdghfghfghghsdfgdfghdfghdsfgdfgdfgsdfgfds"
-            android:textSize="@dimen/margin_activity_horizontal"
+            android:text="@string/really_long_word"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/image_message_profile2"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/contact_unread_circle"
-            android:layout_width="24dp"
-            android:layout_height="14dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:background="@drawable/unread_circle"
             android:contentDescription="@string/to_show_when_it_is_unread"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -74,14 +79,11 @@
             android:id="@+id/time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="31m"
+            android:text="@string/time_passed_placeholder"
             app:layout_constraintEnd_toStartOf="@+id/contact_unread_circle"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,7 +26,7 @@
                 android:background="@drawable/rounded_rectangle_dark"
                 android:maxWidth="240dp"
                 android:padding="8dp"
-                android:text="TextView"
+                android:text="@string/textview"
 
                 android:textColor="#ffffff"
                 android:textSize="14sp"
@@ -37,7 +37,7 @@
                 android:id="@+id/quote_sender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/textview"
                 app:layout_constraintEnd_toStartOf="@+id/quote_text"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_rectangle_steel"
                 android:padding="8dp"
-                android:text="John Doe"
+                android:text="@string/john_doe"
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintStart_toEndOf="@+id/image_message_profile"
@@ -58,6 +58,7 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:background="@drawable/circle"
+                android:contentDescription="@string/profile_image"
                 app:layout_constraintBottom_toBottomOf="@+id/text_message_name"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/text_message_name" />
@@ -66,6 +67,7 @@
                 android:id="@+id/img_seen2"
                 android:layout_width="13dp"
                 android:layout_height="17dp"
+                android:contentDescription="@string/indicates_secure_messaging"
                 android:elevation="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -79,18 +81,18 @@
                 android:background="@drawable/rounded_rectangle_steel"
                 android:maxWidth="240dp"
                 android:padding="8dp"
-                android:text="hi man, how are you?"
+                android:text="@string/hi_man_how_are_you"
                 android:textColor="#ffffff"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/img_seen2"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_message_name" />
 
             <TextView
                 android:id="@+id/text_message_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="11:40"
+                android:text="@string/time_placeholder"
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"

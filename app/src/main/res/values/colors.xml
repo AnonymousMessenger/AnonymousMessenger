@@ -17,5 +17,7 @@
     <color name="dx_button_text">#ffffff</color>
     <color name="dx_white">#ffffff</color>
     <color name="red_500">#F44336</color>
+    <color name="startGradientColor">#3B0845</color>
+    <color name="endGradientColor">#28062C</color>
 
 </resources>

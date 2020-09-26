@@ -15,8 +15,8 @@
             android:layout_width="0dp"
             android:layout_height="26dp"
             android:layout_margin="4dp"
-            android:layout_marginBottom="0dp"
-            android:background="@color/dx_lime_400"
+            android:background="@drawable/button_ripple"
+            android:fontFamily="sans-serif-condensed"
             android:gravity="center"
             android:padding="4dp"
             android:paddingBottom="0dp"
@@ -46,8 +46,7 @@
                 android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="2dp"
+                android:contentDescription="@string/online"
                 android:src="@drawable/ic_online" />
 
             <ImageView
@@ -56,14 +55,14 @@
                 android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="2dp"
+                android:contentDescription="@string/offline"
                 android:src="@drawable/ic_offline" />
 
             <TextView
                 android:id="@+id/online_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="monospace"
                 android:text="@string/online"
                 tools:layout_editor_absoluteX="51dp"
                 tools:layout_editor_absoluteY="18dp" />
@@ -109,6 +108,7 @@
                 android:id="@+id/imageView2"
                 android:layout_width="350dp"
                 android:layout_height="350dp"
+                android:contentDescription="@string/picture_of_contact"
                 android:src="@drawable/ic_baseline_contacts_24" />
 
             <TextView
@@ -119,7 +119,7 @@
                 android:gravity="center"
                 android:text="@string/no_contacts"
                 android:textColor="@color/dx_brand_green"
-                android:textSize="90px"
+                android:textSize="32sp"
                 android:textStyle="bold" />
         </LinearLayout>
 

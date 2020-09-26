@@ -20,8 +20,8 @@
     <string name="decrypt_button">Decrypt</string>
     <string name="myaddress">My Address</string>
     <string name="hint_contact_address">Enter Contact Address (.onion)</string>
-    <string name="lbl_contact_address">Enter Contact Address To Add One</string>
-    <string name="enter_message">Send secure message...</string>
+    <string name="lbl_contact_address">Enter Contact Address</string>
+    <string name="enter_message">Send secure message…</string>
     <string name="send_button">SEND</string>
     <string name="reply">Reply</string>
     <string name="pin">Pin</string>
@@ -46,7 +46,7 @@
     <string name="dx_call">TOR CALL</string>
     <string name="call_picture_description">call screen picture</string>
     <string name="end_call">Hang up</string>
-    <string name="connecting">Connecting...</string>
+    <string name="connecting">Connecting…</string>
     <string name="CallNotificationBuilder_connecting">Connecting</string>
     <string name="NotificationBarManager__incoming_call">Incoming Call</string>
     <string name="NotificationBarManager_call_in_progress">Call in progress</string>
@@ -59,7 +59,7 @@
     <string name="identity_verification_fail">Couldn\'t fetch identity keys</string>
     <string name="identity_key_fail">Can\'t find your identity key</string>
     <string name="delete_contact">Delete Contact</string>
-    <string name="no_contacts">No Contacts Found</string>
+    <string name="no_contacts">No Contacts Found!</string>
     <string name="online">Online</string>
     <string name="tor_output">tor output</string>
     <string name="anonymous_messenger">Anonymous Messenger</string>
@@ -67,7 +67,19 @@
     <string name="welcome_to">welcome to</string>
     <string name="recording">Recording</string>
     <string name="send">SEND</string>
-    <string name="textview">TextView</string>
     <string name="_00_00">00:00</string>
     <string name="to_show_when_it_is_unread">to show when it is unread</string>
+    <string name="text_msg_placeholder">dude forgot to remind you about that thing over there</string>
+    <string name="profile_image">profile image</string>
+    <string name="really_long_word">sfsdfdgsdhfdghfdghfghfghghsdfgdfghdfghdsfgdfgdfgsdfgfds</string>
+    <string name="time_passed_placeholder">31m</string>
+    <string name="seen_image">seen image</string>
+    <string name="msg_place_holder">hi man, how are you?</string>
+    <string name="indicates_secure_messaging">indicates secure messaging</string>
+    <string name="textview">TextView</string>
+    <string name="john_doe">John Doe</string>
+    <string name="hi_man_how_are_you">hi man, how are you?</string>
+    <string name="time_placeholder">11:40</string>
+    <string name="offline">offline</string>
+    <string name="picture_of_contact">picture of contact</string>
 </resources>

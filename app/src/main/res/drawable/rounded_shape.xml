@@ -2,9 +2,13 @@
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle"   >
-    <solid
-        android:color="@color/dx_brand_green" >
-    </solid>
+    <gradient
+        android:startColor="@color/startGradientColor"
+        android:endColor="@color/endGradientColor"
+        android:angle="180"/>
+<!--    <solid-->
+<!--        android:color="@color/dx_brand_green" >-->
+<!--    </solid>-->
     <corners
         android:radius="300dp"   >
     </corners>

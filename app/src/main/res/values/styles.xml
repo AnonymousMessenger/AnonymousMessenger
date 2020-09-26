@@ -2,13 +2,13 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/dx_brand_green</item>
-        <item name="colorPrimaryDark">@color/dx_brand_green</item>
+        <item name="colorPrimary">@color/startGradientColor</item>
+        <item name="colorPrimaryDark">@color/startGradientColor</item>
         <item name="android:textColorSecondary">@color/dx_white</item>
         <item name="android:textColorPrimary">@color/dx_white</item>
         <item name="android:textColor">@color/dx_white</item>
         <item name="android:textColorHint">@color/dx_white</item>
-        <item name="colorAccent">@color/dx_brand_green</item>
+        <item name="colorAccent">@color/startGradientColor</item>
         <item name="android:windowBackground">@color/dx_night_700</item>
         <item name="android:navigationBarColor">@color/dx_night_700</item>
         <item name="android:itemBackground">@color/dx_night_700</item>

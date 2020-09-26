@@ -49,6 +49,9 @@ public class SetupInProcess extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        if(mMyBroadcastReceiver!=null){
+            return;
+        }
         mMyBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent)
@@ -72,6 +75,7 @@ public class SetupInProcess extends AppCompatActivity {
         super.onPause();
         try {
             LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
+            mMyBroadcastReceiver = null;
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -99,9 +103,7 @@ public class SetupInProcess extends AppCompatActivity {
             }).start();
         }else{
             try {
-                runOnUiThread(()->{
-                    statusText.setText(torStatus);
-                });
+                runOnUiThread(()-> statusText.setText(torStatus));
             }catch (Exception ignored){}
         }
     }

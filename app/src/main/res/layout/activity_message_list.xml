@@ -14,6 +14,9 @@
         android:id="@+id/reyclerview_message_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fadeScrollbars="true"
+        android:scrollIndicators="end"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/frameLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -25,17 +28,54 @@
     <FrameLayout
         android:id="@+id/frameLayout2"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:background="@drawable/rounded_rectangle_steel"
-        android:padding="2dp"
+        android:layout_height="2dp"
+        android:background="@drawable/chatbox_background"
         app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintEnd_toEndOf="@+id/reyclerview_message_list"
+        app:layout_constraintStart_toStartOf="@+id/reyclerview_message_list">
+
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_chatbox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_rectangle_steel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fab_audio"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/edittext_chatbox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:autofillHints="@string/enter_message"
+                android:background="@drawable/rounded_rectangle_steel"
+                android:hint="@string/enter_message"
+                android:inputType="textMultiLine"
+                android:maxLines="6"
+                android:padding="5dp"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"
+                android:visibility="visible"
+                android:animateLayoutChanges="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/quote_sender_typing"
@@ -45,9 +85,13 @@
                 android:paddingEnd="6dp"
                 android:text="@string/textview"
                 android:textColor="#ffffff"
+                android:animateLayoutChanges="true"
                 app:layout_constraintBottom_toTopOf="@+id/quote_text_typing"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintEnd_toEndOf="@+id/quote_text_typing"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
 
             <TextView
                 android:id="@+id/quote_text_typing"
@@ -60,22 +104,11 @@
                 android:text="@string/textview"
                 android:textColor="#ffffff"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:animateLayoutChanges="true"
+                app:layout_constraintBottom_toTopOf="@+id/edittext_chatbox"
+                app:layout_constraintEnd_toEndOf="@+id/edittext_chatbox"
                 app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_chatbox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_rectangle_dark"
-        android:orientation="horizontal"
-        android:padding="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_audio"
@@ -85,32 +118,12 @@
             android:backgroundTint="@android:color/transparent"
             android:clickable="true"
             android:focusable="true"
+            android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_chatbox_send"
             app:layout_constraintTop_toTopOf="parent"
             app:rippleColor="@color/red_500"
             app:srcCompat="@drawable/ic_baseline_mic_24" />
-
-        <EditText
-            android:id="@+id/edittext_chatbox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:autofillHints="@string/enter_message"
-            android:background="@drawable/rounded_rectangle_steel"
-            android:hint="@string/enter_message"
-            android:inputType="textMultiLine"
-            android:maxLines="6"
-            android:padding="5dp"
-            android:textColor="#ffffff"
-            android:textColorHint="#ffffff"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/fab_audio"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/button_chatbox_send"
@@ -119,6 +132,7 @@
             android:layout_height="45dp"
             android:background="@drawable/button_ripple"
             android:text="@string/send"
+            android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -129,6 +143,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:visibility="gone"
+            android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fab_audio"
             app:layout_constraintStart_toStartOf="parent"
@@ -140,6 +155,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
                 android:contentDescription="@string/recording"
+                android:animateLayoutChanges="true"
                 app:srcCompat="@drawable/ic_baseline_mic_red_36" />
 
             <TextView
@@ -151,9 +167,25 @@
                 android:gravity="center"
                 android:text="@string/_00_00"
                 android:textColor="@color/red_500"
+                android:animateLayoutChanges="true"
                 android:textStyle="bold" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_scroll_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:alpha="@dimen/material_emphasis_medium"
+        android:backgroundTint="@color/dx_night_950"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_baseline_arrow_downward_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

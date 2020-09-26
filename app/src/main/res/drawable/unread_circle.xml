@@ -4,9 +4,9 @@
     android:shape="oval">
 
     <solid
-        android:color="@color/dx_brand_green" />
+        android:color="@color/dx_button_text" />
 
     <size
-        android:width="120dp"
-        android:height="120dp"/>
+        android:width="24dp"
+        android:height="24dp"/>
 </shape>

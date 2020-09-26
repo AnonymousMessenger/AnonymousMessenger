@@ -32,7 +32,7 @@ import java.util.Objects;
 import static androidx.core.content.ContextCompat.getDrawable;
 import static androidx.core.content.ContextCompat.getSystemService;
 
-public class MessageListAdapter extends Adapter {
+public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
     private static final int VIEW_TYPE_MESSAGE_SENT_OK = 3;
@@ -214,7 +214,7 @@ public class MessageListAdapter extends Adapter {
                         quoteTextTyping.setVisibility(View.VISIBLE);
                         quoteSenderTyping.setVisibility(View.VISIBLE);
                         RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);
-                        rv.scrollToPosition(mMessageList.size() - 1);
+                        rv.smoothScrollToPosition(mMessageList.size() - 1);
                         return true;
                     case R.id.navigation_drawer_item2:
                         //handle pin click
@@ -263,22 +263,16 @@ public class MessageListAdapter extends Adapter {
                     if(msg.getMessage().equals(message.getQuotedMessage())
                             && msg.getSender().equals(message.getQuoteSender())){
                         Handler h = new Handler(Looper.getMainLooper());
-                        h.post(()->{
-                            mMessageRecycler.scrollToPosition(mMessageList.indexOf(msg));
-                        });
+                        h.post(()-> mMessageRecycler.smoothScrollToPosition(mMessageList.indexOf(msg)));
                         try{
                             Thread.sleep(350);
                         }catch (Exception ignored) {}
-                        h.post(()->{
-                            notifyItemChanged(mMessageList.indexOf(msg));
-                        });
+                        h.post(()-> notifyItemChanged(mMessageList.indexOf(msg)));
                         return;
                     }
                 }
                 Handler h = new Handler(Looper.getMainLooper());
-                h.post(()->{
-                    Toast.makeText(app, "can't find original message", Toast.LENGTH_SHORT).show();
-                });
+                h.post(()-> Toast.makeText(app, "can't find original message", Toast.LENGTH_SHORT).show());
             }).start();
         }
     }
