@@ -42,6 +42,15 @@ public class DxApplication extends Application {
     private boolean weAsked = false;
     private Entity entity;
     private CallController cc;
+    private boolean exitingHoldup;
+
+    public boolean isExitingHoldup() {
+        return exitingHoldup;
+    }
+
+    public void setExitingHoldup(boolean exitingHoldup) {
+        this.exitingHoldup = exitingHoldup;
+    }
 
     public boolean isInCall(){
         return cc!=null;

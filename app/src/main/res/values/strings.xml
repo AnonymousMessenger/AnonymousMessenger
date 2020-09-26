@@ -60,7 +60,6 @@
     <string name="identity_key_fail">Can\'t find your identity key</string>
     <string name="delete_contact">Delete Contact</string>
     <string name="no_contacts">No Contacts Found!</string>
-    <string name="online">Online</string>
     <string name="tor_output">tor output</string>
     <string name="anonymous_messenger">Anonymous Messenger</string>
     <string name="by_drxtreme">by DrXtreme</string>
@@ -82,4 +81,10 @@
     <string name="time_placeholder">11:40</string>
     <string name="offline">offline</string>
     <string name="picture_of_contact">picture of contact</string>
+    <string name="hold_on">Hold on!</string>
+    <string name="starting_up_tor">starting up tor</string>
+    <string name="doing_stuff">doing stuff…</string>
+    <string name="go_to_contacts">Go to Contacts</string>
+    <string name="checking">Checking</string>
+    <string name="online">Online</string>
 </resources>

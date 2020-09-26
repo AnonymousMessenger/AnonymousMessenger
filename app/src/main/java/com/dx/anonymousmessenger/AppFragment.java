@@ -65,6 +65,7 @@ public class AppFragment extends Fragment {
     public void onPause() {
         stopCheckingMessages();
         LocalBroadcastManager.getInstance(rootView.getContext()).unregisterReceiver(mMyBroadcastReceiver);
+        mMyBroadcastReceiver = null;
         super.onPause();
     }
 
@@ -98,6 +99,9 @@ public class AppFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if(mMyBroadcastReceiver!=null){
+            return;
+        }
         mMyBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent)
@@ -185,22 +189,21 @@ public class AppFragment extends Fragment {
                 try{
                     Thread.sleep(1000);
                 }catch (Exception ignored){}
-                if(!((DxApplication)getActivity().getApplication()).isIgnoringBatteryOptimizations()){
-                    getActivity().runOnUiThread(()-> new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
-                        .setTitle("Turn off battery optimization?")
-                        .setMessage("allow Anonymous Messenger to keep working in the background?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                            ((DxApplication)getActivity().getApplication()).requestBatteryOptimizationOff();
-                            ((DxApplication)getActivity().getApplication()).setWeAsked(true);
-                        })
-                        .setNegativeButton(android.R.string.no, (dialog, whichButton)->{
-                            ((DxApplication)getActivity().getApplication()).setWeAsked(true);
-                        }).show());
-                }
+                try{
+                    if(!((DxApplication)getActivity().getApplication()).isIgnoringBatteryOptimizations()){
+                        getActivity().runOnUiThread(()-> new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
+                            .setTitle("Turn off battery optimization?")
+                            .setMessage("allow Anonymous Messenger to keep working in the background?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                                ((DxApplication)getActivity().getApplication()).requestBatteryOptimizationOff();
+                                ((DxApplication)getActivity().getApplication()).setWeAsked(true);
+                            })
+                            .setNegativeButton(android.R.string.no, (dialog, whichButton)-> ((DxApplication)getActivity().getApplication()).setWeAsked(true)).show());
+                    }
+                }catch (Exception ignored){}
             }).start();
         }
-
         return rootView;
     }
 
@@ -292,7 +295,7 @@ public class AppFragment extends Fragment {
         try{
             onlineImg.setVisibility(View.GONE);
             offlineImg.setVisibility(View.GONE);
-            onlineTxt.setText("Checking");
+            onlineTxt.setText(R.string.checking);
             onlineToolbar.setVisibility(View.VISIBLE);
         }catch (Exception ignored){}
 
@@ -304,7 +307,7 @@ public class AppFragment extends Fragment {
                 if(isOnline()){
                     mainThread.post(()->{
                         try{
-                            onlineTxt.setText("Online");
+                            onlineTxt.setText(R.string.online);
                             onlineImg.setVisibility(View.VISIBLE);
                             offlineImg.setVisibility(View.GONE);
                             onlineToolbar.setVisibility(View.VISIBLE);
@@ -313,7 +316,7 @@ public class AppFragment extends Fragment {
                 }else{
                     mainThread.post(()->{
                         try{
-                            onlineTxt.setText("Offline");
+                            onlineTxt.setText(R.string.offline);
                             onlineImg.setVisibility(View.GONE);
                             offlineImg.setVisibility(View.VISIBLE);
                             onlineToolbar.setVisibility(View.VISIBLE);
@@ -341,7 +344,7 @@ public class AppFragment extends Fragment {
                 ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).restartTor();
                 mainThread.post(()->{
                     try{
-                        onlineTxt.setText("Offline");
+                        onlineTxt.setText(R.string.offline);
                         onlineImg.setVisibility(View.GONE);
                         offlineImg.setVisibility(View.VISIBLE);
                         onlineToolbar.setVisibility(View.VISIBLE);
@@ -353,8 +356,12 @@ public class AppFragment extends Fragment {
                 break;
             case R.id.action_my_identity:
                 stopCheckingMessages();
-                Intent intent = new Intent(getContext(), MyIdentityActivity.class);
-                Objects.requireNonNull(getContext()).startActivity(intent);
+                try{
+                    Intent intent = new Intent(getContext(), MyIdentityActivity.class);
+                    if(getContext()!=null){
+                        getContext().startActivity(intent);
+                    }
+                }catch (Exception ignored) {}
                 break;
         }
         return super.onOptionsItemSelected(item);

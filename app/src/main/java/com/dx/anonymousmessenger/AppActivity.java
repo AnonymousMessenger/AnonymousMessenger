@@ -8,11 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 public class AppActivity extends AppCompatActivity {
-    private String fragmentName = "";
 
     @Override
     protected void onDestroy() {
-        fragmentName = null;
         super.onDestroy();
     }
 
@@ -23,10 +21,16 @@ public class AppActivity extends AppCompatActivity {
         setContentView(R.layout.activity_app);
 
         new Thread(()->{
+            ((DxApplication) this.getApplication()).setExitingHoldup(false);
             //has logged in?
             if(((DxApplication) this.getApplication()).getAccount()!=null){
                 //has logged in?
                 if(((DxApplication) this.getApplication()).getAccount().getPassword()!=null){
+                    if(getIntent().getBooleanExtra("force_app",false)){
+                        //on users orders it goes to contacts
+                        loadAppFragment();
+                        return;
+                    }
                     //still starting up tor?
                     if(!((DxApplication) getApplication()).isServerReady()){
                         goToTorActivity();
@@ -60,24 +64,23 @@ public class AppActivity extends AppCompatActivity {
     }
 
     public void showNextFragment(Fragment f) {
-        fragmentName = f.getClass().toString();
         getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
-                .replace(R.id.fragment_container, f)
-                .addToBackStack(null)
-                .commit();
+            .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
+            .replace(R.id.fragment_container, f)
+            .addToBackStack(null)
+            .commit();
     }
 
     @Override
     public void onBackPressed() {
-        if (!fragmentName.contains("StartTor")) {
+//        if (!fragmentName.contains("StartTor")) {
             finish();
-        }
+//        }
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
+//    @Override
+//    public boolean onSupportNavigateUp() {
+//        onBackPressed();
+//        return true;
+//    }
 }

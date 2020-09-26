@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +17,7 @@ public class SetupInProcess extends AppCompatActivity {
 
     private BroadcastReceiver mMyBroadcastReceiver;
     private TextView statusText;
+    private Button gotoContact,restartTorButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,20 @@ public class SetupInProcess extends AppCompatActivity {
             }
         }).start();
         statusText = findViewById(R.id.status_text);
+        gotoContact = findViewById(R.id.btn_goto_contacts);
+        restartTorButton = findViewById(R.id.btn_restart_tor);
+        if(!getIntent().getBooleanExtra("first_time",true)){
+            gotoContact.setVisibility(View.VISIBLE);
+            gotoContact.setOnClickListener(v -> {
+                ((DxApplication)getApplication()).setExitingHoldup(true);
+                Intent intent = new Intent(this, AppActivity.class);
+                intent.putExtra("force_app",true);
+                startActivity(intent);
+                finish();
+            });
+            restartTorButton.setVisibility(View.VISIBLE);
+            restartTorButton.setOnClickListener(v -> ((DxApplication)getApplication()).restartTor());
+        }
 //        try {
 //            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
 //        } catch (Exception e){
@@ -90,6 +107,10 @@ public class SetupInProcess extends AppCompatActivity {
                 try {
                     statusText.setText(torStatus);
                 }catch (Exception ignored) {}
+                if(((DxApplication)getApplication()).isExitingHoldup()){
+                    return;
+                }
+                ((DxApplication)getApplication()).setExitingHoldup(true);
                 Intent intent = new Intent(this, AppActivity.class);
                 startActivity(intent);
                 finish();

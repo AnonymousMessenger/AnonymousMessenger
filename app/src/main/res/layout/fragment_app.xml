@@ -33,9 +33,9 @@
             android:id="@+id/online_toolbar"
             android:layout_width="match_parent"
             android:layout_height="21dp"
-            android:background="?attr/colorPrimary"
+            android:background="@drawable/button_ripple"
             android:theme="?attr/actionBarTheme"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">

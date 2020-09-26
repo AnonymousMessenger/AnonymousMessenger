@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.MessageListActivity;
@@ -263,11 +262,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     if(msg.getMessage().equals(message.getQuotedMessage())
                             && msg.getSender().equals(message.getQuoteSender())){
                         Handler h = new Handler(Looper.getMainLooper());
-                        h.post(()-> mMessageRecycler.smoothScrollToPosition(mMessageList.indexOf(msg)));
-                        try{
-                            Thread.sleep(350);
-                        }catch (Exception ignored) {}
-                        h.post(()-> notifyItemChanged(mMessageList.indexOf(msg)));
+                        h.post(()-> {
+                            mMessageRecycler.smoothScrollToPosition(mMessageList.indexOf(msg));
+                            notifyItemChanged(mMessageList.indexOf(msg));
+                        });
+//                        try{
+//                            Thread.sleep(350);
+//                        }catch (Exception ignored) {}
+//                        h.post(()-> notifyItemChanged(mMessageList.indexOf(msg)));
                         return;
                     }
                 }
