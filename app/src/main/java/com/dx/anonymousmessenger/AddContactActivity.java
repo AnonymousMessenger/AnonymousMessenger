@@ -43,12 +43,12 @@ public class AddContactActivity extends AppCompatActivity {
         try{
             if(getSupportActionBar()!=null){
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle("Add Contact");
+                getSupportActionBar().setTitle(R.string.add_contact);
             }
         }catch (Exception ignored){}
 
         tv = findViewById(R.id.txt_myaddress);
-        tv.setText(((DxApplication)getApplication()).getHostname());
+        tv.setText(((DxApplication)getApplication()).getHostname()==null?"waiting for tor":((DxApplication)getApplication()).getHostname());
         tv.setOnClickListener(v -> {
             ClipboardManager clipboard = getSystemService(ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", tv.getText().toString());

@@ -198,7 +198,7 @@ public class FileUtilities {
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                 File file = new File(destinationDirectory, zipEntry.getName());
                 if (zipEntry.isDirectory()) {
-                    if (file.exists() == false && !file.mkdirs()) {
+                    if (!file.exists() && !file.mkdirs()) {
                         throw new RuntimeException("Could not create directory " + file);
                     }
                 } else {

@@ -82,18 +82,20 @@ public class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback 
 
     @Override
     public void onLost(@NonNull Network network) {
-        new Thread(()->{
-            ((DxApplication)context).sendNotification("Lost Connection","waiting for connectivity to restore",false);
-            Intent gcm_rec = new Intent("your_action");
-            LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(gcm_rec);
-            if(((DxApplication)context).getTorSocket()!=null&&((DxApplication)context).getTorSocket().getAndroidTorRelay()!=null){
-                try {
-                    ((DxApplication)context).getTorSocket().getAndroidTorRelay().shutDown();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        try{
+            new Thread(()->{
+                ((DxApplication)context).sendNotification("Lost Connection","waiting for connectivity to restore",false);
+                Intent gcm_rec = new Intent("your_action");
+                LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(gcm_rec);
+                if(((DxApplication)context).getTorSocket()!=null&&((DxApplication)context).getTorSocket().getAndroidTorRelay()!=null){
+                    try {
+                        ((DxApplication)context).getTorSocket().getAndroidTorRelay().shutDown();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }catch (Exception ignored) {}
     }
 
     public static boolean isServiceRunningInForeground(Context context, Class<?> serviceClass) {

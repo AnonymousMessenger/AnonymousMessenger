@@ -36,6 +36,36 @@ public class MessageSender {
                 }
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
                 DbHelper.saveMessage(msg,app,to,false);
+                //second broadcast here to make sure everything aligns correctly for the user
+                Intent gcm_rec = new Intent("your_action");
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+                received = new TorClientSocks4().Init(to,app,aem.toJson().toString());
+            }catch (Exception e){
+                Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("error","Couldn't encrypt message");
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+                e.printStackTrace();
+                Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
+            }finally {
+                DbHelper.setMessageReceived(msg,app,to,received);
+            }
+            Intent gcm_rec = new Intent("your_action");
+            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+        } catch (Exception e) {
+            Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendQueuedMessage(QuotedUserMessage msg, DxApplication app, String to){
+        try {
+            boolean received = false;
+            try {
+                if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(to,1))){
+                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained nigga!!!" );
+                    return;
+                }
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
                 received = new TorClientSocks4().Init(to,app,aem.toJson().toString());
             }catch (Exception e){
                 Intent gcm_rec = new Intent("your_action");
@@ -65,6 +95,35 @@ public class MessageSender {
                 DbHelper.saveMessage(msg,app,to, false);
                 Intent gcm_rec = new Intent("your_action");
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+                //split message to file and metadata (msg is metadata)
+                byte[] file = FileHelper.getFile(msg.getPath(),app);
+
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
+
+                received = new TorClientSocks4().sendMedia(to,app,aem.toJson().toString(),MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
+            }catch (Exception e){
+//                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
+            }finally {
+                DbHelper.setMessageReceived(msg,app,to,received);
+            }
+            Intent gcm_rec = new Intent("your_action");
+            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+        } catch (Exception e) {
+            Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendQueuedMediaMessage(QuotedUserMessage msg, DxApplication app, String to) {
+        try {
+            boolean received = false;
+            try {
+                if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(to,1))){
+                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained nigga!!!" );
+                    return;
+                }
                 //split message to file and metadata (msg is metadata)
                 byte[] file = FileHelper.getFile(msg.getPath(),app);
 
@@ -138,6 +197,13 @@ public class MessageSender {
     public static void messageReceiver(String msg, DxApplication app){
         try {
             JSONObject json = new JSONObject(msg);
+            if(json.has("address")){
+                if(!DbHelper.contactExists(json.getString("address"),app)){
+                    return;
+                }
+            }else{
+                return;
+            }
             if(json.has("kem")){
 //                if(app.getEntity().getStore().containsSession(new SignalProtocolAddress(json.getString("address"),1))){
 //                    if(!app.getEntity().getStore().loadSession(new SignalProtocolAddress(json.getString("address"),1)).getSessionState().hasPendingKeyExchange()){
@@ -163,10 +229,10 @@ public class MessageSender {
 
                     } catch (UntrustedIdentityException | InvalidKeyException | StaleKeyExchangeException e) {
                         e.printStackTrace();
-                        Log.e("MESSAGE RECEIVER", "FAILED!!! Received Response Key Exchange Message : " + json.getString("address"));
+                        Log.e("MESSAGE RECEIVER", "FAILED!!! Received Response Key Exchange Message : ");
                     } catch (Exception e){
                         e.printStackTrace();
-                        Log.e("MESSAGE RECEIVER ERROR", "FAILED!!! Received Response Key Exchange Message : " + json.getString("address"));
+                        Log.e("MESSAGE RECEIVER ERROR", "FAILED!!! Received Response Key Exchange Message : ");
                     }
                 }else{
                     DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),"Key Exchange Message", json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
@@ -238,6 +304,10 @@ public class MessageSender {
             e.printStackTrace();
             Log.e("MESSAGE RECEIVER", "FAILED TO RECEIVE MEDIA MESSAGE" );
         }
+    }
+
+    public static void syncConversation(String address, DxApplication app){
+//        DbHelper.messa
     }
 
     public static void pinMessage(QuotedUserMessage message, DxApplication app) {

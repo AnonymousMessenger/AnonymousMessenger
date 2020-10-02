@@ -71,19 +71,17 @@ public class CreateUserActivity extends AppCompatActivity {
 	}
 
     public void createAccount(String password){
-        new Thread(() -> {
-            try{
-                if(nickname==null || password==null){
-                    throw new IllegalStateException();
-                }
-                ((DxApplication)getApplication()).createAccount(password,nickname);
-                Intent intent = new Intent(this, SetupInProcess.class);
-                startActivity(intent);
-                finish();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }).start();
+        if(nickname==null || password==null){
+            return;
+        }
+        try{
+            ((DxApplication)getApplication()).createAccount(password,nickname);
+            Intent intent = new Intent(this, SetupInProcess.class);
+            startActivity(intent);
+            finish();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void switchToAppView(){

@@ -165,7 +165,16 @@ public class ServerSocketViaTor {
                                 DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
                                 DataInputStream in=new DataInputStream(sock.getInputStream());
                                 String msg = in.readUTF();
-                                if(msg.equals("call")){
+                                if(msg.equals("hello")){
+//                                    try {
+//                                        outputStream.writeUTF("hello");
+//                                        outputStream.flush();
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+                                    sock.close();
+                                    return;
+                                }else if(msg.equals("call")){
                                     try {
                                         CallController.callReceiveHandler(sock,app);
                                     } catch (Exception e) {
@@ -196,11 +205,17 @@ public class ServerSocketViaTor {
                                         outputStream.flush();
                                         msg = in.readUTF();
                                         String recMsg = msg;
-                                        //MessageSender.messageReceiver(recMsg,app);
                                         outputStream.writeUTF("ok");
                                         outputStream.flush();
                                         int fileSize = in.readInt();
-                                        //todo set maximum file size
+                                        //maximum file size 30MB
+                                        if(fileSize>(30*1024*1024)){
+                                            //no bueno
+                                            outputStream.writeUTF("nuf");
+                                            outputStream.flush();
+                                            sock.close();
+                                            return;
+                                        }
                                         outputStream.writeUTF("ok");
                                         outputStream.flush();
                                         byte[] buffer;
@@ -218,7 +233,6 @@ public class ServerSocketViaTor {
                                             }
                                             read = in.read(buffer,0,buffer.length);
                                             total_read += read;
-                                            System.out.println("READ BYTES : "+read);
                                             cache.write(buffer,0,buffer.length);
                                         }
                                         in.close();
@@ -231,8 +245,8 @@ public class ServerSocketViaTor {
                                     }
                                     return;
                                 }
-                                while(!msg.equals("nuf"))
-                                {
+//                                while(!msg.equals("nuf"))
+//                                {
                                     final String rec = msg;
                                     new Thread(()->{
                                         MessageSender.messageReceiver(rec,app);
@@ -240,8 +254,8 @@ public class ServerSocketViaTor {
                                     }).start();
                                     outputStream.writeUTF("ack3");
                                     outputStream.flush();
-                                    msg = in.readUTF();
-                                }
+//                                    msg = in.readUTF();
+//                                }
                                 outputStream.close();
                             }catch (IOException e){
                                 e.printStackTrace();

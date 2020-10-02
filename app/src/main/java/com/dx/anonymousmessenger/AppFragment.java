@@ -106,11 +106,11 @@ public class AppFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent)
             {
-            if(intent.getStringExtra("tor_status")!=null){
-                if(Objects.requireNonNull(intent.getStringExtra("tor_status")).equals("ALL GOOD")){
+            if(intent.getStringExtra("tor_status1")!=null){
+                if(Objects.requireNonNull(intent.getStringExtra("tor_status1")).equals("ALL GOOD")){
                     checkConnectivity();
                 }
-                updateTorOutput(Objects.requireNonNull(intent.getStringExtra("tor_status")));
+                updateTorOutput(Objects.requireNonNull(intent.getStringExtra("tor_status1")));
             }else{
                 updateUi();
             }
@@ -141,7 +141,7 @@ public class AppFragment extends Fragment {
 
         try {
             LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("your_action"));
-            LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
+            LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status1"));
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -165,9 +165,9 @@ public class AppFragment extends Fragment {
             v.getContext().startActivity(intent);
         });
 
-        onlineImg = rootView.findViewById(R.id.online_image);
-        offlineImg = rootView.findViewById(R.id.offline_image);
-        onlineTxt = rootView.findViewById(R.id.online_text);
+        onlineImg = rootView.findViewById(R.id.synced_image);
+        offlineImg = rootView.findViewById(R.id.unsynced_image);
+        onlineTxt = rootView.findViewById(R.id.sync_text);
         onlineToolbar = rootView.findViewById(R.id.online_toolbar);
         onlineToolbar.setOnClickListener(v -> checkConnectivity());
         torOutput = rootView.findViewById(R.id.status_text);
@@ -183,6 +183,9 @@ public class AppFragment extends Fragment {
         checkConnectivity();
         updateUi();
         checkMessages();
+//        new Thread(()->{
+//
+//        })
 
         if(!((DxApplication)getActivity().getApplication()).isWeAsked()){
             new Thread(()->{
@@ -312,6 +315,10 @@ public class AppFragment extends Fragment {
                             offlineImg.setVisibility(View.GONE);
                             onlineToolbar.setVisibility(View.VISIBLE);
                         }catch (Exception ignored) {}
+                        if(getActivity()==null||getActivity().getApplication()==null){
+                            return;
+                        }
+                        ((DxApplication)getActivity().getApplication()).queueAllUnsentMessages();
                     });
                 }else{
                     mainThread.post(()->{
@@ -348,6 +355,9 @@ public class AppFragment extends Fragment {
                         onlineImg.setVisibility(View.GONE);
                         offlineImg.setVisibility(View.VISIBLE);
                         onlineToolbar.setVisibility(View.VISIBLE);
+                        Intent intent = new Intent((DxApplication)getActivity().getApplication(), SetupInProcess.class);
+                        intent.putExtra("first_time",false);
+                        startActivity(intent);
                     } catch (Exception ignored) {}
                 });
                 break;

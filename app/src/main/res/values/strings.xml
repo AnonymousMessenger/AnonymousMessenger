@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Anonymous Messenger</string>
     <string name="create_account_button">Create Account</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="nickname">Nickname</string>
     <string name="nickname_error">Invalid Nickname</string>
     <string name="nickname_help">Enter Nickname to continue</string>
@@ -12,9 +11,8 @@
     <string name="setup_password_explanation">Your account and any data will be stored encrypted on your device, so if you forget the password there will be no way of recovering that.</string>
     <string name="password_too_weak">Your password is too weak, we can\'t allow you to do this because we care about your security</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
-    <string name="channel_name">channel4</string>
+    <string name="channel4">channel4</string>
     <string name="channel_description">this and that</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="enter_password">Enter password</string>
     <string name="decrypt_button">Decrypt</string>
@@ -33,7 +31,7 @@
     <string name="action_search">Search</string>
     <string name="action_shutdown">Shutdown</string>
     <string name="action_my_identity">My Identity</string>
-    <string name="action_restart_tor">Restart Tor</string>
+    <string name="action_restart_tor">restart tor</string>
     <string name="my_identity_explanation">Public key used to verify identity</string>
     <string name="verify_identity_explanation">Both public keys together to verify both identities</string>
     <string name="action_call">Call</string>
@@ -66,7 +64,7 @@
     <string name="welcome_to">welcome to</string>
     <string name="recording">Recording</string>
     <string name="send">SEND</string>
-    <string name="_00_00">00:00</string>
+    <string name="_00_00" translatable="false">00:00</string>
     <string name="to_show_when_it_is_unread">to show when it is unread</string>
     <string name="text_msg_placeholder">dude forgot to remind you about that thing over there</string>
     <string name="profile_image">profile image</string>
@@ -78,13 +76,20 @@
     <string name="textview">TextView</string>
     <string name="john_doe">John Doe</string>
     <string name="hi_man_how_are_you">hi man, how are you?</string>
-    <string name="time_placeholder">11:40</string>
+    <string name="time_placeholder" translatable="false">11:40</string>
     <string name="offline">offline</string>
     <string name="picture_of_contact">picture of contact</string>
     <string name="hold_on">Hold on!</string>
     <string name="starting_up_tor">starting up tor</string>
-    <string name="doing_stuff">doing stuff…</string>
-    <string name="go_to_contacts">Go to Contacts</string>
+    <string name="doing_stuff">making you anonymous…</string>
+    <string name="go_to_contacts">Skip</string>
     <string name="checking">Checking</string>
-    <string name="online">Online</string>
+    <string name="online">online</string>
+    <string name="synced">synced</string>
+    <string name="add_contact">Add Contact</string>
+    <string name="waiting_for_tor">waiting for tor</string>
+    <string name="oh_no">Oh No!</string>
+    <string name="did_you_forget_your_password">Did you forget your password?</string>
+    <string name="hello_hello" translatable="false">hello, hello!</string>
+    <string name="_11_40" translatable="false">11:40</string>
 </resources>

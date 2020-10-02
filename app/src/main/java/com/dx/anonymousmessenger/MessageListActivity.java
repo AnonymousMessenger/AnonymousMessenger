@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -23,12 +24,14 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
@@ -49,7 +52,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class MessageListActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class MessageListActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2 {
 
     private static final int REQUEST_CODE = 1;
     public TextView quoteTextTyping;
@@ -67,6 +70,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     private LinearLayout audioLayout;
     private FloatingActionButton scrollDownFab;
     private BroadcastReceiver timeBroadcastReceiver;
+    private ImageView syncedImg;
+    private ImageView unsyncedImg;
+    private TextView syncTxt;
+    private Toolbar syncToolbar;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -90,6 +97,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         audio = findViewById(R.id.fab_audio);
         audioLayout = findViewById(R.id.layout_audio);
         txtAudioTimer = findViewById(R.id.txt_audio_timer);
+        syncedImg = findViewById(R.id.synced_image);
+        unsyncedImg = findViewById(R.id.unsynced_image);
+        syncTxt = findViewById(R.id.sync_text);
+        syncToolbar = findViewById(R.id.sync_toolbar);
         scrollDownFab = findViewById(R.id.fab_scroll_down);
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication(), mMessageRecycler);
@@ -351,6 +362,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     protected void onResume() {
         super.onResume();
         checkMessages();
+        if(mMyBroadcastReceiver!=null){
+            return;
+        }
         mMyBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent)
@@ -368,6 +382,17 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             e.printStackTrace();
         }
         updateUi();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopCheckingMessages();
+        if(mMyBroadcastReceiver==null){
+            return;
+        }
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMyBroadcastReceiver);
+        mMyBroadcastReceiver = null;
     }
 
     @Override
@@ -390,13 +415,6 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         txt = null;
         finish();
         return true;
-    }
-
-    @Override
-    protected void onPause() {
-        stopCheckingMessages();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMyBroadcastReceiver);
-        super.onPause();
     }
 
     @Override
@@ -514,6 +532,63 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             requestPermissions(
                     new String[] { Manifest.permission.RECORD_AUDIO },
                     REQUEST_CODE);
+        }
+    }
+
+    /**
+     * Release memory when the UI becomes hidden or when system resources become low.
+     * @param level the memory-related event that was raised.
+     */
+    public void onTrimMemory(int level) {
+
+        // Determine which lifecycle or system event was raised.
+        switch (level) {
+
+            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
+            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
+                onSupportNavigateUp();
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
+            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
+
+                /*
+                   Release any memory that your app doesn't need to run.
+
+                   The device is running low on memory while the app is running.
+                   The event raised indicates the severity of the memory-related event.
+                   If the event is TRIM_MEMORY_RUNNING_CRITICAL, then the system will
+                   begin killing background processes.
+                */
+
+                /*
+                   Release as much memory as the process can.
+
+                   The app is on the LRU list and the system is running low on memory.
+                   The event raised indicates where the app sits within the LRU list.
+                   If the event is TRIM_MEMORY_COMPLETE, the process will be one of
+                   the first to be terminated.
+                */
+
+                /*
+                   Release any UI objects that currently hold memory.
+
+                   The user interface has moved to the background.
+                */
+
+//                onSupportNavigateUp();
+
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
+            default:
+                /*
+                  Release any non-critical data structures.
+
+                  The app received an unrecognized memory level value
+                  from the system. Treat this as a generic low-memory message.
+                */
+                stopCheckingMessages();
+                break;
         }
     }
 

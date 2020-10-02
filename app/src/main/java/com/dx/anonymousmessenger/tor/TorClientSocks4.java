@@ -108,18 +108,18 @@ public class TorClientSocks4 {
             String msg2;
             boolean result = false;
 
-            while(!msg.equals("nuf"))
-            {
+//            while(!msg.equals("nuf"))
+//            {
                 outputStream.writeUTF(msg);
                 outputStream.flush();
                 msg2 = in.readUTF();
                 if(msg2.contains("ack3")){
-                    outputStream.writeUTF("nuf");
-                    outputStream.flush();
-                    msg = "nuf";
+//                    outputStream.writeUTF("nuf");
+//                    outputStream.flush();
+//                    msg = "nuf";
                     result = true;
                 }
-            }
+//            }
             outputStream.close();
             socket.close();
             return result;
@@ -132,15 +132,29 @@ public class TorClientSocks4 {
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection("nraswjtnyrvywxk7.onion", 80, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
-            return socket.isConnected() && !socket.isClosed();
-//            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            boolean b = socket.isConnected() && !socket.isClosed();
+            socket.close();
+            return b;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    public boolean testAddress(DxApplication app, String address){
+        Socket socket;
+        try {
+            socket = Utilities.socks4aSocketConnection(address, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
+//            boolean b = socket.isConnected() && !socket.isClosed();
+//            socket.close();
+//            return b;
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
 //            DataInputStream in =new DataInputStream(socket.getInputStream());
-//            outputStream.writeUTF("hello");
-//            outputStream.flush();
-//            Log.e("TEST CONN", String.valueOf(in.readUTF()));
+            outputStream.writeUTF("hello");
+            outputStream.flush();
+//            String s = in.readUTF();
 //            outputStream.close();
 //            socket.close();
-//            return true;
+            return true;
         }catch (EOFException e){
             return true;
         }catch (Exception e){

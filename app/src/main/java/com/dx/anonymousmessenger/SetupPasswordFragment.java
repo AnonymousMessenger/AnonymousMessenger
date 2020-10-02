@@ -142,7 +142,6 @@ public class SetupPasswordFragment extends Fragment {
         });
         nextButton.setOnClickListener(v1 -> {
 //            ((CreateUserActivity)getActivity()).setOkayToBack(false);
-            ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).lockTorStart();
             IBinder token = passwordEntry.getWindowToken();
             Object o = Objects.requireNonNull(getContext()).getSystemService(INPUT_METHOD_SERVICE);
             ((InputMethodManager) o).hideSoftInputFromWindow(token, 0);
@@ -150,7 +149,7 @@ public class SetupPasswordFragment extends Fragment {
             passwordConfirmation.setEnabled(false);
             nextButton.setVisibility(INVISIBLE);
             progressBar.setVisibility(VISIBLE);
-            ((CreateUserActivity)getActivity()).createAccount(Objects.requireNonNull(passwordEntry.getText()).toString());
+            ((CreateUserActivity) Objects.requireNonNull(getActivity())).createAccount(Objects.requireNonNull(passwordEntry.getText()).toString());
 //            Intent intent = new Intent(getActivity(), SetupInProcess.class);
 //            startActivity(intent);
 //            if(getActivity()!=null){

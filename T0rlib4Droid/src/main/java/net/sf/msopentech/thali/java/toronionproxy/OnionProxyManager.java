@@ -1,10 +1,7 @@
 
 package net.sf.msopentech.thali.java.toronionproxy;
 
-import android.content.Intent;
 import android.util.Log;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import net.sf.controller.network.NetLayerStatus;
 import net.sf.controller.network.ServiceDescriptor;
@@ -163,9 +160,9 @@ public abstract class OnionProxyManager {
         }*/
 
         LOG.info("Creating hidden service");
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","Creating hidden service");
-        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//        Intent gcm_rec = new Intent("tor_status");
+//        gcm_rec.putExtra("tor_status","Creating hidden service");
+//        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         File hostnameFile = onionProxyContext.getHostNameFile();
 
         if (!hostnameFile.getParentFile().exists()
@@ -194,9 +191,9 @@ public abstract class OnionProxyManager {
         // Publish the hidden service's onion hostname in transport properties
         String hostname = new String(FileUtilities.read(hostnameFile), "UTF-8").trim();
         LOG.info("Hidden service config has completed.");
-        gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","Hidden service config has completed.");
-        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//        gcm_rec = new Intent("tor_status");
+//        gcm_rec.putExtra("tor_status","Hidden service config has completed.");
+//        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         return hostname;
     }
 
@@ -235,9 +232,9 @@ public abstract class OnionProxyManager {
         }
         controlConnection.setConf("DisableNetwork", enable ? "0" : "1");
         LOG.info("Enabling network: " + enable);
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","Enabling network: " + enable);
-        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//        Intent gcm_rec = new Intent("tor_status");
+//        gcm_rec.putExtra("tor_status","Enabling network: " + enable);
+//        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
 
@@ -290,9 +287,9 @@ public abstract class OnionProxyManager {
         ServiceDescriptor serviceDescriptor = null;
         try {
             LOG.info("Publishing Hidden Service. This will at least take half a minute...");
-            Intent gcm_rec = new Intent("tor_status");
-            gcm_rec.putExtra("tor_status","Publishing Hidden Service. This will at least take half a minute...");
-            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//            Intent gcm_rec = new Intent("tor_status");
+//            gcm_rec.putExtra("tor_status","Publishing Hidden Service. This will at least take half a minute...");
+//            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
             final OnionProxyManager onionProxyManager = (OnionProxyManager) clone();
             final String hiddenServiceName;
 
@@ -336,9 +333,9 @@ public abstract class OnionProxyManager {
         installAndConfigureFiles();
 
         LOG.info("Starting Tor");
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","Starting Tor");
-        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//        Intent gcm_rec = new Intent("tor_status");
+//        gcm_rec.putExtra("tor_status","Starting Tor");
+//        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         File cookieFile = onionProxyContext.getCookieFile();
         if (!cookieFile.getParentFile().exists()
                 && !cookieFile.getParentFile().mkdirs()) {
@@ -408,7 +405,7 @@ public abstract class OnionProxyManager {
             controlConnection.takeOwnership();
             controlConnection.resetConf(Collections.singletonList(OWNER));
             // Register to receive events from the Tor process
-            controlConnection.setEventHandler(new OnionProxyManagerEventHandler(onionProxyContext));
+            controlConnection.setEventHandler(eventHandler);
             controlConnection.setEvents(Arrays.asList(EVENTS));
             // We only set the class property once the connection is in a known good state
             this.controlConnection = controlConnection;
@@ -457,9 +454,9 @@ public abstract class OnionProxyManager {
                                 countDownLatch.countDown();
                             }
                             LOG.info(nextLine);
-                            Intent gcm_rec = new Intent("tor_status");
-                            gcm_rec.putExtra("tor_status",nextLine);
-                            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//                            Intent gcm_rec = new Intent("tor_status");
+//                            gcm_rec.putExtra("tor_status",nextLine);
+//                            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
 //                            try {
 //                                if(controlConnection==null){
 //                                    new Thread(new Runnable() {

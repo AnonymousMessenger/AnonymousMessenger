@@ -304,6 +304,12 @@ public class CallController {
         }
     }
 
+    //experimental
+//    public boolean isCallActive(Context context){
+//        AudioManager manager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+//        return manager.getMode() == AudioManager.MODE_IN_CALL;
+//    }
+
     public static void callReceiveHandler(Socket sock, DxApplication app) throws Exception {
         Log.e("SERVER CONNECTION", "its a call");
         DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());

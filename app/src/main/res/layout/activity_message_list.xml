@@ -10,6 +10,45 @@
 
     <!-- A horizontal line between the chatbox and RecyclerView -->
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/sync_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="21dp"
+        android:background="@drawable/custom_ripple"
+        android:theme="?attr/actionBarTheme"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/synced_image"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:contentDescription="@string/online"
+            android:src="@drawable/ic_online" />
+
+        <ImageView
+            android:id="@+id/unsynced_image"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:contentDescription="@string/offline"
+            android:src="@drawable/ic_offline" />
+
+        <TextView
+            android:id="@+id/sync_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="@string/synced"
+            tools:layout_editor_absoluteX="51dp"
+            tools:layout_editor_absoluteY="18dp" />
+    </androidx.appcompat.widget.Toolbar>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reyclerview_message_list"
         android:layout_width="match_parent"
@@ -21,7 +60,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/sync_toolbar">
 
     </androidx.recyclerview.widget.RecyclerView>
 

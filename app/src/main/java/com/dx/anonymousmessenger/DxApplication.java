@@ -20,12 +20,18 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.call.CallController;
 import com.dx.anonymousmessenger.crypto.Entity;
+import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.messages.MessageSender;
+import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.tor.ServerSocketViaTor;
+import com.dx.anonymousmessenger.tor.TorClientSocks4;
 
 import net.sf.controller.network.AndroidTorRelay;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -43,6 +49,78 @@ public class DxApplication extends Application {
     private Entity entity;
     private CallController cc;
     private boolean exitingHoldup;
+    private volatile List<QuotedUserMessage> messageQueue = new ArrayList<>();
+    private volatile boolean syncing;
+
+    public void addToMessagesQueue(List<QuotedUserMessage> messages){
+        for (QuotedUserMessage message:messages) {
+            if(messageQueue.contains(message)){
+                continue;
+            }
+            messageQueue.add(message);
+        }
+    }
+
+    public void addToMessageQueue(QuotedUserMessage message){
+        if(!messageQueue.contains(message)){
+            messageQueue.add(message);
+        }
+    }
+
+    public void sendQueuedMessages(){
+        for (QuotedUserMessage msg:messageQueue){
+            if(msg.getPath()!=null && !msg.getPath().equals("")){
+                MessageSender.sendQueuedMediaMessage(msg,this,msg.getTo());
+                messageQueue.remove(msg);
+                continue;
+            }
+            MessageSender.sendQueuedMessage(msg,this,msg.getTo());
+            messageQueue.remove(msg);
+        }
+    }
+
+    public void queueAllUnsentMessages(){
+        if(syncing){
+            return;
+        }
+        new Thread(()->{
+            try{
+                syncing = true;
+                try{
+                    Thread.sleep(1000);
+                }catch (Exception ignored) {}
+                List<String[]> contactsList = DbHelper.getContactsList(this);
+                if(contactsList==null || contactsList.size()==0){
+                    return;
+                }
+                for (String[] contact: contactsList){
+                    List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, contact[1]);
+                    if (undeliveredMessageList.size()==0){
+                        return;
+                    }
+                    addToMessagesQueue(undeliveredMessageList);
+                    boolean b = new TorClientSocks4().testAddress(this, contact[1]);
+                    if(!b){
+                        return;
+                    }
+                    sendQueuedMessages();
+                    syncing = true;
+                }
+            }catch (Exception ignored) {}
+        }).start();
+    }
+
+    public void queueUnsentMessages(String address){
+        new Thread(()->{
+            List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
+            addToMessagesQueue(undeliveredMessageList);
+            boolean b = new TorClientSocks4().testAddress(this, address);
+            if(!b){
+                return;
+            }
+            sendQueuedMessages();
+        }).start();
+    }
 
     public boolean isExitingHoldup() {
         return exitingHoldup;

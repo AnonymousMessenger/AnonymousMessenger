@@ -99,6 +99,16 @@ public class FileHelper {
         return null;
     }
 
-    //todo delete file here
-
+    public static void deleteFile(String path, DxApplication app){
+        try{
+            //no need to use crypto to delete
+            File f = new File(app.getFilesDir(),path);
+            if(!f.exists()){
+                return;
+            }
+            f.delete();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

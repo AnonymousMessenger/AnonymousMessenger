@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.crypto.DxSignalKeyStore;
+import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 
 import net.sqlcipher.Cursor;
@@ -124,7 +125,7 @@ public class DbHelper {
         else
         {
             c.close();
-            c = null;
+//            c = null;
 //            database.execSQL(DbHelper.CONTACT_SQL_INSERT,DbHelper.getContactSqlValues(address));
             database.execSQL(CONTACT_SQL_INSERT,getContactSqlValues(address));
             return true;
@@ -306,7 +307,7 @@ public class DbHelper {
         return "CREATE TABLE IF NOT EXISTS message "+getMessageColumns()+";";
     }
 
-    public static String getMessageSqlInsert(){//todo change ?'s to columns.split.length*?
+    public static String getMessageSqlInsert(){
         return "INSERT INTO message "+getMessageColumns()+" VALUES(?"+giveMeQMarks(getMessageColumns().split(",").length-1)+")";
     }
 
@@ -350,6 +351,40 @@ public class DbHelper {
         }
         cr.close();
         setContactRead(conversation,database);
+        return messages;
+    }
+
+    public static List<QuotedUserMessage> getUndeliveredMessageList(DxApplication app, String conversation){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getMessageTableSqlCreate());
+        try{
+            database.query("SELECT "+DbHelper.getMessageColumns().trim().substring(1,getMessageColumns().length()-1)+" FROM message LIMIT 1");
+        }catch (Exception e){
+            Log.w("getMessageList", "updating DbSchema");
+            e.printStackTrace();
+            updateDbSchema(database);
+        }
+        Cursor cr = database.rawQuery("SELECT * FROM message WHERE conversation=? AND send_from=? AND received=?;",new Object[]{conversation,app.getHostname(),false});
+        List<QuotedUserMessage> messages = new ArrayList<>();
+        if (cr.moveToFirst()) {
+            do {
+                QuotedUserMessage message = new QuotedUserMessage(cr.getString(9),cr.getString(8),cr.getString(0),cr.getString(3),cr.getString(4),
+                        cr.getLong(5),cr.getInt(7)>0,cr.getString(1),cr.getInt(10)>0,cr.getString(11),cr.getString(12),cr.getString(13));
+
+                if ((new Date().getTime() - message.getCreatedAt()) < (3*60*1000)) {
+                    continue;
+                }
+
+                if ((new Date().getTime() - message.getCreatedAt()) < app.getTime2delete()) {
+                    messages.add(message);
+                } else {
+                    if(!message.isPinned()) deleteMessage(message, app);
+                    else messages.add(message);
+                }
+            } while (cr.moveToNext());
+        }
+        cr.close();
+//        setContactRead(conversation,database);
         return messages;
     }
 
@@ -428,9 +463,9 @@ public class DbHelper {
         SQLiteDatabase database = app.getDb();
         database.execSQL("DELETE FROM message WHERE send_to=? AND sender=? AND msg=? AND created_at=? AND send_from=? AND received=? AND quote=? AND quote_sender=?", new Object[]{msg.getTo(),msg.getSender(),msg.getMessage(),msg.getCreatedAt(),msg.getAddress(),msg.isReceived(),msg.getQuotedMessage(),msg.getQuoteSender()});
         try{
-            //todo make deleting files possible!
-            //todo then do network stuff
-//            FileHelper.deleteFile(msg.getPath);
+            if(msg.getPath()!=null && !msg.getPath().equals("")){
+                FileHelper.deleteFile(msg.getPath(),app);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -6,7 +6,7 @@
             <gradient
                 android:startColor="@color/startGradientColor"
                 android:endColor="@color/endGradientColor"
-                android:angle="180"/>
+                android:angle="-90"/>
 <!--            <solid android:color="@color/dx_brand_green" />-->
             <corners android:radius="300dp" />
         </shape>

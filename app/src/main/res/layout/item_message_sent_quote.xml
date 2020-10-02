@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_rectangle_dark"
         android:padding="8dp"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         >
 
@@ -55,6 +55,7 @@
                 android:textColor="#ffffff"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:autoLink="all"
                 app:layout_constraintEnd_toStartOf="@+id/img_seen"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote_text" />

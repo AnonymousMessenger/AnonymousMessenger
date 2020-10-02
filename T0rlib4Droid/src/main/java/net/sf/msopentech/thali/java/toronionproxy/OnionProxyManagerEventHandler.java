@@ -40,11 +40,10 @@ import net.sf.freehaven.tor.control.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import static android.content.Intent.FLAG_RECEIVER_FOREGROUND;
 
 /**
  * Logs the data we get from notifications from the Tor OP. This is really just meant for debugging.
@@ -55,9 +54,47 @@ public class OnionProxyManagerEventHandler implements EventHandler {
     private NetLayerStatus listener;
     private boolean hsPublished;
     private OnionProxyContext onionProxyContext;
+    private volatile List<String> statuses = new ArrayList<>();
+    private volatile boolean lastMessage;
+
+    private void sendStatuses(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("running in thread");
+                while (!lastMessage){
+                    System.out.println("running in while !last");
+                    try{
+                        Thread.sleep(500);
+                    }catch (Exception ignored) {}
+                }
+                for (int i=0;i<statuses.size();i++){
+                    System.out.println("running in for");
+                    Intent gcm_rec = new Intent("tor_status");
+                    System.out.println("printing: "+statuses.get(i));
+                    gcm_rec.putExtra("tor_status",statuses.get(i));
+                    LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+                    if(statuses.get(i).contains("100%")){
+                        return;
+                    }
+                    try{
+                        Thread.sleep(500);
+                    }catch (Exception ignored) {}
+//                    while (i==(statuses.size()-1)){
+//                        System.out.println("running in while last");
+//                        try{
+//                            Thread.sleep(500);
+//                        }catch (Exception ignored) {}
+//                    }
+                }
+            }
+        }).start();
+
+    }
 
     public OnionProxyManagerEventHandler(OnionProxyContext onionProxyContext) {
         this.onionProxyContext = onionProxyContext;
+        sendStatuses();
     }
 
     public void setHStoWatchFor(ServiceDescriptor hs, NetLayerStatus listener) {
@@ -80,42 +117,37 @@ public class OnionProxyManagerEventHandler implements EventHandler {
         if (rendQuery != null) msg += ", service: " + rendQuery;
         if (!path.isEmpty()) msg += ", path: " + shortenPath(path);
         LOG.info(msg);
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status",msg);
-        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
-        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//        Intent gcm_rec = new Intent("tor_status");
+//        gcm_rec.putExtra("tor_status",msg);
+//        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     @Override
     public void circuitStatus(String status, String circID, String path) {
         LOG.info("status: " + status + ", circID: " + circID + ", path: " + path);
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","status: " + status + ", circID: " + circID + ", path: " + path);
-        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        Intent gcm_rec = new Intent("tor_status1");
+        gcm_rec.putExtra("tor_status1","status: " + status + ", circID: " + circID + ", path: " + path);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void streamStatus(String status, String id, String target) {
         LOG.info("status: " + status + ", id: " + id + ", target: " + target);
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","status: " + status + ", id: " + id + ", target: " + target);
-        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
-        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//        Intent gcm_rec = new Intent("tor_status");
+//        gcm_rec.putExtra("tor_status","status: " + status + ", id: " + id + ", target: " + target);
+//        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void orConnStatus(String status, String orName) {
         LOG.info("OR connection: status: " + status + ", orName: " + orName);
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","OR connection: status: " + status + ", orName: " + orName);
-        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
-        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//        Intent gcm_rec = new Intent("tor_status");
+//        gcm_rec.putExtra("tor_status","OR connection: status: " + status + ", orName: " + orName);
+//        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void bandwidthUsed(long read, long written) {
         LOG.info("bandwidthUsed: read: " + read + ", written: " + written);
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","bandwidthUsed: read: " + read + ", written: " + written);
-        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        Intent gcm_rec = new Intent("tor_status1");
+        gcm_rec.putExtra("tor_status1","bandwidthUsed: read: " + read + ", written: " + written);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
@@ -126,26 +158,28 @@ public class OnionProxyManagerEventHandler implements EventHandler {
             stringBuilder.append(iterator.next());
         }
         LOG.info("newDescriptors: " + stringBuilder.toString());
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","newDescriptors: " + stringBuilder.toString());
-        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        Intent gcm_rec = new Intent("tor_status1");
+        gcm_rec.putExtra("tor_status1","newDescriptors: " + stringBuilder.toString());
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     //fetch Exit Node
     public void message(String severity, String msg) {
         LOG.info("message: severity: " + severity + ", msg: " + msg);
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","message: severity: " + severity + ", msg: " + msg);
-        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
-        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+        String out = "message: " + severity + ", msg: " + msg;
+        if(out.contains("100%")){
+            lastMessage = true;
+        }
+        statuses.add(out);
+//        Intent gcm_rec = new Intent("tor_status");
+//        gcm_rec.putExtra("tor_status","message: " + severity + ", msg: " + msg);
+//        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void unrecognized(String type, String msg) {
-        LOG.info("unrecognized: type: " + type + ", msg: " + msg);
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","unrecognized: type: " + type + ", msg: " + msg);
-        gcm_rec.setFlags(FLAG_RECEIVER_FOREGROUND);
+        LOG.info("unrecognized: msg: " + type + ", " + msg);
+        Intent gcm_rec = new Intent("tor_status1");
+        gcm_rec.putExtra("tor_status1","unrecognized: msg: " + type + ", " + msg);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 

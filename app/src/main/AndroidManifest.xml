@@ -29,10 +29,6 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service
-            android:name=".AudioRecordingService"
-            android:enabled="true"
-            android:exported="false"></service>
 
         <activity android:name=".RingingActivity" />
         <activity android:name=".CallActivity" />
@@ -53,6 +49,10 @@
             </intent-filter>
         </receiver>
 
+        <service
+            android:name=".AudioRecordingService"
+            android:enabled="true"
+            android:exported="false" />
         <service
             android:name=".MyService"
             android:enabled="true"
