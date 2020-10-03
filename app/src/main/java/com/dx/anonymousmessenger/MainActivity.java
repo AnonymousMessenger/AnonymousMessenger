@@ -2,9 +2,11 @@ package com.dx.anonymousmessenger;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -51,6 +53,23 @@ public class MainActivity extends AppCompatActivity {
                 switchToAppView();
             }
         }).start();
+
+        Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
+            new Thread() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    Toast.makeText(getApplicationContext(),R.string.crash_message, Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                }
+            }.start();
+            try
+            {
+                Thread.sleep(4000); // Let the Toast display before app will get shutdown
+            }
+            catch (InterruptedException ignored) {    }
+            System.exit(2);
+        });
     }
 
     public void onNextClick(View view){

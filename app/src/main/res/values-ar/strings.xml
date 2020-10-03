@@ -89,4 +89,7 @@
     <string name="waiting_for_tor">إنتظار الرد من قبل تور</string>
     <string name="oh_no">أوه لا!</string>
     <string name="did_you_forget_your_password">هل نسيت كلمة مرورك؟</string>
+    <string name="crash_message">المسنجر المجهول: لقد نفذت الرام لديك</string>
+    <string name="no_encryption_yet">التشفير ليس جاهزاََ بعد</string>
+    <string name="no_session">لا توجد جلسة تشفير, سيتم بدء جلسة تشفير الآن</string>
 </resources>

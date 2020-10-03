@@ -32,7 +32,7 @@
 
         <activity android:name=".RingingActivity" />
         <activity android:name=".CallActivity" />
-        <activity android:name=".AddContactActivity" />
+        <activity android:name=".AddContactActivity"/>
         <activity android:name=".VerifyIdentityActivity" />
         <activity android:name=".MyIdentityActivity" />
         <activity android:name=".SetupInProcess" />

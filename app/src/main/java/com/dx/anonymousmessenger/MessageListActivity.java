@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.transition.Explode;
@@ -24,14 +25,12 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
@@ -44,6 +43,7 @@ import com.dx.anonymousmessenger.messages.MessageListAdapter;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
 
@@ -70,10 +70,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     private LinearLayout audioLayout;
     private FloatingActionButton scrollDownFab;
     private BroadcastReceiver timeBroadcastReceiver;
-    private ImageView syncedImg;
-    private ImageView unsyncedImg;
-    private TextView syncTxt;
-    private Toolbar syncToolbar;
+//    private ImageView syncedImg;
+//    private ImageView unsyncedImg;
+//    private TextView syncTxt;
+//    private Toolbar syncToolbar;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -97,10 +97,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         audio = findViewById(R.id.fab_audio);
         audioLayout = findViewById(R.id.layout_audio);
         txtAudioTimer = findViewById(R.id.txt_audio_timer);
-        syncedImg = findViewById(R.id.synced_image);
-        unsyncedImg = findViewById(R.id.unsynced_image);
-        syncTxt = findViewById(R.id.sync_text);
-        syncToolbar = findViewById(R.id.sync_toolbar);
+//        syncedImg = findViewById(R.id.synced_image);
+//        unsyncedImg = findViewById(R.id.unsynced_image);
+//        syncTxt = findViewById(R.id.sync_text);
+//        syncToolbar = findViewById(R.id.sync_toolbar);
         scrollDownFab = findViewById(R.id.fab_scroll_down);
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication(), mMessageRecycler);
@@ -169,14 +169,20 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         });
         scrollDownFab.setOnClickListener(v -> mMessageRecycler.smoothScrollToPosition(messageList.size()-1));
         send.setOnClickListener(v -> {
+            if(((DxApplication) getApplication()).getEntity()==null){
+                Snackbar.make(send, R.string.no_encryption_yet,Snackbar.LENGTH_SHORT).show();
+                return;
+            }
             if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1))){
-                Toast.makeText(this,"Session doesn't exist, not sending message",Toast.LENGTH_SHORT).show();
+                Snackbar.make(send, R.string.no_session,Snackbar.LENGTH_SHORT).show();
                 new Thread(()-> MessageSender.sendKeyExchangeMessage(((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
                 return;
             }
             TextView quoteSenderTyping = findViewById(R.id.quote_sender_typing);
             TextView quoteTextTyping = findViewById(R.id.quote_text_typing);
-            QuotedUserMessage msg = new QuotedUserMessage(quoteSenderTyping.getText().toString().equals("You")?((DxApplication)getApplication()).getAccount().getNickname():getIntent().getStringExtra("nickname"),quoteTextTyping.getText().toString(),((DxApplication)getApplication()).getHostname(),txt.getText().toString(),((DxApplication)getApplication()).getAccount().getNickname(),new Date().getTime(),false,getIntent().getStringExtra("address"),false);
+            QuotedUserMessage msg =
+                    new QuotedUserMessage(quoteSenderTyping.getText().toString().equals(R.string.you)?
+                            ((DxApplication)getApplication()).getAccount().getNickname():getIntent().getStringExtra("nickname"),quoteTextTyping.getText().toString(),((DxApplication)getApplication()).getHostname(),txt.getText().toString(),((DxApplication)getApplication()).getAccount().getNickname(),new Date().getTime(),false,getIntent().getStringExtra("address"),false);
             messageList.add(msg);
             new Thread(()-> MessageSender.sendMessage(msg,((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
             txt.setText("");
@@ -283,6 +289,23 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 
         //run db message checker to delete any old messages then tell us to update ui
         checkMessages();
+
+        Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
+            new Thread() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    Toast.makeText(getApplicationContext(), R.string.crash_message, Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                }
+            }.start();
+            try
+            {
+                Thread.sleep(4000); // Let the Toast display before app will get shutdown
+            }
+            catch (InterruptedException ignored) {    }
+            System.exit(2);
+        });
     }
 
     public void checkMessages(){
@@ -370,7 +393,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             public void onReceive(Context context, Intent intent)
             {
                 if(intent.getStringExtra("error")!=null){
-                    Toast.makeText(getApplication(),intent.getStringExtra("error"),Toast.LENGTH_SHORT).show();
+                    try{
+                        Snackbar.make(send, Objects.requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).show();
+                    }catch (Exception ignored) {}
                 }
                 updateUi();
             }
@@ -443,7 +468,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 new Thread(()->{
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                         if(((DxApplication)getApplication()).isInCall()){
-                            runOnUiThread(()-> Toast.makeText(this,"Already in a call",Toast.LENGTH_SHORT).show());
+                            runOnUiThread(()-> Snackbar.make(send,"Already in a call",Snackbar.LENGTH_SHORT).show());
                             return;
                         }
                         Intent intent = new Intent(this, CallActivity.class);

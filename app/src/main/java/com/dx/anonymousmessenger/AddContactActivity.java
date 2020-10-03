@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.transition.Explode;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
@@ -53,7 +55,7 @@ public class AddContactActivity extends AppCompatActivity {
             ClipboardManager clipboard = getSystemService(ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", tv.getText().toString());
             Objects.requireNonNull(clipboard).setPrimaryClip(clip);
-            Toast.makeText(getApplicationContext(),"Copied address",Toast.LENGTH_LONG).show();
+            Snackbar.make(tv,"Copied address",Snackbar.LENGTH_LONG).show();
         });
         contact = findViewById(R.id.txt_contact_address);
         Context context = this;
@@ -66,7 +68,7 @@ public class AddContactActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.toString().equals(((DxApplication)getApplication()).getHostname())){
-                    Toast.makeText(context, "You can't add yourself!",Toast.LENGTH_SHORT).show();
+                    Snackbar.make(contact, "You can't add yourself!",Snackbar.LENGTH_SHORT).show();
                     contact.setText("");
                     return;
                 }
@@ -81,7 +83,7 @@ public class AddContactActivity extends AppCompatActivity {
                                 try{
                                     if(DbHelper.contactExists(s.toString(),(DxApplication)getApplication())){
                                         runOnUiThread(()->{
-                                            Toast.makeText(context, "Contact already exists!",Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(contact, "Contact already exists!",Snackbar.LENGTH_SHORT).show();
                                             contact.setText("");
                                         });
                                         return;
@@ -90,7 +92,7 @@ public class AddContactActivity extends AppCompatActivity {
                                     if(!b){
                                         Log.e("FAILED TO SAVE CONTACT", "SAME " );
                                         runOnUiThread(()->{
-                                            Toast.makeText(context, "can't add contact!",Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(contact, "can't add contact!",Snackbar.LENGTH_SHORT).show();
                                             contact.setText("");
                                         });
                                         return;
@@ -100,7 +102,7 @@ public class AddContactActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                     Log.e("FAILED TO SAVE CONTACT", "SAME " );
                                     runOnUiThread(()->{
-                                        Toast.makeText(context, "can't add contact!",Toast.LENGTH_SHORT).show();
+                                        Snackbar.make(contact, "can't add contact!",Snackbar.LENGTH_SHORT).show();
                                         contact.setText("");
                                     });
                                 }
@@ -115,6 +117,23 @@ public class AddContactActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
 
             }
+        });
+
+        Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
+            new Thread() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    Toast.makeText(getApplicationContext(),R.string.crash_message, Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                }
+            }.start();
+            try
+            {
+                Thread.sleep(4000); // Let the Toast display before app will get shutdown
+            }
+            catch (InterruptedException ignored) {    }
+            System.exit(2);
         });
     }
 }

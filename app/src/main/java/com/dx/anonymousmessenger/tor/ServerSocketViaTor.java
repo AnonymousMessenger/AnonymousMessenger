@@ -165,7 +165,7 @@ public class ServerSocketViaTor {
                                 DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
                                 DataInputStream in=new DataInputStream(sock.getInputStream());
                                 String msg = in.readUTF();
-                                if(msg.equals("hello")){
+                                if(msg.contains("hello-")){
 //                                    try {
 //                                        outputStream.writeUTF("hello");
 //                                        outputStream.flush();
@@ -173,6 +173,9 @@ public class ServerSocketViaTor {
 //                                        e.printStackTrace();
 //                                    }
                                     sock.close();
+                                    if(DbHelper.contactExists(msg.replace("hello-",""),app)){
+                                        app.queueUnsentMessages(msg.replace("hello-",""));
+                                    }
                                     return;
                                 }else if(msg.equals("call")){
                                     try {

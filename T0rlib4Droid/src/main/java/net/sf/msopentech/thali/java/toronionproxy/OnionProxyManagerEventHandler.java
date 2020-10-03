@@ -61,17 +61,13 @@ public class OnionProxyManagerEventHandler implements EventHandler {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println("running in thread");
                 while (!lastMessage){
-                    System.out.println("running in while !last");
                     try{
                         Thread.sleep(500);
                     }catch (Exception ignored) {}
                 }
                 for (int i=0;i<statuses.size();i++){
-                    System.out.println("running in for");
                     Intent gcm_rec = new Intent("tor_status");
-                    System.out.println("printing: "+statuses.get(i));
                     gcm_rec.putExtra("tor_status",statuses.get(i));
                     LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
                     if(statuses.get(i).contains("100%")){

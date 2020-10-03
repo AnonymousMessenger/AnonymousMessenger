@@ -71,12 +71,11 @@ public class DxApplication extends Application {
         for (QuotedUserMessage msg:messageQueue){
             if(msg.getPath()!=null && !msg.getPath().equals("")){
                 MessageSender.sendQueuedMediaMessage(msg,this,msg.getTo());
-                messageQueue.remove(msg);
                 continue;
             }
             MessageSender.sendQueuedMessage(msg,this,msg.getTo());
-            messageQueue.remove(msg);
         }
+        messageQueue.clear();
     }
 
     public void queueAllUnsentMessages(){
@@ -104,7 +103,7 @@ public class DxApplication extends Application {
                         return;
                     }
                     sendQueuedMessages();
-                    syncing = true;
+                    syncing = false;
                 }
             }catch (Exception ignored) {}
         }).start();
@@ -112,6 +111,12 @@ public class DxApplication extends Application {
 
     public void queueUnsentMessages(String address){
         new Thread(()->{
+            while (syncing){
+                try{
+                    Thread.sleep(1000);
+                }catch (Exception ignored) {}
+            }
+            syncing = true;
             List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
             addToMessagesQueue(undeliveredMessageList);
             boolean b = new TorClientSocks4().testAddress(this, address);
@@ -119,6 +124,7 @@ public class DxApplication extends Application {
                 return;
             }
             sendQueuedMessages();
+            syncing = false;
         }).start();
     }
 

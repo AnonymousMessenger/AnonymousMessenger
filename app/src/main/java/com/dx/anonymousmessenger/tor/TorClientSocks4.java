@@ -149,7 +149,7 @@ public class TorClientSocks4 {
 //            return b;
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
 //            DataInputStream in =new DataInputStream(socket.getInputStream());
-            outputStream.writeUTF("hello");
+            outputStream.writeUTF("hello-"+app.getHostname());
             outputStream.flush();
 //            String s = in.readUTF();
 //            outputStream.close();

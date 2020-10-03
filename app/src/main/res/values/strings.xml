@@ -92,4 +92,7 @@
     <string name="did_you_forget_your_password">Did you forget your password?</string>
     <string name="hello_hello" translatable="false">hello, hello!</string>
     <string name="_11_40" translatable="false">11:40</string>
+    <string name="crash_message">Anonymous Messenger: you are out of RAM !</string>
+    <string name="no_encryption_yet">Not ready for encryption yet</string>
+    <string name="no_session">Session doesn\'t exist, starting session now</string>
 </resources>
