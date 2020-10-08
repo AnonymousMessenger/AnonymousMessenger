@@ -27,6 +27,7 @@
         android:name=".DxApplication"
         android:allowBackup="false"
         android:fullBackupContent="false"
+        tools:replace="android:allowBackup"
         android:icon="@drawable/notification"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
