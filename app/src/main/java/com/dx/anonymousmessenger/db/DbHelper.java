@@ -3,6 +3,7 @@ package com.dx.anonymousmessenger.db;
 import android.util.Log;
 
 import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.crypto.DxSignalKeyStore;
 import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
@@ -55,11 +56,11 @@ public class DbHelper {
                 database.execSQL(DbHelper.getMessageTableSqlCreate());
                 //delete old messages
                 database.execSQL("DELETE FROM message WHERE conversation=? AND pinned=? AND created_at<?", new Object[]{address,0,new Date().getTime() - app.getTime2delete()});
-                Cursor cr2 = database.rawQuery("SELECT * FROM message WHERE conversation=? ORDER BY created_at DESC LIMIT 1;",new Object[]{address});
+                Cursor cr2 = database.rawQuery("SELECT * FROM message WHERE conversation=? ORDER BY rowid DESC LIMIT 1;",new Object[]{address});
 
                 if (cr2.moveToFirst()) {
                     QuotedUserMessage message = new QuotedUserMessage(cr2.getString(9),cr2.getString(8),cr2.getString(0),cr2.getString(3),cr2.getString(4),
-                            cr2.getLong(5),cr2.getInt(7)>0,cr2.getString(1),cr2.getInt(10)>0);
+                            cr2.getLong(5),cr2.getInt(7)>0,cr2.getString(1),cr2.getInt(10)>0,cr2.getString(11),cr2.getString(12),cr2.getString(13));
                     if ((new Date().getTime() - message.getCreatedAt()) >= app.getTime2delete()) {
                         if(!message.isPinned()) {
                             deleteMessage(message, app);
@@ -70,8 +71,18 @@ public class DbHelper {
                     }
                     cr2.close();
 
-                    contacts.add(new String[]{cr.getString(0), address, cr.getInt(2) > 0 ? "unread" : "read",message.getMessage(),message.getTo(), String.valueOf(message.getCreatedAt()),message.isReceived()?"true":"false"});
+                    String msg;
+                    if(message.getType()!=null && message.getType().equals("audio")){
+                        msg = app.getString(R.string.audio_message);
+                    }else if(message.getType()!=null && message.getType().equals("image")){
+                        msg = app.getString(R.string.media_message);
+                    }else{
+                        msg = message.getMessage();
+                    }
+
+                    contacts.add(new String[]{cr.getString(0), address, cr.getInt(2) > 0 ? "unread" : "read",msg,message.getTo(), String.valueOf(message.getCreatedAt()),message.isReceived()?"true":"false"});
                 }else{
+                    cr2.close();
                     contacts.add(new String[]{cr.getString(0), address, cr.getInt(2) > 0 ? "unread" : "read","","","",""});
                 }
             } while (cr.moveToNext());
@@ -319,6 +330,10 @@ public class DbHelper {
         return new Object[]{from,to,number,msg,sender,createdAt,conversation,received,quote,quoteSender,false,null,null,null};
     }
 
+    public static Object[] getFullMessageSqlValues(String from, String to, String number, String msg, String sender, long createdAt, String conversation, boolean received, String quote, String quoteSender, String filename, String path, String type){
+        return new Object[]{from,to,number,msg,sender,createdAt,conversation,received,quote,quoteSender,false,filename,path,type};
+    }
+
     public static Object[] getMediaMessageSqlValues(String from, String to, String number, String sender, long createdAt, String conversation, boolean received, String filename, String path, String type){
         return new Object[]{from,to,number,"",sender,createdAt,conversation,received,"","",false,filename,path,type};
     }
@@ -371,7 +386,7 @@ public class DbHelper {
                 QuotedUserMessage message = new QuotedUserMessage(cr.getString(9),cr.getString(8),cr.getString(0),cr.getString(3),cr.getString(4),
                         cr.getLong(5),cr.getInt(7)>0,cr.getString(1),cr.getInt(10)>0,cr.getString(11),cr.getString(12),cr.getString(13));
 
-                if ((new Date().getTime() - message.getCreatedAt()) < (3*60*1000)) {
+                if ((new Date().getTime() - message.getCreatedAt()) < (2*60*1000)) {
                     continue;
                 }
 
@@ -446,7 +461,8 @@ public class DbHelper {
         if(msg.getType()==null || msg.getType().equals("")){
             database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getMessage(),msg.getSender(),msg.getCreatedAt(),conversation,received,msg.getQuotedMessage(),msg.getQuoteSender()));
         }else{
-            database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getMediaMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getSender(),msg.getCreatedAt(),conversation,received,msg.getFilename(),msg.getPath(),msg.getType()));
+            database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getFullMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getMessage(),msg.getSender(),msg.getCreatedAt(),conversation,received,msg.getQuotedMessage(),msg.getQuoteSender(),msg.getFilename(),msg.getPath(),msg.getType()));
+//            database.execSQL(DbHelper.getMessageSqlInsert(),DbHelper.getMediaMessageSqlValues(msg.getAddress(),msg.getTo(),"1",msg.getSender(),msg.getCreatedAt(),conversation,received,msg.getFilename(),msg.getPath(),msg.getType()));
         }
 
         return true;
@@ -513,6 +529,7 @@ public class DbHelper {
 
     public static void setMessageReceived(QuotedUserMessage msg, DxApplication app, String conversation, boolean received){
         SQLiteDatabase database = app.getDb();
+        System.out.println("message received is "+msg.getMessage());
         database.execSQL("UPDATE message SET received=? WHERE send_to=? AND created_at=? AND send_from=? AND msg=? AND conversation=?", new Object[]{received,msg.getTo(),msg.getCreatedAt(),msg.getAddress(),msg.getMessage(),conversation});
     }
 

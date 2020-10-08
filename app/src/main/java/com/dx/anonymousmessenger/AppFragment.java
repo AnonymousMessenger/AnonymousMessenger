@@ -162,6 +162,7 @@ public class AppFragment extends Fragment {
         FloatingActionButton btnAddContact = rootView.findViewById(R.id.btn_add_contact);
         btnAddContact.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), AddContactActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             v.getContext().startActivity(intent);
         });
 
@@ -257,6 +258,7 @@ public class AppFragment extends Fragment {
                         mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
                         recyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
+                        ((DxApplication)getActivity().getApplication()).clearMessageNotification();
                     } catch (Exception ignored) {}
                 });
             }catch (Exception ignored){}
@@ -355,8 +357,9 @@ public class AppFragment extends Fragment {
                         onlineImg.setVisibility(View.GONE);
                         offlineImg.setVisibility(View.VISIBLE);
                         onlineToolbar.setVisibility(View.VISIBLE);
-                        Intent intent = new Intent((DxApplication)getActivity().getApplication(), SetupInProcess.class);
+                        Intent intent = new Intent(getActivity().getApplication(), SetupInProcess.class);
                         intent.putExtra("first_time",false);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
                     } catch (Exception ignored) {}
                 });

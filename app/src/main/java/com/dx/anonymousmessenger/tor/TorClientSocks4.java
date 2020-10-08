@@ -140,7 +140,7 @@ public class TorClientSocks4 {
         }
     }
 
-    public boolean testAddress(DxApplication app, String address){
+    public static boolean testAddress(DxApplication app, String address){
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection(address, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());

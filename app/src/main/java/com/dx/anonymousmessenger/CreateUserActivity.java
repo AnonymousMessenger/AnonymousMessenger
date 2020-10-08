@@ -77,6 +77,7 @@ public class CreateUserActivity extends AppCompatActivity {
         try{
             ((DxApplication)getApplication()).createAccount(password,nickname);
             Intent intent = new Intent(this, SetupInProcess.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();
         }catch(Exception e){
@@ -86,6 +87,7 @@ public class CreateUserActivity extends AppCompatActivity {
 
     public void switchToAppView(){
         Intent intent = new Intent(this, AppActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }

@@ -112,6 +112,7 @@ public class PasswordEntryFragment extends Fragment {
 //                            txtPassword.setError("An unexpected error happened");
 //                        });
                         Intent intent = new Intent(getActivity(), AppActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
                         getActivity().finish();
                     }
@@ -142,6 +143,7 @@ public class PasswordEntryFragment extends Fragment {
 //                            txtPassword.setError("An unexpected error happened");
 //                        });
                         Intent intent = new Intent(getActivity(), AppActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
                         try{
                             Objects.requireNonNull(getActivity()).finish();

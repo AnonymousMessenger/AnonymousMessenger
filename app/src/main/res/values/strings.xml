@@ -31,7 +31,7 @@
     <string name="action_search">Search</string>
     <string name="action_shutdown">Shutdown</string>
     <string name="action_my_identity">My Identity</string>
-    <string name="action_restart_tor">restart tor</string>
+    <string name="action_restart_tor">Restart tor</string>
     <string name="my_identity_explanation">Public key used to verify identity</string>
     <string name="verify_identity_explanation">Both public keys together to verify both identities</string>
     <string name="action_call">Call</string>
@@ -95,4 +95,21 @@
     <string name="crash_message">Anonymous Messenger: you are out of RAM !</string>
     <string name="no_encryption_yet">Not ready for encryption yet</string>
     <string name="no_session">Session doesn\'t exist, starting session now</string>
+    <string name="audio_message">audio message</string>
+    <string name="user_is_online">User is online</string>
+    <string name="user_is_offline">User is offline</string>
+    <string name="cant_encrypt_message">Couldn\'t encrypt message, you have to wait for key exchange</string>
+    <string name="resp_key_exchange">Response Key Exchange Message</string>
+    <string name="key_exchange_message">Key Exchange Message</string>
+    <string name="image_to_send">image to send</string>
+    <string name="read_storage_perm_ask_title">Read Storage Permission</string>
+    <string name="why_need_read_storage">the app needs this to be able to send images
+        stored on your phone</string>
+    <string name="icon_for_image_to_send">icon for image to send</string>
+    <string name="image">image</string>
+    <string name="pic_help">Cancel</string>
+    <string name="send_media_to">"Send Media to "</string>
+    <string name="picure_view">Image View</string>
+    <string name="media_message">media message</string>
+    <string name="caption">Caption this</string>
 </resources>

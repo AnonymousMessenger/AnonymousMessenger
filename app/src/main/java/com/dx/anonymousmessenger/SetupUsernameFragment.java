@@ -41,7 +41,7 @@ public class SetupUsernameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_setup_username, container, false);
-        final TextInputEditText txtNickname = rootView.findViewById(R.id.txt_nickname);
+        final TextInputEditText txtNickname = rootView.findViewById(R.id.txt_caption);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             txtNickname.setImeOptions(IME_FLAG_NO_PERSONALIZED_LEARNING);
         }

@@ -92,4 +92,20 @@
     <string name="crash_message">المسنجر المجهول: لقد نفذت الرام لديك</string>
     <string name="no_encryption_yet">التشفير ليس جاهزاََ بعد</string>
     <string name="no_session">لا توجد جلسة تشفير, سيتم بدء جلسة تشفير الآن</string>
+    <string name="audio_message">رسالة صوتية</string>
+    <string name="user_is_online">متصل الآن</string>
+    <string name="user_is_offline">غير متصل الآن</string>
+    <string name="cant_encrypt_message">ﻻ يمكن تشفير الرسالة, عليك انتظار تبادل المفاتيح</string>
+    <string name="resp_key_exchange">رسالة رد تبادل المفاتيح</string>
+    <string name="key_exchange_message">رسالة تبادل مفاتيح</string>
+    <string name="image_to_send">الصورة المرسلة</string>
+    <string name="read_storage_perm_ask_title">إذن قراءة وحدة التخزين المشتركة</string>
+    <string name="why_need_read_storage">هذا البرنامج يحتاج الوصول إلى الصور ليستطيع إرسالها</string>
+    <string name="icon_for_image_to_send">أيقونة للصورة المرسلة</string>
+    <string name="image">صورة</string>
+    <string name="pic_help">إلغاء</string>
+    <string name="send_media_to">إرسال الوسائط إلى</string>
+    <string name="picure_view">رؤية الصورة</string>
+    <string name="media_message">رسالة وسائط</string>
+    <string name="caption">عنوان</string>
 </resources>

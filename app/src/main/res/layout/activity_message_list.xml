@@ -87,11 +87,12 @@
         app:layout_constraintRight_toRightOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_rectangle_steel"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/fab_audio"
+            app:layout_constraintEnd_toStartOf="@+id/fab_file"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -102,6 +103,7 @@
                 android:layout_gravity="center"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
+                android:animateLayoutChanges="true"
                 android:autofillHints="@string/enter_message"
                 android:background="@drawable/rounded_rectangle_steel"
                 android:hint="@string/enter_message"
@@ -111,7 +113,6 @@
                 android:textColor="#ffffff"
                 android:textColorHint="#ffffff"
                 android:visibility="visible"
-                android:animateLayoutChanges="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -120,11 +121,11 @@
                 android:id="@+id/quote_sender_typing"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
                 android:paddingStart="10dp"
                 android:paddingEnd="6dp"
                 android:text="@string/textview"
                 android:textColor="#ffffff"
-                android:animateLayoutChanges="true"
                 app:layout_constraintBottom_toTopOf="@+id/quote_text_typing"
                 app:layout_constraintEnd_toEndOf="@+id/quote_text_typing"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -137,13 +138,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:alpha="0.75"
+                android:animateLayoutChanges="true"
                 android:background="@drawable/rounded_rectangle_dark"
                 android:maxWidth="300dp"
                 android:padding="8dp"
                 android:text="@string/textview"
                 android:textColor="#ffffff"
                 android:textSize="14sp"
-                android:animateLayoutChanges="true"
                 app:layout_constraintBottom_toTopOf="@+id/edittext_chatbox"
                 app:layout_constraintEnd_toEndOf="@+id/edittext_chatbox"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -154,24 +155,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
+            android:animateLayoutChanges="true"
             android:backgroundTint="@android:color/transparent"
             android:clickable="true"
             android:focusable="true"
-            android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_chatbox_send"
             app:layout_constraintTop_toTopOf="parent"
             app:rippleColor="@color/red_500"
             app:srcCompat="@drawable/ic_baseline_mic_24" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_marginEnd="1dp"
+            android:animateLayoutChanges="true"
+            android:backgroundTint="@android:color/transparent"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fab_audio"
+            app:layout_constraintTop_toTopOf="parent"
+            app:rippleColor="@color/red_500"
+            app:srcCompat="@drawable/ic_baseline_attach_file_24" />
+
         <Button
             android:id="@+id/button_chatbox_send"
             style="@style/DXSendButton"
             android:layout_width="64dp"
             android:layout_height="45dp"
+            android:animateLayoutChanges="true"
             android:background="@drawable/button_ripple"
             android:text="@string/send"
-            android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -180,11 +197,11 @@
             android:id="@+id/layout_audio"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
             android:orientation="horizontal"
             android:visibility="gone"
-            android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/fab_audio"
+            app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -193,8 +210,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.25"
-                android:contentDescription="@string/recording"
                 android:animateLayoutChanges="true"
+                android:contentDescription="@string/recording"
                 app:srcCompat="@drawable/ic_baseline_mic_red_36" />
 
             <TextView
@@ -202,11 +219,45 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:animateLayoutChanges="true"
                 android:fontFamily="sans-serif-condensed"
                 android:gravity="center"
                 android:text="@string/_00_00"
                 android:textColor="@color/red_500"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_pics"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
                 android:animateLayoutChanges="true"
+                android:contentDescription="@string/recording"
+                app:srcCompat="@android:drawable/ic_menu_report_image" />
+
+            <TextView
+                android:id="@+id/txt_pic_help"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:animateLayoutChanges="true"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:text="@string/pic_help"
+                android:textColor="@color/red_500"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -226,5 +277,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_baseline_arrow_downward_24" />
+
+    <TextView
+        android:id="@+id/txt_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/contact_item_back"
+        android:elevation="18dp"
+        android:fontFamily="monospace"
+        android:padding="14dp"
+        android:text="@string/user_is_online"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_media"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

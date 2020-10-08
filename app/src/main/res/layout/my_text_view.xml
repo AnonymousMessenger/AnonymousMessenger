@@ -17,6 +17,20 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/contact_online"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="3dp"
+            android:contentDescription="@string/online"
+            android:elevation="18dp"
+            android:src="@drawable/ic_online"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/message_text" />
+
+        <ImageView
             android:id="@+id/seen"
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -30,15 +44,16 @@
 
         <TextView
             android:id="@+id/message_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:ellipsize="end"
-            android:maxLength="25"
             android:maxLines="1"
             android:text="@string/text_msg_placeholder"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/image_message_profile2" />
+            app:layout_constraintEnd_toEndOf="@+id/contact_name"
+            app:layout_constraintStart_toEndOf="@+id/image_message_profile2"
+            app:layout_constraintTop_toBottomOf="@+id/contact_name" />
 
         <ImageView
             android:id="@+id/image_message_profile2"
@@ -47,21 +62,21 @@
             android:layout_margin="4dp"
             android:background="@drawable/circle"
             android:contentDescription="@string/profile_image"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/contact_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:ellipsize="end"
-            android:maxLength="25"
             android:maxLines="1"
             android:text="@string/really_long_word"
+            android:textAlignment="viewStart"
             android:textSize="18sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/time_text"
             app:layout_constraintStart_toEndOf="@+id/image_message_profile2"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -79,6 +94,7 @@
             android:id="@+id/time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="3dp"
             android:text="@string/time_passed_placeholder"
             app:layout_constraintEnd_toStartOf="@+id/contact_unread_circle"
             app:layout_constraintTop_toTopOf="parent" />

@@ -76,11 +76,11 @@ public class MyService extends Service {
         // Wait for shutdown to complete, then exit
         new Thread(() -> {
             try {
-                if(csm!=null){
-                    csm.disable();
-                }
+                csm.disable();
                 if(app!=null){
-                    app.getAndroidTorRelay().shutDown();
+                    if(app.getAndroidTorRelay()!=null){
+                        app.getAndroidTorRelay().shutDown();
+                    }
                     app.emptyVars();
                     app.shutdown(0);
                 }

@@ -3,7 +3,6 @@ package com.dx.anonymousmessenger;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,25 +12,27 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.util.Utils;
 
 import java.util.List;
 
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
+import static androidx.recyclerview.widget.RecyclerView.ViewHolder;
+
+public class MyRecyclerViewAdapter extends Adapter {
     private static final int VIEW_TYPE_READ = 1;
     private static final int VIEW_TYPE_UNREAD = 2;
     private List<String[]> mData;
-    private LayoutInflater mInflater;
+//    private LayoutInflater mInflater;
     private View.OnClickListener mClickListener;
     private DxApplication app;
     private AppFragment appFragment;
 
     // data is passed into the constructor
     MyRecyclerViewAdapter(DxApplication app, List<String[]> data, AppFragment appFragment) {
-        this.mInflater = LayoutInflater.from(app);
+//        this.mInflater = LayoutInflater.from(app);
         this.app = app;
         this.mData = data;
         this.appFragment = appFragment;
@@ -51,7 +52,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
     // inflates the row layout from xml when needed
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         if (viewType == VIEW_TYPE_READ) {
             view = LayoutInflater.from(parent.getContext())
@@ -63,14 +64,17 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
                     .inflate(R.layout.my_text_view, parent, false);
             view.setOnClickListener(mClickListener);
             return new MyRecyclerViewAdapter.UnreadContactHolder(view);
+        } else{
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.my_text_view, parent, false);
+            view.setOnClickListener(mClickListener);
+            return new MyRecyclerViewAdapter.ReadContactHolder(view);
         }
-        Log.e("finding contact type","something went wrong");
-        return null;
     }
 
     // binds the data to the TextView in each row
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String[] contact = mData.get(position);
         long createdAt = 0;
         try {
@@ -80,7 +84,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
         }catch (Exception ignored){}
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_READ://String msg, String send_to, long createdAt, boolean received
-                ((MyRecyclerViewAdapter.ReadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"));
+                ((MyRecyclerViewAdapter.ReadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"),contact[1]);
                 holder.itemView.setOnClickListener(v -> {
                     appFragment.stopCheckingMessages();
                     int position1 = holder.getAdapterPosition();
@@ -92,7 +96,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
                 holder.itemView.setOnLongClickListener(new ListItemOnClickListener(holder.itemView,mData.get(holder.getAdapterPosition())[1]));
                 break;
             case VIEW_TYPE_UNREAD:
-                ((MyRecyclerViewAdapter.UnreadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"));
+                ((MyRecyclerViewAdapter.UnreadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"),contact[1]);
                 holder.itemView.setOnClickListener(v -> {
                     appFragment.stopCheckingMessages();
                     int position12 = holder.getAdapterPosition();
@@ -161,34 +165,32 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
             popup.inflate(R.menu.contact_menu);
 
             popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.delete_contact:
-                        new AlertDialog.Builder(itemView.getContext(),R.style.AppAlertDialog)
+                if (item.getItemId() == R.id.delete_contact) {
+                    new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
                             .setTitle("Delete this contact?")
                             .setMessage("this can't be undone and will also delete this contact's session and conversation")
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
                                 DbHelper.deleteContact(address, app);
-                                DbHelper.clearConversation(address,app);
+                                DbHelper.clearConversation(address, app);
                                 Intent intent = new Intent("your_action");
                                 itemView.getContext().sendBroadcast(intent);
                             })
-                            .setNegativeButton(android.R.string.no, (dialog, whichButton)->{
+                            .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
 
                             }).show();
-                        return true;
-                    default:
-                        return false;
+                    return true;
                 }
+                return false;
             });
             popup.show();
             return true;
         }
     }
 
-    private class ReadContactHolder extends RecyclerView.ViewHolder {
+    private class ReadContactHolder extends ViewHolder {
         TextView contactName,msgText,timeText;
-        ImageView imageView,seen;
+        ImageView imageView,seen,contactOnline;
 
         ReadContactHolder(View itemView) {
             super(itemView);
@@ -197,15 +199,19 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
             timeText = itemView.findViewById(R.id.time_text);
             msgText = itemView.findViewById(R.id.message_text);
             seen = itemView.findViewById(R.id.seen);
+            contactOnline = itemView.findViewById(R.id.contact_online);
         }
 
-        void bind(String title, String msg, String send_to, long createdAt, boolean received) {
+        void bind(String title, String msg, String send_to, long createdAt, boolean received, String address) {
             contactName.setText(title);
             contactName.setTypeface(null, Typeface.NORMAL);
             imageView.setVisibility(View.INVISIBLE);
             msgText.setText(msg);
             timeText.setText(createdAt>0?Utils.formatDateTime(createdAt):"");
             seen.setVisibility(send_to.equals(app.getHostname())?View.GONE:received?View.VISIBLE:View.GONE);
+            if(app.onlineList.contains(address)){
+                contactOnline.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -215,9 +221,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter {
             super(itemView);
         }
 
-        void bind(String title, String msg, String send_to, long createdAt, boolean received) {
+        void bind(String title, String msg, String send_to, long createdAt, boolean received, String address) {
 //            imageView.setVisibility(View.VISIBLE);
-            super.bind(title,msg,send_to,createdAt,received);
+            super.bind(title,msg,send_to,createdAt,received,address);
             itemView.setBackground(ContextCompat.getDrawable(app,R.drawable.rounded_rectangle_steel));
             imageView.setVisibility(View.VISIBLE);
             seen.setVisibility(View.INVISIBLE);

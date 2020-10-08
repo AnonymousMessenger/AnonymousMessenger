@@ -74,18 +74,21 @@ public class MainActivity extends AppCompatActivity {
 
     public void onNextClick(View view){
         Intent intent = new Intent(this, CreateUserActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }
 
     public void switchToAppView(){
         Intent intent = new Intent(this, AppActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }
 
     public void switchToSetupInProcess(){
         Intent intent = new Intent(this, SetupInProcess.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }

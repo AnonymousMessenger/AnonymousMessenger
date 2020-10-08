@@ -24,6 +24,11 @@ public class AppActivity extends AppCompatActivity implements ComponentCallbacks
         setContentView(R.layout.activity_app);
 
         new Thread(()->{
+            if(((DxApplication) this.getApplication()).isExitingHoldup()){
+                loadAppFragment();
+                ((DxApplication) this.getApplication()).setExitingHoldup(false);
+                return;
+            }
             ((DxApplication) this.getApplication()).setExitingHoldup(false);
             //has logged in?
             if(((DxApplication) this.getApplication()).getAccount()!=null){
@@ -72,6 +77,7 @@ public class AppActivity extends AppCompatActivity implements ComponentCallbacks
     public void goToTorActivity() {
         Intent tor = new Intent(this, SetupInProcess.class);
         tor.putExtra("first_time",false);
+        tor.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(tor);
         finish();
     }

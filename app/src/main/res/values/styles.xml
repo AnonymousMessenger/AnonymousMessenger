@@ -15,9 +15,8 @@
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
     </style>
 
-    <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/biglogo</item>
-    </style>
+<!--    <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">-->
+<!--    </style>-->
 
     <style name="ButtonTheme" parent="Theme.AppCompat.DayNight">
         <!-- A strange hack needed only to override button color on all API levels -->

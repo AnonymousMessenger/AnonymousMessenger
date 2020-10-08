@@ -3,6 +3,9 @@ package com.dx.anonymousmessenger.messages;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -20,7 +23,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.MessageListActivity;
+import com.dx.anonymousmessenger.PictureViewerActivity;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.media.AudioPlayer;
 import com.dx.anonymousmessenger.util.CallBack;
 import com.dx.anonymousmessenger.util.Utils;
@@ -41,6 +46,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int VIEW_TYPE_AUDIO_MESSAGE_SENT = 7;
     private static final int VIEW_TYPE_AUDIO_MESSAGE_SENT_OK = 8;
     private static final int VIEW_TYPE_AUDIO_MESSAGE_RECEIVED = 9;
+    private static final int VIEW_TYPE_MEDIA_MESSAGE_SENT = 10;
+    private static final int VIEW_TYPE_MEDIA_MESSAGE_SENT_OK = 11;
+    private static final int VIEW_TYPE_MEDIA_MESSAGE_RECEIVED = 12;
 
     private Context mContext;
     private RecyclerView mMessageRecycler;
@@ -74,6 +82,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if(message.isReceived()){
                 if(message.getType()!=null && message.getType().equals("audio")){
                     return VIEW_TYPE_AUDIO_MESSAGE_SENT_OK;
+                }else if(message.getType()!=null && message.getType().equals("image")){
+                    return VIEW_TYPE_MEDIA_MESSAGE_SENT_OK;
                 }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                     return VIEW_TYPE_MESSAGE_SENT_OK;
                 }else if(message.getQuotedMessage()!=null){
@@ -83,6 +93,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }else{
                 if(message.getType()!=null && message.getType().equals("audio")){
                     return VIEW_TYPE_AUDIO_MESSAGE_SENT;
+                }else if(message.getType()!=null && message.getType().equals("image")){
+                    return VIEW_TYPE_MEDIA_MESSAGE_SENT;
                 }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                     return VIEW_TYPE_MESSAGE_SENT;
                 }else if(message.getQuotedMessage()!=null){
@@ -94,6 +106,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             // If some other user sent the message
             if(message.getType()!=null && message.getType().equals("audio")){
                     return VIEW_TYPE_AUDIO_MESSAGE_RECEIVED;
+            }else if(message.getType()!=null && message.getType().equals("image")){
+                return VIEW_TYPE_MEDIA_MESSAGE_RECEIVED;
             }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                 return VIEW_TYPE_MESSAGE_RECEIVED;
             }else if(message.getQuotedMessage()!=null){
@@ -145,6 +159,18 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_audio_message_received, parent, false);
             return new AudioMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_MEDIA_MESSAGE_RECEIVED){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_media_message_received, parent, false);
+            return new MediaMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_MEDIA_MESSAGE_SENT){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_media_message_sent, parent, false);
+            return new MediaMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_MEDIA_MESSAGE_SENT_OK){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_media_message_sent_ok, parent, false);
+            return new MediaMessageHolder(view);
         }
         Log.e("finding message type","something went wrong");
         view = LayoutInflater.from(parent.getContext())
@@ -180,6 +206,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case VIEW_TYPE_AUDIO_MESSAGE_RECEIVED:
                 ((AudioMessageHolder) holder).bind(message);
                 break;
+            case VIEW_TYPE_MEDIA_MESSAGE_RECEIVED:
+            case VIEW_TYPE_MEDIA_MESSAGE_SENT:
+            case VIEW_TYPE_MEDIA_MESSAGE_SENT_OK:
+                ((MediaMessageHolder) holder).bind(message);
         }
     }
 
@@ -346,6 +376,59 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 };
                 mainHandler.post(myRunnable);
             }catch (Exception e) {e.printStackTrace();}
+        }
+    }
+
+    private class MediaMessageHolder extends RecyclerView.ViewHolder {
+        TextView timeText,nameText,messageText;
+        ImageView imageHolder;
+
+        MediaMessageHolder(View itemView){
+            super(itemView);
+            timeText = itemView.findViewById(R.id.text_message_time);
+            nameText = itemView.findViewById(R.id.text_message_name);
+            messageText = itemView.findViewById(R.id.text_message_body);
+            imageHolder = itemView.findViewById(R.id.img_holder);
+        }
+
+        void bind(QuotedUserMessage message) {
+            if(nameText!=null){
+                nameText.setText(message.getSender());
+            }
+            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
+            if(message.getMessage()!=null && !message.getMessage().equals("")){
+                messageText.setVisibility(View.VISIBLE);
+                messageText.setText(message.getMessage());
+            }else{
+                messageText.setVisibility(View.GONE);
+            }
+            new Thread(()->{
+                byte[] img_bin = FileHelper.getFile(message.getPath(), app);
+                if(img_bin == null){
+                    return;
+                }
+//                YuvImage yuvImage = new YuvImage(img_bin, ImageFormat.NV21, 100, 100, null);
+//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                yuvImage.compressToJpeg(new Rect(0, 0, 100, 100), 80, baos);
+//                byte[] jdata = baos.toByteArray();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(img_bin, 0, img_bin.length);
+                if(bitmap==null){
+                    return;
+                }
+                new Handler(Looper.getMainLooper()).post(()->{
+                    if(imageHolder==null){
+                        return;
+                    }
+                    imageHolder.setImageBitmap(bitmap);
+                    imageHolder.setOnClickListener(v -> {
+                        Intent intent = new Intent(app, PictureViewerActivity.class);
+                        intent.putExtra("appData",true);
+                        intent.putExtra("path",message.getPath());
+                        intent.putExtra("message",message.getMessage());
+                        app.startActivity(intent);
+                    });
+                });
+            }).start();
         }
     }
 

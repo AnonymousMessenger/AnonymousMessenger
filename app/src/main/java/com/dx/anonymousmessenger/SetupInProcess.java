@@ -18,55 +18,31 @@ public class SetupInProcess extends AppCompatActivity implements ComponentCallba
 
     private BroadcastReceiver mMyBroadcastReceiver;
     private TextView statusText;
-    private Button gotoContact,restartTorButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_setup_in_process);
-        new Thread(()->{
-            if(((DxApplication) getApplication()).isServerReady()){
-                Intent intent = new Intent(this, AppActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }).start();
+
         statusText = findViewById(R.id.status_text);
-        gotoContact = findViewById(R.id.btn_goto_contacts);
-        restartTorButton = findViewById(R.id.btn_restart_tor);
+        Button gotoContact = findViewById(R.id.btn_goto_contacts);
+        Button restartTorButton = findViewById(R.id.btn_restart_tor);
+        restartTorButton.setVisibility(View.VISIBLE);
+        restartTorButton.setOnClickListener(v -> ((DxApplication)getApplication()).restartTor());
         if(!getIntent().getBooleanExtra("first_time",true)){
             gotoContact.setVisibility(View.VISIBLE);
             gotoContact.setOnClickListener(v -> {
                 ((DxApplication)getApplication()).setExitingHoldup(true);
                 Intent intent = new Intent(this, AppActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.putExtra("force_app",true);
                 startActivity(intent);
                 finish();
             });
-            restartTorButton.setVisibility(View.VISIBLE);
-            restartTorButton.setOnClickListener(v -> ((DxApplication)getApplication()).restartTor());
         }
 
-        if(mMyBroadcastReceiver!=null){
-            return;
-        }
-        mMyBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                new Thread(()->{
-                    try{
-                        updateUi(intent.getStringExtra("tor_status"));
-                    }catch (Exception ignored) {}
-                }).start();
-            }
-        };
-        try {
-            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+
     }
 
     @Override
@@ -75,13 +51,46 @@ public class SetupInProcess extends AppCompatActivity implements ComponentCallba
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if(mMyBroadcastReceiver==null){
+            return;
+        }
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
+        mMyBroadcastReceiver = null;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        if(((DxApplication) getApplication()).isServerReady()){
-            Intent intent = new Intent(this, AppActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        new Thread(()->{
+            if(((DxApplication) getApplication()).isServerReady()){
+                Intent intent = new Intent(this, AppActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+                return;
+            }
+            if(mMyBroadcastReceiver!=null){
+                return;
+            }
+            mMyBroadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent)
+                {
+                    new Thread(()->{
+                        try{
+                            updateUi(intent.getStringExtra("tor_status"));
+                        }catch (Exception ignored) {}
+                    }).start();
+                }
+            };
+            try {
+                LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public void updateUi(String torStatus){
@@ -97,25 +106,26 @@ public class SetupInProcess extends AppCompatActivity implements ComponentCallba
         if(torStatus.contains("DisableNetwork is set")){
             torStatus = getString(R.string.waiting_for_tor);
         }
-        if(torStatus.contains("Bootstrapped 100%")){
+        if(torStatus.contains("Bootstrapped 100%") || torStatus.contains("ALL GOOD")){
             ((DxApplication)getApplication()).setExitingHoldup(true);
+            LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
+            if(getIntent().getBooleanExtra("first_time",true)){
+                ((DxApplication) this.getApplication()).sendNotification("Ready to chat securely!",
+                        "You got all you need to chat securely with your friends!",false);
+            }
             String finalTorStatus = torStatus;
             runOnUiThread(()->{
                 try {
                     statusText.setText(finalTorStatus);
                 }catch (Exception ignored) {}
             });
-            LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
-            if(getIntent().getBooleanExtra("first_time",true)){
-                ((DxApplication) this.getApplication()).sendNotification("Ready to chat securely!",
-                        "You got all you need to chat securely with your friends!",false);
-            }
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             Intent intent = new Intent(this, AppActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();
         }else{

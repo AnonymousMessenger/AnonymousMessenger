@@ -40,7 +40,6 @@ import net.sf.freehaven.tor.control.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -54,43 +53,42 @@ public class OnionProxyManagerEventHandler implements EventHandler {
     private NetLayerStatus listener;
     private boolean hsPublished;
     private OnionProxyContext onionProxyContext;
-    private volatile List<String> statuses = new ArrayList<>();
-    private volatile boolean lastMessage;
+//    private volatile List<String> statuses = new ArrayList<>();
+//    private volatile boolean lastMessage;
 
-    private void sendStatuses(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!lastMessage){
-                    try{
-                        Thread.sleep(500);
-                    }catch (Exception ignored) {}
-                }
-                for (int i=0;i<statuses.size();i++){
-                    Intent gcm_rec = new Intent("tor_status");
-                    gcm_rec.putExtra("tor_status",statuses.get(i));
-                    LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
-                    if(statuses.get(i).contains("100%")){
-                        return;
-                    }
-                    try{
-                        Thread.sleep(500);
-                    }catch (Exception ignored) {}
+//    private void sendStatuses(){
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (!lastMessage){
+//                    try{
+//                        Thread.sleep(500);
+//                    }catch (Exception ignored) {}
+//                }
+//                for (int i=0;i<statuses.size();i++){
+//                    Intent gcm_rec = new Intent("tor_status");
+//                    gcm_rec.putExtra("tor_status",statuses.get(i));
+//                    LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//                    if(statuses.get(i).contains("100%")){
+//                        return;
+//                    }
+//                    try{
+//                        Thread.sleep(500);
+//                    }catch (Exception ignored) {}
 //                    while (i==(statuses.size()-1)){
 //                        System.out.println("running in while last");
 //                        try{
 //                            Thread.sleep(500);
 //                        }catch (Exception ignored) {}
 //                    }
-                }
-            }
-        }).start();
-
-    }
+//                }
+//            }
+//        }).start();
+//    }
 
     public OnionProxyManagerEventHandler(OnionProxyContext onionProxyContext) {
         this.onionProxyContext = onionProxyContext;
-        sendStatuses();
+//        sendStatuses();
     }
 
     public void setHStoWatchFor(ServiceDescriptor hs, NetLayerStatus listener) {
@@ -121,9 +119,16 @@ public class OnionProxyManagerEventHandler implements EventHandler {
     @Override
     public void circuitStatus(String status, String circID, String path) {
         LOG.info("status: " + status + ", circID: " + circID + ", path: " + path);
-        Intent gcm_rec = new Intent("tor_status1");
-        gcm_rec.putExtra("tor_status1","status: " + status + ", circID: " + circID + ", path: " + path);
-        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+        try{
+            Intent gcm_rec = new Intent("tor_status1");
+            StringBuilder output = new StringBuilder();
+            for (String relay: path.split(",")){
+                output.append(relay.split("~")[1]);
+                output.append(" > ");
+            }
+            gcm_rec.putExtra("tor_status1","circ: " + circID + " "+status+", (" + output + ")");
+            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+        }catch (Exception ignored) {}
     }
 
     public void streamStatus(String status, String id, String target) {
@@ -162,14 +167,14 @@ public class OnionProxyManagerEventHandler implements EventHandler {
     //fetch Exit Node
     public void message(String severity, String msg) {
         LOG.info("message: severity: " + severity + ", msg: " + msg);
-        String out = "message: " + severity + ", msg: " + msg;
-        if(out.contains("100%")){
-            lastMessage = true;
-        }
-        statuses.add(out);
-//        Intent gcm_rec = new Intent("tor_status");
-//        gcm_rec.putExtra("tor_status","message: " + severity + ", msg: " + msg);
-//        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+//        String out = "message: " + severity + ", msg: " + msg;
+//        if(out.contains("100%")){
+//            lastMessage = true;
+//        }
+//        statuses.add(out);
+        Intent gcm_rec = new Intent("tor_status");
+        gcm_rec.putExtra("tor_status","message: " + severity + ", msg: " + msg);
+        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void unrecognized(String type, String msg) {

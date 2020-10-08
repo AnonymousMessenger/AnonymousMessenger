@@ -158,7 +158,7 @@ public class ServerSocketViaTor {
             try {
                 while (true) {
                     Socket sock = socket.accept();
-                    Log.e("SERVER CONNECTION", "SOMETHING IS HAPPENING");
+                    Log.d("SERVER CONNECTION", "RECEIVING SOMETHING");
                     try{
                         new Thread(()->{
                             try{
@@ -172,10 +172,11 @@ public class ServerSocketViaTor {
 //                                    } catch (Exception e) {
 //                                        e.printStackTrace();
 //                                    }
-                                    sock.close();
+
                                     if(DbHelper.contactExists(msg.replace("hello-",""),app)){
                                         app.queueUnsentMessages(msg.replace("hello-",""));
                                     }
+                                    sock.close();
                                     return;
                                 }else if(msg.equals("call")){
                                     try {
@@ -251,10 +252,7 @@ public class ServerSocketViaTor {
 //                                while(!msg.equals("nuf"))
 //                                {
                                     final String rec = msg;
-                                    new Thread(()->{
-                                        MessageSender.messageReceiver(rec,app);
-                                        app.sendNotification("New Message!","you have a new secret message");
-                                    }).start();
+                                    new Thread(()-> MessageSender.messageReceiver(rec,app)).start();
                                     outputStream.writeUTF("ack3");
                                     outputStream.flush();
 //                                    msg = in.readUTF();

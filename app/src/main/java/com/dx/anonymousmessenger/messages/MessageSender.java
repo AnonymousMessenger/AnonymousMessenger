@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.crypto.AddressedEncryptedMessage;
 import com.dx.anonymousmessenger.crypto.AddressedKeyExchangeMessage;
 import com.dx.anonymousmessenger.crypto.KeyExchangeMessage;
@@ -42,7 +43,7 @@ public class MessageSender {
                 received = new TorClientSocks4().Init(to,app,aem.toJson().toString());
             }catch (Exception e){
                 Intent gcm_rec = new Intent("your_action");
-                gcm_rec.putExtra("error","Couldn't encrypt message");
+                gcm_rec.putExtra("error",app.getString(R.string.cant_encrypt_message));
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 e.printStackTrace();
                 Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
@@ -69,7 +70,7 @@ public class MessageSender {
                 received = new TorClientSocks4().Init(to,app,aem.toJson().toString());
             }catch (Exception e){
                 Intent gcm_rec = new Intent("your_action");
-                gcm_rec.putExtra("error","Couldn't encrypt message");
+                gcm_rec.putExtra("error",app.getString(R.string.cant_encrypt_message));
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 e.printStackTrace();
                 Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
@@ -147,7 +148,7 @@ public class MessageSender {
 
     public static void sendKeyExchangeMessage(DxApplication app, String to){
         try {
-            QuotedUserMessage msg = new QuotedUserMessage("","",app.getHostname(),"Key Exchange Message", app.getHostname(),new Date().getTime(),false,to,false);
+            QuotedUserMessage msg = new QuotedUserMessage("","",app.getHostname(),app.getString(R.string.key_exchange_message), app.getHostname(),new Date().getTime(),false,to,false);
             DbHelper.saveMessage(msg,app,to,false);
             Intent gcm_rec = new Intent("your_action");
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
@@ -181,7 +182,7 @@ public class MessageSender {
 
     public static void sendProcessedKeyExchangeMessage(AddressedKeyExchangeMessage akem, DxApplication app){
         try {
-            DbHelper.saveMessage(new QuotedUserMessage(app.getHostname(),"Response Key Exchange Message",akem.getAddress()),app,akem.getAddress(),false);
+            DbHelper.saveMessage(new QuotedUserMessage(app.getHostname(),app.getString(R.string.resp_key_exchange),akem.getAddress()),app,akem.getAddress(),false);
             KeyExchangeMessage kem = new SessionBuilder(app.getEntity().getStore(), new SignalProtocolAddress(akem.getAddress(),1)).process(akem.getKem());
             Log.d("KEM INITIATE", "messageReceiver: "+ Arrays.toString(kem.serialize()));
             AddressedKeyExchangeMessage akem3 = new AddressedKeyExchangeMessage(kem,app.getHostname(),true);
@@ -204,6 +205,7 @@ public class MessageSender {
             }else{
                 return;
             }
+            app.sendNotification("New Message!","you have a new secret message");
             if(json.has("kem")){
 //                if(app.getEntity().getStore().containsSession(new SignalProtocolAddress(json.getString("address"),1))){
 //                    if(!app.getEntity().getStore().loadSession(new SignalProtocolAddress(json.getString("address"),1)).getSessionState().hasPendingKeyExchange()){
@@ -223,7 +225,7 @@ public class MessageSender {
                         SessionBuilder sb = new SessionBuilder(app.getEntity().getStore(), new SignalProtocolAddress(akem.getAddress(),1));
                         sb.process(akem.getKem());
 
-                        DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),"Response Key Exchange Message", json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
+                        DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.resp_key_exchange), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
                         Intent gcm_rec = new Intent("your_action");
                         LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
 
@@ -235,7 +237,7 @@ public class MessageSender {
                         Log.e("MESSAGE RECEIVER ERROR", "FAILED!!! Received Response Key Exchange Message : ");
                     }
                 }else{
-                    DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),"Key Exchange Message", json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
+                    DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.key_exchange_message), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
                     sendKeyExchangeMessage(app,akem.getAddress(),akem.getKem());
                     Log.e("MESSAGE RECEIVER", "GOT KEM: SENDING KEM BACK TO : "+json.getString("address"));
                 }

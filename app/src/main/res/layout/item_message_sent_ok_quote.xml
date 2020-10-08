@@ -27,7 +27,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_message_body"
-                app:srcCompat="@android:drawable/ic_lock_lock" />
+                app:srcCompat="@android:drawable/ic_lock_lock"
+                android:contentDescription="@string/seen_image" />
 
             <TextView
                 android:id="@+id/quote_text"
@@ -37,7 +38,7 @@
                 android:background="@drawable/rounded_rectangle_dark"
                 android:maxWidth="240dp"
                 android:padding="8dp"
-                android:text="TextView"
+                android:text="@string/textview"
 
                 android:textColor="#ffffff"
                 android:textSize="14sp"
@@ -51,7 +52,7 @@
                 android:background="@drawable/rounded_rectangle_dark"
                 android:maxWidth="240dp"
                 android:padding="8dp"
-                android:text="hello, hello!"
+                android:text="@string/hello_hello"
                 android:textColor="#ffffff"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -64,26 +65,27 @@
                 android:id="@+id/text_message_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="11:40"
+                android:text="@string/_11_40"
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageView"
+                app:layout_constraintEnd_toStartOf="@+id/view_image"
                 app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/view_image"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/img_seen"
-                app:srcCompat="@drawable/ic_launcher_foreground" />
+                app:srcCompat="@drawable/ic_launcher_foreground"
+                android:contentDescription="@string/seen_image" />
 
             <TextView
                 android:id="@+id/quote_sender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/textview"
                 android:textColor="@color/dx_white"
                 app:layout_constraintEnd_toStartOf="@+id/quote_text"
                 app:layout_constraintTop_toTopOf="parent" />

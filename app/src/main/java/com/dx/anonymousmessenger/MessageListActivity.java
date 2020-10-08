@@ -9,12 +9,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.transition.Explode;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -23,6 +26,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -39,9 +43,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.media.MediaRecycleViewAdapter;
 import com.dx.anonymousmessenger.messages.MessageListAdapter;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
+import com.dx.anonymousmessenger.tor.TorClientSocks4;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -52,9 +58,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class MessageListActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2 {
+public class MessageListActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, MyRecyclerViewAdapter.ItemClickListener {
 
     private static final int REQUEST_CODE = 1;
+    private static final int READ_STORAGE_REQUEST_CODE = 2;
     public TextView quoteTextTyping;
     public TextView quoteSenderTyping;
     private RecyclerView mMessageRecycler;
@@ -66,10 +73,16 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     private Button send = null;
     private EditText txt = null;
     private TextView txtAudioTimer = null;
-    private FloatingActionButton audio;
+    private FloatingActionButton audio, file;
     private LinearLayout audioLayout;
     private FloatingActionButton scrollDownFab;
     private BroadcastReceiver timeBroadcastReceiver;
+    private TextView status;
+    private RecyclerView mediaRecyclerView;
+    private LinearLayout picsHelp;
+    private String address;
+    private String nickname;
+//    private TextView picsHelpText;
 //    private ImageView syncedImg;
 //    private ImageView unsyncedImg;
 //    private TextView syncTxt;
@@ -86,6 +99,8 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         Objects.requireNonNull(getSupportActionBar()).setTitle(getIntent().getStringExtra("nickname"));
         getSupportActionBar().setSubtitle(getIntent().getStringExtra("address"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        address = getIntent().getStringExtra("address");
+        nickname = getIntent().getStringExtra("nickname");
         quoteTextTyping = findViewById(R.id.quote_text_typing);
         quoteSenderTyping = findViewById(R.id.quote_sender_typing);
         quoteTextTyping.setVisibility(View.GONE);
@@ -95,8 +110,13 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         send = findViewById(R.id.button_chatbox_send);
         txt = findViewById(R.id.edittext_chatbox);
         audio = findViewById(R.id.fab_audio);
+        file = findViewById(R.id.fab_file);
+        mediaRecyclerView = findViewById(R.id.rv_media);
+        picsHelp = findViewById(R.id.layout_pics);
         audioLayout = findViewById(R.id.layout_audio);
         txtAudioTimer = findViewById(R.id.txt_audio_timer);
+        status = findViewById(R.id.txt_status);
+        status.setOnClickListener((v)-> status.setVisibility(View.GONE));
 //        syncedImg = findViewById(R.id.synced_image);
 //        unsyncedImg = findViewById(R.id.unsynced_image);
 //        syncTxt = findViewById(R.id.sync_text);
@@ -114,7 +134,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     return;
                 }
                 if (dy > 0
-                        && ((LinearLayoutManager)recyclerView.getLayoutManager())!=null
+                        && recyclerView.getLayoutManager() !=null
                         && ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition()!=(messageList.size()-1)) { // scrolling down
                     if(scrollDownFab.getVisibility()==View.VISIBLE){
                         return;
@@ -128,7 +148,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     scrollDownFab.setVisibility(View.VISIBLE);
                     scrollDownFab.startAnimation(animation);
                 } else if (dy < 0
-                        && ((LinearLayoutManager)recyclerView.getLayoutManager())!=null
+                        && recyclerView.getLayoutManager() !=null
                         && ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition()!=(messageList.size()-1)) { // scrolling up
                     if(scrollDownFab.getVisibility()==View.VISIBLE){
                         return;
@@ -154,7 +174,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     return;
                 }
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
-                        && ((LinearLayoutManager)recyclerView.getLayoutManager())!=null
+                        && recyclerView.getLayoutManager() !=null
                         && ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition()==(messageList.size()-1)) { // No scrolling
                     scrollDownFab.clearAnimation();
                     final Animation animation = new AlphaAnimation(1f, 0f);
@@ -181,7 +201,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             TextView quoteSenderTyping = findViewById(R.id.quote_sender_typing);
             TextView quoteTextTyping = findViewById(R.id.quote_text_typing);
             QuotedUserMessage msg =
-                    new QuotedUserMessage(quoteSenderTyping.getText().toString().equals(R.string.you)?
+                    new QuotedUserMessage(quoteSenderTyping.getText().toString().equals(getString(R.string.you))?
                             ((DxApplication)getApplication()).getAccount().getNickname():getIntent().getStringExtra("nickname"),quoteTextTyping.getText().toString(),((DxApplication)getApplication()).getHostname(),txt.getText().toString(),((DxApplication)getApplication()).getAccount().getNickname(),new Date().getTime(),false,getIntent().getStringExtra("address"),false);
             messageList.add(msg);
             new Thread(()-> MessageSender.sendMessage(msg,((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
@@ -191,6 +211,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             quoteSenderTyping.setVisibility(View.GONE);
             quoteTextTyping.setVisibility(View.GONE);
             audio.setVisibility(View.VISIBLE);
+            file.setVisibility(View.VISIBLE);
             mMessageAdapter.notifyItemInserted(messageList.size()-1);
             mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
         });
@@ -216,8 +237,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length()==0){
                     audio.setVisibility(View.VISIBLE);
+                    file.setVisibility(View.VISIBLE);
                 }else{
                     audio.setVisibility(View.GONE);
+                    file.setVisibility(View.GONE);
                 }
             }
 
@@ -229,6 +252,8 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         audio.setOnTouchListener((arg0, arg1) -> {
             if (arg1.getAction()== MotionEvent.ACTION_DOWN){
                 txt.setVisibility(View.GONE);
+                quoteTextTyping.setVisibility(View.GONE);
+                quoteSenderTyping.setVisibility(View.GONE);
                 audioLayout.setVisibility(View.VISIBLE);
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                     new Thread(()->{
@@ -265,6 +290,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             }else if(arg1.getAction()== MotionEvent.ACTION_UP){
                 audioLayout.setVisibility(View.GONE);
                 txt.setVisibility(View.VISIBLE);
+                if(quoteTextTyping.getText().length()>0){
+                    quoteTextTyping.setVisibility(View.VISIBLE);
+                    quoteSenderTyping.setVisibility(View.VISIBLE);
+                }
                 Intent intent = new Intent(this, AudioRecordingService.class);
                 stopService(intent);
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
@@ -273,6 +302,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             }else if(arg1.getAction()== MotionEvent.ACTION_CANCEL){
                 audioLayout.setVisibility(View.GONE);
                 txt.setVisibility(View.VISIBLE);
+                if(quoteTextTyping.getText().length()>0){
+                    quoteTextTyping.setVisibility(View.VISIBLE);
+                    quoteSenderTyping.setVisibility(View.VISIBLE);
+                }
                 Intent intent = new Intent(this, AudioRecordingService.class);
                 stopService(intent);
                 LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
@@ -285,7 +318,65 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 //            txt.setVisibility(View.GONE);
 //            audioLayout.setVisibility(View.VISIBLE);
 //        });
+        picsHelp.setOnClickListener(v -> {
+            mediaRecyclerView.setVisibility(View.GONE);
+            send.setVisibility(View.VISIBLE);
+            audio.setVisibility(View.VISIBLE);
+            file.setVisibility(View.VISIBLE);
+            txt.setVisibility(View.VISIBLE);
+            if(quoteTextTyping.getText().length()>0){
+                quoteTextTyping.setVisibility(View.VISIBLE);
+                quoteSenderTyping.setVisibility(View.VISIBLE);
+            }
+            picsHelp.setVisibility(View.GONE);
+        });
+        file.setOnClickListener(v -> {
+//            pickImage();
+            mediaRecyclerView.setVisibility(View.VISIBLE);
+            send.setVisibility(View.GONE);
+            audio.setVisibility(View.GONE);
+            file.setVisibility(View.GONE);
+            txt.setVisibility(View.GONE);
+            quoteTextTyping.setVisibility(View.GONE);
+            quoteSenderTyping.setVisibility(View.GONE);
+            picsHelp.setVisibility(View.VISIBLE);
+
+            new Thread(()->{
+//            ArrayList<Bitmap> pics = new ArrayList<>();
+                ArrayList<String> paths = new ArrayList<>();
+                Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                String[] projection = { MediaStore.Images.ImageColumns.DATA ,MediaStore.Images.Media.DISPLAY_NAME};
+                Cursor cursor = this.getContentResolver().query(uri, projection, null, null, MediaStore.Images.Media._ID + " DESC");
+                try {
+                    if (cursor != null) {
+                        cursor.moveToFirst();
+                        do{
+//                        String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME));
+                            String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                            paths.add(path);
+//                        pics.add(BitmapFactory.decodeFile(path));
+                        }while(cursor.moveToNext());
+                        cursor.close();
+                    }
+                    // set up the RecyclerView
+                    new Handler(Looper.getMainLooper()).post(()->{
+
+                        LinearLayoutManager horizontalLayoutManager
+                                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+                        mediaRecyclerView.setLayoutManager(horizontalLayoutManager);
+                        MediaRecycleViewAdapter adapter = new MediaRecycleViewAdapter(this, paths);
+                        adapter.setClickListener(this::onItemClick);
+                        mediaRecyclerView.setAdapter(adapter);
+                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        });
+
         updateUi();
+        ping();
 
         //run db message checker to delete any old messages then tell us to update ui
         checkMessages();
@@ -306,6 +397,88 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             catch (InterruptedException ignored) {    }
             System.exit(2);
         });
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        mediaRecyclerView.setVisibility(View.GONE);
+        send.setVisibility(View.VISIBLE);
+        audio.setVisibility(View.VISIBLE);
+        file.setVisibility(View.VISIBLE);
+        txt.setVisibility(View.VISIBLE);
+        if(quoteTextTyping.getText().length()>0){
+            quoteTextTyping.setVisibility(View.VISIBLE);
+            quoteSenderTyping.setVisibility(View.VISIBLE);
+        }
+        picsHelp.setVisibility(View.GONE);
+        Intent intent = new Intent(this,PictureViewerActivity.class);
+        intent.putExtra("address",address);
+        intent.putExtra("nickname",nickname);
+        if(mediaRecyclerView!=null && mediaRecyclerView.getAdapter()!=null){
+            String path = ((MediaRecycleViewAdapter)mediaRecyclerView.getAdapter()).mPaths.get(position);
+            intent.putExtra("path",path);
+            intent.putExtra("type","image");
+            startActivity(intent);
+        }
+    }
+
+//    public void pickImage() {
+//        try{
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+//                Intent intent = new Intent(Intent.ACTION_PICK);
+//                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
+//                intent.putExtra("crop", "true");
+//                intent.putExtra("scale", true);
+//                intent.putExtra("outputX", 256);
+//                intent.putExtra("outputY", 256);
+//                intent.putExtra("aspectX", 1);
+//                intent.putExtra("aspectY", 1);
+//                intent.putExtra("return-data", true);
+//                if (intent.resolveActivity(getPackageManager()) != null) {
+//                    startActivityForResult(intent, READ_STORAGE_REQUEST_CODE);
+//                }else{
+//                    Snackbar.make(file,"You do not have a gallery application installed",Snackbar.LENGTH_LONG).show();
+//                }
+//            }else{
+//                getReadStoragePerms();
+//            }
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
+
+    public void ping(){
+        new Thread(()->{
+            boolean b = TorClientSocks4.testAddress(((DxApplication) getApplication()), getIntent().getStringExtra("address"));
+            try {
+                Thread.sleep(500);
+            } catch (Exception ignored) {}
+            Handler h = new Handler(Looper.getMainLooper());
+            h.post(()->{
+                try{
+                    if(b){
+                        ((DxApplication)getApplication()).addToOnlineList(getIntent().getStringExtra("address"));
+                        status.setText(R.string.user_is_online);
+                    }else{
+                        ((DxApplication)getApplication()).onlineList.remove(getIntent().getStringExtra("address"));
+                        status.setText(R.string.user_is_offline);
+                    }
+                    status.setVisibility(View.VISIBLE);
+                    Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+                    status.startAnimation(slideUp);
+                }catch (Exception ignored) {}
+            });
+            try {
+                Thread.sleep(2000);
+            } catch (Exception ignored) {}
+            h.post(()->{
+                try {
+                    Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+                    status.startAnimation(slideDown);
+                    status.setVisibility(View.GONE);
+                }catch (Exception ignored) {}
+            });
+        }).start();
     }
 
     public void checkMessages(){
@@ -352,6 +525,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     mMessageAdapter.notifyDataSetChanged();
                     if(!messageList.isEmpty()){
                         mMessageRecycler.scrollToPosition(messageList.size() - 1);
+                        ((DxApplication)getApplication()).clearMessageNotification();
                         if(!messageList.get(messageList.size()-1).getAddress().equals(((DxApplication)getApplication()).getHostname())){
                             String newName = messageList.get(messageList.size()-1).getSender();
                             Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
@@ -448,11 +622,11 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         onSupportNavigateUp();
     }
 
-    @Override
-    protected void onDestroy() {
-        onSupportNavigateUp();
-        super.onDestroy();
-    }
+//    @Override
+//    protected void onDestroy() {
+//        onSupportNavigateUp();
+//        super.onDestroy();
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -483,10 +657,14 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 break;
             case R.id.action_settings:
                 //add the function to perform here
-                DxApplication app =  ((DxApplication) getApplication());
-                app.getEntity().getStore().deleteSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
+                try{
+                    DxApplication app =  ((DxApplication) getApplication());
+                    if(app.getEntity()==null){
+                        break;
+                    }
+                    app.getEntity().getStore().deleteSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
+                }catch (Exception ignored) {}
                 //((DxSignalKeyStore)app.getEntity().getStore()).removeIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
-                Log.e("RESET SESSION","RESET SESSION with : "+getIntent().getStringExtra("address"));
                 break;
             case R.id.action_verify_identity:
                 stopCheckingMessages();
@@ -524,9 +702,45 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 // system settings in an effort to convince the user to change
                 // their decision.
 //            }
+        }//else if(requestCode == READ_STORAGE_REQUEST_CODE){
+        //}
+    }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode != RESULT_OK) {
+//            return;
+//        }
+//        if (requestCode == READ_STORAGE_REQUEST_CODE) {
+//            final Bundle extras = data.getExtras();
+//            if (extras != null) {
+//                //Get image
+//                Bitmap image = extras.getParcelable("data");
+//                ImageView img2send = findViewById(R.id.img_to_send);
+//                ImageView img2sendIcon = findViewById(R.id.img_to_send_icon);
+//                img2sendIcon.setVisibility(View.VISIBLE);
+//                img2send.setVisibility(View.VISIBLE);
+//                img2send.setImageBitmap(image);
+//            }
+//        }
+//    }
+
+    public void getReadStoragePerms(){
+        if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
+                    .setTitle(R.string.read_storage_perm_ask_title)
+                    .setMessage(R.string.why_need_read_storage)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> requestPermissions(
+                            new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
+                            READ_STORAGE_REQUEST_CODE))
+                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+
+                    });
+        } else {
+            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_CODE);
         }
-        // Other 'case' lines to check for other
-        // permissions this app might request.
     }
 
     public void getMicrophonePerms(){

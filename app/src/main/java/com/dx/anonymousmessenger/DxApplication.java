@@ -49,8 +49,15 @@ public class DxApplication extends Application {
     private Entity entity;
     private CallController cc;
     private boolean exitingHoldup;
-    private volatile List<QuotedUserMessage> messageQueue = new ArrayList<>();
+    private List<QuotedUserMessage> messageQueue = new ArrayList<>();
     private volatile boolean syncing;
+    public List<String> onlineList = new ArrayList<>();
+
+    public void addToOnlineList(String address){
+        if(!onlineList.contains(address)){
+            onlineList.add(address);
+        }
+    }
 
     public void addToMessagesQueue(List<QuotedUserMessage> messages){
         for (QuotedUserMessage message:messages) {
@@ -94,18 +101,26 @@ public class DxApplication extends Application {
                 }
                 for (String[] contact: contactsList){
                     List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, contact[1]);
-                    if (undeliveredMessageList.size()==0){
-                        return;
+                    boolean b = TorClientSocks4.testAddress(this, contact[1]);
+                    if(!b){
+                        onlineList.remove(contact[1]);
+                        Intent gcm_rec = new Intent("your_action");
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
+                        continue;
+                    }
+                    if(!onlineList.contains(contact[1])){
+                        onlineList.add(contact[1]);
+                        Intent gcm_rec = new Intent("your_action");
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
+                    }
+                    if(undeliveredMessageList.size()==0){
+                        continue;
                     }
                     addToMessagesQueue(undeliveredMessageList);
-                    boolean b = new TorClientSocks4().testAddress(this, contact[1]);
-                    if(!b){
-                        return;
-                    }
                     sendQueuedMessages();
-                    syncing = false;
                 }
-            }catch (Exception ignored) {}
+                syncing = false;
+            }catch (Exception ignored) {syncing = false;}
         }).start();
     }
 
@@ -116,15 +131,25 @@ public class DxApplication extends Application {
                     Thread.sleep(1000);
                 }catch (Exception ignored) {}
             }
-            syncing = true;
-            List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
-            addToMessagesQueue(undeliveredMessageList);
-            boolean b = new TorClientSocks4().testAddress(this, address);
-            if(!b){
-                return;
-            }
-            sendQueuedMessages();
-            syncing = false;
+            try{
+                syncing = true;
+                List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
+                if(undeliveredMessageList.size()==0){
+                    return;
+                }
+                boolean b = TorClientSocks4.testAddress(this, address);
+                if(!b){
+                    syncing = false;
+                    onlineList.remove(address);
+                    return;
+                }
+                if(!onlineList.contains(address)){
+                    onlineList.add(address);
+                }
+                addToMessagesQueue(undeliveredMessageList);
+                sendQueuedMessages();
+                syncing = false;
+            }catch (Exception ignored) {syncing = false;}
         }).start();
     }
 
@@ -239,6 +264,12 @@ public class DxApplication extends Application {
         Intent gcm_rec = new Intent("tor_status");
         gcm_rec.putExtra("tor_status","ALL GOOD");
         LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+    }
+
+    public void clearMessageNotification(){
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(1);
     }
 
     public void sendNotification(String title, String msg){
