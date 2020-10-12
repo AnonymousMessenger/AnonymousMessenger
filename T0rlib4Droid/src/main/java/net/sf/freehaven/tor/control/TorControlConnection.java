@@ -193,8 +193,7 @@ public class TorControlConnection implements TorControlCommands {
         } catch (InterruptedException ex) {
             throw new IOException("Interrupted");
         }
-        for (Iterator<ReplyLine> i = lst.iterator(); i.hasNext(); ) {
-            ReplyLine c = i.next();
+        for (ReplyLine c : lst) {
             if (!c.status.startsWith("2"))
                 throw new TorControlError("Error reply: " + c.msg);
         }

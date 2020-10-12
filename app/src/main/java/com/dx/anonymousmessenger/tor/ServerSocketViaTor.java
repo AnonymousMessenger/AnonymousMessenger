@@ -174,6 +174,7 @@ public class ServerSocketViaTor {
 //                                    }
 
                                     if(DbHelper.contactExists(msg.replace("hello-",""),app)){
+                                        app.addToOnlineList(msg.replace("hello-",""));
                                         app.queueUnsentMessages(msg.replace("hello-",""));
                                     }
                                     sock.close();

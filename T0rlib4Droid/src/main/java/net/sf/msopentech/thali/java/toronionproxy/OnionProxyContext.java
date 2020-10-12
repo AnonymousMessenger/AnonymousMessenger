@@ -56,7 +56,8 @@ abstract public class OnionProxyContext {
         // This is sleezy but we have cases where an old instance of the Tor OP needs an extra second to
         // clean itself up. Without that time we can't do things like delete its binary (which we currently
         // do by default, something we hope to fix with https://github.com/thaliproject/Tor_Onion_Proxy_Library/issues/13
-        Thread.sleep(1000, 0);
+//        fuck that shit
+//        Thread.sleep(1000, 0);
 
         if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
             throw new RuntimeException("Could not create root directory!");
@@ -71,20 +72,20 @@ abstract public class OnionProxyContext {
         //added this to save space on android with zipped binaries
         FileUtilities.extractContentFromZip(torExecutableFile.getParentFile(), getAssetOrResourceByName("tor.zip"));
 
-        switch (OsData.getOsType()) {
-            case ANDROID:
+//        switch (OsData.getOsType()) {
+//            case ANDROID:
 //                FileUtilities.cleanInstallOneFile(torExecutableFile);
-                break;
-            case WINDOWS:
-            case LINUX_32:
-            case LINUX_64:
-            case MAC:
-                FileUtilities.extractContentFromZip(getWorkingDirectory(),
-                        getClass().getResourceAsStream("/tor.zip"));
-                break;
-            default:
-                throw new RuntimeException("We don't support Tor on this OS yet");
-        }
+//                break;
+//            case WINDOWS:
+//            case LINUX_32:
+//            case LINUX_64:
+//            case MAC:
+//                FileUtilities.extractContentFromZip(getWorkingDirectory(),
+//                        getClass().getResourceAsStream("/tor.zip"));
+//                break;
+//            default:
+//                throw new RuntimeException("We don't support Tor on this OS yet");
+//        }
     }
 
     /**
@@ -202,7 +203,6 @@ abstract public class OnionProxyContext {
             case LINUX_64:
                 return "tor";
             case WINDOWS:
-                return "tor.exe";
             case MAC:
                 return "tor.exe";
             default:

@@ -349,9 +349,9 @@ public abstract class OnionProxyManager {
             throw new RuntimeException("Could not create cookieFile");
         }
 
-        File workingDirectory = onionProxyContext.getWorkingDirectory();
+//        File workingDirectory = onionProxyContext.getWorkingDirectory();
         // Watch for the auth cookie file being created/updated
-        WriteObserver cookieObserver = onionProxyContext.generateWriteObserver(cookieFile);
+//        WriteObserver cookieObserver = onionProxyContext.generateWriteObserver(cookieFile);
         // Start a new Tor process
         String torPath = onionProxyContext.getTorExecutableFile().getAbsolutePath();
         String configDir = onionProxyContext.getTorrcFile().getAbsoluteFile().getParent();
@@ -367,8 +367,8 @@ public abstract class OnionProxyManager {
         try {
 //            torProcess = Runtime.getRuntime().exec(cmd, env, workingDirectory);
             torProcess = processBuilder.start();
-            CountDownLatch controlPortCountDownLatch = new CountDownLatch(1);
-            eatStream(torProcess.getInputStream(), false, controlPortCountDownLatch);
+//            CountDownLatch controlPortCountDownLatch = new CountDownLatch(1);
+            eatStream(torProcess.getInputStream(), false, null);
             eatStream(torProcess.getErrorStream(), true, null);
 
             // On platforms other than Windows we run as a daemon and so we need to wait for the process to detach
@@ -388,11 +388,11 @@ public abstract class OnionProxyManager {
             }
 
             // Wait for the auth cookie file to be created/updated
-            if (!cookieObserver.poll(COOKIE_TIMEOUT, MILLISECONDS)) {
-                LOG.warn("Auth cookie not created");
-                FileUtilities.listFilesToLog(workingDirectory);
-                return false;
-            }
+//            if (!cookieObserver.poll(COOKIE_TIMEOUT, MILLISECONDS)) {
+//                LOG.warn("Auth cookie not created");
+//                FileUtilities.listFilesToLog(workingDirectory);
+//                return false;
+//            }
 
             // Now we should be able to connect to the new process
 //            controlPortCountDownLatch.await();
@@ -401,6 +401,7 @@ public abstract class OnionProxyManager {
             // Open a control connection and authenticate using the cookie file
             TorControlConnection controlConnection = new TorControlConnection(controlSocket);
             controlConnection.authenticate(FileUtilities.read(cookieFile));
+            System.out.println("no way we quick to here");
             // Tell Tor to exit when the control connection is closed
             controlConnection.takeOwnership();
             controlConnection.resetConf(Collections.singletonList(OWNER));
@@ -451,7 +452,7 @@ public abstract class OnionProxyManager {
                                 control_port
                                         = Integer.parseInt(
                                         nextLine.substring(nextLine.lastIndexOf(" ") + 1, nextLine.length() - 1));
-                                countDownLatch.countDown();
+//                                countDownLatch.countDown();
                             }
                             LOG.info(nextLine);
 //                            Intent gcm_rec = new Intent("tor_status");

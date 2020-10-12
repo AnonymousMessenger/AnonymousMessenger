@@ -230,7 +230,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             popup.inflate(R.menu.options_menu);
             if(message.isPinned()){
                 MenuItem pinButton = popup.getMenu().findItem(R.id.navigation_drawer_item2);
-                pinButton.setTitle("Unpin");
+                pinButton.setTitle(R.string.unpin);
             }
             popup.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
@@ -239,7 +239,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         TextView quoteTextTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_text_typing);
                         TextView quoteSenderTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_sender_typing);
                         quoteTextTyping.setText(message.getMessage());
-                        quoteSenderTyping.setText(message.getTo().equals(app.getHostname())?message.getSender():"You");
+                        quoteSenderTyping.setText(message.getTo().equals(app.getHostname())?message.getSender():app.getString(R.string.you));
                         quoteTextTyping.setVisibility(View.VISIBLE);
                         quoteSenderTyping.setVisibility(View.VISIBLE);
                         RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);
@@ -399,6 +399,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if(message.getMessage()!=null && !message.getMessage().equals("")){
                 messageText.setVisibility(View.VISIBLE);
                 messageText.setText(message.getMessage());
+                messageText.setOnClickListener(new ListItemOnClickListener(message,itemView,messageText));
             }else{
                 messageText.setVisibility(View.GONE);
             }
@@ -422,6 +423,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     imageHolder.setImageBitmap(bitmap);
                     imageHolder.setOnClickListener(v -> {
                         Intent intent = new Intent(app, PictureViewerActivity.class);
+                        intent.putExtra("address",message.getAddress());
+                        intent.putExtra("nickname",message.getSender());
+                        intent.putExtra("time",message.getCreatedAt());
                         intent.putExtra("appData",true);
                         intent.putExtra("path",message.getPath());
                         intent.putExtra("message",message.getMessage());

@@ -261,9 +261,9 @@ public class DxApplication extends Application {
             return;
         }
         this.lockTorStart = false;
-        Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","ALL GOOD");
-        LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+//        Intent gcm_rec = new Intent("tor_status");
+//        gcm_rec.putExtra("tor_status","ALL GOOD");
+//        LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
     }
 
     public void clearMessageNotification(){

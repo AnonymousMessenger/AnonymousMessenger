@@ -33,7 +33,6 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -47,18 +46,17 @@ import java.io.File;
 import java.io.IOException;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
-import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
 import static android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY;
 
 public class AndroidOnionProxyManager extends OnionProxyManager {
     private static final Logger LOG = LoggerFactory.getLogger(AndroidOnionProxyManager.class);
 
-    private volatile BroadcastReceiver networkStateReceiver;
-    private final Context context;
+//    private volatile BroadcastReceiver networkStateReceiver;
+//    private final Context context;
 
     public AndroidOnionProxyManager(Context context, String workingSubDirectoryName) {
         super(new AndroidOnionProxyContext(context, workingSubDirectoryName));
-        this.context = context;
+//        this.context = context;
     }
 
 
@@ -67,9 +65,9 @@ public class AndroidOnionProxyManager extends OnionProxyManager {
     public boolean installAndStartTorOp() throws IOException, InterruptedException {
         if (super.installAndStartTorOp()) {
             // Register to receive network status events
-            networkStateReceiver = new NetworkStateReceiver();
-            IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
-            context.registerReceiver(networkStateReceiver, filter);
+//            networkStateReceiver = new NetworkStateReceiver();
+//            IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
+//            context.registerReceiver(networkStateReceiver, filter);
             return true;
         }
         return false;
@@ -77,27 +75,12 @@ public class AndroidOnionProxyManager extends OnionProxyManager {
 
     @Override
     public void stop() throws IOException {
-        try {
-            super.stop();
-        } finally {
-            if (networkStateReceiver != null) {
-                try {
-                    if (networkStateReceiver != null) {
-                        context.unregisterReceiver(networkStateReceiver);
-                    }
-                } catch(IllegalArgumentException e) {
-                    // There is a race condition where if someone calls stop before installAndStartTorOp is done
-                    // then we could get an exception because the network state receiver might not be properly
-                    // registered.
-                    LOG.info("Someone tried to call stop before we had finished registering the receiver", e);
-                }
-            }
-        }
+        super.stop();
     }
 
     @SuppressLint("NewApi")
     protected boolean setExecutable(File f) {
-        if(Build.VERSION.SDK_INT >= 9) {
+        if(Build.VERSION.SDK_INT >= 15) {
             return f.setExecutable(true, true);
         } else {
             String[] command = { "chmod", "700", f.getAbsolutePath() };

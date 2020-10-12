@@ -29,7 +29,7 @@ public class MyService extends Service {
 
         super.onCreate();
 
-        Notification ntf = app.getServiceNotification("Still running in background", "click here to hide notification", SERVICE_NOTIFICATION_CHANNEL);
+        Notification ntf = app.getServiceNotification(getString(R.string.still_background), getString(R.string.click_to_hide), SERVICE_NOTIFICATION_CHANNEL);
         startForeground(3, ntf);
         csm.enable(this.getApplication());
         startTor();

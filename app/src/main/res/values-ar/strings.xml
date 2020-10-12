@@ -108,4 +108,14 @@
     <string name="picure_view">رؤية الصورة</string>
     <string name="media_message">رسالة وسائط</string>
     <string name="caption">عنوان</string>
+    <string name="still_background">ما يزال يشتغل فالخلفية</string>
+    <string name="click_to_hide">إضغط هنا لإخفاء هذا الإشعار</string>
+    <string name="unpin">إلغاء التثبيت</string>
+    <string name="profile_contact">رؤية البروفايل</string>
+    <string name="save_picture">تخزين الصورة</string>
+    <string name="confirm_add_contact">"هل فعلا تريد إن تضيف "</string>
+    <string name="contact_exists">جهة الإتصال هذه موجودة بالفعل</string>
+    <string name="cant_add_contact">ﻻ يمكن إضافة جهة الإتصال</string>
+    <string name="save_to_storage">حفظ في وحدة التخزين المشتركة ؟</string>
+    <string name="save_to_storage_explain">تستطيع التطبيقات الأخرى الوصول إلى هذه الصورة إذا تم تخزينها فالتخزين المشترك</string>
 </resources>

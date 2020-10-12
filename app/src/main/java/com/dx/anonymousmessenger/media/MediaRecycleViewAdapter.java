@@ -40,7 +40,7 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
 //        Bitmap image = mImages.get(position);
         String path = mPaths.get(position);
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 8;
+        options.inSampleSize = 2;
         holder.myView.setImageBitmap(BitmapFactory.decodeFile(path,options));
     }
 

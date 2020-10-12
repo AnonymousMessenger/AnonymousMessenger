@@ -332,6 +332,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         });
         file.setOnClickListener(v -> {
 //            pickImage();
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_CODE);
+                return;
+            }
             mediaRecyclerView.setVisibility(View.VISIBLE);
             send.setVisibility(View.GONE);
             audio.setVisibility(View.GONE);
@@ -459,6 +463,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     if(b){
                         ((DxApplication)getApplication()).addToOnlineList(getIntent().getStringExtra("address"));
                         status.setText(R.string.user_is_online);
+                        ((DxApplication)getApplication()).queueUnsentMessages(getIntent().getStringExtra("address"));
                     }else{
                         ((DxApplication)getApplication()).onlineList.remove(getIntent().getStringExtra("address"));
                         status.setText(R.string.user_is_offline);
@@ -529,6 +534,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                         if(!messageList.get(messageList.size()-1).getAddress().equals(((DxApplication)getApplication()).getHostname())){
                             String newName = messageList.get(messageList.size()-1).getSender();
                             Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
+                            getIntent().putExtra("nickname",newName);
                         }
                     }
                 }catch (Exception ignored) {}

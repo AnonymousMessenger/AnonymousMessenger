@@ -74,41 +74,39 @@ public class AddContactActivity extends AppCompatActivity {
                 }
                 if(s.toString().endsWith(".onion") && s.toString().length()>15){
                     new AlertDialog.Builder(context,R.style.AppAlertDialog)
-                        .setTitle("Add Contact")
-                        .setMessage("Do you really want to add "+s.toString()+" ?")
+                        .setTitle(R.string.add_contact)
+                        .setMessage(getString(R.string.confirm_add_contact)+s.toString()+" ?")
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                            new Thread(() ->
-                            {
-                                try{
-                                    if(DbHelper.contactExists(s.toString(),(DxApplication)getApplication())){
-                                        runOnUiThread(()->{
-                                            Snackbar.make(contact, "Contact already exists!",Snackbar.LENGTH_SHORT).show();
-                                            contact.setText("");
-                                        });
-                                        return;
-                                    }
-                                    boolean b = DbHelper.saveContact(s.toString().trim(), ((DxApplication) getApplication()));
-                                    if(!b){
-                                        Log.e("FAILED TO SAVE CONTACT", "SAME " );
-                                        runOnUiThread(()->{
-                                            Snackbar.make(contact, "can't add contact!",Snackbar.LENGTH_SHORT).show();
-                                            contact.setText("");
-                                        });
-                                        return;
-                                    }
-                                    finish();
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                    Log.e("FAILED TO SAVE CONTACT", "SAME " );
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(() ->
+                        {
+                            try{
+                                if(DbHelper.contactExists(s.toString(),(DxApplication)getApplication())){
                                     runOnUiThread(()->{
-                                        Snackbar.make(contact, "can't add contact!",Snackbar.LENGTH_SHORT).show();
+                                        Snackbar.make(contact, R.string.contact_exists,Snackbar.LENGTH_SHORT).show();
                                         contact.setText("");
                                     });
+                                    return;
                                 }
+                                boolean b = DbHelper.saveContact(s.toString().trim(), ((DxApplication) getApplication()));
+                                if(!b){
+                                    Log.e("FAILED TO SAVE CONTACT", "SAME " );
+                                    runOnUiThread(()->{
+                                        Snackbar.make(contact, R.string.cant_add_contact,Snackbar.LENGTH_SHORT).show();
+                                        contact.setText("");
+                                    });
+                                    return;
+                                }
+                                finish();
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                Log.e("FAILED TO SAVE CONTACT", "SAME " );
+                                runOnUiThread(()->{
+                                    Snackbar.make(contact, R.string.cant_add_contact,Snackbar.LENGTH_SHORT).show();
+                                    contact.setText("");
+                                });
                             }
-                            ).start();
-                        })
+                        }
+                        ).start())
                         .setNegativeButton(android.R.string.no, null).show();
                 }
             }

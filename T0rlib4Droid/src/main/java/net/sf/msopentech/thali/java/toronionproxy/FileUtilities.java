@@ -202,10 +202,8 @@ public class FileUtilities {
                         throw new RuntimeException("Could not create directory " + file);
                     }
                 } else {
-                    if (file.exists() && !file.delete()) {
-                        throw new RuntimeException(
-                                "Could not delete file in preparation for overwriting it. File - "
-                                + file.getAbsolutePath());
+                    if (file.exists()) {
+                        continue;
                     }
 
                     if (!file.createNewFile()) {

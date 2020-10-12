@@ -309,6 +309,9 @@ public class AppFragment extends Fragment {
                 return;
             }
             try{
+                if(getActivity()==null||getActivity().getApplication()==null){
+                    return;
+                }
                 if(isOnline()){
                     mainThread.post(()->{
                         try{
@@ -317,11 +320,8 @@ public class AppFragment extends Fragment {
                             offlineImg.setVisibility(View.GONE);
                             onlineToolbar.setVisibility(View.VISIBLE);
                         }catch (Exception ignored) {}
-                        if(getActivity()==null||getActivity().getApplication()==null){
-                            return;
-                        }
-                        ((DxApplication)getActivity().getApplication()).queueAllUnsentMessages();
                     });
+                    ((DxApplication)getActivity().getApplication()).queueAllUnsentMessages();
                 }else{
                     mainThread.post(()->{
                         try{
