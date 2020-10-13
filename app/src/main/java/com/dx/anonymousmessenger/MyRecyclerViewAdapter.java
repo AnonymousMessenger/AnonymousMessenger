@@ -167,18 +167,20 @@ public class MyRecyclerViewAdapter extends Adapter {
             popup.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.delete_contact) {
                     new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
-                            .setTitle("Delete this contact?")
-                            .setMessage("this can't be undone and will also delete this contact's session and conversation")
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                        .setTitle("Delete this contact?")
+                        .setMessage("this can't be undone and will also delete this contact's session and conversation")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            try{
                                 DbHelper.deleteContact(address, app);
                                 DbHelper.clearConversation(address, app);
                                 Intent intent = new Intent("your_action");
                                 itemView.getContext().sendBroadcast(intent);
-                            })
-                            .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
+                            }catch (Exception ignored) {}
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
 
-                            }).show();
+                        }).show();
                     return true;
                 }
                 return false;

@@ -401,7 +401,7 @@ public abstract class OnionProxyManager {
             // Open a control connection and authenticate using the cookie file
             TorControlConnection controlConnection = new TorControlConnection(controlSocket);
             controlConnection.authenticate(FileUtilities.read(cookieFile));
-            System.out.println("no way we quick to here");
+            //System.out.println("no way we quick to here");
             // Tell Tor to exit when the control connection is closed
             controlConnection.takeOwnership();
             controlConnection.resetConf(Collections.singletonList(OWNER));

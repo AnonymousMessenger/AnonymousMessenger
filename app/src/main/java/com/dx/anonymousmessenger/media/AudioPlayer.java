@@ -1,6 +1,5 @@
 package com.dx.anonymousmessenger.media;
 
-import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -16,11 +15,11 @@ import static com.dx.anonymousmessenger.file.FileHelper.getFile;
 
 public class AudioPlayer {
     private AudioTrack at;
-    public AudioManager audioManager;
+//    public AudioManager audioManager;
     private DxApplication app;
     private String path;
     private final int sampleRate = 16000 ; // 44100 for music
-    private final int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_MONO;
+    private final int channelConfig = AudioFormat.CHANNEL_IN_MONO;
     private final int audioFormat = AudioFormat.ENCODING_PCM_8BIT;
     private final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
     byte[] receiveData = new byte[minBufSize];
@@ -45,7 +44,7 @@ public class AudioPlayer {
             try {
                 int read = is.read(receiveData, 0, receiveData.length);
                 if(read<1){
-                    System.out.println("done playing");
+                    //System.out.println("done playing");
                     stop(1);
                     break;
                 }
@@ -60,9 +59,9 @@ public class AudioPlayer {
         play = false;
         path = null;
         try{
-            System.out.println("checking for callback");
+            //System.out.println("checking for callback");
             if(callBack!=null){
-                System.out.println("found callback");
+                //System.out.println("found callback");
                 callBack.doStuff();
             }
         }catch (Exception e) {
@@ -76,20 +75,20 @@ public class AudioPlayer {
     }
 
     public void setAudioDefaults(){
-        audioManager = (AudioManager)app.getSystemService(Context.AUDIO_SERVICE);
-        audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE);
-        audioManager.setMode(AudioManager.MODE_NORMAL);
-        audioManager.setSpeakerphoneOn(true);
-        at = new AudioTrack(AudioManager.MODE_NORMAL,sampleRate,channelConfig,audioFormat,receiveData.length,AudioTrack.MODE_STREAM);
+//        audioManager = (AudioManager)app.getSystemService(Context.AUDIO_SERVICE);
+//        audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE);
+//        audioManager.setMode(AudioManager.STREAM_MUSIC);
+//        audioManager.setSpeakerphoneOn(true);
+        at = new AudioTrack(AudioManager.STREAM_MUSIC,sampleRate,channelConfig,audioFormat,receiveData.length,AudioTrack.MODE_STREAM);
     }
 
     public void toSpeaker(byte[] soundBytes) {
         try {
             at.write(soundBytes, 0, soundBytes.length);
             at.play();
-        } catch (Exception e) {
-            System.out.println("Not working in speakers...");
-            e.printStackTrace();
+        } catch (Exception ignored) {
+            //System.out.println("Not working in speakers...");
+            //e.printStackTrace();
         }
     }
 }

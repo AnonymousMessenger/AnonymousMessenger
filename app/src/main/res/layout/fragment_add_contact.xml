@@ -10,12 +10,12 @@
         android:layout_height="wrap_content"
         android:text="@string/lbl_contact_address"
         android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@+id/txt_container_contact_address"
+        app:layout_constraintBottom_toTopOf="@+id/txt_container_new_nickname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/txt_container_contact_address"
+        android:id="@+id/txt_container_new_nickname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:errorEnabled="true"
@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txt_contact_address"
+            android:id="@+id/txt_new_nickname"
             android:layout_width="match_parent"
             android:layout_height="41dp"
             android:hint="@string/hint_contact_address"

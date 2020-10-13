@@ -529,7 +529,6 @@ public class DbHelper {
 
     public static void setMessageReceived(QuotedUserMessage msg, DxApplication app, String conversation, boolean received){
         SQLiteDatabase database = app.getDb();
-        System.out.println("message received is "+msg.getMessage());
         database.execSQL("UPDATE message SET received=? WHERE send_to=? AND created_at=? AND send_from=? AND msg=? AND conversation=?", new Object[]{received,msg.getTo(),msg.getCreatedAt(),msg.getAddress(),msg.getMessage(),conversation});
     }
 

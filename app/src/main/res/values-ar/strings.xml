@@ -118,4 +118,10 @@
     <string name="cant_add_contact">ﻻ يمكن إضافة جهة الإتصال</string>
     <string name="save_to_storage">حفظ في وحدة التخزين المشتركة ؟</string>
     <string name="save_to_storage_explain">تستطيع التطبيقات الأخرى الوصول إلى هذه الصورة إذا تم تخزينها فالتخزين المشترك</string>
+    <string name="action_my_profile">بروفايلي</string>
+    <string name="action_help">مساعدة</string>
+    <string name="action_about">حول</string>
+    <string name="change_nickname">غير الإسم المستعار</string>
+    <string name="new_nickname">إسم مستعار جديد</string>
+    <string name="confirm">تأكيد</string>
 </resources>

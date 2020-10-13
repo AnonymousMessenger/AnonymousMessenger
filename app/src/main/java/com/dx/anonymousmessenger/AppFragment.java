@@ -107,9 +107,12 @@ public class AppFragment extends Fragment {
             public void onReceive(Context context, Intent intent)
             {
             if(intent.getStringExtra("tor_status1")!=null){
-                if(Objects.requireNonNull(intent.getStringExtra("tor_status1")).equals("ALL GOOD")){
+                if(onlineTxt.getText().toString().equals(getString(R.string.offline))){
                     checkConnectivity();
                 }
+//                if(Objects.requireNonNull(intent.getStringExtra("tor_status1")).equals("ALL GOOD")){
+//                    checkConnectivity();
+//                }
                 updateTorOutput(Objects.requireNonNull(intent.getStringExtra("tor_status1")));
             }else{
                 updateUi();
@@ -181,9 +184,9 @@ public class AppFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
 
 
-        checkConnectivity();
-        updateUi();
-        checkMessages();
+//        checkConnectivity();
+//        updateUi();
+//        checkMessages();
 //        new Thread(()->{
 //
 //        })
@@ -371,6 +374,15 @@ public class AppFragment extends Fragment {
                 stopCheckingMessages();
                 try{
                     Intent intent = new Intent(getContext(), MyIdentityActivity.class);
+                    if(getContext()!=null){
+                        getContext().startActivity(intent);
+                    }
+                }catch (Exception ignored) {}
+                break;
+            case R.id.action_my_profile:
+                stopCheckingMessages();
+                try{
+                    Intent intent = new Intent(getContext(), MyProfileActivity.class);
                     if(getContext()!=null){
                         getContext().startActivity(intent);
                     }

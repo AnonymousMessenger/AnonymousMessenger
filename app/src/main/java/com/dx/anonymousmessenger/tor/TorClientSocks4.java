@@ -73,7 +73,7 @@ public class TorClientSocks4 {
                             ByteArrayInputStream bais = new ByteArrayInputStream(media);
                             byte[] buffer;
                             while(bais.available()>0){
-                                System.out.println("sending part");
+                                //System.out.println("sending part");
                                 if(bais.available()<1024){
                                     buffer = new byte[bais.available()];
                                 }else{

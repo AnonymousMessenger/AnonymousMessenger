@@ -35,7 +35,7 @@ public class ProxyServer implements Runnable {
             try {
                 System.out.println("wait for connections");
                 clntSocket = this.serverSocketVal.accept();
-                System.out.println("Client Accepted" + clntSocket.getRemoteSocketAddress());
+                //System.out.println("Client Accepted" + clntSocket.getRemoteSocketAddress());
             } catch (IOException e) {
                 if (hasStopped()) {
                     System.out.println("Server has Stopped...Please check");

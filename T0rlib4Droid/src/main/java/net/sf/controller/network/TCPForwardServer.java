@@ -19,7 +19,7 @@ public class TCPForwardServer {
         ServerSocket serverSocket = new ServerSocket(DESTINATION_PORT);
         while (true) {
             Socket clientSocket = serverSocket.accept();
-            System.out.println("client Accepted with "+clientSocket.getRemoteSocketAddress());
+            //System.out.println("client Accepted with "+clientSocket.getRemoteSocketAddress());
             ClientThread clientThread =
                     new ClientThread(clientSocket, DESTINATION_HOST, SOURCE_PORT);
             clientThread.start();

@@ -91,7 +91,7 @@ public class PasswordEntryFragment extends Fragment {
                     btn_next = null;
                     progressBar = null;
                     rootView = null;
-                    Cursor cr = database.rawQuery("select * from account;", null);
+                    Cursor cr = database.rawQuery("SELECT * FROM account LIMIT 1;", null);
                     if (cr != null && cr.moveToFirst()) {
                         DxAccount account = new DxAccount(cr.getString(0), cr.getString(1));
                         cr.close();

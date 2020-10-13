@@ -66,7 +66,7 @@ public class AddContactFragment extends Fragment {
             Objects.requireNonNull(clipboard).setPrimaryClip(clip);
             Toast.makeText(getContext(),"Copied address",Toast.LENGTH_LONG).show();
         });
-        contact = rootView.findViewById(R.id.txt_contact_address);
+        contact = rootView.findViewById(R.id.txt_new_nickname);
         contact.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

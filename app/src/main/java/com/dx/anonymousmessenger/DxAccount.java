@@ -10,6 +10,7 @@ public class DxAccount {
 
     public static final String CREATE_ACCOUNT_TABLE_SQL = "CREATE TABLE IF NOT EXISTS account(nickname,password)";
     public static final String INSERT_ACCOUNT_SQL = "INSERT INTO account(nickname,password) values(?,?)";
+    public static final String DELETE_ACCOUNT_SQL = "DELETE FROM account";
 
     public String getPassword() {
         return password;
@@ -25,6 +26,11 @@ public class DxAccount {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void changeNickname(String nickname, DxApplication app){
+        setNickname(nickname);
+        saveAccount(this,app);
     }
 
     public DxAccount(String nickname){
@@ -45,25 +51,13 @@ public class DxAccount {
     public static void saveAccount(DxAccount account, DxApplication app) {
         Log.d("Account Saver","Saving Account");
         SQLiteDatabase database = app.getDb(account.getPassword());
-//        while (database.isDbLockedByOtherThreads()||database.isDbLockedByCurrentThread()||database.isReadOnly()){
         try{
-//            Thread.sleep(200);
-//            Log.e("ACCOUNT SAVER", "WAITING FOR DB database.isDbLockedByOtherThreads()||database.isDbLockedByCurrentThread()||database.isReadOnly()");
             database.execSQL(DxAccount.CREATE_ACCOUNT_TABLE_SQL);
+            database.execSQL(DxAccount.DELETE_ACCOUNT_SQL);
             database.execSQL(DxAccount.INSERT_ACCOUNT_SQL,account.getSqlInsertValues());
         }catch (Exception e){
             e.printStackTrace();
         }
-//        }
-//        database.execSQL(DxAccount.CREATE_ACCOUNT_TABLE_SQL);
-//        database.execSQL(DxAccount.INSERT_ACCOUNT_SQL,account.getSqlInsertValues());
     }
 
-//    public boolean saveAccount(Context ctx){
-//        if(nickname==null | address==null | port==0 | identity_key==null){
-//            //maybe put more fail logic here
-//            return false;
-//        }
-//        return true;
-//    }
 }

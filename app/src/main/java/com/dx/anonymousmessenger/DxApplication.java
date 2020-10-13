@@ -51,11 +51,14 @@ public class DxApplication extends Application {
     private boolean exitingHoldup;
     private List<QuotedUserMessage> messageQueue = new ArrayList<>();
     private volatile boolean syncing;
+    private volatile boolean pinging;
     public List<String> onlineList = new ArrayList<>();
 
     public void addToOnlineList(String address){
         if(!onlineList.contains(address)){
             onlineList.add(address);
+            Intent gcm_rec = new Intent("your_action");
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
         }
     }
 
@@ -76,6 +79,7 @@ public class DxApplication extends Application {
 
     public void sendQueuedMessages(){
         for (QuotedUserMessage msg:messageQueue){
+            System.out.println("sending a message");
             if(msg.getPath()!=null && !msg.getPath().equals("")){
                 MessageSender.sendQueuedMediaMessage(msg,this,msg.getTo());
                 continue;
@@ -86,21 +90,21 @@ public class DxApplication extends Application {
     }
 
     public void queueAllUnsentMessages(){
-        if(syncing){
+        if(pinging || syncing){
+            System.out.println("still pinging or syncing!");
             return;
         }
         new Thread(()->{
             try{
-                syncing = true;
-                try{
-                    Thread.sleep(1000);
-                }catch (Exception ignored) {}
+                pinging = true;
+//                try{
+//                    Thread.sleep(1000);
+//                }catch (Exception ignored) {}
                 List<String[]> contactsList = DbHelper.getContactsList(this);
                 if(contactsList==null || contactsList.size()==0){
                     return;
                 }
                 for (String[] contact: contactsList){
-                    List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, contact[1]);
                     boolean b = TorClientSocks4.testAddress(this, contact[1]);
                     if(!b){
                         onlineList.remove(contact[1]);
@@ -113,24 +117,32 @@ public class DxApplication extends Application {
                         Intent gcm_rec = new Intent("your_action");
                         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
                     }
+                    while (syncing){
+                        try{
+                            Thread.sleep(1000);
+                        }catch (Exception ignored) {}
+                    }
+                    List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, contact[1]);
                     if(undeliveredMessageList.size()==0){
                         continue;
                     }
+                    syncing = true;
                     addToMessagesQueue(undeliveredMessageList);
                     sendQueuedMessages();
                 }
                 syncing = false;
-            }catch (Exception ignored) {syncing = false;}
+                pinging = false;
+            }catch (Exception ignored) {syncing = false; pinging = false;}
         }).start();
     }
 
     public void queueUnsentMessages(String address){
+        while (syncing){
+            try{
+                Thread.sleep(1000);
+            }catch (Exception ignored) {}
+        }
         new Thread(()->{
-            while (syncing){
-                try{
-                    Thread.sleep(1000);
-                }catch (Exception ignored) {}
-            }
             try{
                 syncing = true;
                 List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
@@ -139,7 +151,6 @@ public class DxApplication extends Application {
                 }
                 boolean b = TorClientSocks4.testAddress(this, address);
                 if(!b){
-                    syncing = false;
                     onlineList.remove(address);
                     return;
                 }
