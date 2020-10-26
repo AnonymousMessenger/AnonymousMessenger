@@ -45,7 +45,7 @@ public class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback 
     public void onAvailable(Network network) {
         new Thread(()->{
             if(((DxApplication)context).getTorSocket()!=null&&((DxApplication)context).getTorSocket().getAndroidTorRelay()!=null){
-                ((DxApplication)context).sendNotification("Restarting service","connection should be back soon",false);
+                ((DxApplication)context).sendNotification(context.getString(R.string.restarting_service),context.getString(R.string.connection_is_coming),false);
                 new Thread(()->{
                     while (!new TorClientSocks4().test((DxApplication) context)){
                         try {
@@ -54,7 +54,7 @@ public class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback 
                             e.printStackTrace();
                         }
                     }
-                    ((DxApplication)context).sendNotification("Connection Restored","should be able to receive messages within 2 minutes",false);
+                    ((DxApplication)context).sendNotification(context.getString(R.string.connection_restored),context.getString(R.string.will_receive_messages_soon),false);
                     Intent gcm_rec = new Intent("your_action");
                     LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(gcm_rec);
                 }).start();
@@ -84,7 +84,7 @@ public class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback 
     public void onLost(@NonNull Network network) {
         try{
             new Thread(()->{
-                ((DxApplication)context).sendNotification("Lost Connection","waiting for connectivity to restore",false);
+                ((DxApplication)context).sendNotification(context.getString(R.string.lost_connection),context.getString(R.string.waiting_for_connectivity),false);
                 Intent gcm_rec = new Intent("your_action");
                 LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(gcm_rec);
                 if(((DxApplication)context).getTorSocket()!=null&&((DxApplication)context).getTorSocket().getAndroidTorRelay()!=null){

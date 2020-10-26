@@ -1,7 +1,12 @@
 package com.dx.anonymousmessenger.media;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +21,16 @@ import java.util.List;
 
 public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleViewAdapter.ViewHolder> {
 
-    public List<String> mPaths;
+    public List<String> paths;
+    public List<String> types;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     // data is passed into the constructor
-    public MediaRecycleViewAdapter(Context context, List<String> paths) {
+    public MediaRecycleViewAdapter(Context context, List<String> paths, List<String> types) {
         this.mInflater = LayoutInflater.from(context);
-        this.mPaths = paths;
+        this.paths = paths;
+        this.types = types;
     }
 
     // inflates the row layout from xml when needed
@@ -34,20 +41,32 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
         return new ViewHolder(view);
     }
 
-    // binds the data to the view and textview in each row
+    // binds the data to the view
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-//        Bitmap image = mImages.get(position);
-        String path = mPaths.get(position);
+        String path = paths.get(position);
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
-        holder.myView.setImageBitmap(BitmapFactory.decodeFile(path,options));
+        new Thread(()->{
+            Bitmap image;
+            if(types.get(position).equals(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO+"")){
+                image = ThumbnailUtils.createVideoThumbnail(path,
+                        MediaStore.Images.Thumbnails.MINI_KIND);
+            }else{
+                image = BitmapFactory.decodeFile(path,options);
+            }
+            new Handler(Looper.getMainLooper()).post(()->{
+                try{
+                    holder.myView.setImageBitmap(image);
+                }catch (Exception ignored) {}
+            });
+        }).start();
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
-        return mPaths.size();
+        return paths.size();
     }
 
     // stores and recycles views as they are scrolled off screen
@@ -68,7 +87,7 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
 
     // convenience method for getting data at click position
     public String getItem(int id) {
-        return mPaths.get(id);
+        return paths.get(id);
     }
 
     // allows clicks events to be caught

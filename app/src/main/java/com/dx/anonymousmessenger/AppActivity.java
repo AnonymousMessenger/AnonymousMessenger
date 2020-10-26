@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment;
 
 public class AppActivity extends AppCompatActivity implements ComponentCallbacks2 {
 
+    private boolean isAppFragmentShown;
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -83,6 +85,10 @@ public class AppActivity extends AppCompatActivity implements ComponentCallbacks
     }
 
     private void loadAppFragment(){
+        if(isAppFragmentShown){
+            return;
+        }
+        isAppFragmentShown = true;
         showNextFragment(new AppFragment());
     }
 
@@ -94,7 +100,6 @@ public class AppActivity extends AppCompatActivity implements ComponentCallbacks
         getSupportFragmentManager().beginTransaction()
             .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
             .replace(R.id.fragment_container, f)
-            .addToBackStack(null)
             .commit();
     }
 

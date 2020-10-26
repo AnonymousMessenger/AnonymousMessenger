@@ -199,8 +199,8 @@ public class AppFragment extends Fragment {
                 try{
                     if(!((DxApplication)getActivity().getApplication()).isIgnoringBatteryOptimizations()){
                         getActivity().runOnUiThread(()-> new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
-                            .setTitle("Turn off battery optimization?")
-                            .setMessage("allow Anonymous Messenger to keep working in the background?")
+                            .setTitle(R.string.turn_off_battery)
+                            .setMessage(R.string.allow_in_background)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
                                 ((DxApplication)getActivity().getApplication()).requestBatteryOptimizationOff();
@@ -353,22 +353,37 @@ public class AppFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_restart_tor:
-                ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).restartTor();
-                mainThread.post(()->{
-                    try{
-                        onlineTxt.setText(R.string.offline);
-                        onlineImg.setVisibility(View.GONE);
-                        offlineImg.setVisibility(View.VISIBLE);
-                        onlineToolbar.setVisibility(View.VISIBLE);
-                        Intent intent = new Intent(getActivity().getApplication(), SetupInProcess.class);
-                        intent.putExtra("first_time",false);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                    } catch (Exception ignored) {}
-                });
+                new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
+                    .setTitle(R.string.restart_tor)
+                    .setMessage(R.string.restart_tor_explain)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                        ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).restartTor();
+                        mainThread.post(()->{
+                            try{
+                                onlineTxt.setText(R.string.offline);
+                                onlineImg.setVisibility(View.GONE);
+                                offlineImg.setVisibility(View.VISIBLE);
+                                onlineToolbar.setVisibility(View.VISIBLE);
+                                Intent intent = new Intent(getActivity().getApplication(), SetupInProcess.class);
+                                intent.putExtra("first_time",false);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(intent);
+                                getActivity().finish();
+                            } catch (Exception ignored) {}
+                        });
+                    })
+                    .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
                 break;
             case R.id.action_shutdown:
-                ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).shutdown();
+                new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
+                    .setTitle(R.string.shut_app)
+                    .setMessage(R.string.shut_app_explain)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                        ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).shutdown();
+                    })
+                    .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
                 break;
             case R.id.action_my_identity:
                 stopCheckingMessages();
@@ -383,6 +398,17 @@ public class AppFragment extends Fragment {
                 stopCheckingMessages();
                 try{
                     Intent intent = new Intent(getContext(), MyProfileActivity.class);
+                    if(getContext()!=null){
+                        getContext().startActivity(intent);
+                    }
+                }catch (Exception ignored) {}
+                break;
+            case R.id.action_about:
+            case R.id.action_help:
+            case R.id.action_license:
+                stopCheckingMessages();
+                try{
+                    Intent intent = new Intent(getContext(), LicenseActivity.class);
                     if(getContext()!=null){
                         getContext().startActivity(intent);
                     }

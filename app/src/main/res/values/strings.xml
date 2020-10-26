@@ -44,7 +44,7 @@
     <string name="dx_call">TOR CALL</string>
     <string name="call_picture_description">call screen picture</string>
     <string name="end_call">Hang up</string>
-    <string name="connecting">Connecting…</string>
+    <string name="connecting">Decrypting…</string>
     <string name="CallNotificationBuilder_connecting">Connecting</string>
     <string name="NotificationBarManager__incoming_call">Incoming Call</string>
     <string name="NotificationBarManager_call_in_progress">Call in progress</string>
@@ -128,4 +128,50 @@
     <string name="change_nickname">Change Nickname</string>
     <string name="new_nickname">New Nickname</string>
     <string name="confirm">Confirm</string>
+    <string name="action_license">License</string>
+    <string name="license">
+        Anonymous Messenger, a full private communications solution that works over tor.\n
+    Copyright © 2020  Sofian M. Benissa\n\n
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.\n
+
+    This program is distributed in the hope that it will be useful,\n
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.\n
+
+    You should have received a copy of the GNU General Public License
+        along with this program.  If not, see https://www.gnu.org/licenses .</string>
+    <string name="copied_address">Copied address</string>
+    <string name="empty_nickname_help">Can\'t have an empty nickname</string>
+    <string name="theiraddress">Their Address</string>
+    <string name="turn_off_battery">Turn off battery optimization?</string>
+    <string name="allow_in_background">allow Anonymous Messenger to keep working in the background?</string>
+    <string name="shut_app">Shutdown app?</string>
+    <string name="shut_app_explain">You won\'t be able to receive messages until you decrypt with your password again</string>
+    <string name="restart_tor">Restart tor?</string>
+    <string name="restart_tor_explain">This should not be needed in normal operation unless you think tor isn\'t working properly right now</string>
+    <string name="restarting_service">Restarting service</string>
+    <string name="connection_restored">Connection Restored</string>
+    <string name="lost_connection">Lost Connection</string>
+    <string name="connection_is_coming">connection should be back soon</string>
+    <string name="will_receive_messages_soon">should be able to receive messages within 2 minutes</string>
+    <string name="waiting_for_connectivity">waiting for connectivity to restore</string>
+    <string name="almost_ready">Almost Ready!</string>
+    <string name="starting_tor_first_time">Starting tor and warming up to get all we need to connect!</string>
+    <string name="ready_to_chat">Ready to chat securely!</string>
+    <string name="you_got_all_you_need">You got all you need to chat securely with your friends!</string>
+    <string name="new_message">New Message!</string>
+    <string name="you_have_message">you have a new secret message</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="no_key">encryption key not found</string>
+    <string name="error">error</string>
+    <string name="failed_to_decrypt">FAILED TO DECRYPT MESSAGE</string>
+    <string name="failed_to_read_after_decrypt">FAILED TO READ MESSAGE AFTER DECRYPTING IT</string>
+    <string name="failed_to_get_AEM">FAILED TO GET AddressedEncryptedMessage FROM MESSAGE</string>
+    <string name="cant_add_self">You can\'t add yourself!</string>
+    <string name="waiting_for_response">Sent key, Waiting for response</string>
 </resources>

@@ -72,4 +72,10 @@ public class Utils {
 
         return parts;
     }
+
+    public static byte[] splitOne(byte[] input, int firstLength) {
+        byte[] part = new byte[firstLength];
+        System.arraycopy(input, 0, part, 0, firstLength);
+        return part;
+    }
 }

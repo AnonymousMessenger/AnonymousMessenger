@@ -166,13 +166,6 @@ public class ServerSocketViaTor {
                                 DataInputStream in=new DataInputStream(sock.getInputStream());
                                 String msg = in.readUTF();
                                 if(msg.contains("hello-")){
-//                                    try {
-//                                        outputStream.writeUTF("hello");
-//                                        outputStream.flush();
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                    }
-
                                     if(DbHelper.contactExists(msg.replace("hello-",""),app)){
                                         app.addToOnlineList(msg.replace("hello-",""));
                                         app.queueUnsentMessages(msg.replace("hello-",""));
@@ -241,8 +234,8 @@ public class ServerSocketViaTor {
                                             cache.write(buffer,0,buffer.length);
                                         }
                                         in.close();
-                                        System.out.println("TOTAL BYTES READ : "+total_read);
-                                        System.out.println("FILE SIZE : "+fileSize);
+                                        Log.d("FILE RECEIVER", "TOTAL BYTES READ : "+total_read);
+                                        Log.d("FILE RECEIVER", "FILE SIZE : "+fileSize);
                                         MessageSender.mediaMessageReceiver(cache.toByteArray(),recMsg,app);
                                     } catch (Exception e) {
                                         Log.e("RECEIVING MEDIA MESSAGE","ERROR BELOW");
@@ -250,14 +243,11 @@ public class ServerSocketViaTor {
                                     }
                                     return;
                                 }
-//                                while(!msg.equals("nuf"))
-//                                {
-                                    final String rec = msg;
-                                    new Thread(()-> MessageSender.messageReceiver(rec,app)).start();
-                                    outputStream.writeUTF("ack3");
-                                    outputStream.flush();
-//                                    msg = in.readUTF();
-//                                }
+
+                                final String rec = msg;
+                                new Thread(()-> MessageSender.messageReceiver(rec,app)).start();
+                                outputStream.writeUTF("ack3");
+                                outputStream.flush();
                                 outputStream.close();
                             }catch (IOException e){
                                 e.printStackTrace();

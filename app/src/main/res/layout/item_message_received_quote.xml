@@ -25,9 +25,10 @@
                 android:alpha="@dimen/material_emphasis_disabled"
                 android:background="@drawable/rounded_rectangle_dark"
                 android:maxWidth="240dp"
+                android:maxLines="4"
                 android:padding="8dp"
-                android:text="@string/textview"
 
+                android:text="@string/textview"
                 android:textColor="#ffffff"
                 android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@+id/quote_sender"

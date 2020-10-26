@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
@@ -187,7 +188,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 }
             }
         });
-        scrollDownFab.setOnClickListener(v -> mMessageRecycler.smoothScrollToPosition(messageList.size()-1));
+        scrollDownFab.setOnClickListener(v -> {
+            mMessageRecycler.smoothScrollToPosition(messageList.size()-1);
+            scrollDownFab.setVisibility(View.GONE);
+        });
         send.setOnClickListener(v -> {
             if(((DxApplication) getApplication()).getEntity()==null){
                 Snackbar.make(send, R.string.no_encryption_yet,Snackbar.LENGTH_SHORT).show();
@@ -196,6 +200,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1))){
                 Snackbar.make(send, R.string.no_session,Snackbar.LENGTH_SHORT).show();
                 new Thread(()-> MessageSender.sendKeyExchangeMessage(((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
+                return;
+            }
+            if(((DxApplication)getApplication()).getEntity().getStore().loadSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)).getSessionState().hasPendingKeyExchange() || ((DxApplication)getApplication()).getEntity().getStore().getIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)) == null){
+                Snackbar.make(send, R.string.cant_encrypt_message,Snackbar.LENGTH_SHORT).show();
                 return;
             }
             TextView quoteSenderTyping = findViewById(R.id.quote_sender_typing);
@@ -346,29 +354,41 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             picsHelp.setVisibility(View.VISIBLE);
 
             new Thread(()->{
-//            ArrayList<Bitmap> pics = new ArrayList<>();
                 ArrayList<String> paths = new ArrayList<>();
-                Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                String[] projection = { MediaStore.Images.ImageColumns.DATA ,MediaStore.Images.Media.DISPLAY_NAME};
-                Cursor cursor = this.getContentResolver().query(uri, projection, null, null, MediaStore.Images.Media._ID + " DESC");
+                ArrayList<String> types = new ArrayList<>();
+                // Get relevant columns for use later.
+                String[] projection = {
+                    MediaStore.Files.FileColumns.DATA,
+                    MediaStore.Files.FileColumns.MEDIA_TYPE,
+                    MediaStore.Files.FileColumns.MIME_TYPE
+                };
+
+                // Return only video and image metadata.
+                String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                                 + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                                 + " OR "
+                                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+                Uri queryUri = MediaStore.Files.getContentUri("external");
+                Cursor cursor = this.getContentResolver().query(queryUri, projection, selection, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC");
+
                 try {
                     if (cursor != null) {
                         cursor.moveToFirst();
                         do{
-//                        String name = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME));
-                            String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                            String type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE));
+                            String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
                             paths.add(path);
-//                        pics.add(BitmapFactory.decodeFile(path));
+                            types.add(type);
                         }while(cursor.moveToNext());
                         cursor.close();
                     }
                     // set up the RecyclerView
                     new Handler(Looper.getMainLooper()).post(()->{
-
                         LinearLayoutManager horizontalLayoutManager
                                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
                         mediaRecyclerView.setLayoutManager(horizontalLayoutManager);
-                        MediaRecycleViewAdapter adapter = new MediaRecycleViewAdapter(this, paths);
+                        MediaRecycleViewAdapter adapter = new MediaRecycleViewAdapter(this, paths, types);
                         adapter.setClickListener(this::onItemClick);
                         mediaRecyclerView.setAdapter(adapter);
                     });
@@ -379,11 +399,11 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             }).start();
         });
 
-        updateUi();
+//        updateUi();
         ping();
 
         //run db message checker to delete any old messages then tell us to update ui
-        checkMessages();
+//        checkMessages();
 
         Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
             new Thread() {
@@ -419,9 +439,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         intent.putExtra("address",address);
         intent.putExtra("nickname",nickname);
         if(mediaRecyclerView!=null && mediaRecyclerView.getAdapter()!=null){
-            String path = ((MediaRecycleViewAdapter)mediaRecyclerView.getAdapter()).mPaths.get(position);
+            String path = ((MediaRecycleViewAdapter)mediaRecyclerView.getAdapter()).paths.get(position);
+            String type = ((MediaRecycleViewAdapter)mediaRecyclerView.getAdapter()).types.get(position);
             intent.putExtra("path",path);
-            intent.putExtra("type","image");
+            intent.putExtra("type",type);
             startActivity(intent);
         }
     }
@@ -454,20 +475,19 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     public void ping(){
         new Thread(()->{
             boolean b = TorClientSocks4.testAddress(((DxApplication) getApplication()), getIntent().getStringExtra("address"));
+            if(b){
+                ((DxApplication)getApplication()).addToOnlineList(getIntent().getStringExtra("address"));
+                ((DxApplication)getApplication()).queueUnsentMessages(getIntent().getStringExtra("address"));
+            }else{
+                ((DxApplication)getApplication()).onlineList.remove(getIntent().getStringExtra("address"));
+            }
             try {
                 Thread.sleep(500);
             } catch (Exception ignored) {}
             Handler h = new Handler(Looper.getMainLooper());
             h.post(()->{
                 try{
-                    if(b){
-                        ((DxApplication)getApplication()).addToOnlineList(getIntent().getStringExtra("address"));
-                        status.setText(R.string.user_is_online);
-                        ((DxApplication)getApplication()).queueUnsentMessages(getIntent().getStringExtra("address"));
-                    }else{
-                        ((DxApplication)getApplication()).onlineList.remove(getIntent().getStringExtra("address"));
-                        status.setText(R.string.user_is_offline);
-                    }
+                    status.setText(b?R.string.user_is_online:R.string.user_is_offline);
                     status.setVisibility(View.VISIBLE);
                     Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
                     status.startAnimation(slideUp);
@@ -520,51 +540,79 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 
     public void updateUi(){
         try{
-            messageList = DbHelper.getMessageList(((DxApplication) getApplication()) ,
-                    getIntent().getStringExtra("address"));
-            runOnUiThread(()->{
-                try{
+            new Thread(()->{
+                DxApplication app = (DxApplication) getApplication();
+                if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)) || app.getEntity().getStore().loadSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)).getSessionState().hasPendingKeyExchange() || app.getEntity().getStore().getIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)) == null){
+                    if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1))){
+                        new Thread(()-> MessageSender.sendKeyExchangeMessage(app,getIntent().getStringExtra("address"))).start();
+                        new Handler(Looper.getMainLooper()).post(()->{
+                            TextView keyStatus = findViewById(R.id.txt_key_status);
+                            keyStatus.setVisibility(View.VISIBLE);
+                            keyStatus.setText(R.string.no_session);
+                            ConstraintLayout chatBox = findViewById(R.id.layout_chatbox);
+                            chatBox.setVisibility(View.GONE);
+                        });
+                    }
+                    if(app.getEntity().getStore().loadSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)).getSessionState().hasPendingKeyExchange()){
+                        new Handler(Looper.getMainLooper()).post(()->{
+                            TextView keyStatus = findViewById(R.id.txt_key_status);
+                            keyStatus.setVisibility(View.VISIBLE);
+                            keyStatus.setText(R.string.waiting_for_response);
+                            ConstraintLayout chatBox = findViewById(R.id.layout_chatbox);
+                            chatBox.setVisibility(View.GONE);
+                        });
+                    }
+                }else{
+                    new Handler(Looper.getMainLooper()).post(()->{
+                        TextView keyStatus = findViewById(R.id.txt_key_status);
+                        keyStatus.setVisibility(View.GONE);
+                        ConstraintLayout chatBox = findViewById(R.id.layout_chatbox);
+                        chatBox.setVisibility(View.VISIBLE);
+                    });
+                }
+                messageList = DbHelper.getMessageList(((DxApplication) getApplication()) ,
+                        getIntent().getStringExtra("address"));
+                runOnUiThread(()->{
+                    try{
 //                    mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
 //                    mMessageRecycler.setAdapter(mMessageAdapter);
-                    mMessageAdapter.setMessageList(messageList);
-                    mMessageAdapter.notifyDataSetChanged();
-                    if(!messageList.isEmpty()){
-                        mMessageRecycler.scrollToPosition(messageList.size() - 1);
-                        ((DxApplication)getApplication()).clearMessageNotification();
-                        if(!messageList.get(messageList.size()-1).getAddress().equals(((DxApplication)getApplication()).getHostname())){
-                            String newName = messageList.get(messageList.size()-1).getSender();
-                            Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
-                            getIntent().putExtra("nickname",newName);
+                        mMessageAdapter.setMessageList(messageList);
+                        mMessageAdapter.notifyDataSetChanged();
+                        if(!messageList.isEmpty()){
+                            mMessageRecycler.scrollToPosition(messageList.size() - 1);
+                            ((DxApplication)getApplication()).clearMessageNotification();
+                            if(!messageList.get(messageList.size()-1).getAddress().equals(((DxApplication)getApplication()).getHostname())){
+                                String newName = messageList.get(messageList.size()-1).getSender();
+                                Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
+                                getIntent().putExtra("nickname",newName);
+                            }
                         }
-                    }
-                }catch (Exception ignored) {}
-            });
+                    }catch (Exception ignored) {}
+                });
+            }).start();
         }catch (Exception ignored) {}
 
     }
 
     public void updateUi(List<QuotedUserMessage> tmp){
-        new Thread(()->{
-            if(quoteTextTyping==null && mMyBroadcastReceiver==null){
-                return;
-            }
-            messageList = tmp;
-            runOnUiThread(()->{
-                try{
+        if(quoteTextTyping==null && mMyBroadcastReceiver==null){
+            return;
+        }
+        messageList = tmp;
+        runOnUiThread(()->{
+            try{
 //                    mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
 //                    mMessageRecycler.setAdapter(mMessageAdapter);
-                    mMessageAdapter.setMessageList(messageList);
-                    mMessageAdapter.notifyDataSetChanged();
-                    mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
-                }catch (Exception ignored){}
-            });
-        }).start();
+                mMessageAdapter.setMessageList(messageList);
+                mMessageAdapter.notifyDataSetChanged();
+                mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
+            }catch (Exception ignored){}
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        checkMessages();
         if(mMyBroadcastReceiver!=null){
             return;
         }
@@ -572,12 +620,13 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                if(intent.getStringExtra("error")!=null){
-                    try{
-                        Snackbar.make(send, Objects.requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).show();
-                    }catch (Exception ignored) {}
-                }
-                updateUi();
+            if(intent.getStringExtra("error")!=null){
+                try{
+                    Snackbar.make(send, Objects.requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).show();
+                }catch (Exception ignored) {}
+                return;
+            }
+            updateUi();
             }
         };
         try {
@@ -587,6 +636,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             e.printStackTrace();
         }
         updateUi();
+        checkMessages();
     }
 
     @Override

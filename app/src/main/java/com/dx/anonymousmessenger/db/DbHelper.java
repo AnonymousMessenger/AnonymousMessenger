@@ -6,6 +6,7 @@ import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.crypto.DxSignalKeyStore;
 import com.dx.anonymousmessenger.file.FileHelper;
+import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 
 import net.sqlcipher.Cursor;
@@ -370,6 +371,12 @@ public class DbHelper {
     }
 
     public static List<QuotedUserMessage> getUndeliveredMessageList(DxApplication app, String conversation){
+        if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(conversation,1)) || app.getEntity().getStore().loadSession(new SignalProtocolAddress(conversation,1)).getSessionState().hasPendingKeyExchange() || app.getEntity().getStore().getIdentity(new SignalProtocolAddress(conversation,1)) == null){
+            if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(conversation,1))){
+                new Thread(()-> MessageSender.sendKeyExchangeMessage(app,conversation)).start();
+            }
+            return new ArrayList<>();
+        }
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getMessageTableSqlCreate());
         try{
@@ -386,9 +393,26 @@ public class DbHelper {
                 QuotedUserMessage message = new QuotedUserMessage(cr.getString(9),cr.getString(8),cr.getString(0),cr.getString(3),cr.getString(4),
                         cr.getLong(5),cr.getInt(7)>0,cr.getString(1),cr.getInt(10)>0,cr.getString(11),cr.getString(12),cr.getString(13));
 
-                if ((new Date().getTime() - message.getCreatedAt()) < (2*60*1000)) {
+                if ((new Date().getTime() - message.getCreatedAt()) < (60*1000)) {
                     continue;
                 }
+
+                if(app.getEntity().getStore().loadSession(new SignalProtocolAddress(conversation,1)).getSessionState().hasPendingKeyExchange()){
+                    if(message.getMessage().equals(app.getString(R.string.key_exchange_message))
+                            ||
+                            message.getMessage().equals(app.getString(R.string.resp_key_exchange))
+                    ){
+                        new Thread(()-> MessageSender.sendKeyExchangeMessage(app,conversation)).start();
+                        return new ArrayList<>();
+                    }
+                }
+
+                if(message.getMessage().equals(app.getString(R.string.key_exchange_message))
+                            ||
+                            message.getMessage().equals(app.getString(R.string.resp_key_exchange))
+                    ){
+                        continue;
+                    }
 
                 if ((new Date().getTime() - message.getCreatedAt()) < app.getTime2delete()) {
                     messages.add(message);

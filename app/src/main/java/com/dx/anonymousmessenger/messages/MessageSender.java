@@ -43,7 +43,7 @@ public class MessageSender {
                 received = new TorClientSocks4().Init(to,app,aem.toJson().toString());
             }catch (Exception e){
                 Intent gcm_rec = new Intent("your_action");
-                gcm_rec.putExtra("error",app.getString(R.string.cant_encrypt_message));
+                gcm_rec.putExtra("error",app.getString(R.string.error)+": "+e.getMessage());
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 e.printStackTrace();
                 Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
@@ -165,7 +165,7 @@ public class MessageSender {
 
     public static void sendKeyExchangeMessage(DxApplication app, String to, KeyExchangeMessage ikem){
         try {
-            QuotedUserMessage msg = new QuotedUserMessage("","",app.getHostname(),"RESPONSE Key Exchange Message", app.getHostname(),new Date().getTime(),false,to,false);
+            QuotedUserMessage msg = new QuotedUserMessage("","",app.getHostname(),app.getString(R.string.resp_key_exchange), app.getHostname(),new Date().getTime(),false,to,false);
             DbHelper.saveMessage(msg,app,to,false);
             Intent gcm_rec = new Intent("your_action");
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
@@ -205,7 +205,7 @@ public class MessageSender {
             }else{
                 return;
             }
-            app.sendNotification("New Message!","you have a new secret message");
+            app.sendNotification(app.getString(R.string.new_message),app.getString(R.string.you_have_message));
             if(json.has("kem")){
 //                if(app.getEntity().getStore().containsSession(new SignalProtocolAddress(json.getString("address"),1))){
 //                    if(!app.getEntity().getStore().loadSession(new SignalProtocolAddress(json.getString("address"),1)).getSessionState().hasPendingKeyExchange()){
@@ -219,9 +219,6 @@ public class MessageSender {
 
                 if(!Objects.requireNonNull(akem).getKem().isInitiate()){
                     try {
-//                        Log.d("KEM RESPONSE", "messageReceiver: "+ Arrays.toString(akem.getKem().serialize()));
-//                        Log.d("KEM RESPONSE", "FROM: "+ akem.getAddress());
-
                         SessionBuilder sb = new SessionBuilder(app.getEntity().getStore(), new SignalProtocolAddress(akem.getAddress(),1));
                         sb.process(akem.getKem());
 
@@ -239,12 +236,13 @@ public class MessageSender {
                 }else{
                     DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.key_exchange_message), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
                     sendKeyExchangeMessage(app,akem.getAddress(),akem.getKem());
-                    Log.e("MESSAGE RECEIVER", "GOT KEM: SENDING KEM BACK TO : "+json.getString("address"));
+//                    Log.e("MESSAGE RECEIVER", "GOT KEM: SENDING KEM BACK TO : "+json.getString("address"));
                 }
             }else{
                 try {
                     AddressedEncryptedMessage aem = AddressedEncryptedMessage.fromJson(json);
                     if(aem==null){
+                        DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.failed_to_get_AEM), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
                         Log.e("MESSAGE RECEIVER", "FAILED TO GET AddressedEncryptedMessage FROM MESSAGE" );
                         return;
                     }
@@ -252,7 +250,10 @@ public class MessageSender {
                     json = new JSONObject(decrypted);
 
                     QuotedUserMessage um = QuotedUserMessage.fromJson(json,app);
-                    if(um == null){return;}
+                    if(um == null){
+                        DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.failed_to_read_after_decrypt), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
+                        return;
+                    }
                     new Thread(()-> DbHelper.setContactNickname(um.getSender(),um.getAddress(),app)).start();
                     new Thread(()-> DbHelper.setContactUnread(um.getAddress(),app)).start();
                     DbHelper.saveMessage(um,app,um.getAddress(),true);
@@ -260,8 +261,11 @@ public class MessageSender {
                     LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
 
                 } catch (Exception e) {
+                    DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.failed_to_decrypt), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
+                    Intent gcm_rec = new Intent("your_action");
+                    LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                     e.printStackTrace();
-                    Log.e("MESSAGE RECEIVER", "FAILED TO RECEIVE MESSAGE" );
+                    Log.e("MESSAGE RECEIVER", "FAILED TO DECRYPT MESSAGE" );
                 }
             }
 
@@ -298,7 +302,7 @@ public class MessageSender {
 
             DbHelper.saveMessage(um,app,um.getAddress(),true);
 
-            app.sendNotification("New Message!","you have a new secret message");
+            app.sendNotification(app.getString(R.string.new_message),app.getString(R.string.you_have_message));
             Intent gcm_rec = new Intent("your_action");
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
 
@@ -306,10 +310,6 @@ public class MessageSender {
             e.printStackTrace();
             Log.e("MESSAGE RECEIVER", "FAILED TO RECEIVE MEDIA MESSAGE" );
         }
-    }
-
-    public static void syncConversation(String address, DxApplication app){
-//        DbHelper.messa
     }
 
     public static void pinMessage(QuotedUserMessage message, DxApplication app) {

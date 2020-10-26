@@ -110,8 +110,8 @@ public class SetupInProcess extends AppCompatActivity implements ComponentCallba
             ((DxApplication)getApplication()).setExitingHoldup(true);
             LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
             if(getIntent().getBooleanExtra("first_time",true)){
-                ((DxApplication) this.getApplication()).sendNotification("Ready to chat securely!",
-                        "You got all you need to chat securely with your friends!",false);
+                ((DxApplication) this.getApplication()).sendNotification(getString(R.string.ready_to_chat),
+                        getString(R.string.you_got_all_you_need),false);
             }
             String finalTorStatus = torStatus;
             runOnUiThread(()->{

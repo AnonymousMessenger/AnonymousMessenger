@@ -18,8 +18,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.messages.MessageSender;
+import com.dx.anonymousmessenger.tor.TorClientSocks4;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+
+import org.whispersystems.libsignal.SignalProtocolAddress;
 
 import java.util.Objects;
 
@@ -55,7 +59,7 @@ public class AddContactActivity extends AppCompatActivity {
             ClipboardManager clipboard = getSystemService(ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", tv.getText().toString());
             Objects.requireNonNull(clipboard).setPrimaryClip(clip);
-            Snackbar.make(tv,"Copied address",Snackbar.LENGTH_LONG).show();
+            Snackbar.make(tv,R.string.copied_address,Snackbar.LENGTH_LONG).show();
         });
         contact = findViewById(R.id.txt_contact_address);
         Context context = this;
@@ -68,11 +72,11 @@ public class AddContactActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.toString().equals(((DxApplication)getApplication()).getHostname())){
-                    Snackbar.make(contact, "You can't add yourself!",Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(contact, R.string.cant_add_self,Snackbar.LENGTH_SHORT).show();
                     contact.setText("");
                     return;
                 }
-                if(s.toString().endsWith(".onion") && s.toString().length()>15){
+                if(s.toString().endsWith(".onion") && s.toString().length()>40){
                     new AlertDialog.Builder(context,R.style.AppAlertDialog)
                         .setTitle(R.string.add_contact)
                         .setMessage(getString(R.string.confirm_add_contact)+s.toString()+" ?")
@@ -96,6 +100,13 @@ public class AddContactActivity extends AppCompatActivity {
                                     });
                                     return;
                                 }
+                                new Thread(()-> {
+                                    if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.toString().trim())){
+                                        if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.toString().trim(),1))){
+                                            MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.toString().trim());
+                                        }
+                                    }
+                                }).start();
                                 finish();
                             }catch (Exception e){
                                 e.printStackTrace();

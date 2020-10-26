@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class MyService extends Service {
     public final static String SERVICE_NOTIFICATION_CHANNEL = "service_running";
-    private final ConnectionStateMonitor csm = new ConnectionStateMonitor();
+//    private final ConnectionStateMonitor csm = new ConnectionStateMonitor();
     private DxApplication app;
 
     public MyService() {
@@ -31,7 +31,7 @@ public class MyService extends Service {
 
         Notification ntf = app.getServiceNotification(getString(R.string.still_background), getString(R.string.click_to_hide), SERVICE_NOTIFICATION_CHANNEL);
         startForeground(3, ntf);
-        csm.enable(this.getApplication());
+//        csm.enable(this.getApplication());
         startTor();
     }
 
@@ -76,7 +76,7 @@ public class MyService extends Service {
         // Wait for shutdown to complete, then exit
         new Thread(() -> {
             try {
-                csm.disable();
+//                csm.disable();
                 if(app!=null){
                     if(app.getAndroidTorRelay()!=null){
                         app.getAndroidTorRelay().shutDown();

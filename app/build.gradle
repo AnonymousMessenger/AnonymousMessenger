@@ -10,8 +10,8 @@ android {
         applicationId "com.example.anonymousmessenger"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,12 +38,14 @@ android {
 
 repositories {
     maven { url "https://raw.githubusercontent.com/guardianproject/gpmaven/master" }
+    google()
+    jcenter()
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation project(path: ':T0rlib4Droid')
@@ -55,6 +57,9 @@ dependencies {
     implementation 'net.zetetic:android-database-sqlcipher:4.4.0@aar'
     implementation "androidx.sqlite:sqlite:2.1.0"
     implementation "com.android.support:support-compat:29.0.0"
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.12.0'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.12.0'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.12.0'
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
 //    implementation 'io.javalin:javalin:3.9.1'
 }

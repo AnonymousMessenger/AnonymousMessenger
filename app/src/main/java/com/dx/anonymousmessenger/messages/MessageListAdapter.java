@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaDataSource;
+import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,6 +33,8 @@ import com.dx.anonymousmessenger.media.AudioPlayer;
 import com.dx.anonymousmessenger.util.CallBack;
 import com.dx.anonymousmessenger.util.Utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,6 +54,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int VIEW_TYPE_MEDIA_MESSAGE_SENT = 10;
     private static final int VIEW_TYPE_MEDIA_MESSAGE_SENT_OK = 11;
     private static final int VIEW_TYPE_MEDIA_MESSAGE_RECEIVED = 12;
+    private static final int VIEW_TYPE_VIDEO_MESSAGE_SENT = 13;
+    private static final int VIEW_TYPE_VIDEO_MESSAGE_SENT_OK = 14;
+    private static final int VIEW_TYPE_VIDEO_MESSAGE_RECEIVED = 15;
 
     private Context mContext;
     private RecyclerView mMessageRecycler;
@@ -84,6 +92,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     return VIEW_TYPE_AUDIO_MESSAGE_SENT_OK;
                 }else if(message.getType()!=null && message.getType().equals("image")){
                     return VIEW_TYPE_MEDIA_MESSAGE_SENT_OK;
+                }else if(message.getType()!=null && message.getType().equals(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO+"")){
+                    return VIEW_TYPE_VIDEO_MESSAGE_SENT_OK;
                 }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                     return VIEW_TYPE_MESSAGE_SENT_OK;
                 }else if(message.getQuotedMessage()!=null){
@@ -95,6 +105,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     return VIEW_TYPE_AUDIO_MESSAGE_SENT;
                 }else if(message.getType()!=null && message.getType().equals("image")){
                     return VIEW_TYPE_MEDIA_MESSAGE_SENT;
+                }else if(message.getType()!=null && message.getType().equals(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO+"")){
+                    return VIEW_TYPE_VIDEO_MESSAGE_SENT;
                 }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                     return VIEW_TYPE_MESSAGE_SENT;
                 }else if(message.getQuotedMessage()!=null){
@@ -108,6 +120,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     return VIEW_TYPE_AUDIO_MESSAGE_RECEIVED;
             }else if(message.getType()!=null && message.getType().equals("image")){
                 return VIEW_TYPE_MEDIA_MESSAGE_RECEIVED;
+            }else if(message.getType()!=null && message.getType().equals(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO+"")){
+                return VIEW_TYPE_VIDEO_MESSAGE_RECEIVED;
             }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                 return VIEW_TYPE_MESSAGE_RECEIVED;
             }else if(message.getQuotedMessage()!=null){
@@ -171,6 +185,18 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_media_message_sent_ok, parent, false);
             return new MediaMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_VIDEO_MESSAGE_RECEIVED){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_media_message_sent_ok, parent, false);
+            return new VideoMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_VIDEO_MESSAGE_SENT){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_media_message_sent_ok, parent, false);
+            return new VideoMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_VIDEO_MESSAGE_SENT_OK){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_media_message_sent_ok, parent, false);
+            return new VideoMessageHolder(view);
         }
         Log.e("finding message type","something went wrong");
         view = LayoutInflater.from(parent.getContext())
@@ -210,6 +236,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case VIEW_TYPE_MEDIA_MESSAGE_SENT:
             case VIEW_TYPE_MEDIA_MESSAGE_SENT_OK:
                 ((MediaMessageHolder) holder).bind(message);
+                break;
+            case VIEW_TYPE_VIDEO_MESSAGE_RECEIVED:
+            case VIEW_TYPE_VIDEO_MESSAGE_SENT:
+            case VIEW_TYPE_VIDEO_MESSAGE_SENT_OK:
+                ((VideoMessageHolder) holder).bind(message);
         }
     }
 
@@ -226,7 +257,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @Override
         public void onClick(View v) {
-            PopupMenu popup = new PopupMenu(mContext, messageText);
+            RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);
+            rv.scrollToPosition(mMessageList.indexOf(message));
+            PopupMenu popup = new PopupMenu(mContext, v);
             popup.inflate(R.menu.options_menu);
             if(message.isPinned()){
                 MenuItem pinButton = popup.getMenu().findItem(R.id.navigation_drawer_item2);
@@ -242,7 +275,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         quoteSenderTyping.setText(message.getTo().equals(app.getHostname())?message.getSender():app.getString(R.string.you));
                         quoteTextTyping.setVisibility(View.VISIBLE);
                         quoteSenderTyping.setVisibility(View.VISIBLE);
-                        RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);
+//                        RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);
                         rv.smoothScrollToPosition(mMessageList.size() - 1);
                         return true;
                     case R.id.navigation_drawer_item2:
@@ -379,6 +412,80 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
+    private class VideoMessageHolder extends MediaMessageHolder {
+
+        VideoMessageHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        void bind(QuotedUserMessage message) {
+            if(nameText!=null){
+                nameText.setText(message.getSender());
+            }
+            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
+            if(message.getMessage()!=null && !message.getMessage().equals("")){
+                messageText.setVisibility(View.VISIBLE);
+                messageText.setText(message.getMessage());
+                messageText.setOnClickListener(new ListItemOnClickListener(message,itemView,messageText));
+            }else{
+                messageText.setVisibility(View.GONE);
+            }
+            imageHolder.setOnClickListener(v -> {
+                Intent intent = new Intent(app, PictureViewerActivity.class);
+                intent.putExtra("address",message.getAddress());
+                intent.putExtra("nickname",message.getSender());
+                intent.putExtra("time",message.getCreatedAt());
+                intent.putExtra("appData",true);
+                intent.putExtra("type",MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO);
+                intent.putExtra("path",message.getPath());
+                intent.putExtra("message",message.getMessage());
+                app.startActivity(intent);
+            });
+            new Thread(()->{
+                try{
+                    final byte[] img_bin = FileHelper.getFile(message.getPath(), app);
+                    if(img_bin == null){
+                        System.out.println("no img_bin!!!");
+                        return;
+                    }
+                    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                    mmr.setDataSource(new MediaDataSource() {
+                        @Override
+                        public int readAt(long position, byte[] buffer, int offset, int size) throws IOException {
+                            ByteArrayInputStream bais = new ByteArrayInputStream(img_bin);
+                            bais.skip(position-1);
+                            return bais.read(buffer,offset,size);
+                        }
+
+                        @Override
+                        public long getSize() throws IOException {
+                            return img_bin.length;
+                        }
+
+                        @Override
+                        public void close() throws IOException {
+
+                        }
+                    });
+                    byte[] thumb = mmr.getEmbeddedPicture();
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(thumb,0,thumb.length);
+                    if(bitmap==null){
+                        System.out.println("no bitmap!!!");
+                        return;
+                    }
+                    new Handler(Looper.getMainLooper()).post(()->{
+                        if(imageHolder==null){
+                            return;
+                        }
+                        imageHolder.setImageBitmap(bitmap);
+                    });
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
+    }
     private class MediaMessageHolder extends RecyclerView.ViewHolder {
         TextView timeText,nameText,messageText;
         ImageView imageHolder;

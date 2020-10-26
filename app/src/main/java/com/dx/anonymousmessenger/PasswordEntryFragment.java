@@ -125,7 +125,7 @@ public class PasswordEntryFragment extends Fragment {
                             try{
                                 txtPassword.setText("");
                                 txtPassword.setEnabled(true);
-                                txtPassword.setError("Wrong password");
+                                txtPassword.setError(getString(R.string.wrong_password));
                                 errorBox.setVisibility(View.VISIBLE);
                                 Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.animation1);
                                 errorBox.startAnimation(hyperspaceJumpAnimation);

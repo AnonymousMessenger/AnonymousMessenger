@@ -22,6 +22,11 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_license"
+        android:title="@string/action_license"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_restart_tor"
         android:title="@string/action_restart_tor"
         app:showAsAction="never"/>

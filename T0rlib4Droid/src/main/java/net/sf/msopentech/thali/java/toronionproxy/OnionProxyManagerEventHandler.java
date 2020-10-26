@@ -118,7 +118,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
 
     @Override
     public void circuitStatus(String status, String circID, String path) {
-        LOG.info("status: " + status + ", circID: " + circID + ", path: " + path);
+        //LOG.info("status: " + status + ", circID: " + circID + ", path: " + path);
         try{
             Intent gcm_rec = new Intent("tor_status1");
             StringBuilder output = new StringBuilder();
@@ -132,14 +132,14 @@ public class OnionProxyManagerEventHandler implements EventHandler {
     }
 
     public void streamStatus(String status, String id, String target) {
-        LOG.info("status: " + status + ", id: " + id + ", target: " + target);
+        //LOG.info("status: " + status + ", id: " + id + ", target: " + target);
 //        Intent gcm_rec = new Intent("tor_status");
 //        gcm_rec.putExtra("tor_status","status: " + status + ", id: " + id + ", target: " + target);
 //        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void orConnStatus(String status, String orName) {
-        LOG.info("OR connection: status: " + status + ", orName: " + orName);
+        //LOG.info("OR connection: status: " + status + ", orName: " + orName);
 //        Intent gcm_rec = new Intent("tor_status");
 //        gcm_rec.putExtra("tor_status","OR connection: status: " + status + ", orName: " + orName);
 //        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -166,14 +166,14 @@ public class OnionProxyManagerEventHandler implements EventHandler {
 
     //fetch Exit Node
     public void message(String severity, String msg) {
-        LOG.info("message: severity: " + severity + ", msg: " + msg);
+        LOG.info(severity + "," + msg);
 //        String out = "message: " + severity + ", msg: " + msg;
 //        if(out.contains("100%")){
 //            lastMessage = true;
 //        }
 //        statuses.add(out);
         Intent gcm_rec = new Intent("tor_status");
-        gcm_rec.putExtra("tor_status","message: " + severity + ", msg: " + msg);
+        gcm_rec.putExtra("tor_status",severity + "," + msg);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 

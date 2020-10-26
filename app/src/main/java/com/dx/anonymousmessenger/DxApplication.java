@@ -102,6 +102,7 @@ public class DxApplication extends Application {
 //                }catch (Exception ignored) {}
                 List<String[]> contactsList = DbHelper.getContactsList(this);
                 if(contactsList==null || contactsList.size()==0){
+                    pinging = false;
                     return;
                 }
                 for (String[] contact: contactsList){
@@ -137,21 +138,23 @@ public class DxApplication extends Application {
     }
 
     public void queueUnsentMessages(String address){
-        while (syncing){
-            try{
-                Thread.sleep(1000);
-            }catch (Exception ignored) {}
-        }
         new Thread(()->{
+            while (syncing){
+                try{
+                    Thread.sleep(1000);
+                }catch (Exception ignored) {}
+            }
             try{
                 syncing = true;
                 List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
                 if(undeliveredMessageList.size()==0){
+                    syncing = false;
                     return;
                 }
                 boolean b = TorClientSocks4.testAddress(this, address);
                 if(!b){
                     onlineList.remove(address);
+                    syncing = false;
                     return;
                 }
                 if(!onlineList.contains(address)){
@@ -213,7 +216,7 @@ public class DxApplication extends Application {
                     throw new IllegalStateException();
                 }
 
-                this.sendNotification("Almost Ready!","Starting tor and warming up to get all we need to connect!",false);
+                this.sendNotification(getString(R.string.almost_ready),getString(R.string.starting_tor_first_time),false);
 
                 DxAccount account;
                 if(this.getAccount()==null){

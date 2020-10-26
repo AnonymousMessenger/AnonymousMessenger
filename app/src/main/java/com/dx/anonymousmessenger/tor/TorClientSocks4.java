@@ -131,7 +131,7 @@ public class TorClientSocks4 {
     public boolean test(DxApplication app){
         Socket socket;
         try {
-            socket = Utilities.socks4aSocketConnection("nraswjtnyrvywxk7.onion", 80, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
+            socket = Utilities.socks4aSocketConnection("3g2upl4pq6kufc4m.onion", 80, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
             boolean b = socket.isConnected() && !socket.isClosed();
             socket.close();
             return b;

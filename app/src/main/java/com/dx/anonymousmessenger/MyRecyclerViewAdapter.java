@@ -82,29 +82,22 @@ public class MyRecyclerViewAdapter extends Adapter {
                 createdAt = Long.parseLong(contact[5]);
             }
         }catch (Exception ignored){}
+
+        holder.itemView.setOnLongClickListener(new ListItemOnClickListener(holder.itemView,mData.get(holder.getAdapterPosition())[1]));
+        holder.itemView.setOnClickListener(v -> {
+            appFragment.stopCheckingMessages();
+            int position1 = holder.getAdapterPosition();
+            Intent intent = new Intent(v.getContext(), MessageListActivity.class);
+            intent.putExtra("nickname",mData.get(position1)[0]);
+            intent.putExtra("address",mData.get(position1)[1]);
+            v.getContext().startActivity(intent);
+        });
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_READ://String msg, String send_to, long createdAt, boolean received
                 ((MyRecyclerViewAdapter.ReadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"),contact[1]);
-                holder.itemView.setOnClickListener(v -> {
-                    appFragment.stopCheckingMessages();
-                    int position1 = holder.getAdapterPosition();
-                    Intent intent = new Intent(v.getContext(), MessageListActivity.class);
-                    intent.putExtra("nickname",mData.get(position1)[0]);
-                    intent.putExtra("address",mData.get(position1)[1]);
-                    v.getContext().startActivity(intent);
-                });
-                holder.itemView.setOnLongClickListener(new ListItemOnClickListener(holder.itemView,mData.get(holder.getAdapterPosition())[1]));
                 break;
             case VIEW_TYPE_UNREAD:
                 ((MyRecyclerViewAdapter.UnreadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"),contact[1]);
-                holder.itemView.setOnClickListener(v -> {
-                    appFragment.stopCheckingMessages();
-                    int position12 = holder.getAdapterPosition();
-                    Intent intent = new Intent(v.getContext(), MessageListActivity.class);
-                    intent.putExtra("nickname",mData.get(position12)[0]);
-                    intent.putExtra("address",mData.get(position12)[1]);
-                    v.getContext().startActivity(intent);
-                });
                 break;
         }
     }
@@ -165,23 +158,33 @@ public class MyRecyclerViewAdapter extends Adapter {
             popup.inflate(R.menu.contact_menu);
 
             popup.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.delete_contact) {
-                    new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
-                        .setTitle("Delete this contact?")
-                        .setMessage("this can't be undone and will also delete this contact's session and conversation")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                            try{
-                                DbHelper.deleteContact(address, app);
-                                DbHelper.clearConversation(address, app);
-                                Intent intent = new Intent("your_action");
-                                itemView.getContext().sendBroadcast(intent);
-                            }catch (Exception ignored) {}
-                        })
-                        .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
+                switch (item.getItemId()) {
+                    case R.id.profile_contact:
+                        try{
+                            Intent intent = new Intent(itemView.getContext(), ContactProfileActivity.class);
+                            intent.putExtra("address",address);
+                            itemView.getContext().startActivity(intent);
+                        }catch (Exception ignored) {}
+                        break;
+                    case R.id.delete_contact:
+                        new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
+                            .setTitle("Delete this contact?")
+                            .setMessage("this can't be undone and will also delete this contact's session and conversation")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                                try {
+                                    DbHelper.deleteContact(address, app);
+                                    DbHelper.clearConversation(address, app);
+                                    Intent intent = new Intent("your_action");
+                                    itemView.getContext().sendBroadcast(intent);
+                                } catch (Exception ignored) {
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
 
-                        }).show();
-                    return true;
+                            }).show();
+                        break;
+
                 }
                 return false;
             });
