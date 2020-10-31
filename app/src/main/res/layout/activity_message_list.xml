@@ -73,7 +73,7 @@
         android:fontFamily="sans-serif-condensed"
         android:padding="6dp"
         android:shadowColor="@color/dx_night_950"
-        android:text="@string/connecting"
+        android:text="@string/decrypting"
         android:textColor="@color/green_tor"
         android:textSize="20sp"
         android:visibility="visible"

@@ -69,6 +69,7 @@ abstract public class OnionProxyContext {
         FileUtilities.cleanInstallOneFile(this.ctx.getAssets().open(DIR+GEO_IPV_6_NAME), geoIpv6File);
         FileUtilities.cleanInstallOneFile(this.ctx.getAssets().open(DIR+TORRC_NAME), torrcFile);
 
+        //todo change to use jniLibs and maybe not compressed for speed
         //added this to save space on android with zipped binaries
         FileUtilities.extractContentFromZip(torExecutableFile.getParentFile(), getAssetOrResourceByName("tor.zip"));
 
@@ -111,7 +112,7 @@ abstract public class OnionProxyContext {
     }
 
     public String[] getEnvironmentArgsForExec() {
-        List<String> envArgs = new ArrayList<String>();
+        List<String> envArgs = new ArrayList<>();
         envArgs.add("HOME=" + getWorkingDirectory().getAbsolutePath());
         switch (OsData.getOsType()) {
             case LINUX_32:

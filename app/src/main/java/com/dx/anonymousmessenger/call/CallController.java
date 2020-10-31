@@ -92,7 +92,7 @@ public class CallController {
     public CallController(String address, DxApplication app){
         // start service and notification and get actions ready
         app.commandCallService(address,CallService.ACTION_START_OUTGOING_CALL);
-        this.outgoing = new TorClientSocks4().getCallSocket(address,app, CallService.ACTION_START_INCOMING_CALL);
+        this.outgoing = TorClientSocks4.getCallSocket(address,app, CallService.ACTION_START_INCOMING_CALL);
         this.address = address;
         this.app = app;
         if(outgoing==null){
@@ -107,7 +107,7 @@ public class CallController {
     //for new incoming calls
     public CallController(String address, Socket incoming, DxApplication app){
         app.commandCallService(address, app.getString(R.string.NotificationBarManager_call_in_progress));
-        this.outgoing = new TorClientSocks4().getCallSocket(address,app, CallService.ACTION_START_OUTGOING_CALL_RESPONSE);
+        this.outgoing = TorClientSocks4.getCallSocket(address,app, CallService.ACTION_START_OUTGOING_CALL_RESPONSE);
         this.incoming = incoming;
         this.address = address;
         this.app = app;

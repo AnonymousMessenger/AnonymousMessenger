@@ -474,6 +474,18 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 
     public void ping(){
         new Thread(()->{
+            try {
+                Thread.sleep(500);
+            } catch (Exception ignored) {}
+            Handler h = new Handler(Looper.getMainLooper());
+            h.post(()->{
+                try{
+                    status.setText(R.string.connecting);
+                    status.setVisibility(View.VISIBLE);
+                    Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+                    status.startAnimation(slideUp);
+                }catch (Exception ignored) {}
+            });
             boolean b = TorClientSocks4.testAddress(((DxApplication) getApplication()), getIntent().getStringExtra("address"));
             if(b){
                 ((DxApplication)getApplication()).addToOnlineList(getIntent().getStringExtra("address"));
@@ -481,16 +493,12 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             }else{
                 ((DxApplication)getApplication()).onlineList.remove(getIntent().getStringExtra("address"));
             }
-            try {
-                Thread.sleep(500);
-            } catch (Exception ignored) {}
-            Handler h = new Handler(Looper.getMainLooper());
             h.post(()->{
                 try{
                     status.setText(b?R.string.user_is_online:R.string.user_is_offline);
-                    status.setVisibility(View.VISIBLE);
-                    Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
-                    status.startAnimation(slideUp);
+//                    status.setVisibility(View.VISIBLE);
+                    Animation shock = AnimationUtils.loadAnimation(this, R.anim.animation1);
+                    status.startAnimation(shock);
                 }catch (Exception ignored) {}
             });
             try {
@@ -518,12 +526,13 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                             getIntent().getStringExtra("address"));
 
                     if(messageList.size() != tmp.size()){
+                        System.out.println("they'ren't equal");
                         updateUi(tmp);
                     }
                 }catch (Exception ignored){messageList=null;break;}
             }
             //maybe remove this line?
-            messageList = null;
+//            messageList = null;
         });
         messageChecker.start();
     }
@@ -542,9 +551,29 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         try{
             new Thread(()->{
                 DxApplication app = (DxApplication) getApplication();
-                if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)) || app.getEntity().getStore().loadSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)).getSessionState().hasPendingKeyExchange() || app.getEntity().getStore().getIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)) == null){
+                if(app.getEntity()==null){
+                    new Handler(Looper.getMainLooper()).post(()->{
+                        TextView keyStatus = findViewById(R.id.txt_key_status);
+                        keyStatus.setVisibility(View.VISIBLE);
+                        keyStatus.setText(R.string.waiting_for_tor);
+                        ConstraintLayout chatBox = findViewById(R.id.layout_chatbox);
+                        chatBox.setVisibility(View.GONE);
+                    });
+                }else if(app.getEntity().getStore()==null){
+                    new Handler(Looper.getMainLooper()).post(()->{
+                        TextView keyStatus = findViewById(R.id.txt_key_status);
+                        keyStatus.setVisibility(View.VISIBLE);
+                        keyStatus.setText(R.string.waiting_for_tor);
+                        ConstraintLayout chatBox = findViewById(R.id.layout_chatbox);
+                        chatBox.setVisibility(View.GONE);
+                    });
+                }else if(
+                        !app.getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)) ||
+                        app.getEntity().getStore().loadSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)).getSessionState().hasPendingKeyExchange() ||
+                        app.getEntity().getStore().getIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)) == null
+                ){
                     if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1))){
-                        new Thread(()-> MessageSender.sendKeyExchangeMessage(app,getIntent().getStringExtra("address"))).start();
+                        new Thread(()-> MessageSender.sendKeyExchangeMessageWithoutBroadcast(app,getIntent().getStringExtra("address"))).start();
                         new Handler(Looper.getMainLooper()).post(()->{
                             TextView keyStatus = findViewById(R.id.txt_key_status);
                             keyStatus.setVisibility(View.VISIBLE);
@@ -620,13 +649,15 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             @Override
             public void onReceive(Context context, Intent intent)
             {
-            if(intent.getStringExtra("error")!=null){
-                try{
-                    Snackbar.make(send, Objects.requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).show();
-                }catch (Exception ignored) {}
-                return;
-            }
-            updateUi();
+                if(intent.getStringExtra("error")!=null){
+                    try{
+                        Snackbar.make(send, Objects.requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).show();
+                    }catch (Exception ignored) {}
+                    return;
+                }else if(intent.getStringExtra("type")!=null && intent.getStringExtra("type").equals("online_status")){
+                    return;
+                }
+                updateUi();
             }
         };
         try {
@@ -719,6 +750,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                         break;
                     }
                     app.getEntity().getStore().deleteSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
+                    updateUi();
                 }catch (Exception ignored) {}
                 //((DxSignalKeyStore)app.getEntity().getStore()).removeIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
                 break;

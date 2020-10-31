@@ -64,6 +64,9 @@ public class SetupInProcess extends AppCompatActivity implements ComponentCallba
     public void onResume() {
         super.onResume();
         new Thread(()->{
+            try{
+                Thread.sleep(500);
+            }catch (Exception ignored) {}
             if(((DxApplication) getApplication()).isServerReady()){
                 Intent intent = new Intent(this, AppActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

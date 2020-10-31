@@ -47,7 +47,7 @@ public class ConnectionStateMonitor extends ConnectivityManager.NetworkCallback 
             if(((DxApplication)context).getTorSocket()!=null&&((DxApplication)context).getTorSocket().getAndroidTorRelay()!=null){
                 ((DxApplication)context).sendNotification(context.getString(R.string.restarting_service),context.getString(R.string.connection_is_coming),false);
                 new Thread(()->{
-                    while (!new TorClientSocks4().test((DxApplication) context)){
+                    while (!TorClientSocks4.test((DxApplication) context)){
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {

@@ -371,7 +371,7 @@ public class DbHelper {
     }
 
     public static List<QuotedUserMessage> getUndeliveredMessageList(DxApplication app, String conversation){
-        if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(conversation,1)) || app.getEntity().getStore().loadSession(new SignalProtocolAddress(conversation,1)).getSessionState().hasPendingKeyExchange() || app.getEntity().getStore().getIdentity(new SignalProtocolAddress(conversation,1)) == null){
+        if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(conversation,1)) || app.getEntity().getStore().getIdentity(new SignalProtocolAddress(conversation,1)) == null){
             if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(conversation,1))){
                 new Thread(()-> MessageSender.sendKeyExchangeMessage(app,conversation)).start();
             }
@@ -403,8 +403,15 @@ public class DbHelper {
                             message.getMessage().equals(app.getString(R.string.resp_key_exchange))
                     ){
                         new Thread(()-> MessageSender.sendKeyExchangeMessage(app,conversation)).start();
+                        deleteMessage(message,app);
                         return new ArrayList<>();
                     }
+                }
+
+                if(cr.isLast() && message.getMessage().equals(app.getString(R.string.resp_key_exchange))){
+                    new Thread(()-> MessageSender.sendKeyExchangeMessage(app,conversation)).start();
+                    deleteMessage(message,app);
+                    return new ArrayList<>();
                 }
 
                 if(message.getMessage().equals(app.getString(R.string.key_exchange_message))

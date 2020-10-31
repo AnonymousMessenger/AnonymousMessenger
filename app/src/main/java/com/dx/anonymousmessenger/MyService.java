@@ -24,39 +24,25 @@ public class MyService extends Service {
     public void onCreate() {
         app = (DxApplication) getApplication();
         if(app.getAccount()==null||app.getAccount().getPassword()==null){
+            super.onCreate();
             return;
         }
-
         super.onCreate();
-
         Notification ntf = app.getServiceNotification(getString(R.string.still_background), getString(R.string.click_to_hide), SERVICE_NOTIFICATION_CHANNEL);
         startForeground(3, ntf);
 //        csm.enable(this.getApplication());
-        startTor();
+        app.startTor(1);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String command = intent.getStringExtra("inputExtra");
         if (command != null && command.contains("reconnect now")) {
-            startTor(2);
+            app.startTor(2);
         }else if (command != null && command.contains("shutdown now")) {
             shutdownFromBackground();
         }
-        //do heavy work on a background thread
-        //stopSelf();
-
         return START_NOT_STICKY;
-    }
-
-    public void startTor(){
-        app.startTor(1);
-    }
-
-    public void startTor(int force){
-        if(force>0){
-            app.startTor(2);
-        }
     }
 
     @Override
@@ -71,24 +57,19 @@ public class MyService extends Service {
     }
 
     private void shutdownFromBackground() {
-        // Hide the UI
-        //hideUi();
-        // Wait for shutdown to complete, then exit
-        new Thread(() -> {
-            try {
-//                csm.disable();
-                if(app!=null){
-                    if(app.getAndroidTorRelay()!=null){
-                        app.getAndroidTorRelay().shutDown();
-                    }
-                    app.emptyVars();
-                    app.shutdown(0);
+        try {
+//          csm.disable();
+            if(app!=null){
+                if(app.getAndroidTorRelay()!=null){
+                    app.getAndroidTorRelay().shutDown();
                 }
-                stopSelf();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e("SHUTDOWN ERROR","ya");
+                app.emptyVars();
+                app.shutdown(0);
             }
-        }).start();
+            stopSelf();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("SHUTDOWN ERROR","ya");
+        }
     }
 }

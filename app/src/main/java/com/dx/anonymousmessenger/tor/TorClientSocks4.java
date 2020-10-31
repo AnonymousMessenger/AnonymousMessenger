@@ -14,7 +14,7 @@ public class TorClientSocks4 {
     public TorClientSocks4() {
     }
 
-    public Socket getCallSocket(String OnionAddress, DxApplication app, String type){
+    public static Socket getCallSocket(String OnionAddress, DxApplication app, String type){
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection(OnionAddress, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
@@ -45,7 +45,7 @@ public class TorClientSocks4 {
         }
     }
 
-    public boolean sendMedia(String onion, DxApplication app, String msg, byte[] media){
+    public static boolean sendMedia(String onion, DxApplication app, String msg, byte[] media){
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection(onion, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
@@ -96,30 +96,22 @@ public class TorClientSocks4 {
         }
     }
 
-    public boolean Init(String OnionAddress, DxApplication app, String msg) {
+    public static boolean Init(String OnionAddress, DxApplication app, String msg) {
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection(OnionAddress, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
-//            socket = Utilities.Socks5connection(new Socks5Proxy("127.0.0.1",app.getRport()),OnionAddress,5780);
-//            socket = Utilities.socks5rawSocketConnection(OnionAddress,5780,"127.0.0.1",app.getRport());
 
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             DataInputStream in =new DataInputStream(socket.getInputStream());
             String msg2;
             boolean result = false;
 
-//            while(!msg.equals("nuf"))
-//            {
-                outputStream.writeUTF(msg);
-                outputStream.flush();
-                msg2 = in.readUTF();
-                if(msg2.contains("ack3")){
-//                    outputStream.writeUTF("nuf");
-//                    outputStream.flush();
-//                    msg = "nuf";
-                    result = true;
-                }
-//            }
+            outputStream.writeUTF(msg);
+            outputStream.flush();
+            msg2 = in.readUTF();
+            if(msg2.contains("ack3")){
+                result = true;
+            }
             outputStream.close();
             socket.close();
             return result;
@@ -128,7 +120,7 @@ public class TorClientSocks4 {
         }
     }
 
-    public boolean test(DxApplication app){
+    public static boolean test(DxApplication app){
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection("3g2upl4pq6kufc4m.onion", 80, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
@@ -144,16 +136,9 @@ public class TorClientSocks4 {
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection(address, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
-//            boolean b = socket.isConnected() && !socket.isClosed();
-//            socket.close();
-//            return b;
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-//            DataInputStream in =new DataInputStream(socket.getInputStream());
             outputStream.writeUTF("hello-"+app.getHostname());
             outputStream.flush();
-//            String s = in.readUTF();
-//            outputStream.close();
-//            socket.close();
             return true;
         }catch (EOFException e){
             return true;

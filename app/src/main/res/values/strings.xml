@@ -44,7 +44,7 @@
     <string name="dx_call">TOR CALL</string>
     <string name="call_picture_description">call screen picture</string>
     <string name="end_call">Hang up</string>
-    <string name="connecting">Decrypting…</string>
+    <string name="connecting">Connecting…</string>
     <string name="CallNotificationBuilder_connecting">Connecting</string>
     <string name="NotificationBarManager__incoming_call">Incoming Call</string>
     <string name="NotificationBarManager_call_in_progress">Call in progress</string>
@@ -174,4 +174,11 @@
     <string name="failed_to_get_AEM">FAILED TO GET AddressedEncryptedMessage FROM MESSAGE</string>
     <string name="cant_add_self">You can\'t add yourself!</string>
     <string name="waiting_for_response">Sent key, Waiting for response</string>
+    <string name="decrypting">Decrypting…</string>
+    <string name="stale_key">Stale key received (ignoring)</string>
+    <string name="invalid_key">Invalid key received</string>
+    <string name="untrusted_identity">Key received from an Untrusted Identity</string>
+    <string name="bad_message">Corrupted message</string>
+    <string name="decrypt_reminder_title">Decrypt to receive messages</string>
+    <string name="decrypt_reminder_message">you need to enter your password to run in background</string>
 </resources>

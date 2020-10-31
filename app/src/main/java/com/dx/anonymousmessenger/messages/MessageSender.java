@@ -40,7 +40,7 @@ public class MessageSender {
                 //second broadcast here to make sure everything aligns correctly for the user
                 Intent gcm_rec = new Intent("your_action");
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
-                received = new TorClientSocks4().Init(to,app,aem.toJson().toString());
+                received = TorClientSocks4.Init(to,app,aem.toJson().toString());
             }catch (Exception e){
                 Intent gcm_rec = new Intent("your_action");
                 gcm_rec.putExtra("error",app.getString(R.string.error)+": "+e.getMessage());
@@ -67,7 +67,7 @@ public class MessageSender {
                     return;
                 }
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
-                received = new TorClientSocks4().Init(to,app,aem.toJson().toString());
+                received = TorClientSocks4.Init(to,app,aem.toJson().toString());
             }catch (Exception e){
                 Intent gcm_rec = new Intent("your_action");
                 gcm_rec.putExtra("error",app.getString(R.string.cant_encrypt_message));
@@ -101,7 +101,7 @@ public class MessageSender {
 
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
-                received = new TorClientSocks4().sendMedia(to,app,aem.toJson().toString(),MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
+                received = TorClientSocks4.sendMedia(to,app,aem.toJson().toString(),MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
             }catch (Exception e){
 //                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
@@ -130,7 +130,7 @@ public class MessageSender {
 
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
-                received = new TorClientSocks4().sendMedia(to,app,aem.toJson().toString(),MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
+                received = TorClientSocks4.sendMedia(to,app,aem.toJson().toString(),MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
             }catch (Exception e){
 //                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
@@ -154,7 +154,23 @@ public class MessageSender {
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
             KeyExchangeMessage kem = MessageEncryptor.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1));
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),false);
-            boolean received = new TorClientSocks4().Init(to,app,akem.toJson().toString());
+            boolean received = TorClientSocks4.Init(to,app,akem.toJson().toString());
+            DbHelper.setMessageReceived(msg,app,to,received);
+            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+        }catch (Exception e){
+            Log.e("SENDER MESSAGE EXCHANGE", "FAIL" );
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendKeyExchangeMessageWithoutBroadcast(DxApplication app, String to){
+        try {
+            QuotedUserMessage msg = new QuotedUserMessage("","",app.getHostname(),app.getString(R.string.key_exchange_message), app.getHostname(),new Date().getTime(),false,to,false);
+            DbHelper.saveMessage(msg,app,to,false);
+            Intent gcm_rec = new Intent("your_action");
+            KeyExchangeMessage kem = MessageEncryptor.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1));
+            AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),false);
+            boolean received = TorClientSocks4.Init(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         }catch (Exception e){
@@ -171,7 +187,7 @@ public class MessageSender {
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
             KeyExchangeMessage kem = MessageEncryptor.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1),ikem);
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),true);
-            boolean received = new TorClientSocks4().Init(to,app,akem.toJson().toString());
+            boolean received = TorClientSocks4.Init(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         }catch (Exception | StaleKeyExchangeException e){
@@ -186,7 +202,7 @@ public class MessageSender {
             KeyExchangeMessage kem = new SessionBuilder(app.getEntity().getStore(), new SignalProtocolAddress(akem.getAddress(),1)).process(akem.getKem());
             Log.d("KEM INITIATE", "messageReceiver: "+ Arrays.toString(kem.serialize()));
             AddressedKeyExchangeMessage akem3 = new AddressedKeyExchangeMessage(kem,app.getHostname(),true);
-            new TorClientSocks4().Init(akem.getAddress(),app,akem3.toJson().toString());
+            TorClientSocks4.Init(akem.getAddress(),app,akem3.toJson().toString());
             Intent gcm_rec = new Intent("your_action");
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         }catch (Exception | StaleKeyExchangeException e){
@@ -207,14 +223,6 @@ public class MessageSender {
             }
             app.sendNotification(app.getString(R.string.new_message),app.getString(R.string.you_have_message));
             if(json.has("kem")){
-//                if(app.getEntity().getStore().containsSession(new SignalProtocolAddress(json.getString("address"),1))){
-//                    if(!app.getEntity().getStore().loadSession(new SignalProtocolAddress(json.getString("address"),1)).getSessionState().hasPendingKeyExchange()){
-//                        DbHelper.saveMessage(new QuotedUserMessage("","",app.getHostname(),"Received Key Exchange Message WHEN WE ALREADY HAVE A SESSION", app.getHostname(),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
-////                        DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),"Received Key Exchange Message WHEN WE ALREADY HAVE A SESSION", json.getString("address"),new Date().getTime(),false,app.getHostname(),false),app,app.getHostname(),false);
-//                        Log.e("MESSAGE RECEIVER","GOT KEM WHEN WE ALREADY HAVE A SESSION");
-//                        return;
-//                    }
-//                }
                 AddressedKeyExchangeMessage akem = AddressedKeyExchangeMessage.fromJson(json);
 
                 if(!Objects.requireNonNull(akem).getKem().isInitiate()){
@@ -227,6 +235,19 @@ public class MessageSender {
                         LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
 
                     } catch (UntrustedIdentityException | InvalidKeyException | StaleKeyExchangeException e) {
+                        DbHelper.saveMessage(new QuotedUserMessage("",
+                                "",
+                                json.getString("address"),
+                                (e.getClass().equals(StaleKeyExchangeException.class)?app.getString(R.string.stale_key)
+                                        :e.getClass().equals(InvalidKeyException.class)?app.getString(R.string.invalid_key)
+                                        :e.getClass().equals(UntrustedIdentityException.class)?app.getString(R.string.untrusted_identity):app.getString(R.string.bad_message)),
+                                json.getString("address"),
+                                new Date().getTime(),
+                                false,
+                                json.getString("address"),
+                                false),app,json.getString("address"),false);
+                        Intent gcm_rec = new Intent("your_action");
+                        LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                         e.printStackTrace();
                         Log.e("MESSAGE RECEIVER", "FAILED!!! Received Response Key Exchange Message : ");
                     } catch (Exception e){
@@ -262,6 +283,7 @@ public class MessageSender {
 
                 } catch (Exception e) {
                     DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.failed_to_decrypt), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
+
                     Intent gcm_rec = new Intent("your_action");
                     LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                     e.printStackTrace();

@@ -155,4 +155,11 @@
     <string name="failed_to_get_AEM">فشل في الحصول على عنوان الرسالة المشفرة</string>
     <string name="cant_add_self">ﻻ يمكنك إضافة نفسك!</string>
     <string name="waiting_for_response">تم إرسال المفتاح, في إنتظار الرد</string>
+    <string name="decrypting">فك التشفير…</string>
+    <string name="stale_key">وصلنا مفتاح قديم (تجاهل)</string>
+    <string name="invalid_key">وصلنا مفتاح غير صالح</string>
+    <string name="untrusted_identity">وصلنا مفتاح من جهة غير موثوقة</string>
+    <string name="bad_message">رسالة غير صالحة</string>
+    <string name="decrypt_reminder_title">فك التشفير لتتمكن من إستلام الرسائل</string>
+    <string name="decrypt_reminder_message">عليك إدخال كلمة السر ليتمكن البرنامج من العمل بالخلفية</string>
 </resources>

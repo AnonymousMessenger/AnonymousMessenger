@@ -54,7 +54,6 @@ public class ServerSocketViaTor {
         }
 
         if(node!=null){
-            boolean exit = false;
             if(serverThread!=null){
                 try{
                     serverThread.interrupt();
@@ -65,32 +64,22 @@ public class ServerSocketViaTor {
                 torServerSocket.getServerSocket().close();
                 torServerSocket = null;
             }
-            while (!exit){
-                try {
-                    node.shutDown();
-                    Thread.sleep(1000);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                try {
-                    node = null;
-                    exit = true;
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+            try {
+                node.shutDown();
+                Thread.sleep(1000);
+            }catch (Exception e){
+                e.printStackTrace();
             }
+            node = null;
         }
 
         String fileLocation = "torfiles";
-        while (node==null){
-            try {
-                node = new AndroidTorRelay(ctx, fileLocation);
-            }catch (Exception e){
-                e.printStackTrace();
-                try {
-                    Thread.sleep(1000);
-                }catch (InterruptedException ie){ie.printStackTrace();}
-            }
+        try {
+            node = new AndroidTorRelay(ctx, fileLocation);
+        }catch (Exception e){
+            e.printStackTrace();
+            init(app);
+            return;
         }
 
         this.torServerSocket = node.createHiddenService(localport, hiddenservicedirport);
@@ -103,6 +92,10 @@ public class ServerSocketViaTor {
 
         this.serverThread = new Thread(server);
         serverThread.start();
+
+        if(TorClientSocks4.test(app)){
+            new Thread(app::queueAllUnsentMessages).start();
+        }
 
 //        serverLatch.await();
     }

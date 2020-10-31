@@ -5,7 +5,6 @@ import com.dx.anonymousmessenger.DxApplication;
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.IdentityKeyPair;
 import org.whispersystems.libsignal.InvalidKeyException;
-import org.whispersystems.libsignal.SignalProtocolAddress;
 import org.whispersystems.libsignal.ecc.ECPublicKey;
 import org.whispersystems.libsignal.ratchet.BobSignalProtocolParameters;
 import org.whispersystems.libsignal.ratchet.RatchetingSession;
@@ -19,7 +18,7 @@ public class Entity {
     private final SignalProtocolStore store;
 //    private PreKeyBundle preKey;
 //    private final int preKeyId;
-    private final SignalProtocolAddress address;
+//    private final SignalProtocolAddress address;
 //    private ECPublicKey ephemeralPublicKey;
 //    private ECPrivateKey ephemeralPrivateKey;
 //    private ECKeyPair ephemeralKey;
@@ -29,7 +28,7 @@ public class Entity {
 
 
     public Entity(DxApplication app) {
-        this.address = new SignalProtocolAddress(app.getHostname(), 1);
+//        this.address = new SignalProtocolAddress(app.getHostname(), 1);
 
 //        this.store = new InMemorySignalProtocolStore(
 //                KeyHelper.generateIdentityKeyPair(),
@@ -131,9 +130,9 @@ public class Entity {
 //        return preKey;
 //    }
 
-    public SignalProtocolAddress getAddress() {
-        return address;
-    }
+//    public SignalProtocolAddress getAddress() {
+//        return address;
+//    }
 
 //    public ECPublicKey getEphemeralPublicKey() {
 //        return ephemeralPublicKey;

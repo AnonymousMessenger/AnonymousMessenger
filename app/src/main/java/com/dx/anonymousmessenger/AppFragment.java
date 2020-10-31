@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.tor.TorClientSocks4;
@@ -47,8 +48,9 @@ public class AppFragment extends Fragment {
     private ImageView offlineImg;
     private TextView onlineTxt,torOutput;
     private Toolbar onlineToolbar;
-    List<String[]> lst;
+    private List<String[]> lst;
     private Thread messageChecker = null;
+    private volatile boolean pinging;
 
     public AppFragment() {
         // Required empty public constructor
@@ -62,7 +64,8 @@ public class AppFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
+    public void onStop() {
+        super.onStop();
         stopCheckingMessages();
         LocalBroadcastManager.getInstance(rootView.getContext()).unregisterReceiver(mMyBroadcastReceiver);
         mMyBroadcastReceiver = null;
@@ -97,8 +100,8 @@ public class AppFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         if(mMyBroadcastReceiver!=null){
             return;
         }
@@ -119,29 +122,11 @@ public class AppFragment extends Fragment {
             }
             }
         };
-
         checkMessages();
-        checkConnectivity();
         updateUi();
-        //I don't think we need to restart tor when offline
-//        new Thread(()->{
-//            int tries = 0;
-//            while(!isOnline()){
-//                tries++;
-//                if(tries>4)break;
-//            }
-//            if(tries>4) {
-//                if (getActivity()!=null && ((getActivity()).getApplication()) != null && ((DxApplication) (getActivity()).getApplication()).getTorThread() != null) {
-//                    ((DxApplication) getActivity().getApplication()).getTorThread().interrupt();
-//                    ((DxApplication) getActivity().getApplication()).setTorThread(null);
-//                    ((DxApplication) getActivity().getApplication()).setServerReady(false);
-//                }
-//                if(getActivity()!=null && ((getActivity()).getApplication()) != null){
-//                    ((DxApplication) getActivity().getApplication()).startTor();
-//                }
-//            }
-//        }).start();
-
+        if(onlineTxt.getText().toString().equals(getString(R.string.offline))){
+            checkConnectivity();
+        }
         try {
             LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("your_action"));
             LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status1"));
@@ -182,10 +167,16 @@ public class AppFragment extends Fragment {
         lst = new ArrayList<>();
         mAdapter = new MyRecyclerViewAdapter((DxApplication) Objects.requireNonNull(getActivity()).getApplication(),lst,this);
         recyclerView.setAdapter(mAdapter);
+        ((SwipeRefreshLayout)rootView.findViewById(R.id.refresh)).setOnRefreshListener(
+                () -> {
+                    checkConnectivity();
+                    updateUi();
+                    ((SwipeRefreshLayout)rootView.findViewById(R.id.refresh)).setRefreshing(false);
+                }
+        );
 
-
-//        checkConnectivity();
-//        updateUi();
+        checkConnectivity();
+        updateUi();
 //        checkMessages();
 //        new Thread(()->{
 //
@@ -291,7 +282,7 @@ public class AppFragment extends Fragment {
 
     public boolean isOnline() {
         if(getActivity() !=null) {
-            return new TorClientSocks4().test((DxApplication) Objects.requireNonNull(getActivity()).getApplication());
+            return TorClientSocks4.test((DxApplication) Objects.requireNonNull(getActivity()).getApplication());
         }
         return false;
     }
@@ -300,6 +291,10 @@ public class AppFragment extends Fragment {
         if(getActivity()==null || mainThread==null || onlineToolbar==null || onlineImg==null || onlineTxt==null || offlineImg==null){
                 return;
         }
+        if(pinging){
+            return;
+        }
+        pinging = true;
         try{
             onlineImg.setVisibility(View.GONE);
             offlineImg.setVisibility(View.GONE);
@@ -309,10 +304,12 @@ public class AppFragment extends Fragment {
 
         new Thread(()->{
             if(getActivity()==null || mainThread==null){
+                pinging = false;
                 return;
             }
             try{
-                if(getActivity()==null||getActivity().getApplication()==null){
+                if(getActivity()==null || getActivity().getApplication()==null){
+                    pinging = false;
                     return;
                 }
                 if(isOnline()){
@@ -324,7 +321,7 @@ public class AppFragment extends Fragment {
                             onlineToolbar.setVisibility(View.VISIBLE);
                         }catch (Exception ignored) {}
                     });
-                    ((DxApplication)getActivity().getApplication()).queueAllUnsentMessages();
+                    new Thread(()-> ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).queueAllUnsentMessages()).start();
                 }else{
                     mainThread.post(()->{
                         try{
@@ -335,7 +332,8 @@ public class AppFragment extends Fragment {
                         }catch (Exception ignored) {}
                     });
                 }
-            }catch (Exception ignored){}
+                pinging = false;
+            }catch (Exception ignored){pinging = false;}
         }).start();
     }
 

@@ -49,8 +49,9 @@ public class DxApplication extends Application {
     private Entity entity;
     private CallController cc;
     private boolean exitingHoldup;
-    private List<QuotedUserMessage> messageQueue = new ArrayList<>();
+    private final List<QuotedUserMessage> messageQueue = new ArrayList<>();
     private volatile boolean syncing;
+    private volatile String syncingAddress;
     private volatile boolean pinging;
     public List<String> onlineList = new ArrayList<>();
 
@@ -58,6 +59,7 @@ public class DxApplication extends Application {
         if(!onlineList.contains(address)){
             onlineList.add(address);
             Intent gcm_rec = new Intent("your_action");
+            gcm_rec.putExtra("type","online_status");
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
         }
     }
@@ -94,50 +96,50 @@ public class DxApplication extends Application {
             System.out.println("still pinging or syncing!");
             return;
         }
-        new Thread(()->{
-            try{
-                pinging = true;
-//                try{
-//                    Thread.sleep(1000);
-//                }catch (Exception ignored) {}
-                List<String[]> contactsList = DbHelper.getContactsList(this);
-                if(contactsList==null || contactsList.size()==0){
-                    pinging = false;
-                    return;
-                }
-                for (String[] contact: contactsList){
-                    boolean b = TorClientSocks4.testAddress(this, contact[1]);
-                    if(!b){
-                        onlineList.remove(contact[1]);
-                        Intent gcm_rec = new Intent("your_action");
-                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
-                        continue;
-                    }
-                    if(!onlineList.contains(contact[1])){
-                        onlineList.add(contact[1]);
-                        Intent gcm_rec = new Intent("your_action");
-                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
-                    }
-                    while (syncing){
-                        try{
-                            Thread.sleep(1000);
-                        }catch (Exception ignored) {}
-                    }
-                    List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, contact[1]);
-                    if(undeliveredMessageList.size()==0){
-                        continue;
-                    }
-                    syncing = true;
-                    addToMessagesQueue(undeliveredMessageList);
-                    sendQueuedMessages();
-                }
-                syncing = false;
+        try{
+            pinging = true;
+            List<String[]> contactsList = DbHelper.getContactsList(this);
+            if(contactsList==null || contactsList.size()==0){
                 pinging = false;
-            }catch (Exception ignored) {syncing = false; pinging = false;}
-        }).start();
+                return;
+            }
+            for (String[] contact: contactsList){
+                boolean b = TorClientSocks4.testAddress(this, contact[1]);
+                if(!b){
+                    onlineList.remove(contact[1]);
+                    Intent gcm_rec = new Intent("your_action");
+                    gcm_rec.putExtra("type","online_status");
+                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
+                    continue;
+                }
+                if(!onlineList.contains(contact[1])){
+                    onlineList.add(contact[1]);
+                    Intent gcm_rec = new Intent("your_action");
+                    gcm_rec.putExtra("type","online_status");
+                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
+                }
+                if(syncingAddress!=null && syncingAddress.equals(contact[1])){
+                    continue;
+                }
+                syncing = true;
+                syncingAddress = contact[1];
+                List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, contact[1]);
+                if(undeliveredMessageList.size()==0){
+                    continue;
+                }
+                addToMessagesQueue(undeliveredMessageList);
+                sendQueuedMessages();
+            }
+            syncing = false;
+            pinging = false;
+            syncingAddress = null;
+        }catch (Exception ignored) {syncing = false; pinging = false; syncingAddress = null;}
     }
 
     public void queueUnsentMessages(String address){
+        if(syncingAddress!=null && syncingAddress.equals(address)){
+            return;
+        }
         new Thread(()->{
             while (syncing){
                 try{
@@ -146,24 +148,26 @@ public class DxApplication extends Application {
             }
             try{
                 syncing = true;
+                syncingAddress = address;
                 List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
                 if(undeliveredMessageList.size()==0){
                     syncing = false;
                     return;
                 }
-                boolean b = TorClientSocks4.testAddress(this, address);
-                if(!b){
-                    onlineList.remove(address);
-                    syncing = false;
-                    return;
-                }
-                if(!onlineList.contains(address)){
-                    onlineList.add(address);
-                }
+//                boolean b = TorClientSocks4.testAddress(this, address);
+//                if(!b){
+//                    onlineList.remove(address);
+//                    syncing = false;
+//                    return;
+//                }
+//                if(!onlineList.contains(address)){
+//                    onlineList.add(address);
+//                }
                 addToMessagesQueue(undeliveredMessageList);
                 sendQueuedMessages();
                 syncing = false;
-            }catch (Exception ignored) {syncing = false;}
+                syncingAddress = null;
+            }catch (Exception ignored) {syncing = false; syncingAddress = null;}
         }).start();
     }
 
