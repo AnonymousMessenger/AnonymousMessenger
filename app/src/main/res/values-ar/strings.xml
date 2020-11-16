@@ -140,7 +140,7 @@
     <string name="lost_connection">فقد الإتصال</string>
     <string name="connection_is_coming">ينبغي أن يعود الإتصال قريباًًََ</string>
     <string name="will_receive_messages_soon">ينبغي أن تتمكن من إستقبال الرسائل خلال أقل من دقيقتين من الآن</string>
-    <string name="waiting_for_connectivity">في إنتظار أن يعود الإتصال</string>
+    <string name="waiting_for_connectivity">في إنتظار الإتصال</string>
     <string name="almost_ready">قربنا على الإنتهاء!</string>
     <string name="starting_tor_first_time">يتم بدء تور و التحمية قليلاًًَ حتى نحصل على كل ما نريده للإتصال</string>
     <string name="ready_to_chat">جاهر للدردشة بأمان</string>
@@ -162,4 +162,18 @@
     <string name="bad_message">رسالة غير صالحة</string>
     <string name="decrypt_reminder_title">فك التشفير لتتمكن من إستلام الرسائل</string>
     <string name="decrypt_reminder_message">عليك إدخال كلمة السر ليتمكن البرنامج من العمل بالخلفية</string>
+    <string name="denied_microphone">تم رفض صلاحيات الميكروفون</string>
+    <string name="denied_microphone_help">بهذا لن تستطيع تلقي المكالمات</string>
+    <string name="delete_messages">حذف جميع الرسائل؟</string>
+    <string name="delete_messages_help">هذا سيقوم بحذف الرسائل المثبتة أيضاًَ</string>
+    <string name="yes">نعم</string>
+    <string name="pinned_message">تم تثبيت الرسالة</string>
+    <string name="unpinned_message">تم إلغاء تثبيت الرسالة</string>
+    <string name="copied">تم النسخ</string>
+    <string name="saved_to_storage">تم الحفظ في وحدة التخزين</string>
+    <string name="about">برنامج ممول من قبل ألتون جيمس ستيل و مطور من قبل سفيان بن عيسى ليجلب لكم
+        مراسلة مجهولة و آمنة و
+        مريحة و سهلة
+        الإستعمال, لأننا لم نكن راضيين عن ما كان  متوفرا و قد قررنا  أن ننفذ فكرتنا عن برنامج  للمراسلة  و أن نشاركها مع العالم  , إن الشيفرة المصدرية للبرنامج متوفرة حسب شروط رخصة غنو العمومية حتى نضمن حقك في تعديل البرنامج و غيرها من الحقوق لتتحكم بالبرنامج على وجه كامل.</string>
+    <string name="copyright">جميع الحقوق محفوظة © 2020 سفيان بن عيسى</string>
 </resources>

@@ -461,7 +461,7 @@ public class ProxyServer implements Runnable {
 			s = ss.accept();
 			if (s.getInetAddress().equals(msg.ip)) {
 				// got the connection from the right host
-				// Close listenning socket.
+				// Close listening socket.
 				ss.close();
 				break;
 			} else if (ss instanceof SocksServerSocket) {

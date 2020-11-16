@@ -176,7 +176,7 @@ public class AppFragment extends Fragment {
         );
 
         checkConnectivity();
-        updateUi();
+//        updateUi();
 //        checkMessages();
 //        new Thread(()->{
 //
@@ -252,6 +252,7 @@ public class AppFragment extends Fragment {
                         mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
                         recyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
+                        recyclerView.scheduleLayoutAnimation();
                         ((DxApplication)getActivity().getApplication()).clearMessageNotification();
                     } catch (Exception ignored) {}
                 });
@@ -275,6 +276,8 @@ public class AppFragment extends Fragment {
                     mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
                     recyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
+                    //this is because our test in the message checker always fails
+                    recyclerView.scheduleLayoutAnimation();
                 });
             }catch (Exception ignored){}
         }).start();
@@ -402,7 +405,23 @@ public class AppFragment extends Fragment {
                 }catch (Exception ignored) {}
                 break;
             case R.id.action_about:
-            case R.id.action_help:
+                stopCheckingMessages();
+                try{
+                    Intent intent = new Intent(getContext(), AboutActivity.class);
+                    if(getContext()!=null){
+                        getContext().startActivity(intent);
+                    }
+                }catch (Exception ignored) {}
+                break;
+            case R.id.action_tips:
+                stopCheckingMessages();
+                try{
+                    Intent intent = new Intent(getContext(), TipsActivity.class);
+                    if(getContext()!=null){
+                        getContext().startActivity(intent);
+                    }
+                }catch (Exception ignored) {}
+                break;
             case R.id.action_license:
                 stopCheckingMessages();
                 try{

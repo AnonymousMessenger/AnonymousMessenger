@@ -62,7 +62,9 @@ public class AppActivity extends AppCompatActivity implements ComponentCallbacks
                 @Override
                 public void run() {
                     Looper.prepare();
-                    Toast.makeText(getApplicationContext(),R.string.crash_message, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(),R.string.crash_message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), paramThrowable.getMessage(), Toast.LENGTH_LONG).show();
+                    Looper.loop();
                     Looper.loop();
                 }
             }.start();

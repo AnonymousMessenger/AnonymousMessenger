@@ -159,7 +159,7 @@
     <string name="lost_connection">Lost Connection</string>
     <string name="connection_is_coming">connection should be back soon</string>
     <string name="will_receive_messages_soon">should be able to receive messages within 2 minutes</string>
-    <string name="waiting_for_connectivity">waiting for connectivity to restore</string>
+    <string name="waiting_for_connectivity">waiting for connectivity</string>
     <string name="almost_ready">Almost Ready!</string>
     <string name="starting_tor_first_time">Starting tor and warming up to get all we need to connect!</string>
     <string name="ready_to_chat">Ready to chat securely!</string>
@@ -181,4 +181,24 @@
     <string name="bad_message">Corrupted message</string>
     <string name="decrypt_reminder_title">Decrypt to receive messages</string>
     <string name="decrypt_reminder_message">you need to enter your password to run in background</string>
+    <string name="denied_microphone">Denied Microphone Permission</string>
+    <string name="denied_microphone_help">this way you can\'t make or receive calls</string>
+    <string name="delete_messages">Delete all messages?</string>
+    <string name="delete_messages_help">this will delete even pinned messages!</string>
+    <string name="yes">Yes</string>
+    <string name="pinned_message">Message Pinned</string>
+    <string name="unpinned_message">Message Unpinned</string>
+    <string name="copied">Copied</string>
+    <string name="saved_to_storage">Saved to storage</string>
+    <string name="about">A project funded by Alton James Steele and developed by Sofian Mahmoud
+        Benissa
+        to bring anonymous secure and convenient
+        messaging to you, as we were not satisfied by what was available we decided to
+        create our own idea of a messaging application and share it with the world, source code
+        is available and project is licensed under the GNU General Public License so you can
+        take full advantage of it and have the freedom to change it among other
+        freedoms</string>
+    <string name="copyright">\n Copyright © 2020 Sofian M. Benissa\n\n</string>
+    <string name="action_tips">Security Tips</string>
+    <string name="hide_notification">disable the service_running notification</string>
 </resources>

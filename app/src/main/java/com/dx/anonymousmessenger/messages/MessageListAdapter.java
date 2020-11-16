@@ -32,6 +32,7 @@ import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.media.AudioPlayer;
 import com.dx.anonymousmessenger.util.CallBack;
 import com.dx.anonymousmessenger.util.Utils;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -75,6 +76,15 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void setMessageList(List<QuotedUserMessage> mMessageList) {
         this.mMessageList = mMessageList;
     }
+
+    public void removeData(int position) {
+        mMessageList.remove(position);
+        notifyItemRemoved(position);
+//        notifyItemChanged(position);
+        notifyItemRangeChanged(position,getItemCount());
+//        notifyDataSetChanged();
+    }
+
 
     @Override
     public int getItemCount() {
@@ -276,7 +286,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         quoteTextTyping.setVisibility(View.VISIBLE);
                         quoteSenderTyping.setVisibility(View.VISIBLE);
 //                        RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);
-                        rv.smoothScrollToPosition(mMessageList.size() - 1);
+//                        rv.smoothScrollToPosition(mMessageList.size() - 1);
                         return true;
                     case R.id.navigation_drawer_item2:
                         //handle pin click
@@ -284,9 +294,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             if(message.isPinned()){
                                 MessageSender.unPinMessage(message,app);
                                 message.setPinned(false);
+                                Snackbar.make(rv, R.string.unpinned_message, Snackbar.LENGTH_SHORT).show();
                             }else{
                                 MessageSender.pinMessage(message,app);
                                 message.setPinned(true);
+                                Snackbar.make(rv, R.string.pinned_message, Snackbar.LENGTH_SHORT).show();
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -297,6 +309,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         ClipboardManager clipboard = getSystemService(Objects.requireNonNull(mContext), ClipboardManager.class);
                         ClipData clip = ClipData.newPlainText("label", messageText.getText().toString());
                         Objects.requireNonNull(clipboard).setPrimaryClip(clip);
+                        Snackbar.make(rv, R.string.copied, Snackbar.LENGTH_SHORT).show();
                         return true;
                     default:
                         return false;

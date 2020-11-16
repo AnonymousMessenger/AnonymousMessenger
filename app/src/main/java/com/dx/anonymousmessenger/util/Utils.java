@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +30,10 @@ public class Utils {
         }
         for(int i=0;i<one.size();i++){
             try{
-                if(!Arrays.deepEquals(one.get(i),two.get(i))){
+//                if(!Arrays.deepEquals(one.get(i),two.get(i))){
+//                    return false;
+//                }
+                if(one.get(i).length!=two.get(i).length){
                     return false;
                 }
             }catch (Exception e){

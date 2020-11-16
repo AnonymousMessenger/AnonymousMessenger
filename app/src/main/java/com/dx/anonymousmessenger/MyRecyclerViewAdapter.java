@@ -94,7 +94,12 @@ public class MyRecyclerViewAdapter extends Adapter {
         });
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_READ://String msg, String send_to, long createdAt, boolean received
-                ((MyRecyclerViewAdapter.ReadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"),contact[1]);
+                ((MyRecyclerViewAdapter.ReadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],
+                        contact[3],
+                        contact[4],
+                        createdAt,
+                        contact[6].equals("true"),
+                        contact[1]);
                 break;
             case VIEW_TYPE_UNREAD:
                 ((MyRecyclerViewAdapter.UnreadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"),contact[1]);

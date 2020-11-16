@@ -12,9 +12,9 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_help"
-        android:title="@string/action_help"
-        app:showAsAction="never"/>
+        android:id="@+id/action_tips"
+        android:title="@string/action_tips"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_about"

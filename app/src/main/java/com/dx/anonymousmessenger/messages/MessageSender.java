@@ -50,8 +50,11 @@ public class MessageSender {
             }finally {
                 DbHelper.setMessageReceived(msg,app,to,received);
             }
-            Intent gcm_rec = new Intent("your_action");
-            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            if(received){
+                Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("delivery",msg.getCreatedAt());
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            }
         } catch (Exception e) {
             Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
             e.printStackTrace();
@@ -78,6 +81,7 @@ public class MessageSender {
                 DbHelper.setMessageReceived(msg,app,to,received);
             }
             Intent gcm_rec = new Intent("your_action");
+            gcm_rec.putExtra("delivery",msg.getCreatedAt());
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         } catch (Exception e) {
             Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
@@ -110,6 +114,7 @@ public class MessageSender {
                 DbHelper.setMessageReceived(msg,app,to,received);
             }
             Intent gcm_rec = new Intent("your_action");
+            gcm_rec.putExtra("delivery",msg.getCreatedAt());
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         } catch (Exception e) {
             Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
@@ -139,6 +144,7 @@ public class MessageSender {
                 DbHelper.setMessageReceived(msg,app,to,received);
             }
             Intent gcm_rec = new Intent("your_action");
+            gcm_rec.putExtra("delivery",msg.getCreatedAt());
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         } catch (Exception e) {
             Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
@@ -156,6 +162,7 @@ public class MessageSender {
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),false);
             boolean received = TorClientSocks4.Init(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
+            gcm_rec.putExtra("delivery",msg.getCreatedAt());
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         }catch (Exception e){
             Log.e("SENDER MESSAGE EXCHANGE", "FAIL" );
@@ -172,6 +179,7 @@ public class MessageSender {
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),false);
             boolean received = TorClientSocks4.Init(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
+            gcm_rec.putExtra("delivery",msg.getCreatedAt());
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         }catch (Exception e){
             Log.e("SENDER MESSAGE EXCHANGE", "FAIL" );
@@ -189,6 +197,7 @@ public class MessageSender {
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),true);
             boolean received = TorClientSocks4.Init(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
+            gcm_rec.putExtra("delivery",msg.getCreatedAt());
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
         }catch (Exception | StaleKeyExchangeException e){
             Log.e("SENDER MESSAGE EXCHANGE", "FAIL" );

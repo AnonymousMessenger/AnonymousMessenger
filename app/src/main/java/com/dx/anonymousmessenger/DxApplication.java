@@ -43,6 +43,7 @@ public class DxApplication extends Application {
     private Thread torThread;
     private SQLiteDatabase database;
     private long time2delete = 86400000;
+//    private long time2delete = 10000;
     private boolean serverReady = false;
     private boolean lockTorStart = false;
     private boolean weAsked = false;
@@ -106,10 +107,12 @@ public class DxApplication extends Application {
             for (String[] contact: contactsList){
                 boolean b = TorClientSocks4.testAddress(this, contact[1]);
                 if(!b){
-                    onlineList.remove(contact[1]);
-                    Intent gcm_rec = new Intent("your_action");
-                    gcm_rec.putExtra("type","online_status");
-                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
+                    if(onlineList.contains(contact[1])){
+                        onlineList.remove(contact[1]);
+                        Intent gcm_rec = new Intent("your_action");
+                        gcm_rec.putExtra("type","online_status");
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
+                    }
                     continue;
                 }
                 if(!onlineList.contains(contact[1])){
@@ -643,10 +646,12 @@ public class DxApplication extends Application {
         //Log.e("SOMEONE ASKED FOR DB","YES INDEED");
         if(this.database==null){
             SQLiteDatabase.loadLibs(this);
-            File databaseFile = new File(getFilesDir(), "demo.db");
-            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,
-                    account.getPassword(),
-                    null);
+//            File databaseFile = new File(getFilesDir(), "demo.db");
+//            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,
+//                    account.getPassword(),
+//                    null);
+            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase("demo.db",
+                    account.getPassword(),null);
             this.database = database;
             return database;
         }else{
@@ -665,7 +670,7 @@ public class DxApplication extends Application {
             databaseFile.mkdirs();
             databaseFile.delete();
         }
-        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,password,null);
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, password,null);
         this.database = database;
         return database;
     }
@@ -741,7 +746,6 @@ public class DxApplication extends Application {
         }
         database = null;
         if(account!=null){
-            account.setPassword("");
             account.setPassword(null);
             account.setNickname(null);
         }

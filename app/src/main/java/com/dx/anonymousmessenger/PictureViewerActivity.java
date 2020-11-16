@@ -34,6 +34,7 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -82,7 +83,7 @@ public class PictureViewerActivity extends AppCompatActivity {
             new Thread(()->{
                 Bitmap image;
                 try{
-                    if(!Objects.equals(getIntent().getStringExtra("type"), "image")){
+                    if(Objects.equals(getIntent().getStringExtra("type"), MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO + "")){
                         Uri uri = Uri.fromFile(new File(Objects.requireNonNull(getIntent().getStringExtra("path"))));
                         DxApplication app = (DxApplication) getApplication();
                         MessageDigest crypt = MessageDigest.getInstance("SHA-256");
@@ -187,7 +188,18 @@ public class PictureViewerActivity extends AppCompatActivity {
                         txtMsg = msg.getText().toString();
                     }
                     //save metadata in encrypted database with reference to encrypted file
-                    QuotedUserMessage qum = new QuotedUserMessage("","",app.getHostname(),txtMsg,app.getAccount().getNickname(),time,false,getIntent().getStringExtra("address"),false,filename,path,MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO+"");
+                    QuotedUserMessage qum = new QuotedUserMessage("",
+                            "",
+                            app.getHostname(),
+                            txtMsg,
+                            app.getAccount().getNickname(),
+                            time,
+                            false,
+                            getIntent().getStringExtra("address"),
+                            false,
+                            filename,
+                            path,
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO+"");
                     //send message and get received status
                     MessageSender.sendMediaMessage(qum,app,getIntent().getStringExtra("address"));
                 }).start();
@@ -303,7 +315,8 @@ public class PictureViewerActivity extends AppCompatActivity {
                 if(image == null){
                     return;
                 }
-                MediaStore.Images.Media.insertImage(getContentResolver(), image, getString(R.string.anonymous_messenger)+Utils.formatDateTime(getIntent().getLongExtra("time",0)) , "");
+                MediaStore.Images.Media.insertImage(getContentResolver(), image, getString(R.string.anonymous_messenger)+Utils.formatDateTime(getIntent().getLongExtra("time",new Date().getTime())) , "");
+                runOnUiThread(()-> Snackbar.make(findViewById(R.id.img_to_send),R.string.saved_to_storage,Snackbar.LENGTH_LONG).show());
             }
         }catch (Exception e){
             e.printStackTrace();

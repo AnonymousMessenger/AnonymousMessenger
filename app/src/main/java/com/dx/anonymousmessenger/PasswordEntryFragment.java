@@ -22,6 +22,7 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class PasswordEntryFragment extends Fragment {
@@ -93,7 +94,7 @@ public class PasswordEntryFragment extends Fragment {
                     rootView = null;
                     Cursor cr = database.rawQuery("SELECT * FROM account LIMIT 1;", null);
                     if (cr != null && cr.moveToFirst()) {
-                        DxAccount account = new DxAccount(cr.getString(0), cr.getString(1));
+                        DxAccount account = new DxAccount(cr.getString(0));
                         cr.close();
                         account.setPassword(pass);
                         app.setAccount(account,false);
@@ -120,6 +121,7 @@ public class PasswordEntryFragment extends Fragment {
                         cr.close();
                     }
                 } catch (SQLiteException e) {
+                    e.printStackTrace();
                     if (getActivity() != null) {
                         Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
                             try{
@@ -176,6 +178,8 @@ public class PasswordEntryFragment extends Fragment {
 
     public SQLiteDatabase isPasswordCorrect(String password) throws SQLiteException{
         Log.d("Account Checker","Checking Password");
+        byte[] serialized = password.getBytes(StandardCharsets.UTF_8);
+        password = new String(serialized, StandardCharsets.UTF_8);
         SQLiteDatabase database = app.getDb(password);
         Cursor cr2 = database.rawQuery("select count(*) from account;",null);
         int data;

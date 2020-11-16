@@ -48,6 +48,9 @@ public class QuotedUserMessage extends UserMessage {
     //for media only messages
     public QuotedUserMessage(String address, String sender, long createdAt, boolean received, String to, String filename, String path, String type){
         super(address, "", sender, createdAt, received, to);
+        this.quotedMessage = "";
+        this.quoteSender = "";
+        pinned = false;
         this.filename = filename;
         this.path = path;
         this.type = type;

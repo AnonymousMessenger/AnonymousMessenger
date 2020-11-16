@@ -45,12 +45,13 @@ public class DxAccount {
     public DxAccount(){}
 
     public Object[] getSqlInsertValues(){
-        return new Object[]{nickname,password};
+        return new Object[]{nickname,""};
     }
 
     public static void saveAccount(DxAccount account, DxApplication app) {
         Log.d("Account Saver","Saving Account");
         SQLiteDatabase database = app.getDb(account.getPassword());
+//        SQLiteDatabase database = app.getDb();
         try{
             database.execSQL(DxAccount.CREATE_ACCOUNT_TABLE_SQL);
             database.execSQL(DxAccount.DELETE_ACCOUNT_SQL);

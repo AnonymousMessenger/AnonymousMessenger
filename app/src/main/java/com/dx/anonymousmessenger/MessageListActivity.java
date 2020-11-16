@@ -211,7 +211,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             QuotedUserMessage msg =
                     new QuotedUserMessage(quoteSenderTyping.getText().toString().equals(getString(R.string.you))?
                             ((DxApplication)getApplication()).getAccount().getNickname():getIntent().getStringExtra("nickname"),quoteTextTyping.getText().toString(),((DxApplication)getApplication()).getHostname(),txt.getText().toString(),((DxApplication)getApplication()).getAccount().getNickname(),new Date().getTime(),false,getIntent().getStringExtra("address"),false);
-            messageList.add(msg);
+//            messageList.add(msg);
             new Thread(()-> MessageSender.sendMessage(msg,((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
             txt.setText("");
             quoteSenderTyping.setText("");
@@ -220,8 +220,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             quoteTextTyping.setVisibility(View.GONE);
             audio.setVisibility(View.VISIBLE);
             file.setVisibility(View.VISIBLE);
-            mMessageAdapter.notifyItemInserted(messageList.size()-1);
-            mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
+//            try{
+//                mMessageAdapter.notifyItemInserted(messageList.size()-1);
+//                mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
+//            }catch (Exception ignored) {}
         });
         quoteTextTyping.setOnClickListener(v -> {
             quoteTextTyping.setVisibility(View.GONE);
@@ -322,10 +324,6 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             }
             return true;
         });
-//        audio.setOnClickListener(v -> {
-//            txt.setVisibility(View.GONE);
-//            audioLayout.setVisibility(View.VISIBLE);
-//        });
         picsHelp.setOnClickListener(v -> {
             mediaRecyclerView.setVisibility(View.GONE);
             send.setVisibility(View.VISIBLE);
@@ -399,7 +397,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             }).start();
         });
 
-//        updateUi();
+        updateUi();
         ping();
 
         //run db message checker to delete any old messages then tell us to update ui
@@ -410,7 +408,8 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 @Override
                 public void run() {
                     Looper.prepare();
-                    Toast.makeText(getApplicationContext(), R.string.crash_message, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), R.string.crash_message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), paramThrowable.getMessage(), Toast.LENGTH_LONG).show();
                     Looper.loop();
                 }
             }.start();
@@ -522,17 +521,15 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             while (messageList!=null){
                 try{
                     Thread.sleep(5000);
-                    List<QuotedUserMessage> tmp = DbHelper.getMessageList(((DxApplication) getApplication()) ,
+                    DbHelper.getMessageList(((DxApplication) getApplication()) ,
                             getIntent().getStringExtra("address"));
-
-                    if(messageList.size() != tmp.size()){
-                        System.out.println("they'ren't equal");
-                        updateUi(tmp);
-                    }
-                }catch (Exception ignored){messageList=null;break;}
+                    //mMessageAdapter.setMessageList(messageList);
+//                    if(messageList.size() != tmp.size()){
+//                        System.out.println("they'ren't equal");
+//                        updateUi(tmp);
+//                    }
+                }catch (Exception ignored){break;}
             }
-            //maybe remove this line?
-//            messageList = null;
         });
         messageChecker.start();
     }
@@ -555,7 +552,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     new Handler(Looper.getMainLooper()).post(()->{
                         TextView keyStatus = findViewById(R.id.txt_key_status);
                         keyStatus.setVisibility(View.VISIBLE);
-                        keyStatus.setText(R.string.waiting_for_tor);
+                        keyStatus.setText(R.string.waiting_for_connectivity);
                         ConstraintLayout chatBox = findViewById(R.id.layout_chatbox);
                         chatBox.setVisibility(View.GONE);
                     });
@@ -607,8 +604,11 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 //                    mMessageRecycler.setAdapter(mMessageAdapter);
                         mMessageAdapter.setMessageList(messageList);
                         mMessageAdapter.notifyDataSetChanged();
+                        mMessageRecycler.scheduleLayoutAnimation();
+
                         if(!messageList.isEmpty()){
                             mMessageRecycler.scrollToPosition(messageList.size() - 1);
+                            scrollDownFab.setVisibility(View.GONE);
                             ((DxApplication)getApplication()).clearMessageNotification();
                             if(!messageList.get(messageList.size()-1).getAddress().equals(((DxApplication)getApplication()).getHostname())){
                                 String newName = messageList.get(messageList.size()-1).getSender();
@@ -634,14 +634,15 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 //                    mMessageRecycler.setAdapter(mMessageAdapter);
                 mMessageAdapter.setMessageList(messageList);
                 mMessageAdapter.notifyDataSetChanged();
+                mMessageRecycler.scheduleLayoutAnimation();
                 mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
             }catch (Exception ignored){}
         });
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         if(mMyBroadcastReceiver!=null){
             return;
         }
@@ -649,14 +650,41 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             @Override
             public void onReceive(Context context, Intent intent)
             {
+                if(intent.getLongExtra("delete",-1) > -1){
+                    for (QuotedUserMessage quotedUserMessage : messageList) {
+                        if(quotedUserMessage.getCreatedAt()==intent.getLongExtra("delete",-1)){
+                            try{
+                                int pos = messageList.indexOf(quotedUserMessage);
+//                                messageList.remove(pos);
+                                mMessageAdapter.removeData(pos);
+                            }catch (Exception ignored) {}
+                            return;
+                        }
+                    }
+                    return;
+                }
                 if(intent.getStringExtra("error")!=null){
                     try{
                         Snackbar.make(send, Objects.requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).show();
                     }catch (Exception ignored) {}
                     return;
-                }else if(intent.getStringExtra("type")!=null && intent.getStringExtra("type").equals("online_status")){
+                }else if(intent.getStringExtra("type")!=null && Objects.equals(intent.getStringExtra("type"), "online_status")){
+                    return;
+                }else if(intent.getLongExtra("delivery",-1) != -1){
+                    for (QuotedUserMessage quotedUserMessage : messageList) {
+                        if(quotedUserMessage.getCreatedAt()==intent.getLongExtra("delivery",-1)){
+                            //todo refresh item from DB
+                            //todo unite messagelists by only accessing the one in the adapter
+//                            messageList = DbHelper.getMessageList((DxApplication)getApplication(),quotedUserMessage.getTo());
+//                            mMessageAdapter.setMessageList(messageList);
+//                            mMessageAdapter.notifyItemChanged(messageList.indexOf(quotedUserMessage));
+                            updateUi();
+                            return;
+                        }
+                    }
                     return;
                 }
+
                 updateUi();
             }
         };
@@ -666,13 +694,12 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         {
             e.printStackTrace();
         }
-        updateUi();
         checkMessages();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         stopCheckingMessages();
         if(mMyBroadcastReceiver==null){
             return;
@@ -761,8 +788,19 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 startActivity(intent);
                 break;
             case R.id.action_clear_conversation:
-                DbHelper.clearConversation(getIntent().getStringExtra("address"),(DxApplication)getApplication());
-                updateUi();
+                new AlertDialog.Builder(this,R.style.AppAlertDialog)
+                        .setTitle(R.string.delete_messages)
+                        .setMessage(R.string.delete_messages_help)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(R.string.yes, (dialog, which) -> {
+                            new Thread(()-> {
+                                try{
+                                    DbHelper.clearConversation(getIntent().getStringExtra("address"), (DxApplication) getApplication());
+                                }catch (Exception ignored) {}
+                            }).start();
+                        })
+                        .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+                        }).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -776,13 +814,12 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 //                // Permission is granted. Continue the action or workflow
 //                // in your app.
 //            } else {
-                new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
-                        .setTitle("Denied Microphone Permission")
-                        .setMessage("this way you can't make or receive calls")
+                new AlertDialog.Builder(this,R.style.AppAlertDialog)
+                        .setTitle(R.string.denied_microphone)
+                        .setMessage(R.string.denied_microphone_help)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getMicrophonePerms())
                         .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-
                         });
                 // Explain to the user that the feature is unavailable because
                 // the features requires a permission that the user has denied.
