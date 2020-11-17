@@ -18,6 +18,7 @@ import com.dx.anonymousmessenger.login.StrengthMeter;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -149,7 +150,8 @@ public class SetupPasswordFragment extends Fragment {
             passwordConfirmation.setEnabled(false);
             nextButton.setVisibility(INVISIBLE);
             progressBar.setVisibility(VISIBLE);
-            ((CreateUserActivity) Objects.requireNonNull(getActivity())).createAccount(Objects.requireNonNull(passwordEntry.getText()).toString());
+            ((CreateUserActivity) Objects.requireNonNull(getActivity())).createAccount(Objects.requireNonNull(passwordEntry.getText()).toString().getBytes(StandardCharsets.UTF_8));
+
 //            Intent intent = new Intent(getActivity(), SetupInProcess.class);
 //            startActivity(intent);
 //            if(getActivity()!=null){

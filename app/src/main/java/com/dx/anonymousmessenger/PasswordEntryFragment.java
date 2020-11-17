@@ -83,7 +83,7 @@ public class PasswordEntryFragment extends Fragment {
             progressBar.setVisibility(View.VISIBLE);
             new Thread(() -> {
                 try {
-                    SQLiteDatabase database = isPasswordCorrect(Objects.requireNonNull(txtPassword.getText()).toString());
+                    SQLiteDatabase database = isPasswordCorrect(Objects.requireNonNull(txtPassword.getText()).toString().getBytes(StandardCharsets.UTF_8));
                     if (getActivity() != null) {
                         Objects.requireNonNull(getActivity()).runOnUiThread(() -> ((AppActivity) getActivity()).goToTorActivity());
                     }
@@ -96,7 +96,7 @@ public class PasswordEntryFragment extends Fragment {
                     if (cr != null && cr.moveToFirst()) {
                         DxAccount account = new DxAccount(cr.getString(0));
                         cr.close();
-                        account.setPassword(pass);
+                        account.setPassword(pass.getBytes(StandardCharsets.UTF_8));
                         app.setAccount(account,false);
                         if (!app.isServerReady()) {
                             if (app.getTorThread() != null) {
@@ -176,10 +176,8 @@ public class PasswordEntryFragment extends Fragment {
         return rootView;
     }
 
-    public SQLiteDatabase isPasswordCorrect(String password) throws SQLiteException{
+    public SQLiteDatabase isPasswordCorrect(byte[] password) throws SQLiteException{
         Log.d("Account Checker","Checking Password");
-        byte[] serialized = password.getBytes(StandardCharsets.UTF_8);
-        password = new String(serialized, StandardCharsets.UTF_8);
         SQLiteDatabase database = app.getDb(password);
         Cursor cr2 = database.rawQuery("select count(*) from account;",null);
         int data;

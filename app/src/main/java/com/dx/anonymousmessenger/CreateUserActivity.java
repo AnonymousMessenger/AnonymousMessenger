@@ -70,7 +70,7 @@ public class CreateUserActivity extends AppCompatActivity {
 		}
 	}
 
-    public void createAccount(String password){
+    public void createAccount(byte[] password){
         if(nickname==null || password==null){
             return;
         }

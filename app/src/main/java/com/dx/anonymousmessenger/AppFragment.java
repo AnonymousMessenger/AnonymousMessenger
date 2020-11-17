@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -302,7 +304,13 @@ public class AppFragment extends Fragment {
             onlineImg.setVisibility(View.GONE);
             offlineImg.setVisibility(View.GONE);
             onlineTxt.setText(R.string.checking);
+            onlineTxt.setVisibility(View.GONE);
             onlineToolbar.setVisibility(View.VISIBLE);
+            ColorDrawable[] color = {new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.startGradientColor)), new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.endGradientColor))};
+            TransitionDrawable trans = new TransitionDrawable(color);
+            onlineToolbar.setBackground(trans);
+            trans.startTransition(3000); // duration 3 seconds
+
         }catch (Exception ignored){}
 
         new Thread(()->{
@@ -319,9 +327,13 @@ public class AppFragment extends Fragment {
                     mainThread.post(()->{
                         try{
                             onlineTxt.setText(R.string.online);
-                            onlineImg.setVisibility(View.VISIBLE);
-                            offlineImg.setVisibility(View.GONE);
+//                            onlineImg.setVisibility(View.VISIBLE);
+//                            offlineImg.setVisibility(View.GONE);
                             onlineToolbar.setVisibility(View.VISIBLE);
+                            ColorDrawable[] color = {new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.endGradientColor)), new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.green_tor))};
+                            TransitionDrawable trans = new TransitionDrawable(color);
+                            onlineToolbar.setBackground(trans);
+                            trans.startTransition(1500);
                         }catch (Exception ignored) {}
                     });
                     new Thread(()-> ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).queueAllUnsentMessages()).start();
@@ -329,9 +341,13 @@ public class AppFragment extends Fragment {
                     mainThread.post(()->{
                         try{
                             onlineTxt.setText(R.string.offline);
-                            onlineImg.setVisibility(View.GONE);
-                            offlineImg.setVisibility(View.VISIBLE);
+//                            onlineImg.setVisibility(View.GONE);
+//                            offlineImg.setVisibility(View.VISIBLE);
                             onlineToolbar.setVisibility(View.VISIBLE);
+                            ColorDrawable[] color = {new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.endGradientColor)), new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.red_500))};
+                            TransitionDrawable trans = new TransitionDrawable(color);
+                            onlineToolbar.setBackground(trans);
+                            trans.startTransition(1500);
                         }catch (Exception ignored) {}
                     });
                 }

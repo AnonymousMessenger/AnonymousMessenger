@@ -55,7 +55,7 @@
     <string name="identity_verification_fail">لم أجد مفاتيح الهوية</string>
     <string name="identity_key_fail">لا أستطيع إيجاد مفتاح هويتك</string>
     <string name="delete_contact">إزالة جهة الإتصال</string>
-    <string name="no_contacts">لم يتم العثور على جهات اتصال!</string>
+    <string name="no_contacts">ﻻ توجد جهات اتصال!</string>
     <string name="tor_output">معلومات تور</string>
     <string name="anonymous_messenger">المسنجر المجهول</string>
     <string name="by_drxtreme">من قبل سفيان بن عيسى</string>
@@ -176,4 +176,6 @@
         مريحة و سهلة
         الإستعمال, لأننا لم نكن راضيين عن ما كان  متوفرا و قد قررنا  أن ننفذ فكرتنا عن برنامج  للمراسلة  و أن نشاركها مع العالم  , إن الشيفرة المصدرية للبرنامج متوفرة حسب شروط رخصة غنو العمومية حتى نضمن حقك في تعديل البرنامج و غيرها من الحقوق لتتحكم بالبرنامج على وجه كامل.</string>
     <string name="copyright">جميع الحقوق محفوظة © 2020 سفيان بن عيسى</string>
+    <string name="action_tips">نصائح أمنية</string>
+    <string name="hide_notification">أطفئ إشعار service_running</string>
 </resources>

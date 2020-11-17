@@ -30,6 +30,7 @@ import net.sf.controller.network.AndroidTorRelay;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -216,7 +217,7 @@ public class DxApplication extends Application {
         }
     }
 
-    public void createAccount(String password, String nickname){
+    public void createAccount(byte[] password, String nickname){
         new Thread(() -> {
             try{
                 if(nickname==null || password==null){
@@ -225,6 +226,7 @@ public class DxApplication extends Application {
 
                 this.sendNotification(getString(R.string.almost_ready),getString(R.string.starting_tor_first_time),false);
 
+//                getDb(password);
                 DxAccount account;
                 if(this.getAccount()==null){
                     account = new DxAccount();
@@ -659,7 +661,7 @@ public class DxApplication extends Application {
         }
     }
 
-    public SQLiteDatabase getDb(String password){
+    public SQLiteDatabase getDb(byte[] password){
         if(database!=null){
             database.close();
             database = null;
@@ -670,7 +672,7 @@ public class DxApplication extends Application {
             databaseFile.mkdirs();
             databaseFile.delete();
         }
-        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, password,null);
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, new String(password,StandardCharsets.UTF_8),null);
         this.database = database;
         return database;
     }

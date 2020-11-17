@@ -12,7 +12,6 @@ import org.whispersystems.libsignal.InvalidKeyException;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -66,7 +65,7 @@ public class FileHelper {
             //decrypt this shit
             MessageDigest crypt = MessageDigest.getInstance("SHA-256");
             crypt.reset();
-            crypt.update(app.getAccount().getPassword().getBytes(StandardCharsets.UTF_8));
+            crypt.update(app.getAccount().getPassword());
             byte[] sha1b = crypt.digest();
             File f = new File(app.getFilesDir(),path);
             if(!f.exists()){
@@ -83,7 +82,7 @@ public class FileHelper {
     public static String saveFile(byte[] data, DxApplication app, String filename) throws NoSuchAlgorithmException {
         MessageDigest crypt = MessageDigest.getInstance("SHA-256");
         crypt.reset();
-        crypt.update(app.getAccount().getPassword().getBytes(StandardCharsets.UTF_8));
+        crypt.update(app.getAccount().getPassword());
         byte[] sha1b = crypt.digest();
         byte[] encrypted = encrypt(sha1b, data);
         String eFilename = Hex.toStringCondensed(encrypt(sha1b,filename.getBytes()));

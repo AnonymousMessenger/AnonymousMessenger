@@ -14,5 +14,18 @@ public class AboutActivity extends AppCompatActivity {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         }catch (Exception ignored){}
         setContentView(R.layout.activity_about);
+
+        try{
+            if(getSupportActionBar()!=null){
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle(R.string.action_about);
+            }
+        }catch (Exception ignored){}
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
     }
 }

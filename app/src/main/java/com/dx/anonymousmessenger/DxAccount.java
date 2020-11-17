@@ -6,17 +6,17 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 public class DxAccount {
     private String nickname;
-    private String password;
+    private byte[] password;
 
     public static final String CREATE_ACCOUNT_TABLE_SQL = "CREATE TABLE IF NOT EXISTS account(nickname,password)";
     public static final String INSERT_ACCOUNT_SQL = "INSERT INTO account(nickname,password) values(?,?)";
     public static final String DELETE_ACCOUNT_SQL = "DELETE FROM account";
 
-    public String getPassword() {
+    public byte[] getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(byte[] password) {
         this.password = password;
     }
 
@@ -37,7 +37,7 @@ public class DxAccount {
         this.nickname = nickname;
     }
 
-    public DxAccount(String nickname, String password){
+    public DxAccount(String nickname, byte[] password){
         this.nickname = nickname;
         this.password = password;
     }

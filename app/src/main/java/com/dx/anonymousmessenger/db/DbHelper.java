@@ -40,7 +40,7 @@ public class DbHelper {
     }
 
     public static List<String[]> getContactsList(DxApplication app){
-        if (app.getAccount()==null||app.getAccount().getPassword()==null){
+        if (app.getAccount()==null){
             return null;
         }
         SQLiteDatabase database = app.getDb();
@@ -125,7 +125,7 @@ public class DbHelper {
     }
 
     public static boolean saveContact(String address, DxApplication app) {
-        while (app.getAccount()==null||app.getAccount().getPassword()==null){
+        while (app.getAccount()==null){
             try {
                 Thread.sleep(150);
             } catch (InterruptedException e) {
@@ -151,7 +151,7 @@ public class DbHelper {
     }
 
     public static boolean saveContact(String address, String nickname, DxApplication app) {
-        while (app.getAccount()==null||app.getAccount().getPassword()==null){
+        while (app.getAccount()==null){
             try {
                 Thread.sleep(150);
             } catch (InterruptedException e) {
@@ -175,7 +175,7 @@ public class DbHelper {
     }
 
     public static void deleteContact(String address, DxApplication app) {
-        while (app.getAccount()==null||app.getAccount().getPassword()==null){
+        while (app.getAccount()==null){
             try {
                 Thread.sleep(150);
             } catch (InterruptedException e) {
@@ -191,7 +191,7 @@ public class DbHelper {
     }
 
     public static boolean setContactNickname(String nickname, String address, DxApplication app){
-        while (app.getAccount()==null||app.getAccount().getPassword()==null){
+        while (app.getAccount()==null){
             try {
                 Thread.sleep(150);
             } catch (InterruptedException e) {
@@ -215,7 +215,7 @@ public class DbHelper {
     }
 
     public static String getContactNickname(String address, DxApplication app) {
-        while (app.getAccount()==null||app.getAccount().getPassword()==null){
+        while (app.getAccount()==null){
             try {
                 Thread.sleep(150);
             } catch (InterruptedException e) {
@@ -240,7 +240,7 @@ public class DbHelper {
 
     public static boolean setContactUnread(String address, DxApplication app) {
 
-        while (app.getAccount()==null||app.getAccount().getPassword()==null){
+        while (app.getAccount()==null){
             try {
                 Thread.sleep(150);
             } catch (InterruptedException e) {
@@ -266,7 +266,7 @@ public class DbHelper {
 
     public static boolean setContactRead(String address, DxApplication app) {
 
-        while (app.getAccount()==null||app.getAccount().getPassword()==null){
+        while (app.getAccount()==null){
             try {
                 Thread.sleep(150);
             } catch (InterruptedException e) {

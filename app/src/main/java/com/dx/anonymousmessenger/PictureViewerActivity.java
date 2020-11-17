@@ -42,7 +42,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -88,7 +87,7 @@ public class PictureViewerActivity extends AppCompatActivity {
                         DxApplication app = (DxApplication) getApplication();
                         MessageDigest crypt = MessageDigest.getInstance("SHA-256");
                         crypt.reset();
-                        crypt.update(app.getAccount().getPassword().getBytes(StandardCharsets.UTF_8));
+                        crypt.update(app.getAccount().getPassword());
                         byte[] sha1b = crypt.digest();
 
                         DataSource.Factory encFac = new EncryptedDataSourceFactory(sha1b,app);

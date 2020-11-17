@@ -32,7 +32,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/online_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="21dp"
+            android:layout_height="2dp"
             android:background="@drawable/custom_ripple"
             android:theme="?attr/actionBarTheme"
             android:visibility="visible"
@@ -113,6 +113,7 @@
             android:background="@drawable/rounded_rectangle_dark"
             android:orientation="vertical"
             android:padding="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/status_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
