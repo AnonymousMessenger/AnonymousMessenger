@@ -309,7 +309,7 @@ public class AppFragment extends Fragment {
             ColorDrawable[] color = {new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.startGradientColor)), new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.endGradientColor))};
             TransitionDrawable trans = new TransitionDrawable(color);
             onlineToolbar.setBackground(trans);
-            trans.startTransition(3000); // duration 3 seconds
+            trans.startTransition(1500);
 
         }catch (Exception ignored){}
 

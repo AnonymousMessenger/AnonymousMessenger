@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +31,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,7 +81,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     private LinearLayout audioLayout;
     private FloatingActionButton scrollDownFab;
     private BroadcastReceiver timeBroadcastReceiver;
-    private TextView status;
+    private FrameLayout frameOnline;
     private RecyclerView mediaRecyclerView;
     private LinearLayout picsHelp;
     private String address;
@@ -116,12 +119,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         picsHelp = findViewById(R.id.layout_pics);
         audioLayout = findViewById(R.id.layout_audio);
         txtAudioTimer = findViewById(R.id.txt_audio_timer);
-        status = findViewById(R.id.txt_status);
-        status.setOnClickListener((v)-> status.setVisibility(View.GONE));
-//        syncedImg = findViewById(R.id.synced_image);
-//        unsyncedImg = findViewById(R.id.unsynced_image);
-//        syncTxt = findViewById(R.id.sync_text);
-//        syncToolbar = findViewById(R.id.sync_toolbar);
+        frameOnline = findViewById(R.id.frame_online);
         scrollDownFab = findViewById(R.id.fab_scroll_down);
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
         mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication(), mMessageRecycler);
@@ -479,10 +477,13 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             Handler h = new Handler(Looper.getMainLooper());
             h.post(()->{
                 try{
-                    status.setText(R.string.connecting);
-                    status.setVisibility(View.VISIBLE);
+                    ColorDrawable[] color = {new ColorDrawable(this.getColor(R.color.startGradientColor)), new ColorDrawable(this.getColor(R.color.endGradientColor))};
+                    TransitionDrawable trans = new TransitionDrawable(color);
+                    frameOnline.setBackground(trans);
+                    trans.startTransition(1500);
+                    frameOnline.setVisibility(View.VISIBLE);
                     Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
-                    status.startAnimation(slideUp);
+                    frameOnline.startAnimation(slideUp);
                 }catch (Exception ignored) {}
             });
             boolean b = TorClientSocks4.testAddress(((DxApplication) getApplication()), getIntent().getStringExtra("address"));
@@ -494,22 +495,31 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             }
             h.post(()->{
                 try{
-                    status.setText(b?R.string.user_is_online:R.string.user_is_offline);
-//                    status.setVisibility(View.VISIBLE);
-                    Animation shock = AnimationUtils.loadAnimation(this, R.anim.animation1);
-                    status.startAnimation(shock);
+                    if(b){
+                        ColorDrawable[] color = {new ColorDrawable(this.getColor(R.color.endGradientColor)), new ColorDrawable(this.getColor(R.color.green_tor))};
+                        TransitionDrawable trans = new TransitionDrawable(color);
+                        frameOnline.setBackground(trans);
+                        trans.startTransition(1500);
+                    }else{
+                        ColorDrawable[] color = {new ColorDrawable(this.getColor(R.color.endGradientColor)), new ColorDrawable(this.getColor(R.color.red_500))};
+                        TransitionDrawable trans = new TransitionDrawable(color);
+                        frameOnline.setBackground(trans);
+                        trans.startTransition(1500);
+                    }
+//                    Animation shock = AnimationUtils.loadAnimation(this, R.anim.rotate_line);
+//                    frameOnline.startAnimation(shock);
                 }catch (Exception ignored) {}
             });
-            try {
-                Thread.sleep(2000);
-            } catch (Exception ignored) {}
-            h.post(()->{
-                try {
-                    Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
-                    status.startAnimation(slideDown);
-                    status.setVisibility(View.GONE);
-                }catch (Exception ignored) {}
-            });
+//            try {
+//                Thread.sleep(6000);
+//            } catch (Exception ignored) {}
+//            h.post(()->{
+//                try {
+//                    Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+//                    frameOnline.startAnimation(slideDown);
+//                    frameOnline.setVisibility(View.GONE);
+//                }catch (Exception ignored) {}
+//            });
         }).start();
     }
 

@@ -10,44 +10,16 @@
 
     <!-- A horizontal line between the chatbox and RecyclerView -->
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/sync_toolbar"
+    <FrameLayout
+        android:id="@+id/frame_online"
         android:layout_width="match_parent"
-        android:layout_height="21dp"
-        android:background="@drawable/custom_ripple"
-        android:theme="?attr/actionBarTheme"
-        android:visibility="gone"
+        android:layout_height="2dp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/synced_image"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:contentDescription="@string/online"
-            android:src="@drawable/ic_online" />
-
-        <ImageView
-            android:id="@+id/unsynced_image"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:contentDescription="@string/offline"
-            android:src="@drawable/ic_offline" />
-
-        <TextView
-            android:id="@+id/sync_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:text="@string/synced"
-            tools:layout_editor_absoluteX="51dp"
-            tools:layout_editor_absoluteY="18dp" />
-    </androidx.appcompat.widget.Toolbar>
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reyclerview_message_list"
@@ -61,8 +33,7 @@
         app:layout_constraintBottom_toTopOf="@id/txt_key_status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sync_toolbar">
+        app:layout_constraintStart_toStartOf="parent">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -185,7 +156,8 @@
             app:layout_constraintEnd_toStartOf="@+id/button_chatbox_send"
             app:layout_constraintTop_toTopOf="parent"
             app:rippleColor="@color/red_500"
-            app:srcCompat="@drawable/ic_baseline_mic_24" />
+            app:srcCompat="@drawable/ic_baseline_mic_24"
+            android:contentDescription="@string/record_audio" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_file"
@@ -201,7 +173,8 @@
             app:layout_constraintEnd_toStartOf="@+id/fab_audio"
             app:layout_constraintTop_toTopOf="parent"
             app:rippleColor="@color/red_500"
-            app:srcCompat="@drawable/ic_baseline_attach_file_24" />
+            app:srcCompat="@drawable/ic_baseline_attach_file_24"
+            android:contentDescription="@string/send_file" />
 
         <Button
             android:id="@+id/button_chatbox_send"
@@ -298,7 +271,8 @@
         app:layout_constraintBottom_toTopOf="@+id/frameLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_baseline_arrow_downward_24" />
+        app:srcCompat="@drawable/ic_baseline_arrow_downward_24"
+        android:contentDescription="@string/scroll_down" />
 
     <TextView
         android:id="@+id/txt_status"

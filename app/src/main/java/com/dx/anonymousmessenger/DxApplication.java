@@ -364,7 +364,7 @@ public class DxApplication extends Application {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mNotificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID,
-                    CHANNEL_ID,NotificationManager.IMPORTANCE_LOW));
+                    CHANNEL_ID,NotificationManager.IMPORTANCE_HIGH));
         }
         // Issue the notification.
         mNotificationManager.notify(2 , notification);

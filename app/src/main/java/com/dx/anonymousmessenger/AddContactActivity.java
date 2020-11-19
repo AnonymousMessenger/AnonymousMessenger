@@ -76,7 +76,7 @@ public class AddContactActivity extends AppCompatActivity {
                     contact.setText("");
                     return;
                 }
-                if(s.toString().endsWith(".onion") && s.toString().length()>40){
+                if(s.toString().endsWith(".onion") && s.toString().length()>48){
                     new AlertDialog.Builder(context,R.style.AppAlertDialog)
                         .setTitle(R.string.add_contact)
                         .setMessage(getString(R.string.confirm_add_contact)+s.toString()+" ?")

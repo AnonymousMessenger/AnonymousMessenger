@@ -27,14 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".TipsActivity"></activity>
+        <activity android:name=".TipsActivity" />
         <activity android:name=".AboutActivity" />
-
-        <service
-            android:name=".BootReminderService"
-            android:enabled="true"
-            android:exported="false" />
-
         <activity android:name=".ContactProfileActivity" />
         <activity android:name=".LicenseActivity" />
         <activity android:name=".MyProfileActivity" />
@@ -65,6 +59,10 @@
             </intent-filter>
         </receiver>
 
+        <service
+            android:name=".BootReminderService"
+            android:enabled="true"
+            android:exported="false" />
         <service
             android:name=".AudioRecordingService"
             android:enabled="true"

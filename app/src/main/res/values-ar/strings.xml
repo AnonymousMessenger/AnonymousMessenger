@@ -178,4 +178,7 @@
     <string name="copyright">جميع الحقوق محفوظة © 2020 سفيان بن عيسى</string>
     <string name="action_tips">نصائح أمنية</string>
     <string name="hide_notification">أطفئ إشعار service_running</string>
+    <string name="record_audio">سجل الصوت</string>
+    <string name="send_file">أرسل ملف</string>
+    <string name="scroll_down">حرك للأسفل</string>
 </resources>

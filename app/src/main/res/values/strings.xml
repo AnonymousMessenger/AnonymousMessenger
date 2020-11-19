@@ -201,4 +201,7 @@
     <string name="copyright">\n Copyright © 2020 Sofian M. Benissa\n\n</string>
     <string name="action_tips">Security Tips</string>
     <string name="hide_notification">disable the service_running notification</string>
+    <string name="record_audio">record audio</string>
+    <string name="send_file">send file</string>
+    <string name="scroll_down">scroll down</string>
 </resources>

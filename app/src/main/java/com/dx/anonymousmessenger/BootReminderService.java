@@ -11,7 +11,7 @@ public class BootReminderService extends Service {
     @Override
     public void onCreate() {
         DxApplication app = (DxApplication) getApplication();
-        app.sendNotification(getString(R.string.decrypt_reminder_title),getString(R.string.decrypt_reminder_message));
+        app.sendNotification(getString(R.string.decrypt_reminder_title),getString(R.string.decrypt_reminder_message),false);
         super.onCreate();
     }
 
