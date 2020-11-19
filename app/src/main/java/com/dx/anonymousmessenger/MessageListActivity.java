@@ -71,7 +71,6 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     private RecyclerView mMessageRecycler;
     private MessageListAdapter mMessageAdapter;
     List<QuotedUserMessage> messageList = new ArrayList<>();
-//    public Handler mainThread = new Handler(Looper.getMainLooper());
     private BroadcastReceiver mMyBroadcastReceiver;
     private Thread messageChecker = null;
     private Button send = null;
@@ -86,11 +85,6 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     private LinearLayout picsHelp;
     private String address;
     private String nickname;
-//    private TextView picsHelpText;
-//    private ImageView syncedImg;
-//    private ImageView unsyncedImg;
-//    private TextView syncTxt;
-//    private Toolbar syncToolbar;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -361,10 +355,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 
                 // Return only video and image metadata.
                 String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                                 + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
-                                 + " OR "
-                                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+                                 + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+//                                 + " OR "
+//                                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+//                                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
                 Uri queryUri = MediaStore.Files.getContentUri("external");
                 Cursor cursor = this.getContentResolver().query(queryUri, projection, selection, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC");
 
@@ -396,6 +390,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         });
 
         updateUi();
+        mMessageRecycler.scheduleLayoutAnimation();
         ping();
 
         //run db message checker to delete any old messages then tell us to update ui
@@ -610,11 +605,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                         getIntent().getStringExtra("address"));
                 runOnUiThread(()->{
                     try{
-//                    mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
-//                    mMessageRecycler.setAdapter(mMessageAdapter);
                         mMessageAdapter.setMessageList(messageList);
                         mMessageAdapter.notifyDataSetChanged();
-                        mMessageRecycler.scheduleLayoutAnimation();
+//                        mMessageRecycler.scheduleLayoutAnimation();
 
                         if(!messageList.isEmpty()){
                             mMessageRecycler.scrollToPosition(messageList.size() - 1);
@@ -665,7 +658,6 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                         if(quotedUserMessage.getCreatedAt()==intent.getLongExtra("delete",-1)){
                             try{
                                 int pos = messageList.indexOf(quotedUserMessage);
-//                                messageList.remove(pos);
                                 mMessageAdapter.removeData(pos);
                             }catch (Exception ignored) {}
                             return;
@@ -685,10 +677,11 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                         if(quotedUserMessage.getCreatedAt()==intent.getLongExtra("delivery",-1)){
                             //todo refresh item from DB
                             //todo unite messagelists by only accessing the one in the adapter
+                            quotedUserMessage.setReceived(true);
 //                            messageList = DbHelper.getMessageList((DxApplication)getApplication(),quotedUserMessage.getTo());
 //                            mMessageAdapter.setMessageList(messageList);
-//                            mMessageAdapter.notifyItemChanged(messageList.indexOf(quotedUserMessage));
-                            updateUi();
+                            mMessageAdapter.notifyItemChanged(messageList.indexOf(quotedUserMessage));
+//                            updateUi();
                             return;
                         }
                     }

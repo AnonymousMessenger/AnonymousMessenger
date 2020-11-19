@@ -58,6 +58,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int VIEW_TYPE_VIDEO_MESSAGE_SENT = 13;
     private static final int VIEW_TYPE_VIDEO_MESSAGE_SENT_OK = 14;
     private static final int VIEW_TYPE_VIDEO_MESSAGE_RECEIVED = 15;
+    private static final int VIEW_TYPE_FILE_MESSAGE_SENT = 13;
+    private static final int VIEW_TYPE_FILE_MESSAGE_SENT_OK = 14;
+    private static final int VIEW_TYPE_FILE_MESSAGE_RECEIVED = 15;
 
     private Context mContext;
     private RecyclerView mMessageRecycler;
