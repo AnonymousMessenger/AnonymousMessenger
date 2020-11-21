@@ -58,14 +58,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int VIEW_TYPE_VIDEO_MESSAGE_SENT = 13;
     private static final int VIEW_TYPE_VIDEO_MESSAGE_SENT_OK = 14;
     private static final int VIEW_TYPE_VIDEO_MESSAGE_RECEIVED = 15;
-    private static final int VIEW_TYPE_FILE_MESSAGE_SENT = 13;
-    private static final int VIEW_TYPE_FILE_MESSAGE_SENT_OK = 14;
-    private static final int VIEW_TYPE_FILE_MESSAGE_RECEIVED = 15;
+    private static final int VIEW_TYPE_FILE_MESSAGE_SENT = 16;
+    private static final int VIEW_TYPE_FILE_MESSAGE_SENT_OK = 17;
+    private static final int VIEW_TYPE_FILE_MESSAGE_RECEIVED = 18;
 
-    private Context mContext;
-    private RecyclerView mMessageRecycler;
+    private final Context mContext;
+    private final RecyclerView mMessageRecycler;
     private List<QuotedUserMessage> mMessageList;
-    private DxApplication app;
+    private final DxApplication app;
     private String nowPlaying;
     public AudioPlayer ap;
 
@@ -101,7 +101,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         // If the current user is the sender of the message
         if (message.getAddress().equals(app.getHostname())) {
             if(message.isReceived()){
-                if(message.getType()!=null && message.getType().equals("audio")){
+                if(message.getType()!=null && message.getType().equals("file")){
+                    return VIEW_TYPE_FILE_MESSAGE_SENT_OK;
+                }else if(message.getType()!=null && message.getType().equals("audio")){
                     return VIEW_TYPE_AUDIO_MESSAGE_SENT_OK;
                 }else if(message.getType()!=null && message.getType().equals("image")){
                     return VIEW_TYPE_MEDIA_MESSAGE_SENT_OK;
@@ -114,7 +116,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
                 return VIEW_TYPE_MESSAGE_SENT_OK;
             }else{
-                if(message.getType()!=null && message.getType().equals("audio")){
+                if(message.getType()!=null && message.getType().equals("file")) {
+                    return VIEW_TYPE_FILE_MESSAGE_SENT;
+                }else if(message.getType()!=null && message.getType().equals("audio")){
                     return VIEW_TYPE_AUDIO_MESSAGE_SENT;
                 }else if(message.getType()!=null && message.getType().equals("image")){
                     return VIEW_TYPE_MEDIA_MESSAGE_SENT;
@@ -129,7 +133,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         } else {
             // If some other user sent the message
-            if(message.getType()!=null && message.getType().equals("audio")){
+            if(message.getType()!=null && message.getType().equals("file")){
+                return VIEW_TYPE_FILE_MESSAGE_RECEIVED;
+            }else if(message.getType()!=null && message.getType().equals("audio")){
                     return VIEW_TYPE_AUDIO_MESSAGE_RECEIVED;
             }else if(message.getType()!=null && message.getType().equals("image")){
                 return VIEW_TYPE_MEDIA_MESSAGE_RECEIVED;
@@ -210,6 +216,18 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_media_message_sent_ok, parent, false);
             return new VideoMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_FILE_MESSAGE_RECEIVED){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_file_message_received, parent, false);
+            return new FileMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_FILE_MESSAGE_SENT){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_file_message_sent, parent, false);
+            return new FileMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_FILE_MESSAGE_SENT_OK){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_file_message_sent_ok, parent, false);
+            return new FileMessageHolder(view);
         }
         Log.e("finding message type","something went wrong");
         view = LayoutInflater.from(parent.getContext())
@@ -254,6 +272,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case VIEW_TYPE_VIDEO_MESSAGE_SENT:
             case VIEW_TYPE_VIDEO_MESSAGE_SENT_OK:
                 ((VideoMessageHolder) holder).bind(message);
+            case VIEW_TYPE_FILE_MESSAGE_RECEIVED:
+            case VIEW_TYPE_FILE_MESSAGE_SENT:
+            case VIEW_TYPE_FILE_MESSAGE_SENT_OK:
+                ((FileMessageHolder) holder).bind(message);
         }
     }
 
@@ -425,6 +447,33 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 };
                 mainHandler.post(myRunnable);
             }catch (Exception e) {e.printStackTrace();}
+        }
+    }
+
+    private static class FileMessageHolder extends RecyclerView.ViewHolder{
+        TextView timeText,nameText,filenameText;
+        ImageView imageHolder;
+
+        FileMessageHolder(View itemView){
+            super(itemView);
+            timeText = itemView.findViewById(R.id.text_message_time);
+            nameText = itemView.findViewById(R.id.text_message_name);
+            imageHolder = itemView.findViewById(R.id.img_holder);
+            filenameText = itemView.findViewById(R.id.txt_filename);
+        }
+
+        void bind(QuotedUserMessage message) {
+            if(nameText!=null){
+                nameText.setText(message.getSender());
+            }
+            filenameText.setText(message.getFilename());
+            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
+            imageHolder.setOnClickListener(v -> {
+                //open/save file
+            });
+            filenameText.setOnClickListener(v -> {
+                //open/save file
+            });
         }
     }
 

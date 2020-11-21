@@ -13,6 +13,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="2dp">
@@ -33,9 +34,9 @@
                 android:layout_height="20dp"
                 android:contentDescription="@string/seen_image"
                 android:elevation="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/view_image"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/img_holder"
+                app:layout_constraintTop_toBottomOf="@+id/txt_filename"
                 app:srcCompat="@android:drawable/ic_lock_lock" />
 
             <TextView
@@ -46,8 +47,17 @@
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/view_image"
+                app:layout_constraintTop_toBottomOf="@+id/txt_filename" />
+
+            <ImageView
+                android:id="@+id/view_image"
+                android:layout_width="22dp"
+                android:layout_height="20dp"
+                android:contentDescription="@string/seen_image"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/img_seen"
-                app:layout_constraintTop_toBottomOf="@+id/img_holder" />
+                app:srcCompat="@drawable/ic_launcher_foreground" />
 
             <TextView
                 android:id="@+id/txt_filename"
@@ -61,11 +71,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/img_holder"
                 app:layout_constraintTop_toTopOf="@+id/img_holder" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

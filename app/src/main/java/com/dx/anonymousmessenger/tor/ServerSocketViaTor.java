@@ -237,6 +237,7 @@ public class ServerSocketViaTor {
                                     return;
                                 }
 
+                                //todo fix this vulnerability which allows attacker to send long utf to dos maybe
                                 final String rec = msg;
                                 new Thread(()-> MessageSender.messageReceiver(rec,app)).start();
                                 outputStream.writeUTF("ack3");

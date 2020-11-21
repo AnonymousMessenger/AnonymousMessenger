@@ -40,9 +40,19 @@
                 android:layout_margin="4dp"
                 android:background="@drawable/circle"
                 android:contentDescription="@string/profile_image"
-                app:layout_constraintBottom_toTopOf="@+id/text_message_body"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/img_holder"
+                android:layout_width="30dp"
+                android:layout_height="19dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/rounded_rectangle_steel"
+                android:contentDescription="@string/image_to_send"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/image_message_profile"
+                app:srcCompat="@drawable/ic_baseline_attach_file_24" />
 
             <ImageView
                 android:id="@+id/img_seen2"
@@ -50,37 +60,34 @@
                 android:layout_height="19dp"
                 android:layout_marginStart="2dp"
                 android:contentDescription="@string/indicates_secure_messaging"
-                android:elevation="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_message_body"
+                app:layout_constraintTop_toBottomOf="@+id/txt_filename"
                 app:srcCompat="@android:drawable/ic_lock_lock" />
-
-            <TextView
-                android:id="@+id/text_message_body"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoLink="all"
-                android:background="@drawable/rounded_rectangle_steel"
-                android:maxWidth="240dp"
-                android:padding="8dp"
-                android:text="@string/msg_place_holder"
-                android:textColor="#ffffff"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_message_name" />
 
             <TextView
                 android:id="@+id/text_message_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:text="@string/time_placeholder"
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintStart_toEndOf="@+id/img_seen2"
-                app:layout_constraintTop_toTopOf="@+id/img_seen2" />
+                app:layout_constraintTop_toBottomOf="@+id/txt_filename" />
+
+            <TextView
+                android:id="@+id/txt_filename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:background="@drawable/rounded_rectangle_steel"
+                android:maxLength="20"
+                android:maxLines="1"
+                android:text="@string/send_file"
+                app:layout_constraintBottom_toBottomOf="@+id/img_holder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/img_holder"
+                app:layout_constraintTop_toTopOf="@+id/img_holder" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
