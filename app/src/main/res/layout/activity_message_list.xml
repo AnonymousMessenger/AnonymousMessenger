@@ -34,7 +34,8 @@
         app:layout_constraintBottom_toTopOf="@id/txt_key_status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frame_online">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -50,7 +51,7 @@
         android:text="@string/decrypting"
         android:textColor="@color/green_tor"
         android:textSize="14sp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/layout_chatbox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -74,7 +75,7 @@
         android:orientation="horizontal"
         android:paddingStart="3dp"
         android:paddingEnd="3dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
@@ -152,13 +153,13 @@
             android:animateLayoutChanges="true"
             android:backgroundTint="@android:color/transparent"
             android:clickable="true"
+            android:contentDescription="@string/record_audio"
             android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_chatbox_send"
             app:layout_constraintTop_toTopOf="parent"
             app:rippleColor="@color/red_500"
-            app:srcCompat="@drawable/ic_baseline_mic_24"
-            android:contentDescription="@string/record_audio" />
+            app:srcCompat="@drawable/ic_baseline_mic_24" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_file"
@@ -169,13 +170,13 @@
             android:animateLayoutChanges="true"
             android:backgroundTint="@android:color/transparent"
             android:clickable="true"
+            android:contentDescription="@string/send_file"
             android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fab_audio"
             app:layout_constraintTop_toTopOf="parent"
             app:rippleColor="@color/red_500"
-            app:srcCompat="@drawable/ic_baseline_attach_file_24"
-            android:contentDescription="@string/send_file" />
+            app:srcCompat="@drawable/ic_baseline_attach_file_24" />
 
         <Button
             android:id="@+id/button_chatbox_send"

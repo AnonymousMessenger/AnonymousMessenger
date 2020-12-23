@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
+import java.io.FileInputStream;
 import java.net.Socket;
 
 public class TorClientSocks4 {
@@ -89,6 +90,57 @@ public class TorClientSocks4 {
                     }
                 }
             }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean sendFile(String onion, DxApplication app, String msg, FileInputStream file){
+        Socket socket;
+        try {
+            socket = Utilities.socks4aSocketConnection(onion, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
+
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            DataInputStream in =new DataInputStream(socket.getInputStream());
+            String msg2;
+
+            outputStream.writeUTF("file");
+            outputStream.flush();
+            msg2 = in.readUTF();
+            if(msg2.contains("ok")){
+                outputStream.writeUTF(app.getHostname());
+                outputStream.flush();
+                msg2 = in.readUTF();
+                if(msg2.contains("ok")){
+                    outputStream.writeUTF(msg);
+                    outputStream.flush();
+                    msg2 = in.readUTF();
+                    if(msg2.contains("ok")){
+                        outputStream.writeInt(file.available());
+                        outputStream.flush();
+                        msg2 = in.readUTF();
+                        if(msg2.contains("ok")){
+                            byte[] buffer;
+                            while(file.available()>0){
+                                //System.out.println("sending part");
+                                if(file.available()<1024){
+                                    buffer = new byte[file.available()];
+                                }else{
+                                    buffer = new byte[1024];
+                                }
+                                file.read(buffer,0,buffer.length);
+                                outputStream.write(buffer,0,buffer.length);
+                            }
+                            outputStream.flush();
+                            outputStream.close();
+                            return true;
+                        }
+                    }
+                }
+            }
+            outputStream.close();
             return false;
         } catch (Exception e) {
             e.printStackTrace();

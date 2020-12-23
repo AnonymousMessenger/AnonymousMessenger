@@ -254,7 +254,7 @@ public class AppFragment extends Fragment {
                         mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
                         recyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
-                        recyclerView.scheduleLayoutAnimation();
+//                        recyclerView.scheduleLayoutAnimation();
                         ((DxApplication)getActivity().getApplication()).clearMessageNotification();
                     } catch (Exception ignored) {}
                 });

@@ -36,6 +36,13 @@ public class MessageEncryptor {
         return new AddressedKeyExchangeMessage(kem,akem.getAddress(),true);
     }
 
+    //encrypt for stream
+    public static byte[] encryptStream(byte[] msg, SignalProtocolStore store, SignalProtocolAddress address) throws UntrustedIdentityException {
+        SessionCipher asc = new SessionCipher(store, address);
+        
+        return asc.encrypt(msg).serialize();
+    }
+
     //encrypt for bytes
     public static byte[] encrypt(byte[] msg, SignalProtocolStore store, SignalProtocolAddress address) throws UntrustedIdentityException {
         SessionCipher asc = new SessionCipher(store, address);

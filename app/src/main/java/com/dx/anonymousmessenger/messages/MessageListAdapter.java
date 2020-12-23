@@ -35,7 +35,6 @@ import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -272,6 +271,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case VIEW_TYPE_VIDEO_MESSAGE_SENT:
             case VIEW_TYPE_VIDEO_MESSAGE_SENT_OK:
                 ((VideoMessageHolder) holder).bind(message);
+                break;
             case VIEW_TYPE_FILE_MESSAGE_RECEIVED:
             case VIEW_TYPE_FILE_MESSAGE_SENT:
             case VIEW_TYPE_FILE_MESSAGE_SENT_OK:
@@ -517,19 +517,19 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     MediaMetadataRetriever mmr = new MediaMetadataRetriever();
                     mmr.setDataSource(new MediaDataSource() {
                         @Override
-                        public int readAt(long position, byte[] buffer, int offset, int size) throws IOException {
+                        public int readAt(long position, byte[] buffer, int offset, int size) {
                             ByteArrayInputStream bais = new ByteArrayInputStream(img_bin);
                             bais.skip(position-1);
                             return bais.read(buffer,offset,size);
                         }
 
                         @Override
-                        public long getSize() throws IOException {
+                        public long getSize() {
                             return img_bin.length;
                         }
 
                         @Override
-                        public void close() throws IOException {
+                        public void close() {
 
                         }
                     });
@@ -580,11 +580,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if(img_bin == null){
                     return;
                 }
-//                YuvImage yuvImage = new YuvImage(img_bin, ImageFormat.NV21, 100, 100, null);
-//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                yuvImage.compressToJpeg(new Rect(0, 0, 100, 100), 80, baos);
-//                byte[] jdata = baos.toByteArray();
-                Bitmap bitmap = BitmapFactory.decodeByteArray(img_bin, 0, img_bin.length);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 2;
+                Bitmap bitmap = BitmapFactory.decodeByteArray(img_bin, 0, img_bin.length, options);
                 if(bitmap==null){
                     return;
                 }

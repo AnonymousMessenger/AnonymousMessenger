@@ -7,6 +7,7 @@ import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -46,7 +47,13 @@ public class AudioRecordingService extends Service {
         new Thread(this::startTiming).start();
         outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[minBufSize];
-        recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,channelConfig,audioFormat,buffer.length);
+        try{
+            recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,channelConfig,audioFormat,buffer.length);
+        }catch (Exception e){
+            Toast.makeText(this, R.string.recording_failed,Toast.LENGTH_LONG).show();
+            stopRecording();
+            return;
+        }
         new Thread(()->{
             try{
                 recorder.startRecording();
@@ -91,6 +98,9 @@ public class AudioRecordingService extends Service {
         recorder.release();
         //put recorded stream into bytes
         byte[] recorded = outputStream.toByteArray();
+        if(recorded.length == 0){
+            return;
+        }
         //get app ready
         DxApplication app = (DxApplication) getApplication();
         //get time ready

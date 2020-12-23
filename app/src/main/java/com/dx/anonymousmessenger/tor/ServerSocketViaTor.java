@@ -12,27 +12,22 @@ import com.dx.anonymousmessenger.messages.MessageSender;
 import net.sf.controller.network.AndroidTorRelay;
 import net.sf.controller.network.TorServerSocket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerSocketViaTor {
-    private static final Logger LOG = LoggerFactory.getLogger(ServerSocketViaTor.class);
     private static final int hiddenservicedirport = 5780;
     private static final int localport = 5780;
-    private static CountDownLatch serverLatch = new CountDownLatch(2);
-    private Context ctx;
+    private final Context ctx;
     AndroidTorRelay node;
     Thread serverThread;
+    Thread jobsThread;
     private TorServerSocket torServerSocket;
-    private Server server;
 
     public ServerSocketViaTor(Context ctx) {
         this.ctx = ctx;
@@ -42,11 +37,11 @@ public class ServerSocketViaTor {
         return node;
     }
 
-    public void setAndroidTorRelay(AndroidTorRelay atr) {this.node = atr;}
+//    public void setAndroidTorRelay(AndroidTorRelay atr) {this.node = atr;}
 
-    public void setServerThread(Thread thread) {this.serverThread = thread;}
+//    public void setServerThread(Thread thread) {this.serverThread = thread;}
 
-    public Thread getServerThread() {return serverThread;}
+//    public Thread getServerThread() {return serverThread;}
 
     public void init(DxApplication app) throws IOException {
         if (ctx == null) {
@@ -88,16 +83,30 @@ public class ServerSocketViaTor {
         app.setEntity(myEntity);
 
         ServerSocket ssocks = torServerSocket.getServerSocket();
-        this.server = new Server(ssocks,app);
+        Server server = new Server(ssocks, app);
 
         this.serverThread = new Thread(server);
         serverThread.start();
 
+        this.jobsThread = new Thread(()->{
+            recurseJobs(app);
+        });
+        jobsThread.start();
+
+//        serverLatch.await();
+    }
+
+    public void recurseJobs(DxApplication app){
+        //send queued messages and update online statuses and delete due messages
         if(TorClientSocks4.test(app)){
             new Thread(app::queueAllUnsentMessages).start();
         }
-
-//        serverLatch.await();
+        try{
+            Thread.sleep(10*60*1000);
+        }catch (Exception ignored) {
+            return;
+        }
+        recurseJobs(app);
     }
 
     public void tryKill(){
@@ -137,7 +146,8 @@ public class ServerSocketViaTor {
     private static class Server implements Runnable {
         private final ServerSocket socket;
 //        private static final DateFormat df = new SimpleDateFormat("K:mm a, z", Locale.ENGLISH);
-        private DxApplication app;
+        private final DxApplication app;
+        private final static int ALLOWED_CONCURRENT_CONNECTIONS = 50;
 
         private Server(ServerSocket socket, DxApplication app) {
             this.socket = socket;
@@ -149,7 +159,15 @@ public class ServerSocketViaTor {
         public void run() {
             app.setServerReady(true);
             try {
+                AtomicInteger sockets = new AtomicInteger();
                 while (true) {
+                    if(sockets.get() >= ALLOWED_CONCURRENT_CONNECTIONS){
+                        Log.e("TOO MANY SOCKETS","open sockets: "+sockets);
+//                        Thread.sleep(200);
+//                        socket.close();
+                        continue;
+                    }
+                    sockets.getAndIncrement();
                     Socket sock = socket.accept();
                     Log.d("SERVER CONNECTION", "RECEIVING SOMETHING");
                     try{
@@ -158,8 +176,9 @@ public class ServerSocketViaTor {
                                 DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
                                 DataInputStream in=new DataInputStream(sock.getInputStream());
                                 String msg = in.readUTF();
+                                System.out.println(msg);
                                 if(msg.contains("hello-")){
-                                    if(DbHelper.contactExists(msg.replace("hello-",""),app)){
+                                    if(msg.length() > 54 && msg.endsWith(".onion") && DbHelper.contactExists(msg.replace("hello-",""),app)){
                                         app.addToOnlineList(msg.replace("hello-",""));
                                         app.queueUnsentMessages(msg.replace("hello-",""));
                                     }
@@ -177,15 +196,15 @@ public class ServerSocketViaTor {
                                         outputStream.writeUTF("ok");
                                         outputStream.flush();
                                         msg = in.readUTF();
-                                        if(!msg.trim().endsWith(".onion")){
+                                        if(msg.length() < 54 || !msg.trim().endsWith(".onion")){
                                             //no bueno
                                             outputStream.writeUTF("nuf");
                                             outputStream.flush();
                                             sock.close();
                                             return;
                                         }
-                                        String address= msg.trim();
-                                        if(!DbHelper.contactExists(address,app)){
+//                                        String address= msg.trim();
+                                        if(!DbHelper.contactExists(msg.trim(),app)){
                                             //no bueno
                                             outputStream.writeUTF("nuf");
                                             outputStream.flush();
@@ -243,19 +262,26 @@ public class ServerSocketViaTor {
                                 outputStream.writeUTF("ack3");
                                 outputStream.flush();
                                 outputStream.close();
+                                sockets.getAndDecrement();
                             }catch (IOException e){
+                                sockets.getAndDecrement();
                                 e.printStackTrace();
                             }
                         }).start();
 
                     }catch (Exception e){
-                        Log.e("SERVER ERRORRRRR", "EROROROROROROROR");
+                        sockets.getAndDecrement();
+                        Log.e("SERVER ERROR", "ERROR");
                         e.printStackTrace();
                     }
                 }
             } catch (Exception  e) {
                 e.printStackTrace();
+                Log.e("SERVER STOPPED","RESTARTING SERVER");
                 app.setServerReady(false);
+
+//                run();
+                app.restartTor();
             }
         }
     }

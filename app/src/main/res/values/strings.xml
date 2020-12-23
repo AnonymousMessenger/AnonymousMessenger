@@ -204,4 +204,18 @@
     <string name="record_audio">record audio</string>
     <string name="send_file">send file</string>
     <string name="scroll_down">scroll down</string>
+    <string name="file">File</string>
+    <string name="unknown_file_name">Unknown file name</string>
+    <string name="unknown_file_size">Unknown file size</string>
+    <string name="recording_failed">Can\'t record now, maybe there\'s a call ongoing?</string>
+    <string-array name="security_tips">
+        <item>@string/security_tips01</item>
+        <item>@string/security_tips02</item>
+    </string-array>
+    <string name="security_tips01">Use a keyboard that respects your freedom and doesn\'t
+        connect to the internet, we recommend using OpenBoard</string>
+    <string name="security_tips02">Your security depends heavily on the applications
+        installed on the device, we recommend changing your default apps to apps from the
+        f-droid repository</string>
+    <string name="feature_unready">this feature will be ready in the next update</string>
 </resources>

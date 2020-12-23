@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -172,6 +174,15 @@ public class PasswordEntryFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+        //todo warn user against using a non free keyboard with internet access.
+        InputMethodManager im = (InputMethodManager)app.getSystemService(Context.INPUT_METHOD_SERVICE);
+        String list = im.getEnabledInputMethodList().toString();
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        System.out.println(list);
+//        for (int i=0;i<list.length();i++){
+//            System.out.println(list[i]);
+//        }
 
         return rootView;
     }

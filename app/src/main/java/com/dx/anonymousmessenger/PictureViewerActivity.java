@@ -72,7 +72,13 @@ public class PictureViewerActivity extends AppCompatActivity {
                     if(file==null){
                         return;
                     }
-                    image = BitmapFactory.decodeByteArray(file, 0, file.length);
+                    Bitmap image2 = BitmapFactory.decodeByteArray(file, 0, file.length);
+                    if(image2.getHeight()>1280 && image2.getWidth()>960){
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inSampleSize = 2;
+                        image2 = BitmapFactory.decodeByteArray(file, 0, file.length,options);
+                    }
+                    image = image2;
                 }catch (Exception e){
                     e.printStackTrace();
                     return;
@@ -82,7 +88,9 @@ public class PictureViewerActivity extends AppCompatActivity {
                 }
                 new Handler(Looper.getMainLooper()).post(()->{
                     ImageView img = findViewById(R.id.img_to_send);
-                    img.setImageBitmap(image);
+                    try{
+                        img.setImageBitmap(image);
+                    }catch (Exception ignored) {}
                     TextView textCaption = findViewById(R.id.txt_caption_view);
                     img.setOnClickListener(v -> {
                         if(textCaption.getText().toString().isEmpty()){

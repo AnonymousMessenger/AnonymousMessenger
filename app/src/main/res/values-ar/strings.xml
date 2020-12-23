@@ -181,4 +181,11 @@
     <string name="record_audio">سجل الصوت</string>
     <string name="send_file">أرسل ملف</string>
     <string name="scroll_down">حرك للأسفل</string>
+    <string name="file">ملف</string>
+    <string name="unknown_file_name">إسم الملف غير معروف</string>
+    <string name="unknown_file_size">حجم الملف غير معروف</string>
+    <string name="recording_failed">ﻻ يمكن التسجيل اﻵن, ربما توجد مكالمة جارية؟</string>
+    <string name="security_tips01">إستعمل كيبورد يحترم حريتك وﻻ يتصل بالإنترنت, نحن ننصح بإستعمال OpenBoard</string>
+    <string name="security_tips02">أمنك يعتمد بشكل كبير على التطبيقات المثبتة على جهازك, نحن ننصح بتغيير برامجك الإفترضية لبرامج من مخزن f-doid</string>
+    <string name="feature_unready">ستكون هذه الميزة متوفرة في الإصدار القادم</string>
 </resources>

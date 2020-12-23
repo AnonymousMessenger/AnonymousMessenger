@@ -1,6 +1,5 @@
 package com.dx.anonymousmessenger.media;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
@@ -11,23 +10,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dx.anonymousmessenger.MessageListActivity;
 import com.dx.anonymousmessenger.R;
 
 import java.util.List;
 
 public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleViewAdapter.ViewHolder> {
 
+    private final MessageListActivity context;
     public List<String> paths;
     public List<String> types;
-    private LayoutInflater mInflater;
+    private final LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     // data is passed into the constructor
-    public MediaRecycleViewAdapter(Context context, List<String> paths, List<String> types) {
+    public MediaRecycleViewAdapter(MessageListActivity context, List<String> paths, List<String> types) {
+        this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.paths = paths;
         this.types = types;
@@ -44,7 +47,14 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
     // binds the data to the view
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String path = paths.get(position);
+        //detect type as file selection to draw file icon
+        if(holder.getLayoutPosition() == 0){
+            holder.myView.setImageResource(R.drawable.ic_baseline_attach_file_24);
+            holder.info.setText(R.string.file);
+            return;
+        }
+        holder.info.setText("");
+        String path = paths.get(holder.getAdapterPosition());
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
         new Thread(()->{
@@ -72,10 +82,14 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView myView;
+        View itemView;
+        TextView info;
 
         ViewHolder(View itemView) {
             super(itemView);
-            myView = itemView.findViewById(R.id.view_image);
+            this.itemView = itemView;
+            this.myView = itemView.findViewById(R.id.view_image);
+            this.info = itemView.findViewById(R.id.txt_info);
             itemView.setOnClickListener(this);
         }
 

@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -47,6 +48,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.media.MediaRecycleViewAdapter;
 import com.dx.anonymousmessenger.messages.MessageListAdapter;
 import com.dx.anonymousmessenger.messages.MessageSender;
@@ -66,6 +68,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 
     private static final int REQUEST_CODE = 1;
     private static final int READ_STORAGE_REQUEST_CODE = 2;
+    public static final int REQUEST_PICK_FILE = 3;
     public TextView quoteTextTyping;
     public TextView quoteSenderTyping;
     private RecyclerView mMessageRecycler;
@@ -346,6 +349,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             new Thread(()->{
                 ArrayList<String> paths = new ArrayList<>();
                 ArrayList<String> types = new ArrayList<>();
+                //add file option in the beginning of the list
+                paths.add("0");
+                types.add("0");
                 // Get relevant columns for use later.
                 String[] projection = {
                     MediaStore.Files.FileColumns.DATA,
@@ -427,6 +433,17 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             quoteSenderTyping.setVisibility(View.VISIBLE);
         }
         picsHelp.setVisibility(View.GONE);
+        if(position == 0){
+            Toast.makeText(this, R.string.feature_unready,Toast.LENGTH_SHORT).show();
+//            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+//            chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
+//            chooseFile.setType("*/*");
+//            this.startActivityForResult(
+//                    Intent.createChooser(chooseFile, "Choose a file"),
+//                    MessageListActivity.REQUEST_PICK_FILE
+//            );
+            return;
+        }
         Intent intent = new Intent(this,PictureViewerActivity.class);
         intent.putExtra("address",address);
         intent.putExtra("nickname",nickname);
@@ -675,13 +692,8 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 }else if(intent.getLongExtra("delivery",-1) != -1){
                     for (QuotedUserMessage quotedUserMessage : messageList) {
                         if(quotedUserMessage.getCreatedAt()==intent.getLongExtra("delivery",-1)){
-                            //todo refresh item from DB
-                            //todo unite messagelists by only accessing the one in the adapter
                             quotedUserMessage.setReceived(true);
-//                            messageList = DbHelper.getMessageList((DxApplication)getApplication(),quotedUserMessage.getTo());
-//                            mMessageAdapter.setMessageList(messageList);
                             mMessageAdapter.notifyItemChanged(messageList.indexOf(quotedUserMessage));
-//                            updateUi();
                             return;
                         }
                     }
@@ -773,15 +785,23 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 }).start();
                 break;
             case R.id.action_settings:
-                //add the function to perform here
-                try{
-                    DxApplication app =  ((DxApplication) getApplication());
-                    if(app.getEntity()==null){
-                        break;
-                    }
-                    app.getEntity().getStore().deleteSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
-                    updateUi();
-                }catch (Exception ignored) {}
+                //reset session
+                new AlertDialog.Builder(this,R.style.AppAlertDialog)
+                        .setTitle(R.string.action_settings)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(R.string.yes, (dialog, which) -> {
+                            try{
+                                DxApplication app =  ((DxApplication) getApplication());
+                                if(app.getEntity()==null){
+                                    return;
+                                }
+                                app.getEntity().getStore().deleteSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
+                                updateUi();
+                            }catch (Exception ignored) {}
+                        })
+                        .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+                        }).show();
+
                 //((DxSignalKeyStore)app.getEntity().getStore()).removeIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
                 break;
             case R.id.action_verify_identity:
@@ -807,6 +827,22 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == REQUEST_PICK_FILE){
+            if(data == null || data.getData() == null){
+                return;
+            }
+            Intent intent = new Intent(this,FileViewerActivity.class);
+            intent.putExtra("path",data.getData().getPath());
+            intent.putExtra("filename", FileHelper.getFileName(data.getData(),this));
+            intent.putExtra("size",FileHelper.getFileSize(data.getData(),this));
+            intent.putExtra("address", getIntent().getStringExtra("address"));
+            startActivity(intent);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

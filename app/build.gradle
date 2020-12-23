@@ -62,5 +62,4 @@ dependencies {
     implementation "androidx.sqlite:sqlite:2.1.0"
     implementation "com.android.support:support-compat:29.0.0"
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
-//    implementation 'io.javalin:javalin:3.9.1'
 }

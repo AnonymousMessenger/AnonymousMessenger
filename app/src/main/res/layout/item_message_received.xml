@@ -60,7 +60,7 @@
                 android:id="@+id/text_message_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:autoLink="all"
+                android:autoLink=""
                 android:background="@drawable/rounded_rectangle_steel"
                 android:maxWidth="240dp"
                 android:padding="8dp"

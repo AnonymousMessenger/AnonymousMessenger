@@ -22,6 +22,7 @@ import org.whispersystems.libsignal.SignalProtocolAddress;
 import org.whispersystems.libsignal.StaleKeyExchangeException;
 import org.whispersystems.libsignal.UntrustedIdentityException;
 
+import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -32,7 +33,7 @@ public class MessageSender {
             boolean received = false;
             try {
                 if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(to,1))){
-                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained nigga!!!" );
+                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained!!!" );
                     return;
                 }
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
@@ -66,27 +67,69 @@ public class MessageSender {
             boolean received = false;
             try {
                 if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(to,1))){
-                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained nigga!!!" );
+                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained!!!" );
                     return;
                 }
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
                 received = TorClientSocks4.Init(to,app,aem.toJson().toString());
             }catch (Exception e){
-                Intent gcm_rec = new Intent("your_action");
-                gcm_rec.putExtra("error",app.getString(R.string.cant_encrypt_message));
-                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+//                Intent gcm_rec = new Intent("your_action");
+//                gcm_rec.putExtra("error",app.getString(R.string.cant_encrypt_message));
+//                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 e.printStackTrace();
                 Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
             }finally {
                 DbHelper.setMessageReceived(msg,app,to,received);
             }
-            Intent gcm_rec = new Intent("your_action");
-            gcm_rec.putExtra("delivery",msg.getCreatedAt());
-            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            if(received){
+                Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("delivery",msg.getCreatedAt());
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            }
         } catch (Exception e) {
             Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
             e.printStackTrace();
         }
+    }
+
+    public static void sendFile(QuotedUserMessage msg, DxApplication app, String to){
+        //get encrypted file stream
+        //send stream
+        //needs message for to know it was received
+
+        try {
+            boolean received = false;
+            try {
+                if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(to,1))){
+                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained!!!" );
+                    return;
+                }
+                DbHelper.saveMessage(msg,app,to, false);
+                Intent gcm_rec = new Intent("your_action");
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+                //split message to file and metadata (msg is metadata)
+                FileInputStream file = FileHelper.getSharedFileStream(msg.getPath(),app);
+
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
+
+//                received = TorClientSocks4.sendFile(to,app,aem.toJson().toString(),MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
+            }catch (Exception e){
+//                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
+            }finally {
+                DbHelper.setMessageReceived(msg,app,to,received);
+            }
+            if(received){
+                Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("delivery",msg.getCreatedAt());
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            }
+        } catch (Exception e) {
+            Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
+            e.printStackTrace();
+        }
+
     }
 
     public static void sendMediaMessage(QuotedUserMessage msg, DxApplication app, String to) {
@@ -94,7 +137,7 @@ public class MessageSender {
             boolean received = false;
             try {
                 if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(to,1))){
-                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained nigga!!!" );
+                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained!!!" );
                     return;
                 }
                 DbHelper.saveMessage(msg,app,to, false);
@@ -113,9 +156,11 @@ public class MessageSender {
             }finally {
                 DbHelper.setMessageReceived(msg,app,to,received);
             }
-            Intent gcm_rec = new Intent("your_action");
-            gcm_rec.putExtra("delivery",msg.getCreatedAt());
-            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            if(received){
+                Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("delivery",msg.getCreatedAt());
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            }
         } catch (Exception e) {
             Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
             e.printStackTrace();
@@ -127,7 +172,7 @@ public class MessageSender {
             boolean received = false;
             try {
                 if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(to,1))){
-                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained nigga!!!" );
+                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained!!!" );
                     return;
                 }
                 //split message to file and metadata (msg is metadata)
@@ -143,9 +188,11 @@ public class MessageSender {
             }finally {
                 DbHelper.setMessageReceived(msg,app,to,received);
             }
-            Intent gcm_rec = new Intent("your_action");
-            gcm_rec.putExtra("delivery",msg.getCreatedAt());
-            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            if(received){
+                Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("delivery",msg.getCreatedAt());
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            }
         } catch (Exception e) {
             Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
             e.printStackTrace();
@@ -162,8 +209,10 @@ public class MessageSender {
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),false);
             boolean received = TorClientSocks4.Init(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
-            gcm_rec.putExtra("delivery",msg.getCreatedAt());
-            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            if(received){
+//                gcm_rec.putExtra("delivery",msg.getCreatedAt());
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            }
         }catch (Exception e){
             Log.e("SENDER MESSAGE EXCHANGE", "FAIL" );
             e.printStackTrace();
@@ -179,8 +228,10 @@ public class MessageSender {
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),false);
             boolean received = TorClientSocks4.Init(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
-            gcm_rec.putExtra("delivery",msg.getCreatedAt());
-            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            if(received){
+//                gcm_rec.putExtra("delivery",msg.getCreatedAt());
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            }
         }catch (Exception e){
             Log.e("SENDER MESSAGE EXCHANGE", "FAIL" );
             e.printStackTrace();
@@ -197,8 +248,10 @@ public class MessageSender {
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),true);
             boolean received = TorClientSocks4.Init(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
-            gcm_rec.putExtra("delivery",msg.getCreatedAt());
-            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            if(received){
+//                gcm_rec.putExtra("delivery",msg.getCreatedAt());
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            }
         }catch (Exception | StaleKeyExchangeException e){
             Log.e("SENDER MESSAGE EXCHANGE", "FAIL" );
             e.printStackTrace();
@@ -224,7 +277,12 @@ public class MessageSender {
         try {
             JSONObject json = new JSONObject(msg);
             if(json.has("address")){
-                if(!DbHelper.contactExists(json.getString("address"),app)){
+                //make isValid function dude
+                if(json.getString("address").length() < 54 ||
+                        json.getString("address").length() > 64 ||
+                        !json.getString("address").endsWith(".onion") ||
+                        !DbHelper.contactExists(json.getString("address"),app)){
+                    Log.e("MSG RCVR","RECEIVED BAD/UNKNOWN ADDRESS, throwing away message");
                     return;
                 }
             }else{
