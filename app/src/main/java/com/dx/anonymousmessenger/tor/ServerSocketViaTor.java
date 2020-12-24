@@ -167,8 +167,8 @@ public class ServerSocketViaTor {
 //                        socket.close();
                         continue;
                     }
-                    sockets.getAndIncrement();
                     Socket sock = socket.accept();
+                    sockets.getAndIncrement();
                     Log.d("SERVER CONNECTION", "RECEIVING SOMETHING");
                     try{
                         new Thread(()->{
