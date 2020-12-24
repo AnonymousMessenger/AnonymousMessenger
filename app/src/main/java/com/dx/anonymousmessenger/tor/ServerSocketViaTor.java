@@ -118,6 +118,12 @@ public class ServerSocketViaTor {
                     serverThread = null;
                 }catch (Exception ignored){}
             }
+            if(jobsThread!=null){
+                try{
+                    jobsThread.interrupt();
+                    jobsThread = null;
+                }catch (Exception ignored){}
+            }
             if(torServerSocket!=null){
                 try {
                     torServerSocket.getServerSocket().close();
@@ -161,13 +167,19 @@ public class ServerSocketViaTor {
             try {
                 AtomicInteger sockets = new AtomicInteger();
                 while (true) {
+//                    if(sockets.get() >= ALLOWED_CONCURRENT_CONNECTIONS){
+//                        Log.e("TOO MANY SOCKETS","open sockets: "+sockets);
+//                        Thread.sleep(200);
+////                        socket.close();
+//                        continue;
+//                    }
+                    Socket sock = socket.accept();
                     if(sockets.get() >= ALLOWED_CONCURRENT_CONNECTIONS){
                         Log.e("TOO MANY SOCKETS","open sockets: "+sockets);
 //                        Thread.sleep(200);
-//                        socket.close();
+                        sock.close();
                         continue;
                     }
-                    Socket sock = socket.accept();
                     sockets.getAndIncrement();
                     Log.d("SERVER CONNECTION", "RECEIVING SOMETHING");
                     try{
@@ -178,11 +190,12 @@ public class ServerSocketViaTor {
                                 String msg = in.readUTF();
                                 System.out.println(msg);
                                 if(msg.contains("hello-")){
-                                    if(msg.length() > 54 && msg.endsWith(".onion") && DbHelper.contactExists(msg.replace("hello-",""),app)){
+                                    if(msg.replace("hello-","").length() > 54 && msg.replace("hello-","").endsWith(".onion") && DbHelper.contactExists(msg.replace("hello-",""),app)){
                                         app.addToOnlineList(msg.replace("hello-",""));
                                         app.queueUnsentMessages(msg.replace("hello-",""));
                                     }
                                     sock.close();
+                                    sockets.getAndDecrement();
                                     return;
                                 }else if(msg.equals("call")){
                                     try {
@@ -201,6 +214,7 @@ public class ServerSocketViaTor {
                                             outputStream.writeUTF("nuf");
                                             outputStream.flush();
                                             sock.close();
+                                            sockets.getAndDecrement();
                                             return;
                                         }
 //                                        String address= msg.trim();
@@ -209,6 +223,7 @@ public class ServerSocketViaTor {
                                             outputStream.writeUTF("nuf");
                                             outputStream.flush();
                                             sock.close();
+                                            sockets.getAndDecrement();
                                             return;
                                         }
                                         outputStream.writeUTF("ok");
@@ -224,6 +239,7 @@ public class ServerSocketViaTor {
                                             outputStream.writeUTF("nuf");
                                             outputStream.flush();
                                             sock.close();
+                                            sockets.getAndDecrement();
                                             return;
                                         }
                                         outputStream.writeUTF("ok");
@@ -246,6 +262,7 @@ public class ServerSocketViaTor {
                                             cache.write(buffer,0,buffer.length);
                                         }
                                         in.close();
+                                        sockets.getAndDecrement();
                                         Log.d("FILE RECEIVER", "TOTAL BYTES READ : "+total_read);
                                         Log.d("FILE RECEIVER", "FILE SIZE : "+fileSize);
                                         MessageSender.mediaMessageReceiver(cache.toByteArray(),recMsg,app);
@@ -263,7 +280,7 @@ public class ServerSocketViaTor {
                                 outputStream.flush();
                                 outputStream.close();
                                 sockets.getAndDecrement();
-                            }catch (IOException e){
+                            }catch (Exception e){
                                 sockets.getAndDecrement();
                                 e.printStackTrace();
                             }

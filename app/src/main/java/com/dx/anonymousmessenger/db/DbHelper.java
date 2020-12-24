@@ -18,6 +18,7 @@ import net.sqlcipher.database.SQLiteException;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,13 +40,14 @@ public class DbHelper {
         return new Object[]{nickname,address};
     }
 
-    public static List<String[]> getContactsList(DxApplication app){
+    public static List<String[]> getContactsList(DxApplication app) {
         if (app.getAccount()==null){
             return null;
         }
         SQLiteDatabase database = app.getDb();
         if (database.isDbLockedByOtherThreads()){
-            return new ArrayList<>();
+//            throw new IOException("DB locked, try again in a few mills");
+            return null;
         }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         Cursor cr = database.rawQuery("SELECT * FROM contact ORDER BY unread DESC;",null);

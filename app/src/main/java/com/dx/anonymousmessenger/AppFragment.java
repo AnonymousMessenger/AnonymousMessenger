@@ -220,6 +220,7 @@ public class AppFragment extends Fragment {
                     if(tmp==null || lst==null)break;
                     if(!Utils.arrayListEquals(lst,tmp)){
                         updateUi(tmp);
+//                        updateUi();
                     }
                 }catch (Exception ignored){break;}
             }
@@ -244,6 +245,9 @@ public class AppFragment extends Fragment {
             }
             try{
                 lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
+                if(lst==null){
+                    return;
+                }
                 mainThread.post(()->{
                     try{
                         if(lst.isEmpty()){
@@ -254,7 +258,7 @@ public class AppFragment extends Fragment {
                         mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
                         recyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
-//                        recyclerView.scheduleLayoutAnimation();
+                        recyclerView.scheduleLayoutAnimation();
                         ((DxApplication)getActivity().getApplication()).clearMessageNotification();
                     } catch (Exception ignored) {}
                 });
@@ -263,6 +267,9 @@ public class AppFragment extends Fragment {
     }
 
     public void updateUi(List<String[]> tmp){
+        if(tmp==null){
+            return;
+        }
         new Thread(()->{
             if(getActivity()==null || mainThread==null){
                 return;
