@@ -208,14 +208,52 @@
     <string name="unknown_file_name">Unknown file name</string>
     <string name="unknown_file_size">Unknown file size</string>
     <string name="recording_failed">Can\'t record now, maybe there\'s a call ongoing?</string>
+    <string name="feature_unready">this feature will be ready in the next update</string>
     <string-array name="security_tips">
         <item>@string/security_tips01</item>
         <item>@string/security_tips02</item>
+        <item>@string/security_tips03</item>
+        <item>@string/security_tips04</item>
+        <item>@string/security_tips05</item>
+        <item>@string/security_tips06</item>
+        <item>@string/security_tips07</item>
+        <item>@string/security_tips08</item>
+        <item>@string/security_tips09</item>
+        <item>@string/security_tips10</item>
+        <item>@string/security_tips11</item>
+        <item>@string/security_tips12</item>
+        <item>@string/security_tips13</item>
+        <item>@string/security_tips14</item>
+        <item>@string/security_tips15</item>
     </string-array>
     <string name="security_tips01">Use a keyboard that respects your freedom and doesn\'t
         connect to the internet, we recommend using OpenBoard</string>
     <string name="security_tips02">Your security depends heavily on the applications
         installed on the device, we recommend changing your default apps to apps from the
         f-droid repository</string>
-    <string name="feature_unready">this feature will be ready in the next update</string>
+    <string name="security_tips03">Try not to accidentally paste your friend\'s address in your
+        browser as that might jeopardize your/their anonymity</string>
+    <string name="security_tips04">Uninstall Anonymous Messenger to delete your account and wipe
+        everything.</string>
+    <string name="security_tips05">Downloading from our onion service is more secure than our
+        clear net servers.</string>
+    <string name="security_tips06">Your data storage encryption is only as secure as your
+        password, we recommend a long password made up of words that mean nothing to you.</string>
+    <string name="security_tips07">Text is more secure and anonymous than anything else.</string>
+    <string name="security_tips08">Share your address in the most secure way possible.</string>
+    <string name="security_tips09">Encrypt phone storage if possible.</string>
+    <string name="security_tips10">When you want to use a VPN make sure the client you use is open
+        source free software such as OpenVPN.</string>
+    <string name="security_tips11">Exiting Anonymous Messenger keeps your data encrypted on your
+        phone.</string>
+    <string name="security_tips12">Build Anonymous Messenger from source if possible.</string>
+    <string name="security_tips13">Verify identities.</string>
+    <string name="security_tips14">Make sure you don\'t use any proprietary apps on your phone and
+        that you use a free open source program to access your social media sites, financial
+        services, and generally to not have any app that you can\'t trust or one that requires
+        more permissions than it needs to have, or has any third party advertisements presented by
+        the app itself.</string>
+    <string name="security_tips15">Consider making a donation to help make this project even
+        better and help us deliver the best solution for anonymous messaging to everyone.</string>
+
 </resources>
