@@ -599,7 +599,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         intent.putExtra("appData",true);
                         intent.putExtra("path",message.getPath());
                         intent.putExtra("message",message.getMessage());
-                        app.startActivity(intent);
+                        v.getContext().startActivity(intent);
                     });
                 });
             }).start();

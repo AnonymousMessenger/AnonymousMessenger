@@ -1,4 +1,4 @@
-//package com.example.anonymousmessenger.android.activity;
+//package com.dx.anonymousmessenger.android.activity;
 //
 //import android.content.Intent;
 //import android.transition.Transition;
@@ -32,12 +32,12 @@
 //import static android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION;
 //import static android.os.Build.VERSION.SDK_INT;
 //import static java.util.logging.Level.INFO;
-//import static com.example.anonymousmessenger.android.activity.RequestCodes.REQUEST_DOZE_WHITELISTING;
-//import static com.example.anonymousmessenger.android.activity.RequestCodes.REQUEST_PASSWORD;
-//import static com.example.anonymousmessenger.android.activity.RequestCodes.REQUEST_UNLOCK;
-//import static com.example.anonymousmessenger.android.util.UiUtils.excludeSystemUi;
-//import static com.example.anonymousmessenger.android.util.UiUtils.getDozeWhitelistingIntent;
-//import static com.example.anonymousmessenger.android.util.UiUtils.isSamsung7;
+//import static com.dx.anonymousmessenger.android.activity.RequestCodes.REQUEST_DOZE_WHITELISTING;
+//import static com.dx.anonymousmessenger.android.activity.RequestCodes.REQUEST_PASSWORD;
+//import static com.dx.anonymousmessenger.android.activity.RequestCodes.REQUEST_UNLOCK;
+//import static com.dx.anonymousmessenger.android.util.UiUtils.excludeSystemUi;
+//import static com.dx.anonymousmessenger.android.util.UiUtils.getDozeWhitelistingIntent;
+//import static com.dx.anonymousmessenger.android.util.UiUtils.isSamsung7;
 //
 //@MethodsNotNullByDefault
 //@ParametersNotNullByDefault

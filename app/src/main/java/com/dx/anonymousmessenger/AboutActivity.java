@@ -1,9 +1,13 @@
 package com.dx.anonymousmessenger;
 
+import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.text.MessageFormat;
 
 public class AboutActivity extends AppCompatActivity {
 
@@ -20,6 +24,12 @@ public class AboutActivity extends AppCompatActivity {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setTitle(R.string.action_about);
             }
+        }catch (Exception ignored){}
+
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            TextView version = findViewById(R.id.txt_version);
+            version.setText(MessageFormat.format("v{0} - {1}", pInfo.versionName, pInfo.versionCode));
         }catch (Exception ignored){}
     }
 

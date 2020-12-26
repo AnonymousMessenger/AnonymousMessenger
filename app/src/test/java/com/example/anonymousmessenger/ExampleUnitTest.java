@@ -1,4 +1,4 @@
-package com.example.anonymousmessenger;
+package com.dx.anonymousmessenger;
 
 import org.junit.Test;
 

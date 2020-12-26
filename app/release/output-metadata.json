@@ -1,19 +1,17 @@
 {
-  "version": 1,
+  "version": 2,
   "artifactType": {
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.example.anonymousmessenger",
-  "variantName": "release",
+  "applicationId": "com.dx.anonymousmessenger",
+  "variantName": "processReleaseResources",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "properties": [],
-      "versionCode": 1,
-      "versionName": "1.0",
-      "enabled": true,
+      "versionCode": 7,
+      "versionName": "0.6",
       "outputFile": "app-release.apk"
     }
   ]

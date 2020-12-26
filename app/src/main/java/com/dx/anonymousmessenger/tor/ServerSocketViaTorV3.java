@@ -1,9 +1,9 @@
-//package com.example.anonymousmessenger.tor;
+//package com.dx.anonymousmessenger.tor;
 //
 //import android.content.Context;
 //import android.util.Log;
 //
-//import com.example.anonymousmessenger.DxApplication;
+//import com.dx.anonymousmessenger.DxApplication;
 //import com.jrummyapps.android.shell.CommandResult;
 //import com.jrummyapps.android.shell.Shell;
 //

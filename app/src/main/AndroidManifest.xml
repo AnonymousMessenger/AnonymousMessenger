@@ -27,7 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".FileViewerActivity"></activity>
+        <activity android:name=".FileViewerActivity" />
         <activity android:name=".TipsActivity" />
         <activity android:name=".AboutActivity" />
         <activity android:name=".ContactProfileActivity" />
