@@ -110,7 +110,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
         String rendQuery = info.get("REND_QUERY");
         if (rendQuery != null) msg += ", service: " + rendQuery;
         if (!path.isEmpty()) msg += ", path: " + shortenPath(path);
-        LOG.info(msg);
+//        LOG.info(msg);
 //        Intent gcm_rec = new Intent("tor_status");
 //        gcm_rec.putExtra("tor_status",msg);
 //        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);

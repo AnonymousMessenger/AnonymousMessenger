@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ServerSocketViaTor {
     private static final int hiddenservicedirport = 5780;
     //todo make this random to have more instances running
-    private static final int localport = 5780;
+    private int localport = 5780;
     private final Context ctx;
     AndroidTorRelay node;
     Thread serverThread;
@@ -78,7 +78,14 @@ public class ServerSocketViaTor {
             return;
         }
 
-        this.torServerSocket = node.createHiddenService(localport, hiddenservicedirport);
+        while(torServerSocket==null){
+            try{
+                this.torServerSocket = node.createHiddenService(localport, hiddenservicedirport);
+            }catch (IOException ignored){
+                localport++;
+            }
+        }
+
         app.setHostname(torServerSocket.getHostname());
         Entity myEntity = new Entity(app);
         app.setEntity(myEntity);

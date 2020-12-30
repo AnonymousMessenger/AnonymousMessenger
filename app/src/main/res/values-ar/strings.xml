@@ -201,4 +201,10 @@
     <string name="security_tips13">تحقق من الهوية التشفيرية لجهات إتصالك</string>
     <string name="security_tips14">تأكد من أنك لا تستعمل أية برامج إحتكارية على جهازك و انك تستعمل برنامجاً مفتوح المصدر لتتصل بخدمات الانترنت مثل وسائل التواصل الإجتماعي و الخدمات المالية و بشكل عام لا تقوم بتثبيت برنامج ﻻ يمكنك الوثوق به أو برنامجاً يتطلب الحصول على أذونات أكثر مما يحتاج ليعمل أو يقوم بوضع دعايات من أطراف ثالثة مقدمة من البرنامج نفسه</string>
     <string name="security_tips15">فكر في التبرع لتساعدنا في إيصال أفضل حل ممكن للتواصل المجهول للجميع</string>
+    <string name="opening_socks_listener">يتم فتح  منفذ سوكس</string>
+    <string name="socks_listener_listening">منفذ سوكس يعمل</string>
+    <string name="opened_socks_listener">تم فتح منفذ سوكس</string>
+    <string name="opening_control_listener">يتم فتح منفذ التحكم</string>
+    <string name="control_listener_listening">منفذ التحكم يعمل</string>
+    <string name="opened_control_listener">تم فتح منفذ التحكم</string>
 </resources>

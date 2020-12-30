@@ -30,11 +30,14 @@ public class Utils {
         }
         for(int i=0;i<one.size();i++){
             try{
-//                if(!Arrays.deepEquals(one.get(i),two.get(i))){
-//                    return false;
-//                }
                 if(one.get(i).length!=two.get(i).length){
                     return false;
+                }
+                //compare all fields in string[]
+                for(int j=0;j<one.get(i).length;j++){
+                    if(!one.get(i)[j].equals(two.get(i)[j])){
+                        return false;
+                    }
                 }
             }catch (Exception e){
                 return false;

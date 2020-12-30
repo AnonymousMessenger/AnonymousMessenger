@@ -395,9 +395,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             }).start();
         });
 
-        updateUi();
-        mMessageRecycler.scheduleLayoutAnimation();
-        ping();
+
 
         //run db message checker to delete any old messages then tell us to update ui
 //        checkMessages();
@@ -542,6 +540,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         messageChecker = new Thread(()->{
             while (messageList!=null){
                 try{
+                    //noinspection BusyWait
                     Thread.sleep(5000);
                     DbHelper.getMessageList(((DxApplication) getApplication()) ,
                             getIntent().getStringExtra("address"));
@@ -660,6 +659,12 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         });
     }
 
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        updateUi();
+//    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -709,6 +714,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         {
             e.printStackTrace();
         }
+        updateUi();
+        mMessageRecycler.scheduleLayoutAnimation();
+        ping();
         checkMessages();
     }
 

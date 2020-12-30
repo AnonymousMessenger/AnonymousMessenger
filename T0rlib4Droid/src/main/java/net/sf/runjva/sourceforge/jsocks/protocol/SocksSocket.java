@@ -373,7 +373,7 @@ public class SocksSocket extends Socket {
 
 	private void doDirect() throws SocksException {
 		try {
-			log.debug("IP: {}_{}", remoteIP, remotePort);
+//			log.debug("IP: {}_{}", remoteIP, remotePort);
 			directSock = new Socket(remoteIP, remotePort);
 			proxy.out = directSock.getOutputStream();
 			proxy.in = directSock.getInputStream();

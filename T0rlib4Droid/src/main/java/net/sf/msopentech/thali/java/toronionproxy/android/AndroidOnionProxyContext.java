@@ -4,6 +4,7 @@ package net.sf.msopentech.thali.java.toronionproxy.android;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
+import net.sf.msopentech.thali.java.toronionproxy.FileUtilities;
 import net.sf.msopentech.thali.java.toronionproxy.OnionProxyContext;
 import net.sf.msopentech.thali.java.toronionproxy.WriteObserver;
 
@@ -49,17 +50,14 @@ public class AndroidOnionProxyContext extends OnionProxyContext {
     return String.valueOf(android.os.Process.myPid());
   }
 
-  @Override
-  public void installFiles() throws IOException, InterruptedException {
-    super.installFiles();
-//    FileUtilities.cleanInstallOneFile(getAssetOrResourceByName(getPathToTorExecutable() + getTorExecutableFileName()),
-//            torExecutableFile);
-  }
+//  @Override
+//  public void installFiles() throws IOException, InterruptedException {
+//    super.installFiles();
+//  }
 
   @Override
   public String getPathToTorExecutable() {
     return "";
-
   }
 
   @SuppressLint("DefaultLocale")

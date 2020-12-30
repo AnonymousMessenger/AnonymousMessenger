@@ -58,13 +58,6 @@ public class AppFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static AppFragment newInstance() {
-        AppFragment fragment = new AppFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -73,13 +66,6 @@ public class AppFragment extends Fragment {
         mMyBroadcastReceiver = null;
         super.onPause();
     }
-
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        stopCheckingMessages();
-//        LocalBroadcastManager.getInstance(rootView.getContext()).unregisterReceiver(mMyBroadcastReceiver);
-//    }
 
     @Override
     public void onDestroyView() {
@@ -124,8 +110,9 @@ public class AppFragment extends Fragment {
             }
             }
         };
-        checkMessages();
         updateUi();
+        checkMessages();
+        checkConnectivity();
         if(onlineTxt.getText().toString().equals(getString(R.string.offline))){
             checkConnectivity();
         }
@@ -136,6 +123,12 @@ public class AppFragment extends Fragment {
         {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUi();
     }
 
     @Override
@@ -176,13 +169,6 @@ public class AppFragment extends Fragment {
                     ((SwipeRefreshLayout)rootView.findViewById(R.id.refresh)).setRefreshing(false);
                 }
         );
-
-        checkConnectivity();
-//        updateUi();
-//        checkMessages();
-//        new Thread(()->{
-//
-//        })
 
         if(!((DxApplication)getActivity().getApplication()).isWeAsked()){
             new Thread(()->{

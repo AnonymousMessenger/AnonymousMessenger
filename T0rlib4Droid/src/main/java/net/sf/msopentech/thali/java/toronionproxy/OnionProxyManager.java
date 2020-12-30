@@ -1,7 +1,10 @@
 
 package net.sf.msopentech.thali.java.toronionproxy;
 
+import android.content.Intent;
 import android.util.Log;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import net.sf.controller.network.NetLayerStatus;
 import net.sf.controller.network.ServiceDescriptor;
@@ -15,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -175,7 +179,7 @@ public abstract class OnionProxyManager {
         }
 
         // Watch for the hostname file being created/updated
-        WriteObserver hostNameFileObserver = onionProxyContext.generateWriteObserver(hostnameFile);
+//        WriteObserver hostNameFileObserver = onionProxyContext.generateWriteObserver(hostnameFile);
         // Use the control connection to update the Tor config
         List<String> config = Arrays.asList(
                 "HiddenServiceDir " + hostnameFile.getParentFile().getAbsolutePath(),
@@ -183,10 +187,10 @@ public abstract class OnionProxyManager {
         controlConnection.setConf(config);
         controlConnection.saveConf();
         // Wait for the hostname file to be created/updated
-        if (!hostNameFileObserver.poll(HOSTNAME_TIMEOUT, MILLISECONDS)) {
-            FileUtilities.listFilesToLog(hostnameFile.getParentFile());
-            throw new RuntimeException("Wait for hidden service hostname file to be created expired.");
-        }
+//        if (!hostNameFileObserver.poll(HOSTNAME_TIMEOUT, MILLISECONDS)) {
+//            FileUtilities.listFilesToLog(hostnameFile.getParentFile());
+//            throw new RuntimeException("Wait for hidden service hostname file to be created expired.");
+//        }
 
         // Publish the hidden service's onion hostname in transport properties
         String hostname = new String(FileUtilities.read(hostnameFile), "UTF-8").trim();
@@ -294,7 +298,7 @@ public abstract class OnionProxyManager {
             final String hiddenServiceName;
 
             hiddenServiceName = onionProxyManager.publishHiddenService(servicePort, localPort);
-
+            //todo add hidden service name to get multiple services running
             serviceDescriptor = new ServiceDescriptor(hiddenServiceName,
                     localPort, servicePort);
             if (listener != null)
@@ -356,6 +360,22 @@ public abstract class OnionProxyManager {
         String torPath = onionProxyContext.getTorExecutableFile().getAbsolutePath();
         String configDir = onionProxyContext.getTorrcFile().getAbsoluteFile().getParent();
         String configPath = onionProxyContext.getTorrcFile().getAbsolutePath();
+        final File directory = new File(configDir);
+        final File[] files = directory.listFiles( new FilenameFilter() {
+            @Override
+            public boolean accept( final File dir,
+                                   final String name ) {
+                return name.matches( "torrc.txt.orig.*" );
+            }
+        } );
+        for ( final File file : files ) {
+            if ( !file.delete() ) {
+                System.err.println( "Can't remove " + file.getAbsolutePath() );
+            }else{
+                System.out.println( "Removed " + file.getAbsolutePath() );
+            }
+        }
+
         String pid = onionProxyContext.getProcessId();
         String[] cmd = {torPath, "-f", configPath, OWNER, pid};
 //        String[] env = onionProxyContext.getEnvironmentArgsForExec();
@@ -400,7 +420,9 @@ public abstract class OnionProxyManager {
 
             // Open a control connection and authenticate using the cookie file
             TorControlConnection controlConnection = new TorControlConnection(controlSocket);
+            System.out.println("authenticating");
             controlConnection.authenticate(FileUtilities.read(cookieFile));
+            System.out.println("authenticated");
             //System.out.println("no way we quick to here");
             // Tell Tor to exit when the control connection is closed
             controlConnection.takeOwnership();
@@ -455,9 +477,9 @@ public abstract class OnionProxyManager {
 //                                countDownLatch.countDown();
                             }
                             LOG.info(nextLine);
-//                            Intent gcm_rec = new Intent("tor_status");
-//                            gcm_rec.putExtra("tor_status",nextLine);
-//                            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
+                            Intent gcm_rec = new Intent("tor_status");
+                            gcm_rec.putExtra("tor_status",nextLine);
+                            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
 //                            try {
 //                                if(controlConnection==null){
 //                                    new Thread(new Runnable() {

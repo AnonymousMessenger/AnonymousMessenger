@@ -255,5 +255,11 @@
         the app itself.</string>
     <string name="security_tips15">Consider making a donation to help make this project even
         better and help us deliver the best solution for anonymous messaging to everyone.</string>
+    <string name="opening_socks_listener">Opening Socks Listener</string>
+    <string name="socks_listener_listening">Socks listener Listening</string>
+    <string name="opened_socks_listener">Opened Socks Listener</string>
+    <string name="opening_control_listener">Opening Control Listener</string>
+    <string name="control_listener_listening">Control Listener Listening</string>
+    <string name="opened_control_listener">Opened Control Listener</string>
 
 </resources>

@@ -57,7 +57,7 @@ abstract public class OnionProxyContext {
         // clean itself up. Without that time we can't do things like delete its binary (which we currently
         // do by default, something we hope to fix with https://github.com/thaliproject/Tor_Onion_Proxy_Library/issues/13
 //        fuck that shit
-//        Thread.sleep(1000, 0);
+        Thread.sleep(1000, 0);
 
         if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
             throw new RuntimeException("Could not create root directory!");

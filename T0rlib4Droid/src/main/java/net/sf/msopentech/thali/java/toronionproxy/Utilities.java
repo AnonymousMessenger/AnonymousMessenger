@@ -26,13 +26,11 @@ public class Utilities {
 
     public static Socket socks4aSocketConnection(String networkHost, int networkPort, String socksHost, int socksPort)
             throws IOException {
-        //check if tor is in good shape or maybe wait for it
-        //DNS LEAK IF YOU USE THIS //hopefully fixed like this
         SocketAddress proxyAddress = InetSocketAddress.createUnresolved(socksHost,socksPort);
         SocketAddress onion = InetSocketAddress.createUnresolved(networkHost,networkPort);
         java.net.Proxy proxy = new java.net.Proxy(Proxy.Type.SOCKS,proxyAddress);
         Socket socket = new Socket(proxy);
-        socket.connect(onion);
+        socket.connect(onion,CONNECT_TIMEOUT_MILLISECONDS);
         return socket;
     }
 

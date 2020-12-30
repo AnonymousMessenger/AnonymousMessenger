@@ -14,10 +14,16 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.util.Utils;
+
+import java.util.List;
+
 public class SetupInProcess extends AppCompatActivity implements ComponentCallbacks2 {
 
     private BroadcastReceiver mMyBroadcastReceiver;
     private TextView statusText;
+    private Thread serverChecker = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +47,6 @@ public class SetupInProcess extends AppCompatActivity implements ComponentCallba
                 finish();
             });
         }
-
-
     }
 
     @Override
@@ -56,6 +60,7 @@ public class SetupInProcess extends AppCompatActivity implements ComponentCallba
         if(mMyBroadcastReceiver==null){
             return;
         }
+        stopCheckingServerReady();
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mMyBroadcastReceiver);
         mMyBroadcastReceiver = null;
     }
@@ -63,37 +68,65 @@ public class SetupInProcess extends AppCompatActivity implements ComponentCallba
     @Override
     public void onResume() {
         super.onResume();
-        new Thread(()->{
-            try{
-                Thread.sleep(500);
-            }catch (Exception ignored) {}
-            if(((DxApplication) getApplication()).isServerReady()){
-                Intent intent = new Intent(this, AppActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                finish();
-                return;
+        if(((DxApplication) getApplication()).isServerReady()){
+            Intent intent = new Intent(this, AppActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+            return;
+        }
+        if(mMyBroadcastReceiver!=null){
+            return;
+        }
+        mMyBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                new Thread(()->{
+                    try{
+                        updateUi(intent.getStringExtra("tor_status"));
+                    }catch (Exception ignored) {}
+                }).start();
             }
-            if(mMyBroadcastReceiver!=null){
-                return;
+        };
+        checkServerReady();
+        try {
+            LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void checkServerReady(){
+        if(serverChecker!=null){
+            return;
+        }
+        serverChecker = new Thread(()->{
+            while (true){
+                try{
+                    Thread.sleep(1000);
+                    if(((DxApplication) getApplication()).isServerReady()){
+                        runOnUiThread(()->{
+                            Intent intent = new Intent(this, AppActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(intent);
+                            finish();
+                        });
+                    }
+                }catch (Exception ignored){break;}
             }
-            mMyBroadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent)
-                {
-                    new Thread(()->{
-                        try{
-                            updateUi(intent.getStringExtra("tor_status"));
-                        }catch (Exception ignored) {}
-                    }).start();
-                }
-            };
-            try {
-                LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        }).start();
+        });
+        serverChecker.start();
+    }
+
+    public void stopCheckingServerReady(){
+        if(serverChecker==null){
+            return;
+        }
+        if(serverChecker.isAlive()){
+            serverChecker.interrupt();
+        }
+        serverChecker = null;
     }
 
     public void updateUi(String torStatus){
@@ -108,6 +141,24 @@ public class SetupInProcess extends AppCompatActivity implements ComponentCallba
 //        }
         if(torStatus.contains("DisableNetwork is set")){
             torStatus = getString(R.string.waiting_for_tor);
+        }
+        if(torStatus.contains("Opening Socks listener")){
+            torStatus = getString(R.string.opening_socks_listener);
+        }
+        if(torStatus.contains("Socks listener listening")){
+            torStatus = getString(R.string.socks_listener_listening);
+        }
+        if(torStatus.contains("Opened Socks listener")){
+            torStatus = getString(R.string.opened_socks_listener);
+        }
+        if(torStatus.contains("Opening Control listener")){
+            torStatus = getString(R.string.opening_control_listener);
+        }
+        if(torStatus.contains("Control listener listening")){
+            torStatus = getString(R.string.control_listener_listening);
+        }
+        if(torStatus.contains("Opened Control listener")){
+            torStatus = getString(R.string.opened_control_listener);
         }
         if(torStatus.contains("Bootstrapped 100%") || torStatus.contains("ALL GOOD")){
             ((DxApplication)getApplication()).setExitingHoldup(true);

@@ -591,7 +591,7 @@ public class ProxyServer implements Runnable {
 				command2String(msg.command));
 
 		final String user = msg.version == 4 ? ", User:" + msg.user : "";
-		log.debug("IP:, Port:" + msg.port + user);
+//		log.debug("IP:, Port:" + msg.port + user);
 	}
 
 	private void pipe(final InputStream in, final OutputStream out)

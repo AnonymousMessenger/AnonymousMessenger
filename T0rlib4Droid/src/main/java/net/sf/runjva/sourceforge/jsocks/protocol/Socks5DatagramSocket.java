@@ -126,8 +126,8 @@ public class Socks5DatagramSocket extends DatagramSocket {
 
 		encapsulation = proxy.udp_encapsulation;
 
-		log.debug("Datagram Socket:{}:{}", getLocalAddress(), getLocalPort());
-		log.debug("Socks5Datagram: {}:{}", relayIP, relayPort);
+//		log.debug("Datagram Socket:{}:{}", getLocalAddress(), getLocalPort());
+//		log.debug("Socks5Datagram: {}:{}", relayIP, relayPort);
 	}
 
 	/**

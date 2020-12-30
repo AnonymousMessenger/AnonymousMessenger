@@ -294,7 +294,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public void onClick(View v) {
             RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);
             rv.scrollToPosition(mMessageList.indexOf(message));
-            PopupMenu popup = new PopupMenu(mContext, v);
+            PopupMenu popup = new PopupMenu(v.getContext(), v);
             popup.inflate(R.menu.options_menu);
             if(message.isPinned()){
                 MenuItem pinButton = popup.getMenu().findItem(R.id.navigation_drawer_item2);

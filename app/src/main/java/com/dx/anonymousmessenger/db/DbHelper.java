@@ -45,9 +45,13 @@ public class DbHelper {
             return null;
         }
         SQLiteDatabase database = app.getDb();
-        if (database.isDbLockedByOtherThreads()){
+        while (database.isDbLockedByOtherThreads()){
 //            throw new IOException("DB locked, try again in a few mills");
-            return null;
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         Cursor cr = database.rawQuery("SELECT * FROM contact ORDER BY unread DESC;",null);
