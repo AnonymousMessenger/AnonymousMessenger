@@ -11,6 +11,9 @@ import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -641,7 +644,32 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
         void bind(QuotedUserMessage message) {
-            messageText.setText(message.getMessage());
+            //temp text
+            Spannable span = new SpannableString(message.getMessage());
+            //detect start-finish of emoji and span it bigger
+            int charStart = -1;
+            for (int i = 0; i < span.length(); i++) {
+                int type = Character.getType(span.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    if(i==(span.length()-1)){
+                        if(charStart>=0){
+                            span.setSpan(new RelativeSizeSpan(3f), charStart, i+1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            charStart = -1;
+                        }else{
+                            span.setSpan(new RelativeSizeSpan(3f), i, i+1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            charStart = -1;
+                        }
+                    }else if (charStart < 0) {
+                        charStart = i;
+                    }
+                }else{
+                    if(charStart>=0){
+                        span.setSpan(new RelativeSizeSpan(3f), charStart, i, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        charStart = -1;
+                    }
+                }
+            }
+            messageText.setText(span);
             timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
             messageText.setOnClickListener(new ListItemOnClickListener(message,itemView,messageText));
         }
