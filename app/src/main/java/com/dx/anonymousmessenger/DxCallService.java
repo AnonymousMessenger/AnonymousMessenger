@@ -8,6 +8,9 @@ import android.os.IBinder;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.call.CallController;
+import com.dx.anonymousmessenger.db.DbHelper;
+
+import java.util.Objects;
 
 public class DxCallService extends Service {
 //    BroadcastReceiver br;
@@ -72,10 +75,12 @@ public class DxCallService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String address = intent.getStringExtra("address");
+        String partialAddress = intent.getStringExtra("address");
+        final String address = DbHelper.getFullAddress(partialAddress,
+                (DxApplication) getApplication());
         String action = intent.getAction();
 
-        createNotification(address,action);
+        createNotification(Objects.requireNonNull(address).substring(0,10),action);
 
         if (action != null) {
             switch (action) {

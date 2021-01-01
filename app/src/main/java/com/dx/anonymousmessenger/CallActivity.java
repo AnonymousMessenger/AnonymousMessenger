@@ -73,22 +73,27 @@ public class CallActivity extends AppCompatActivity {
             hangupCall();
         });
         answer = findViewById(R.id.answer_fab);
-        answer.setOnClickListener(v -> {
-            new Thread(()->{
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-                    answerCall(true);
-                    Intent serviceIntent = new Intent(this, DxCallService.class);
-                    serviceIntent.setAction("answer");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        startForegroundService(serviceIntent);
-                    }else {
-                        startService(serviceIntent);
-                    }
-                }else{
-                    requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
+        answer.setOnClickListener(v -> new Thread(()->{
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
+                        "address"),
+                        (DxApplication) getApplication());
+                if(fullAddress == null){
+                    return;
                 }
-            }).start();
-        });
+                address = fullAddress;
+                answerCall(true);
+                Intent serviceIntent = new Intent(this, DxCallService.class);
+                serviceIntent.setAction("answer");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(serviceIntent);
+                }else {
+                    startService(serviceIntent);
+                }
+            }else{
+                requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
+            }
+        }).start());
         speaker = findViewById(R.id.speaker_fab);
         speaker.setOnClickListener(v -> {
             try {
@@ -202,7 +207,8 @@ public class CallActivity extends AppCompatActivity {
                     runOnUiThread(()-> state.setText(R.string.trying));
                     Intent serviceIntent = new Intent(this, DxCallService.class);
                     serviceIntent.setAction("start_out_call");
-                    serviceIntent.putExtra("address",getIntent().getStringExtra("address"));
+                    serviceIntent.putExtra("address",
+                            Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                     serviceIntent.putExtra("nickname",getIntent().getStringExtra("nickname"));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(serviceIntent);
@@ -223,9 +229,7 @@ public class CallActivity extends AppCompatActivity {
     }
 
     public void answerCall(){
-        runOnUiThread(()->{
-            answer.setVisibility(View.GONE);
-        });
+        runOnUiThread(()-> answer.setVisibility(View.GONE));
     }
 
     public void answerCall(boolean forReal){
@@ -247,9 +251,7 @@ public class CallActivity extends AppCompatActivity {
                         .setTitle("Denied Microphone Permission")
                         .setMessage("this way you can't make or receive calls")
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(R.string.ask_me_again, (dialog, which) -> {
-                            getMicrophonePerms();
-                        })
+                        .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getMicrophonePerms())
                         .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
 
                         });

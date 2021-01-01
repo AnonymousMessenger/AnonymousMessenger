@@ -372,18 +372,18 @@ public class DxApplication extends Application {
 
     public Notification getCallInProgressNotification(Context context, String type, String address) {
         Intent contentIntent = new Intent(context, CallActivity.class);
-        contentIntent.putExtra("address",address);
+        contentIntent.putExtra("address",address.substring(0,10));
         contentIntent.setAction(type);
         contentIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, 0);
 
         Intent answerIntent = new Intent(context, DxCallService.class);
-        answerIntent.putExtra("address",address);
+        answerIntent.putExtra("address",address.substring(0,10));
         answerIntent.setAction("answer");
         PendingIntent answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, 0);
 
         Intent hangupIntent = new Intent(context, DxCallService.class);
-        hangupIntent.putExtra("address",address);
+        hangupIntent.putExtra("address",address.substring(0,10));
         hangupIntent.setAction("hangup");
         PendingIntent hangupPendingIntent = PendingIntent.getService(context, 0, hangupIntent, 0);
 
@@ -791,7 +791,7 @@ public class DxApplication extends Application {
     public void commandCallService(String address, String type) {
         Intent serviceIntent = new Intent(this, DxCallService.class);
         serviceIntent.setAction(type);
-        serviceIntent.putExtra("address", address);
+        serviceIntent.putExtra("address", address.substring(0,10));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);
         }else{

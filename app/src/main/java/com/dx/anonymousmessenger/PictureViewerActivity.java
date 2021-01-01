@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
@@ -162,10 +163,17 @@ public class PictureViewerActivity extends AppCompatActivity {
                 if(msg.getText()!=null){
                     txtMsg = msg.getText().toString();
                 }
+                final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
+                        "address"),
+                        (DxApplication) getApplication());
+                if(fullAddress == null){
+                    return;
+                }
                 //save metadata in encrypted database with reference to encrypted file
-                QuotedUserMessage qum = new QuotedUserMessage("","",app.getHostname(),txtMsg,app.getAccount().getNickname(),time,false,getIntent().getStringExtra("address"),false,filename,path,"image");
+                QuotedUserMessage qum = new QuotedUserMessage("","",app.getHostname(),txtMsg,
+                        app.getAccount().getNickname(),time,false,fullAddress,false,filename,path,"image");
                 //send message and get received status
-                MessageSender.sendMediaMessage(qum,app,getIntent().getStringExtra("address"));
+                MessageSender.sendMediaMessage(qum,app,fullAddress);
             }).start();
             finish();
         });

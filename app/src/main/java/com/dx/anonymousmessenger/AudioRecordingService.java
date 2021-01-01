@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
@@ -74,7 +75,8 @@ public class AudioRecordingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.address = intent.getStringExtra("address");
+        this.address = DbHelper.getFullAddress(intent.getStringExtra("address"),
+                (DxApplication) getApplication());
 //        String action = intent.getAction();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -133,7 +135,7 @@ public class AudioRecordingService extends Service {
                 Intent gcm_rec = new Intent("recording_action");
                 gcm_rec.putExtra("action","timer");
                 gcm_rec.putExtra("time",Utils.getMinutesAndSecondsFromSeconds(callTimer));
-                LocalBroadcastManager.getInstance((DxApplication)getApplication()).sendBroadcast(gcm_rec);
+                LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(gcm_rec);
             }
         }catch (Exception ignored){
             timerOn = false;

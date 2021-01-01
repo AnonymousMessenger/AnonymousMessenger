@@ -36,11 +36,19 @@ public class ContactProfileActivity extends AppCompatActivity {
             }
         }catch (Exception ignored){}
 
-        TextView nickname = findViewById(R.id.txt_nickname);
+        final TextView address = findViewById(R.id.txt_myaddress);
+        final TextView nickname = findViewById(R.id.txt_nickname);
         new Thread(()->{
-            String nickname1 = DbHelper.getContactNickname(getIntent().getStringExtra("address"), (DxApplication) getApplication());
+            final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
+                    "address"),
+                    (DxApplication) getApplication());
+            if(fullAddress == null){
+                return;
+            }
+            String nickname1 = DbHelper.getContactNickname(fullAddress, (DxApplication) getApplication());
             new Handler(Looper.getMainLooper()).post(()->{
                 try{
+                    address.setText(fullAddress);
                     nickname.setText(nickname1);
                     if(getSupportActionBar()!=null){
                         getSupportActionBar().setTitle(nickname1);
@@ -49,8 +57,6 @@ public class ContactProfileActivity extends AppCompatActivity {
             });
         }).start();
 
-        TextView address = findViewById(R.id.txt_myaddress);
-        address.setText(getIntent().getStringExtra("address"));
         address.setOnClickListener(v -> {
             ClipboardManager clipboard = getSystemService(ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", address.getText().toString());

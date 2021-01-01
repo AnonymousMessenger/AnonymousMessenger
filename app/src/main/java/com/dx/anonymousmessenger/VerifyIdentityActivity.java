@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.util.Hex;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
@@ -25,17 +26,22 @@ public class VerifyIdentityActivity extends AppCompatActivity {
         TextView tv = findViewById(R.id.txt_identity_key);
         new Thread(()->{
             try{
+                final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
+                        "address"),
+                        (DxApplication) getApplication());
+                if(fullAddress == null){
+                    return;
+                }
                 byte[] myKey = ((DxApplication) getApplication()).getEntity().getStore().getIdentityKeyPair().getPublicKey().serialize();
-                byte[] theirKey = ((DxApplication) getApplication()).getEntity().getStore().getIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)).serialize();
+                byte[] theirKey =
+                        ((DxApplication) getApplication()).getEntity().getStore().getIdentity(new SignalProtocolAddress(fullAddress,1)).serialize();
                 if(myKey==theirKey){
                     tv.setText(Hex.toString(myKey));
                 }else{
                     tv.setText(Hex.toString(myKey,theirKey));
                 }
             }catch (Exception ignored) {
-                runOnUiThread(()->{
-                    tv.setText(R.string.identity_verification_fail);
-                });
+                runOnUiThread(()-> tv.setText(R.string.identity_verification_fail));
             }
         }).start();
     }

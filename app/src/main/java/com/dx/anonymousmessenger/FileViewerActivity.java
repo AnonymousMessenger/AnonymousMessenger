@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.util.Utils;
@@ -30,13 +31,13 @@ public class FileViewerActivity extends AppCompatActivity {
         TextView fileSizeTxt = findViewById(R.id.txt_file_size);
         FloatingActionButton send = findViewById(R.id.btn_send_file);
 
-        if(getIntent().getStringExtra("filename") == null || getIntent().getStringExtra("filename").equals("")){
+        if(getIntent().getStringExtra("filename") == null || Objects.equals(getIntent().getStringExtra("filename"), "")){
             filenameTxt.setText(R.string.unknown_file_name);
         }else{
             filenameTxt.setText(getIntent().getStringExtra("filename"));
         }
 
-        if(getIntent().getStringExtra("size") == null || getIntent().getStringExtra("size").equals("")){
+        if(getIntent().getStringExtra("size") == null || Objects.equals(getIntent().getStringExtra("size"), "")){
             fileSizeTxt.setText(R.string.unknown_file_size);
             send.setVisibility(View.GONE);
         }else{
@@ -52,12 +53,20 @@ public class FileViewerActivity extends AppCompatActivity {
             return;
         }
 
-        send.setOnClickListener(v -> {
+        send.setOnClickListener(v -> new Thread(()->{
             DxApplication app = (DxApplication) getApplication();
-            QuotedUserMessage qum = new QuotedUserMessage(app.getHostname(),app.getAccount().getNickname(),new Date().getTime(),false,getIntent().getStringExtra("address"),getIntent().getStringExtra("filename"),getIntent().getStringExtra("path"),"file");
+            final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
+                    "address"),
+                    (DxApplication) getApplication());
+            if(fullAddress == null){
+                return;
+            }
+            QuotedUserMessage qum = new QuotedUserMessage(app.getHostname(),
+                    app.getAccount().getNickname(),new Date().getTime(),false,fullAddress,
+                    getIntent().getStringExtra("filename"),getIntent().getStringExtra("path"),"file");
             //send message and get received status
-            MessageSender.sendMediaMessage(qum,app,getIntent().getStringExtra("address"));
-        });
+            MessageSender.sendMediaMessage(qum,app,fullAddress);
+        }).start());
 
     }
 }

@@ -100,7 +100,13 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         Objects.requireNonNull(getSupportActionBar()).setTitle(getIntent().getStringExtra("nickname"));
         getSupportActionBar().setSubtitle(getIntent().getStringExtra("address"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        address = getIntent().getStringExtra("address");
+        final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
+                "address"),
+                (DxApplication) getApplication());
+        if(fullAddress == null){
+            return;
+        }
+        address = fullAddress;
         nickname = getIntent().getStringExtra("nickname");
         quoteTextTyping = findViewById(R.id.quote_text_typing);
         quoteSenderTyping = findViewById(R.id.quote_sender_typing);
@@ -192,12 +198,12 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 Snackbar.make(send, R.string.no_encryption_yet,Snackbar.LENGTH_SHORT).show();
                 return;
             }
-            if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1))){
+            if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(fullAddress,1))){
                 Snackbar.make(send, R.string.no_session,Snackbar.LENGTH_SHORT).show();
-                new Thread(()-> MessageSender.sendKeyExchangeMessage(((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
+                new Thread(()-> MessageSender.sendKeyExchangeMessage(((DxApplication)getApplication()),fullAddress)).start();
                 return;
             }
-            if(((DxApplication)getApplication()).getEntity().getStore().loadSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)).getSessionState().hasPendingKeyExchange() || ((DxApplication)getApplication()).getEntity().getStore().getIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)) == null){
+            if(((DxApplication)getApplication()).getEntity().getStore().loadSession(new SignalProtocolAddress(fullAddress,1)).getSessionState().hasPendingKeyExchange() || ((DxApplication)getApplication()).getEntity().getStore().getIdentity(new SignalProtocolAddress(fullAddress,1)) == null){
                 Snackbar.make(send, R.string.cant_encrypt_message,Snackbar.LENGTH_SHORT).show();
                 return;
             }
@@ -205,9 +211,15 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             TextView quoteTextTyping = findViewById(R.id.quote_text_typing);
             QuotedUserMessage msg =
                     new QuotedUserMessage(quoteSenderTyping.getText().toString().equals(getString(R.string.you))?
-                            ((DxApplication)getApplication()).getAccount().getNickname():getIntent().getStringExtra("nickname"),quoteTextTyping.getText().toString(),((DxApplication)getApplication()).getHostname(),txt.getText().toString(),((DxApplication)getApplication()).getAccount().getNickname(),new Date().getTime(),false,getIntent().getStringExtra("address"),false);
+                            ((DxApplication)getApplication()).getAccount().getNickname():
+                            getIntent().getStringExtra("nickname"),
+                            quoteTextTyping.getText().toString(),
+                            ((DxApplication)getApplication()).getHostname(),
+                            txt.getText().toString(),
+                            ((DxApplication)getApplication()).getAccount().getNickname(),
+                            new Date().getTime(),false,fullAddress,false);
 //            messageList.add(msg);
-            new Thread(()-> MessageSender.sendMessage(msg,((DxApplication)getApplication()),getIntent().getStringExtra("address"))).start();
+            new Thread(()-> MessageSender.sendMessage(msg,((DxApplication)getApplication()),fullAddress)).start();
             txt.setText("");
             quoteSenderTyping.setText("");
             quoteTextTyping.setText("");
@@ -272,7 +284,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 
                     Intent intent = new Intent(this, AudioRecordingService.class);
                     intent.setAction("start_recording");
-                    intent.putExtra("address",getIntent().getStringExtra("address"));
+                    intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                     intent.putExtra("nickname",getIntent().getStringExtra("nickname"));
                     startService(intent);
                     timeBroadcastReceiver = new BroadcastReceiver() {
@@ -443,7 +455,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             return;
         }
         Intent intent = new Intent(this,PictureViewerActivity.class);
-        intent.putExtra("address",address);
+        intent.putExtra("address",address.substring(0,10));
         intent.putExtra("nickname",nickname);
         if(mediaRecyclerView!=null && mediaRecyclerView.getAdapter()!=null){
             String path = ((MediaRecycleViewAdapter)mediaRecyclerView.getAdapter()).paths.get(position);
@@ -496,12 +508,12 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     frameOnline.startAnimation(slideUp);
                 }catch (Exception ignored) {}
             });
-            boolean b = TorClientSocks4.testAddress(((DxApplication) getApplication()), getIntent().getStringExtra("address"));
+            boolean b = TorClientSocks4.testAddress(((DxApplication) getApplication()), address);
             if(b){
-                ((DxApplication)getApplication()).addToOnlineList(getIntent().getStringExtra("address"));
-                ((DxApplication)getApplication()).queueUnsentMessages(getIntent().getStringExtra("address"));
+                ((DxApplication)getApplication()).addToOnlineList(address);
+                ((DxApplication)getApplication()).queueUnsentMessages(address);
             }else{
-                ((DxApplication)getApplication()).onlineList.remove(getIntent().getStringExtra("address"));
+                ((DxApplication)getApplication()).onlineList.remove(address);
             }
             h.post(()->{
                 try{
@@ -543,7 +555,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     //noinspection BusyWait
                     Thread.sleep(5000);
                     DbHelper.getMessageList(((DxApplication) getApplication()) ,
-                            getIntent().getStringExtra("address"));
+                            address);
                     //mMessageAdapter.setMessageList(messageList);
 //                    if(messageList.size() != tmp.size()){
 //                        System.out.println("they'ren't equal");
@@ -586,12 +598,15 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                         chatBox.setVisibility(View.GONE);
                     });
                 }else if(
-                        !app.getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)) ||
-                        app.getEntity().getStore().loadSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)).getSessionState().hasPendingKeyExchange() ||
-                        app.getEntity().getStore().getIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)) == null
+                        !app.getEntity().getStore().containsSession(new SignalProtocolAddress(address,
+                                1)) ||
+                        app.getEntity().getStore().loadSession(new SignalProtocolAddress(address,1)).getSessionState().hasPendingKeyExchange() ||
+                        app.getEntity().getStore().getIdentity(new SignalProtocolAddress(address,1)) == null
                 ){
-                    if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1))){
-                        new Thread(()-> MessageSender.sendKeyExchangeMessageWithoutBroadcast(app,getIntent().getStringExtra("address"))).start();
+                    if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(address,
+                            1))){
+                        new Thread(()-> MessageSender.sendKeyExchangeMessageWithoutBroadcast(app,
+                                address)).start();
                         new Handler(Looper.getMainLooper()).post(()->{
                             TextView keyStatus = findViewById(R.id.txt_key_status);
                             keyStatus.setVisibility(View.VISIBLE);
@@ -600,7 +615,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                             chatBox.setVisibility(View.GONE);
                         });
                     }
-                    if(app.getEntity().getStore().loadSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1)).getSessionState().hasPendingKeyExchange()){
+                    if(app.getEntity().getStore().loadSession(new SignalProtocolAddress(address,1)).getSessionState().hasPendingKeyExchange()){
                         new Handler(Looper.getMainLooper()).post(()->{
                             TextView keyStatus = findViewById(R.id.txt_key_status);
                             keyStatus.setVisibility(View.VISIBLE);
@@ -618,7 +633,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     });
                 }
                 messageList = DbHelper.getMessageList(((DxApplication) getApplication()) ,
-                        getIntent().getStringExtra("address"));
+                        address);
                 runOnUiThread(()->{
                     try{
                         mMessageAdapter.setMessageList(messageList);
@@ -784,7 +799,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                         }
                         Intent intent = new Intent(this, CallActivity.class);
                         intent.setAction("start_out_call");
-                        intent.putExtra("address",getIntent().getStringExtra("address"));
+                        intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                         intent.putExtra("nickname",getIntent().getStringExtra("nickname"));
                         startActivity(intent);
                     }else{
@@ -803,19 +818,20 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                                 if(app.getEntity()==null){
                                     return;
                                 }
-                                app.getEntity().getStore().deleteSession(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
+                                app.getEntity().getStore().deleteSession(new SignalProtocolAddress(address,1));
                                 updateUi();
                             }catch (Exception ignored) {}
                         })
                         .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
                         }).show();
 
-                //((DxSignalKeyStore)app.getEntity().getStore()).removeIdentity(new SignalProtocolAddress(getIntent().getStringExtra("address"),1));
+                //((DxSignalKeyStore)app.getEntity().getStore()).removeIdentity(new
+                // SignalProtocolAddress(address,1));
                 break;
             case R.id.action_verify_identity:
                 stopCheckingMessages();
                 Intent intent = new Intent(this, VerifyIdentityActivity.class);
-                intent.putExtra("address",getIntent().getStringExtra("address"));
+                intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                 startActivity(intent);
                 break;
             case R.id.action_clear_conversation:
@@ -823,13 +839,13 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                         .setTitle(R.string.delete_messages)
                         .setMessage(R.string.delete_messages_help)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(R.string.yes, (dialog, which) -> {
-                            new Thread(()-> {
-                                try{
-                                    DbHelper.clearConversation(getIntent().getStringExtra("address"), (DxApplication) getApplication());
-                                }catch (Exception ignored) {}
-                            }).start();
-                        })
+                        .setPositiveButton(R.string.yes, (dialog, which) -> new Thread(()-> {
+                            try{
+                                DbHelper.clearConversation(address,
+                                        (DxApplication) getApplication());
+                            }catch (Exception ignored) {}
+                            runOnUiThread(this::updateUi);
+                        }).start())
                         .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
                         }).show();
                 break;
@@ -847,7 +863,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             intent.putExtra("path",data.getData().getPath());
             intent.putExtra("filename", FileHelper.getFileName(data.getData(),this));
             intent.putExtra("size",FileHelper.getFileSize(data.getData(),this));
-            intent.putExtra("address", getIntent().getStringExtra("address"));
+            intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
             startActivity(intent);
         }
         super.onActivityResult(requestCode, resultCode, data);

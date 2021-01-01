@@ -501,7 +501,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             imageHolder.setOnClickListener(v -> {
                 Intent intent = new Intent(app, PictureViewerActivity.class);
-                intent.putExtra("address",message.getAddress());
+                intent.putExtra("address",message.getAddress().substring(0,10));
                 intent.putExtra("nickname",message.getSender());
                 intent.putExtra("time",message.getCreatedAt());
                 intent.putExtra("appData",true);
@@ -596,7 +596,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     imageHolder.setImageBitmap(bitmap);
                     imageHolder.setOnClickListener(v -> {
                         Intent intent = new Intent(app, PictureViewerActivity.class);
-                        intent.putExtra("address",message.getAddress());
+                        intent.putExtra("address",message.getAddress().substring(0,10));
                         intent.putExtra("nickname",message.getSender());
                         intent.putExtra("time",message.getCreatedAt());
                         intent.putExtra("appData",true);

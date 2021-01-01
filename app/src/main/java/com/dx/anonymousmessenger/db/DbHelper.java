@@ -18,7 +18,6 @@ import net.sqlcipher.database.SQLiteException;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +37,30 @@ public class DbHelper {
 
     public static Object[] getContactSqlValues(String address, String nickname){
         return new Object[]{nickname,address};
+    }
+
+    public static String getFullAddress(String partialAddress, DxApplication app){
+        if (app.getAccount()==null){
+            return null;
+        }
+        SQLiteDatabase database = app.getDb();
+        while (database.isDbLockedByOtherThreads()){
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        partialAddress+="%";
+        database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
+        Cursor cr = database.rawQuery("SELECT * FROM contact WHERE address LIKE ?",new String[]{partialAddress});
+        if(cr.moveToFirst()){
+            System.out.println(cr.getString(1));
+            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            return cr.getString(1);
+        }else{
+            return null;
+        }
     }
 
     public static List<String[]> getContactsList(DxApplication app) {

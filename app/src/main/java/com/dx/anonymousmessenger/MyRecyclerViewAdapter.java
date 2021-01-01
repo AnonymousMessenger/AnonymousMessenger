@@ -89,7 +89,7 @@ public class MyRecyclerViewAdapter extends Adapter {
             int position1 = holder.getAdapterPosition();
             Intent intent = new Intent(v.getContext(), MessageListActivity.class);
             intent.putExtra("nickname",mData.get(position1)[0]);
-            intent.putExtra("address",mData.get(position1)[1]);
+            intent.putExtra("address",mData.get(position1)[1].substring(0,10));
             v.getContext().startActivity(intent);
         });
         switch (holder.getItemViewType()) {
@@ -167,7 +167,7 @@ public class MyRecyclerViewAdapter extends Adapter {
                     case R.id.profile_contact:
                         try{
                             Intent intent = new Intent(itemView.getContext(), ContactProfileActivity.class);
-                            intent.putExtra("address",address);
+                            intent.putExtra("address",address.substring(0,10));
                             itemView.getContext().startActivity(intent);
                         }catch (Exception ignored) {}
                         break;
