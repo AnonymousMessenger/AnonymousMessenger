@@ -422,6 +422,15 @@ public class AppFragment extends Fragment {
                     }
                 }catch (Exception ignored) {}
                 break;
+            case R.id.action_notepad:
+                stopCheckingMessages();
+                try{
+                    Intent intent = new Intent(getContext(), NotepadActivity.class);
+                    if(getContext()!=null){
+                        getContext().startActivity(intent);
+                    }
+                }catch (Exception ignored) {}
+                break;
             case R.id.action_tips:
                 stopCheckingMessages();
                 try{

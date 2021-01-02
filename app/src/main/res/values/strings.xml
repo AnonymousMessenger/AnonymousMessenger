@@ -261,5 +261,13 @@
     <string name="opening_control_listener">Opening Control Listener</string>
     <string name="control_listener_listening">Control Listener Listening</string>
     <string name="opened_control_listener">Opened Control Listener</string>
+    <string name="action_notepad">Notepad</string>
+    <string name="save">Save</string>
+    <string name="enter_note">Save encrypted note</string>
+    <string name="delete_contact_question">Delete this contact?</string>
+    <string name="delete_contact_details">this can\'t be undone and will also delete this contact\'s session and conversation</string>
+    <string name="delete_note_question">Delete this note?</string>
+    <string name="delete_note_details">this can\'t be undone</string>
+    <string name="delete_note">Delete</string>
 
 </resources>

@@ -27,6 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+        <activity android:name=".NotepadActivity"></activity>
         <activity android:name=".FileViewerActivity" />
         <activity android:name=".TipsActivity" />
         <activity android:name=".AboutActivity" />
@@ -40,7 +41,9 @@
         <activity android:name=".VerifyIdentityActivity" />
         <activity android:name=".MyIdentityActivity" />
         <activity android:name=".SetupInProcess" />
-        <activity android:name=".MessageListActivity" android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity
+            android:name=".MessageListActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".AppActivity" />
         <activity android:name=".CreateUserActivity" />
         <activity android:name=".MainActivity">

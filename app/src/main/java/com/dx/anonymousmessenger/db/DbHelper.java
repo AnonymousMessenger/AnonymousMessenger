@@ -351,6 +351,73 @@ public class DbHelper {
         }
     }
 
+    public static String getNotepadColumns(){
+        return "(msg,created_at,filename,path,type)";
+    }
+
+    public static String getNotepadTableSqlCreate(){
+        return "CREATE TABLE IF NOT EXISTS notepad "+getNotepadColumns()+";";
+    }
+
+    public static String getNotepadSqlInsert(){
+        return "INSERT INTO notepad "+getNotepadColumns()+" VALUES(?"+giveMeQMarks(getNotepadColumns().split(",").length-1)+")";
+    }
+
+    public static Object[] getNotepadSqlValues(String msg, long createdAt, String filename, String path, String type){
+        return new Object[]{msg,createdAt,filename,path,type};
+    }
+
+    public static boolean saveNote(String msg, long createdAt, String filename, String path, String type, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getNotepadTableSqlCreate());
+        database.execSQL(DbHelper.getNotepadSqlInsert(),DbHelper.getNotepadSqlValues(msg,createdAt,filename,path,type));
+        return true;
+    }
+
+    public static void deleteNote(long createdAt, DxApplication app) {
+        SQLiteDatabase database = app.getDb();
+        database.beginTransaction();
+        try{
+            database.execSQL("DELETE FROM notepad WHERE created_at=?", new Object[]{createdAt});
+            database.setTransactionSuccessful();
+        }catch (Exception e) {e.printStackTrace();}
+        finally {
+            database.endTransaction();
+        }
+//        try{
+//            if(msg.getPath()!=null && !msg.getPath().equals("")){
+//                FileHelper.deleteFile(msg.getPath(),app);
+//            }
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+    }
+
+    public static List<Object[]> getNotepadList(DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getNotepadTableSqlCreate());
+        try{
+            database.query("SELECT "+DbHelper.getNotepadColumns().trim().substring(1,getNotepadColumns().length()-1)+" FROM notepad");
+        }catch (Exception e){
+            Log.w("getNotepadList", "updating DbSchema");
+            e.printStackTrace();
+            updateDbSchema(database);
+        }
+        Cursor cr = database.rawQuery("SELECT * FROM notepad ;",null);
+        List<Object[]> notes = new ArrayList<>();
+        if (cr.moveToFirst()) {
+            do {
+                notes.add(new Object[]{cr.getString(0),
+                        cr.getLong(1),
+                        cr.getString(2),
+                        cr.getString(3),
+                        cr.getLong(4)});
+            } while (cr.moveToNext());
+        }
+        cr.close();
+        return notes;
+    }
+
     public static String getMessageTableSqlCreate(){
         return "CREATE TABLE IF NOT EXISTS message "+getMessageColumns()+";";
     }
@@ -527,6 +594,20 @@ public class DbHelper {
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO contact");
                 database.setTransactionSuccessful();
                 database.endTransaction();
+
+                database.beginTransaction();
+                tmpName = "temp_notepad ";
+                createTemp = getNotepadTableSqlCreate().replace("notepad",tmpName);
+                database.execSQL(createTemp);
+                tmpColNum = getNumberOfColumns(tmpName,database);
+                oldColNum = getNumberOfColumns("notepad",database);
+                emptyCols = tmpColNum>oldColNum?giveMeNulls(tmpColNum-oldColNum):"";
+                database.execSQL("INSERT INTO "+tmpName+getNotepadColumns()+" SELECT *"+emptyCols+" FROM notepad;");
+                database.execSQL("DROP TABLE notepad;");
+                database.execSQL("ALTER TABLE "+tmpName+" RENAME TO notepad");
+                database.setTransactionSuccessful();
+                database.endTransaction();
+
                 Log.e("finishing the db update","good bye");
             }catch (SQLiteException e){
                 Log.e("ERROR UPDATING DB","THERE WAS AN ERROR UPDATING THE D B YO!");

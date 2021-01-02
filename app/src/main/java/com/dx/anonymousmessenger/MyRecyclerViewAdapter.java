@@ -173,8 +173,8 @@ public class MyRecyclerViewAdapter extends Adapter {
                         break;
                     case R.id.delete_contact:
                         new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
-                            .setTitle("Delete this contact?")
-                            .setMessage("this can't be undone and will also delete this contact's session and conversation")
+                            .setTitle(R.string.delete_contact_question)
+                            .setMessage(R.string.delete_contact_details)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
                                 try {
@@ -189,7 +189,6 @@ public class MyRecyclerViewAdapter extends Adapter {
 
                             }).show();
                         break;
-
                 }
                 return false;
             });
