@@ -10,8 +10,8 @@ android {
         applicationId "com.example.anonymousmessenger"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 14
-        versionName "0.6.3"
+        versionCode 15
+        versionName "0.6.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,6 +60,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'net.zetetic:android-database-sqlcipher:4.4.0@aar'
     implementation "androidx.sqlite:sqlite:2.1.0"
-    implementation "com.android.support:support-compat:29.0.0"
+    implementation 'androidx.core:core:1.0.0'
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
 }

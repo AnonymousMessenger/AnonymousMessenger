@@ -199,7 +199,7 @@
         is available and project is licensed under the GNU General Public License so you can
         take full advantage of it and have the freedom to change it among other
         freedoms</string>
-    <string name="copyright">\n Copyright © 2021 Sofian M. Benissa\n\n</string>
+    <string name="copyright">Copyright © 2021 Sofian M. Benissa</string>
     <string name="action_tips">Security Tips</string>
     <string name="hide_notification">disable the service_running notification</string>
     <string name="record_audio">record audio</string>
