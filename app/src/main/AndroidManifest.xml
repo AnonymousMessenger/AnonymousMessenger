@@ -26,8 +26,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup">
-        <activity android:name=".NotepadActivity"></activity>
+        tools:replace="android:allowBackup"
+        android:extractNativeLibs="true">
+        <activity android:name=".NotepadActivity" />
         <activity android:name=".FileViewerActivity" />
         <activity android:name=".TipsActivity" />
         <activity android:name=".AboutActivity" />

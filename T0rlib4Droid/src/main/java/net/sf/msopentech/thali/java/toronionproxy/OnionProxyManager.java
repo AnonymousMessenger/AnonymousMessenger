@@ -31,8 +31,6 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
 
 public abstract class OnionProxyManager {
 
@@ -361,6 +359,8 @@ public abstract class OnionProxyManager {
         String configDir = onionProxyContext.getTorrcFile().getAbsoluteFile().getParent();
         String configPath = onionProxyContext.getTorrcFile().getAbsolutePath();
         final File directory = new File(configDir);
+
+        //delete old torrc files that tor keeps copying
         final File[] files = directory.listFiles( new FilenameFilter() {
             @Override
             public boolean accept( final File dir,
@@ -376,11 +376,20 @@ public abstract class OnionProxyManager {
             }
         }
 
+        if(new File(torPath).exists()){
+            System.out.println(torPath+" exists !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }else{
+            System.out.println(torPath+" doesn't exist !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        System.out.println(Arrays.toString(new File(onionProxyContext.ctx.getApplicationInfo().nativeLibraryDir).listFiles()));
+        System.out.println(torPath);
+
         String pid = onionProxyContext.getProcessId();
-        String[] cmd = {torPath, "-f", configPath, OWNER, pid};
+        String[] cmd = {onionProxyContext.getTorExecutableFile().getAbsolutePath(), "-f", configPath, OWNER, pid};
 //        String[] env = onionProxyContext.getEnvironmentArgsForExec();
         ProcessBuilder processBuilder = new ProcessBuilder(cmd);
-        processBuilder.directory(new File(configDir));
+        processBuilder.directory(new File(onionProxyContext.ctx.getApplicationInfo().nativeLibraryDir));
         processBuilder.redirectErrorStream(true);
         onionProxyContext.setEnvironmentArgsAndWorkingDirectoryForStart(processBuilder);
         Process torProcess = null;
@@ -516,10 +525,11 @@ public abstract class OnionProxyManager {
 
     protected synchronized void installAndConfigureFiles() throws IOException, InterruptedException {
         onionProxyContext.installFiles();
+        setExecutable(onionProxyContext.getTorExecutableFile());
 
-        if (!setExecutable(onionProxyContext.getTorExecutableFile())) {
-            throw new RuntimeException("could not make Tor executable.");
-        }
+//        if (!setExecutable(onionProxyContext.getTorExecutableFile())) {
+//            throw new RuntimeException("could not make Tor executable.");
+//        }
 
         // We need to edit the config file to specify exactly where the cookie/geoip files should be stored, on
         // Android this is always a fixed location relative to the configFiles which is why this extra step

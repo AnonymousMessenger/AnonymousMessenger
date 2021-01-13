@@ -207,4 +207,12 @@
     <string name="opening_control_listener">يتم فتح منفذ التحكم</string>
     <string name="control_listener_listening">منفذ التحكم يعمل</string>
     <string name="opened_control_listener">تم فتح منفذ التحكم</string>
+    <string name="action_notepad">المذكرة</string>
+    <string name="save">خزٍن</string>
+    <string name="enter_note">خزٍن مذكرة مشفرة</string>
+    <string name="delete_contact_question">إزالة جهة الإتصال؟</string>
+    <string name="delete_contact_details">ﻻيمكن عكس العملية و ستمسح أيضا الجلسة و المحادثة</string>
+    <string name="delete_note_question">إزالة هذه المذكرة؟</string>
+    <string name="delete_note_details">ﻻيمكن عكس العملية</string>
+    <string name="delete_note">إزالة</string>
 </resources>

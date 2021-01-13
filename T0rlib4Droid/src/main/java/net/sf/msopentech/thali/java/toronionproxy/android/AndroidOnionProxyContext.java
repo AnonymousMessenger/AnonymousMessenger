@@ -4,7 +4,6 @@ package net.sf.msopentech.thali.java.toronionproxy.android;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import net.sf.msopentech.thali.java.toronionproxy.FileUtilities;
 import net.sf.msopentech.thali.java.toronionproxy.OnionProxyContext;
 import net.sf.msopentech.thali.java.toronionproxy.WriteObserver;
 
@@ -19,10 +18,10 @@ public class AndroidOnionProxyContext extends OnionProxyContext {
 
   private enum Arch {
     ARM64,
-    MIPS64,
+//    MIPS64,
     AMD64,
     ARM,
-    MIPS,
+//    MIPS,
     X86
   };
 
@@ -57,7 +56,7 @@ public class AndroidOnionProxyContext extends OnionProxyContext {
 
   @Override
   public String getPathToTorExecutable() {
-    return "";
+    return ctx.getApplicationInfo().nativeLibraryDir;
   }
 
   @SuppressLint("DefaultLocale")
@@ -65,21 +64,21 @@ public class AndroidOnionProxyContext extends OnionProxyContext {
   protected String getTorExecutableFileName() {
     String arch = System.getProperty("os.arch").toLowerCase();
     System.out.println(arch);
-    String exec = "tor.";
+    String exec = "libtor.";
     if (arch.contains("64")) {
       if (arch.contains("arm") || arch.contains("aar"))
-        return exec + Arch.ARM64.name().toLowerCase();
-      else if (arch.contains("mips"))
-        return exec + Arch.MIPS64.name().toLowerCase();
+        return exec + "arm64"+".so";
+//      else if (arch.contains("mips"))
+//        return exec + Arch.MIPS64.name().toLowerCase();
       else if (arch.contains("86") || arch.contains("amd"))
-        return exec + Arch.AMD64.name().toLowerCase();
+        return exec + "x86_64"+".so";
     } else {
       if (arch.contains("arm") || arch.contains("aar"))
-        return exec + Arch.ARM.name().toLowerCase();
-      else if (arch.contains("mips"))
-        return exec + Arch.MIPS.name().toLowerCase();
-      else if (arch.contains("86"))
-        return exec + Arch.X86.name().toLowerCase();
+        return exec + "arm"+".so";
+//      else if (arch.contains("mips"))
+//        return exec + Arch.MIPS.name().toLowerCase();
+      else if (arch.contains("86") || arch.contains("amd"))
+        return exec + "x86"+".so";
     }
     throw new RuntimeException("We don't support Tor on this OS");
   }

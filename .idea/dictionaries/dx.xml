@@ -9,12 +9,14 @@
       <w>ciphertext</w>
       <w>emoji</w>
       <w>hiddenservicedirport</w>
+      <w>libtor</w>
       <w>localport</w>
       <w>lport</w>
       <w>nnnnnnn</w>
       <w>rport</w>
       <w>ssocks</w>
       <w>ssvt</w>
+      <w>torrc</w>
     </words>
   </dictionary>
 </component>

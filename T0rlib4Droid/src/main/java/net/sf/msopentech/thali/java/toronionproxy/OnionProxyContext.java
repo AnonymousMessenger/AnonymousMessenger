@@ -47,7 +47,7 @@ abstract public class OnionProxyContext {
         geoIpFile = new File(getWorkingDirectory(), GEO_IP_NAME);
         geoIpv6File = new File(getWorkingDirectory(), GEO_IPV_6_NAME);
         torrcFile = new File(getWorkingDirectory(), TORRC_NAME);
-        torExecutableFile = new File(getWorkingDirectory(), getTorExecutableFileName());
+        torExecutableFile = new File(ctx.getApplicationInfo().nativeLibraryDir, getTorExecutableFileName());
         cookieFile = new File(getWorkingDirectory(), ".tor/control_auth_cookie");
         hostnameFile = new File(getWorkingDirectory(), "/" + HIDDENSERVICE_DIRECTORY_NAME + "/hostname");
     }
@@ -56,8 +56,7 @@ abstract public class OnionProxyContext {
         // This is sleezy but we have cases where an old instance of the Tor OP needs an extra second to
         // clean itself up. Without that time we can't do things like delete its binary (which we currently
         // do by default, something we hope to fix with https://github.com/thaliproject/Tor_Onion_Proxy_Library/issues/13
-//        fuck that shit
-        Thread.sleep(1000, 0);
+//        Thread.sleep(1000, 0);
 
         if (!workingDirectory.exists() && !workingDirectory.mkdirs()) {
             throw new RuntimeException("Could not create root directory!");
@@ -69,9 +68,8 @@ abstract public class OnionProxyContext {
         FileUtilities.cleanInstallOneFile(this.ctx.getAssets().open(DIR+GEO_IPV_6_NAME), geoIpv6File);
         FileUtilities.cleanInstallOneFile(this.ctx.getAssets().open(DIR+TORRC_NAME), torrcFile);
 
-        //todo change to use jniLibs and maybe not compressed for speed
         //added this to save space on android with zipped binaries
-        FileUtilities.extractContentFromZip(torExecutableFile.getParentFile(), getAssetOrResourceByName("tor.zip"));
+//        FileUtilities.extractContentFromZip(torExecutableFile.getParentFile(), getAssetOrResourceByName("tor.zip"));
 
 //        switch (OsData.getOsType()) {
 //            case ANDROID:
@@ -202,7 +200,8 @@ abstract public class OnionProxyContext {
             case ANDROID:
             case LINUX_32:
             case LINUX_64:
-                return "tor";
+                //todo change for different arches
+                return "libtor.156.so";
             case WINDOWS:
             case MAC:
                 return "tor.exe";

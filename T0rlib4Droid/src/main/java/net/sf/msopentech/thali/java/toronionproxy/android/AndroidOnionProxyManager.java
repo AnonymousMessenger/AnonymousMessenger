@@ -35,7 +35,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 
 import net.sf.msopentech.thali.java.toronionproxy.OnionProxyManager;
 
@@ -80,22 +79,7 @@ public class AndroidOnionProxyManager extends OnionProxyManager {
 
     @SuppressLint("NewApi")
     protected boolean setExecutable(File f) {
-        if(Build.VERSION.SDK_INT >= 15) {
-            return f.setExecutable(true, true);
-        } else {
-            String[] command = { "chmod", "700", f.getAbsolutePath() };
-            try {
-                return Runtime.getRuntime().exec(command).waitFor() == 0;
-            } catch(IOException e) {
-                LOG.warn(e.toString(), e);
-            } catch(InterruptedException e) {
-                LOG.warn("Interrupted while executing chmod");
-                Thread.currentThread().interrupt();
-            } catch(SecurityException e) {
-                LOG.warn(e.toString(), e);
-            }
-            return false;
-        }
+        return f.setExecutable(true, true);
     }
 
     private class NetworkStateReceiver extends BroadcastReceiver {

@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerSocketViaTor {
     private static final int hiddenservicedirport = 5780;
-    //todo make this random to have more instances running
     private int localport = 5780;
     private final Context ctx;
     AndroidTorRelay node;
@@ -71,6 +70,9 @@ public class ServerSocketViaTor {
 
         String fileLocation = "torfiles";
         try {
+//            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//            System.out.println(ctx.getApplicationInfo().nativeLibraryDir);
+//            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             node = new AndroidTorRelay(ctx, fileLocation);
         }catch (Exception e){
             e.printStackTrace();
