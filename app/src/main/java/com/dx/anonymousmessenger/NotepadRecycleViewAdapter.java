@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -45,6 +46,7 @@ public class NotepadRecycleViewAdapter extends RecyclerView.Adapter<NotepadRecyc
         String string = (String)(list.get(holder.getAdapterPosition())[0]);
         long createdAt = (long)(list.get(holder.getAdapterPosition())[1]);
         holder.note.setText(string);
+        holder.time.setText(Utils.formatDateTime(createdAt));
         holder.note.setOnClickListener((v)->{
             PopupMenu popup = new PopupMenu(v.getContext(), holder.itemView);
             popup.inflate(R.menu.note_menu);
@@ -95,13 +97,13 @@ public class NotepadRecycleViewAdapter extends RecyclerView.Adapter<NotepadRecyc
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         View itemView;
-        TextView note;
+        TextView note,time;
 
         ViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
+            this.time = itemView.findViewById(R.id.txt_time);
             this.note = itemView.findViewById(R.id.txt_note);
-
         }
     }
 }

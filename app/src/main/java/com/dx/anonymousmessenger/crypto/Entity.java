@@ -16,70 +16,13 @@ import org.whispersystems.libsignal.util.guava.Optional;
 public class Entity {
 
     private final SignalProtocolStore store;
-//    private PreKeyBundle preKey;
-//    private final int preKeyId;
-//    private final SignalProtocolAddress address;
-//    private ECPublicKey ephemeralPublicKey;
-//    private ECPrivateKey ephemeralPrivateKey;
-//    private ECKeyPair ephemeralKey;
-//    private ECKeyPair baseKey;
-//    private ECKeyPair signedPreKeyPair;
-//    private ECKeyPair preKeyPair;
 
 
     public Entity(DxApplication app) {
-//        this.address = new SignalProtocolAddress(app.getHostname(), 1);
-
-//        this.store = new InMemorySignalProtocolStore(
-//                KeyHelper.generateIdentityKeyPair(),
-//                KeyHelper.generateRegistrationId(false)
-//        );
         this.store = new DxSignalKeyStore(
                 KeyHelper.generateIdentityKeyPair(),
                 KeyHelper.generateRegistrationId(false),
                 app);
-
-//        IdentityKeyPair identityKeyPair = store.getIdentityKeyPair();
-//        int registrationId = store.getLocalRegistrationId();
-
-//        ECKeyPair preKeyPair = Curve.generateKeyPair();
-//        ECKeyPair signedPreKeyPair = Curve.generateKeyPair();
-//        int deviceId = 1;
-//        long timestamp = System.currentTimeMillis();
-
-//        byte[] signedPreKeySignature = Curve.calculateSignature(
-//                identityKeyPair.getPrivateKey(),
-//                signedPreKeyPair.getPublicKey().serialize());
-
-//        IdentityKey identityKey = identityKeyPair.getPublicKey();
-//        ECPublicKey preKeyPublic = preKeyPair.getPublicKey();
-//        ECPublicKey signedPreKeyPublic = signedPreKeyPair.getPublicKey();
-//
-//        this.preKeyPair = preKeyPair;
-//        this.signedPreKeyPair = signedPreKeyPair;
-//
-//        this.preKey = new PreKeyBundle(
-//                registrationId,
-//                deviceId,
-//                preKeyId,
-//                preKeyPublic,
-//                signedPreKeyId,
-//                signedPreKeyPublic,
-//                signedPreKeySignature,
-//                identityKey);
-//
-//        PreKeyRecord preKeyRecord = new PreKeyRecord(preKey.getPreKeyId(), preKeyPair);
-//        SignedPreKeyRecord signedPreKeyRecord = new SignedPreKeyRecord(
-//                signedPreKeyId, timestamp, signedPreKeyPair, signedPreKeySignature);
-//
-//        store.storePreKey(preKeyId, preKeyRecord);
-//        store.storeSignedPreKey(signedPreKeyId, signedPreKeyRecord);
-
-//        this.ephemeralPublicKey  = Curve.decodePoint(preKeyPublic.serialize(), 0);
-//        this.ephemeralPrivateKey = Curve.decodePrivatePoint(preKeyPair.getPrivateKey().serialize());
-//
-//        this.ephemeralKey = new ECKeyPair(ephemeralPublicKey, ephemeralPrivateKey);
-//        this.baseKey = ephemeralKey;
     }
 
     public SignalProtocolStore getStore() {
@@ -107,70 +50,6 @@ public class Entity {
 
         return session;
 
-//        this.preKey = new PreKeyBundle(
-//                registrationId,
-//                deviceId,
-//                preKeyId,
-//                preKeyPublic,
-//                signedPreKeyId,
-//                signedPreKeyPublic,
-//                signedPreKeySignature,
-//                identityKey);
-//
-//        PreKeyRecord preKeyRecord = new PreKeyRecord(preKey.getPreKeyId(), myPreKeyPair);
-//        SignedPreKeyRecord signedPreKeyRecord = new SignedPreKeyRecord(
-//                signedPreKeyId, timestamp, mySignedPreKeyPair, signedPreKeySignature);
-//
-//        store.storePreKey(preKeyId, preKeyRecord);
-//        store.storeSignedPreKey(signedPreKeyId, signedPreKeyRecord);
-
     }
 
-//    public PreKeyBundle getPreKey() {
-//        return preKey;
-//    }
-
-//    public SignalProtocolAddress getAddress() {
-//        return address;
-//    }
-
-//    public ECPublicKey getEphemeralPublicKey() {
-//        return ephemeralPublicKey;
-//    }
-//
-//    public void setEphemeralPublicKey(ECPublicKey ephemeralPublicKey) {
-//        this.ephemeralPublicKey = ephemeralPublicKey;
-//    }
-//
-//    public ECPrivateKey getEphemeralPrivateKey() {
-//        return ephemeralPrivateKey;
-//    }
-//
-//    public void setEphemeralPrivateKey(ECPrivateKey ephemeralPrivateKey) {
-//        this.ephemeralPrivateKey = ephemeralPrivateKey;
-//    }
-//
-//    public ECKeyPair getEphemeralKey() {
-//        return ephemeralKey;
-//    }
-//
-//    public void setEphemeralKey(ECKeyPair ephemeralKey) {
-//        this.ephemeralKey = ephemeralKey;
-//    }
-//
-//    public ECKeyPair getBaseKey() {
-//        return baseKey;
-//    }
-//
-//    public void setBaseKey(ECKeyPair baseKey) {
-//        this.baseKey = baseKey;
-//    }
-//
-//    public ECKeyPair getSignedPreKeyPair() {
-//        return signedPreKeyPair;
-//    }
-//
-//    public void setSignedPreKeyPair(ECKeyPair signedPreKeyPair) {
-//        this.signedPreKeyPair = signedPreKeyPair;
-//    }
 }

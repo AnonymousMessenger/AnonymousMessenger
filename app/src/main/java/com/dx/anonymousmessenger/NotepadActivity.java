@@ -62,6 +62,7 @@ public class NotepadActivity extends AppCompatActivity {
                 NotepadRecycleViewAdapter adapter = new NotepadRecycleViewAdapter(this, list);
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(list.size()-1);
             });
         }).start();
     }

@@ -190,8 +190,12 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             }
         });
         scrollDownFab.setOnClickListener(v -> {
-            mMessageRecycler.smoothScrollToPosition(messageList.size()-1);
-            scrollDownFab.setVisibility(View.GONE);
+            try{
+                mMessageRecycler.smoothScrollToPosition(messageList.size()-1);
+                scrollDownFab.setVisibility(View.GONE);
+            }catch (Exception ignored){
+                scrollDownFab.setVisibility(View.GONE);
+            }
         });
         send.setOnClickListener(v -> {
             if(((DxApplication) getApplication()).getEntity()==null){
@@ -844,7 +848,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                                 DbHelper.clearConversation(address,
                                         (DxApplication) getApplication());
                             }catch (Exception ignored) {}
-                            runOnUiThread(this::updateUi);
+                            runOnUiThread(()->{
+                                scrollDownFab.setVisibility(View.GONE);
+                                updateUi();
+                            });
                         }).start())
                         .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
                         }).show();

@@ -55,8 +55,8 @@ public class DbHelper {
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         Cursor cr = database.rawQuery("SELECT * FROM contact WHERE address LIKE ?",new String[]{partialAddress});
         if(cr.moveToFirst()){
-            System.out.println(cr.getString(1));
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+//            System.out.println(cr.getString(1));
+//            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
             return cr.getString(1);
         }else{
             return null;
