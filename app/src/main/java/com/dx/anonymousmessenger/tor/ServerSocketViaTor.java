@@ -198,7 +198,7 @@ public class ServerSocketViaTor {
                                 DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
                                 DataInputStream in=new DataInputStream(sock.getInputStream());
                                 String msg = in.readUTF();
-                                System.out.println(msg);
+//                                System.out.println(msg);
                                 if(msg.contains("hello-")){
                                     if(msg.replace("hello-","").length() > 54 && msg.replace("hello-","").endsWith(".onion") && DbHelper.contactExists(msg.replace("hello-",""),app)){
                                         app.addToOnlineList(msg.replace("hello-",""));
