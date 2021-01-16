@@ -8,7 +8,7 @@
         <item name="android:textColorPrimary">@color/dx_white</item>
         <item name="android:textColor">@color/dx_white</item>
         <item name="android:textColorHint">@color/dx_white</item>
-        <item name="colorAccent">@color/dx_lime_400</item>
+        <item name="colorAccent">@color/dx_night_940</item>
         <item name="android:windowBackground">@color/dx_dark_purple</item>
         <item name="android:navigationBarColor">@color/dx_dark_purple</item>
         <item name="android:itemBackground">@color/dx_dark_purple</item>

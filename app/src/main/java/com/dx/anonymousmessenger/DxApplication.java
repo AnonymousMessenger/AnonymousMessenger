@@ -554,9 +554,9 @@ public class DxApplication extends Application {
     }
 
     public void restartTor(){
-        if(lockTorStart){
-            return;
-        }
+//        if(lockTorStart){
+//            return;
+//        }
         Intent serviceIntent = new Intent(this, MyService.class);
         serviceIntent.putExtra("inputExtra", "reconnect now");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

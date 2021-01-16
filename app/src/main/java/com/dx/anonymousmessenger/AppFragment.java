@@ -106,7 +106,11 @@ public class AppFragment extends Fragment {
 //                }
                 updateTorOutput(Objects.requireNonNull(intent.getStringExtra("tor_status1")));
             }else{
-                updateUi();
+                if(intent.getLongExtra("delete",-1)>-1 || Objects.equals(intent.getStringExtra("type"), "online_status")){
+                    updateUi(false);
+                }else{
+                    updateUi();
+                }
             }
             }
         };
@@ -128,7 +132,7 @@ public class AppFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateUi();
+        updateUi(false);
     }
 
     @Override
@@ -252,6 +256,36 @@ public class AppFragment extends Fragment {
         }).start();
     }
 
+    public void updateUi(boolean animate){
+        new Thread(()->{
+            if(getActivity()==null || mainThread==null){
+                return;
+            }
+            try{
+                lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
+                if(lst==null){
+                    return;
+                }
+                mainThread.post(()->{
+                    try{
+                        if(lst.isEmpty()){
+                            noContacts.setVisibility(View.VISIBLE);
+                        }else{
+                            noContacts.setVisibility(View.GONE);
+                        }
+                        mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
+                        recyclerView.setAdapter(mAdapter);
+                        mAdapter.notifyDataSetChanged();
+                        if(animate){
+                            recyclerView.scheduleLayoutAnimation();
+                        }
+                        ((DxApplication)getActivity().getApplication()).clearMessageNotification();
+                    } catch (Exception ignored) {}
+                });
+            }catch (Exception ignored){}
+        }).start();
+    }
+
     public void updateUi(List<String[]> tmp){
         if(tmp==null){
             return;
@@ -271,8 +305,7 @@ public class AppFragment extends Fragment {
                     mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
                     recyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
-                    //this is because our test in the message checker always fails
-                    recyclerView.scheduleLayoutAnimation();
+//                    recyclerView.scheduleLayoutAnimation();
                 });
             }catch (Exception ignored){}
         }).start();

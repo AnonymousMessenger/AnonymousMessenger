@@ -44,7 +44,7 @@
         <activity android:name=".SetupInProcess" />
         <activity
             android:name=".MessageListActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity android:name=".AppActivity" />
         <activity android:name=".CreateUserActivity" />
         <activity android:name=".MainActivity">

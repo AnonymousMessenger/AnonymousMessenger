@@ -660,8 +660,6 @@ public class DbHelper {
             database.endTransaction();
         }
 
-
-
         try{
             if(msg.getPath()!=null && !msg.getPath().equals("")){
                 FileHelper.deleteFile(msg.getPath(),app);

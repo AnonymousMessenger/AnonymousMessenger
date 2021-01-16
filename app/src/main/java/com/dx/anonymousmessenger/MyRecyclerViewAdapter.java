@@ -11,7 +11,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import com.dx.anonymousmessenger.db.DbHelper;
@@ -24,11 +23,11 @@ import static androidx.recyclerview.widget.RecyclerView.ViewHolder;
 public class MyRecyclerViewAdapter extends Adapter {
     private static final int VIEW_TYPE_READ = 1;
     private static final int VIEW_TYPE_UNREAD = 2;
-    private List<String[]> mData;
+    private final List<String[]> mData;
 //    private LayoutInflater mInflater;
     private View.OnClickListener mClickListener;
-    private DxApplication app;
-    private AppFragment appFragment;
+    private final DxApplication app;
+    private final AppFragment appFragment;
 
     // data is passed into the constructor
     MyRecyclerViewAdapter(DxApplication app, List<String[]> data, AppFragment appFragment) {
@@ -233,7 +232,10 @@ public class MyRecyclerViewAdapter extends Adapter {
         void bind(String title, String msg, String send_to, long createdAt, boolean received, String address) {
 //            imageView.setVisibility(View.VISIBLE);
             super.bind(title,msg,send_to,createdAt,received,address);
-            itemView.setBackground(ContextCompat.getDrawable(app,R.drawable.rounded_rectangle_steel));
+//            itemView.setBackground(ContextCompat.getDrawable(app,R.drawable.rounded_rectangle_steel));
+//            itemView.setPadding(15,0,12,2);
+            contactName.setTypeface(Typeface.DEFAULT_BOLD);
+            msgText.setTypeface(Typeface.DEFAULT_BOLD);
             imageView.setVisibility(View.VISIBLE);
             seen.setVisibility(View.INVISIBLE);
         }

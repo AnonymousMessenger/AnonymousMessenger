@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@drawable/button_ripple"
+    android:background="@drawable/contact_background"
     android:clickable="true"
     android:focusable="true"
     android:padding="5dp">
