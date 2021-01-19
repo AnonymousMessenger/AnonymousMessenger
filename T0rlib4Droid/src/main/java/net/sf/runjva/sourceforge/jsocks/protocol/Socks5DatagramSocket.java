@@ -1,7 +1,7 @@
 package net.sf.runjva.sourceforge.jsocks.protocol;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class Socks5DatagramSocket extends DatagramSocket {
 	private boolean server_mode = false;
 	UDPEncapsulation encapsulation;
 
-	private Logger log = LoggerFactory.getLogger(Socks5DatagramSocket.class);
+//	private Logger log = LoggerFactory.getLogger(Socks5DatagramSocket.class);
 
 	/**
 	 * Construct Datagram socket for communication over SOCKS5 proxy server.
@@ -163,7 +163,7 @@ public class Socks5DatagramSocket extends DatagramSocket {
 		// If the host should be accessed directly, send it as is.
 		if (!server_mode && proxy.isDirect(dp.getAddress())) {
 			super.send(dp);
-			log.debug("Sending datagram packet directly:");
+			System.out.println("Sending datagram packet directly:");
 			return;
 		}
 
@@ -386,7 +386,7 @@ public class Socks5DatagramSocket extends DatagramSocket {
 				if (eof < 0) {
 					return false; // EOF encountered.
 				} else {
-					log.warn("This really should not happen");
+					System.out.println("This really should not happen");
 					return true; // This really should not happen
 				}
 

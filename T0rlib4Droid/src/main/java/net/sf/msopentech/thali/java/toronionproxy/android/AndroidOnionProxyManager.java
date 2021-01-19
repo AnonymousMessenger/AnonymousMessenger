@@ -38,8 +38,8 @@ import android.net.NetworkInfo;
 
 import net.sf.msopentech.thali.java.toronionproxy.OnionProxyManager;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +48,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY;
 
 public class AndroidOnionProxyManager extends OnionProxyManager {
-    private static final Logger LOG = LoggerFactory.getLogger(AndroidOnionProxyManager.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(AndroidOnionProxyManager.class);
 
 //    private volatile BroadcastReceiver networkStateReceiver;
 //    private final Context context;
@@ -88,7 +88,7 @@ public class AndroidOnionProxyManager extends OnionProxyManager {
             try {
                 if(!isRunning()) return;
             } catch (IOException e) {
-                LOG.info("Did someone call before Tor was ready?", e);
+                System.out.println("Did someone call before Tor was ready?"+ e);
                 return;
             }
             boolean online = !i.getBooleanExtra(EXTRA_NO_CONNECTIVITY, false);
@@ -99,11 +99,11 @@ public class AndroidOnionProxyManager extends OnionProxyManager {
                 NetworkInfo net = cm.getActiveNetworkInfo();
                 if(net == null || !net.isConnected()) online = false;
             }
-            LOG.info("Online: " + online);
+            System.out.println("Online: " + online);
             try {
                 enableNetwork(online);
             } catch(Exception e) {
-                LOG.warn(e.toString(), e);
+                System.out.println(e.toString()+e);
             }
         }
     }

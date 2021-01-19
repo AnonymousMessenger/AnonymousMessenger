@@ -37,9 +37,6 @@ import net.sf.controller.network.NetLayerStatus;
 import net.sf.controller.network.ServiceDescriptor;
 import net.sf.freehaven.tor.control.EventHandler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +45,7 @@ import java.util.Map;
  * Logs the data we get from notifications from the Tor OP. This is really just meant for debugging.
  */
 public class OnionProxyManagerEventHandler implements EventHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(OnionProxyManagerEventHandler.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(OnionProxyManagerEventHandler.class);
     private ServiceDescriptor hs;
     private NetLayerStatus listener;
     private boolean hsPublished;
@@ -146,7 +143,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
     }
 
     public void bandwidthUsed(long read, long written) {
-        LOG.info("bandwidthUsed: read: " + read + ", written: " + written);
+        System.out.println("bandwidthUsed: read: " + read + ", written: " + written);
         Intent gcm_rec = new Intent("tor_status1");
         gcm_rec.putExtra("tor_status1","bandwidthUsed: read: " + read + ", written: " + written);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -158,7 +155,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
         while (iterator.hasNext()) {
             stringBuilder.append(iterator.next());
         }
-        LOG.info("newDescriptors: " + stringBuilder.toString());
+        System.out.println("newDescriptors: " + stringBuilder.toString());
         Intent gcm_rec = new Intent("tor_status1");
         gcm_rec.putExtra("tor_status1","newDescriptors: " + stringBuilder.toString());
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -166,7 +163,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
 
     //fetch Exit Node
     public void message(String severity, String msg) {
-        LOG.info(severity + "," + msg);
+        System.out.println(severity + "," + msg);
 //        String out = "message: " + severity + ", msg: " + msg;
 //        if(out.contains("100%")){
 //            lastMessage = true;
@@ -178,7 +175,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
     }
 
     public void unrecognized(String type, String msg) {
-        LOG.info("unrecognized: msg: " + type + ", " + msg);
+        System.out.println("unrecognized: msg: " + type + ", " + msg);
         Intent gcm_rec = new Intent("tor_status1");
         gcm_rec.putExtra("tor_status1","unrecognized: msg: " + type + ", " + msg);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);

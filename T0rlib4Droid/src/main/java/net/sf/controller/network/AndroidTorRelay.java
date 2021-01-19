@@ -5,8 +5,8 @@ import android.content.Context;
 import net.sf.msopentech.thali.java.toronionproxy.OnionProxyManager;
 import net.sf.msopentech.thali.java.toronionproxy.android.AndroidOnionProxyManager;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -18,7 +18,7 @@ public class AndroidTorRelay {
 
     private static final String PROXY_LOCALHOST = "127.0.0.1";
 
-    private static final Logger LOG = LoggerFactory.getLogger(AndroidTorRelay.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(AndroidTorRelay.class);
 
     public AndroidTorRelay(Context ctx, String torDirectory) throws IOException {
         onionProxyManager = new AndroidOnionProxyManager(ctx, torDirectory);
@@ -32,7 +32,7 @@ public class AndroidTorRelay {
 
     public ServiceDescriptor createHiddenService(final int localPort, final int servicePort,
                                                  final NetLayerStatus listener) throws IOException {
-        LOG.debug("Publishing Hidden Service. This will at least take half a minute...");
+//        LOG.debug("Publishing Hidden Service. This will at least take half a minute...");
         final String hiddenServiceName = onionProxyManager.publishHiddenService(servicePort, localPort);
         final ServiceDescriptor serviceDescriptor = new ServiceDescriptor(hiddenServiceName,
                 localPort, servicePort);
@@ -50,7 +50,7 @@ public class AndroidTorRelay {
     public void initTor()
             throws IOException {
 
-        LOG.debug("Trying to start tor in directory {}", onionProxyManager.getWorkingDirectory());
+//        LOG.debug("Trying to start tor in directory {}", onionProxyManager.getWorkingDirectory());
 
         try {
             if (!onionProxyManager.startWithRepeat(TOTAL_SEC_PER_STARTUP, TRIES_PER_STARTUP)) {
@@ -84,7 +84,7 @@ public class AndroidTorRelay {
         try {
             return onionProxyManager.getIPv4LocalHostSocksPort();
         } catch (IOException e) {
-            LOG.debug("Cannot Establish socks port");
+//            LOG.debug("Cannot Establish socks port");
             throw new IOException(e);
         }
     }

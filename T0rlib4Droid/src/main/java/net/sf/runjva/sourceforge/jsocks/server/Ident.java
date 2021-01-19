@@ -1,7 +1,7 @@
 package net.sf.runjva.sourceforge.jsocks.server;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
  */
 public class Ident {
 
-	Logger log = LoggerFactory.getLogger(Ident.class);
+//	Logger log = LoggerFactory.getLogger(Ident.class);
 
 	/** Error Message can be null. */
 	public String errorMessage;
@@ -118,7 +118,7 @@ public class Ident {
 					sock.close();
 				}
 			} catch (final IOException ioe) {
-				log.warn("Could not close socket", ioe);
+				System.out.println("Could not close socket"+ ioe);
 			}
 		}
 	}

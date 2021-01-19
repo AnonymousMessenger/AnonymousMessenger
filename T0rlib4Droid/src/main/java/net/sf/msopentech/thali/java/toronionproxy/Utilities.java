@@ -4,8 +4,8 @@ package net.sf.msopentech.thali.java.toronionproxy;
 import net.sf.runjva.sourceforge.jsocks.protocol.Socks5Proxy;
 import net.sf.runjva.sourceforge.jsocks.protocol.SocksSocket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
 public class Utilities {
     private static final int READ_TIMEOUT_MILLISECONDS = 30000;
     private static final int CONNECT_TIMEOUT_MILLISECONDS = 60000;
-    private static final Logger LOG = LoggerFactory.getLogger(Utilities.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(Utilities.class);
 
     private Utilities() {
     }
@@ -68,7 +68,7 @@ public class Utilities {
         ByteBuffer byteBuffer = ByteBuffer.wrap(messageByte, 0, 2);
 
         int bytesToRead = byteBuffer.getShort();
-        LOG.info("About to read " + bytesToRead + " octets");
+        System.out.println("About to read " + bytesToRead + " octets");
 
         while (!end) {
             bytesRead = inputStream.read(messageByte);

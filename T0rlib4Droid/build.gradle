@@ -40,7 +40,7 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    api 'org.slf4j:slf4j-android:1.7.30'
+//    api 'org.slf4j:slf4j-android:1.7.30'
     api 'androidx.appcompat:appcompat:1.2.0'
     api 'androidx.constraintlayout:constraintlayout:2.0.4'
     testImplementation 'junit:junit:4.13.1'

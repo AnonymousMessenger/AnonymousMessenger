@@ -1,7 +1,7 @@
 package net.sf.runjva.sourceforge.jsocks.protocol;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -20,7 +20,7 @@ class Socks5Message extends ProxyMessage {
 
 	byte[] data;
 
-	private Logger log = LoggerFactory.getLogger(Socks5Message.class);
+//	private Logger log = LoggerFactory.getLogger(Socks5Message.class);
 
 	/**
 	 * Server error response.
@@ -98,7 +98,7 @@ class Socks5Message extends ProxyMessage {
 		this.host = hostName;
 		this.version = SOCKS_VERSION;
 
-		log.debug("Doing ATYP_DOMAINNAME");
+//		log.debug("Doing ATYP_DOMAINNAME");
 
 		addrType = SOCKS_ATYP_DOMAINNAME;
 		final byte addr[] = hostName.getBytes();
@@ -215,7 +215,7 @@ class Socks5Message extends ProxyMessage {
 			host = bytes2IPV6(addr, 0);
 			break;
 		case SOCKS_ATYP_DOMAINNAME:
-			log.debug("Reading ATYP_DOMAINNAME");
+//			log.debug("Reading ATYP_DOMAINNAME");
 			addr = new byte[di.readUnsignedByte()];// Next byte shows the length
 			di.readFully(addr);
 			host = new String(addr);

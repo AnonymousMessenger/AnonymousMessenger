@@ -12,8 +12,8 @@ import net.sf.freehaven.tor.control.ConfigEntry;
 import net.sf.freehaven.tor.control.TorControlConnection;
 import net.sf.runjva.sourceforge.jsocks.protocol.Socks5Proxy;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -46,7 +46,7 @@ public abstract class OnionProxyManager {
     private static final int TOTAL_SEC_PER_STARTUP = 4 * 60;
     private static final int TRIES_PER_STARTUP = 5;
 
-    private static final Logger LOG = LoggerFactory.getLogger(OnionProxyManager.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(OnionProxyManager.class);
 
     protected final OnionProxyContext onionProxyContext;
 
@@ -161,7 +161,7 @@ public abstract class OnionProxyManager {
            throw new RuntimeException("Sorry, only one hidden service to a customer and we already have one. Please send complaints to https://github.com/thaliproject/Tor_Onion_Proxy_Library/issues/5 with your scenario so we can justify fixing this.");
         }*/
 
-        LOG.info("Creating hidden service");
+//        LOG.info("Creating hidden service");
 //        Intent gcm_rec = new Intent("tor_status");
 //        gcm_rec.putExtra("tor_status","Creating hidden service");
 //        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -192,7 +192,7 @@ public abstract class OnionProxyManager {
 
         // Publish the hidden service's onion hostname in transport properties
         String hostname = new String(FileUtilities.read(hostnameFile), "UTF-8").trim();
-        LOG.info("Hidden service config has completed.");
+//        LOG.info("Hidden service config has completed.");
 //        gcm_rec = new Intent("tor_status");
 //        gcm_rec.putExtra("tor_status","Hidden service config has completed.");
 //        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -210,7 +210,7 @@ public abstract class OnionProxyManager {
             if (controlConnection == null) {
                 return;
             }
-            LOG.info("Stopping Tor");
+//            LOG.info("Stopping Tor");
             controlConnection.setConf("DisableNetwork", "1");
             controlConnection.shutdownTor("TERM");
         } finally {
@@ -233,7 +233,7 @@ public abstract class OnionProxyManager {
             throw new RuntimeException("Tor is not running!");
         }
         controlConnection.setConf("DisableNetwork", enable ? "0" : "1");
-        LOG.info("Enabling network: " + enable);
+//        LOG.info("Enabling network: " + enable);
 //        Intent gcm_rec = new Intent("tor_status");
 //        gcm_rec.putExtra("tor_status","Enabling network: " + enable);
 //        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -272,11 +272,11 @@ public abstract class OnionProxyManager {
 //            gcm_rec.putExtra("tor_status","Bootstrapped: "+phase);
 //            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         } catch (IOException e) {
-            LOG.warn("Control connection is not responding properly to getInfo", e);
+            System.out.println("Control connection is not responding properly to getInfo "+e);
         }
 
         if (phase != null && phase.contains("PROGRESS=100")) {
-            LOG.info("Tor has already bootstrapped");
+//            LOG.info("Tor has already bootstrapped");
             return true;
         }
 
@@ -288,7 +288,7 @@ public abstract class OnionProxyManager {
                                                               final NetLayerStatus listener) throws IOException {
         ServiceDescriptor serviceDescriptor = null;
         try {
-            LOG.info("Publishing Hidden Service. This will at least take half a minute...");
+            System.out.println("Publishing Hidden Service. This will at least take half a minute...");
 //            Intent gcm_rec = new Intent("tor_status");
 //            gcm_rec.putExtra("tor_status","Publishing Hidden Service. This will at least take half a minute...");
 //            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -303,9 +303,9 @@ public abstract class OnionProxyManager {
                 onionProxyManager.attachHiddenServiceReadyListener(serviceDescriptor, listener);
 
         } catch (CloneNotSupportedException e) {
-            LOG.info("Cannot make a reference of this Object");
+            System.out.println("Cannot make a reference of this Object");
         } catch (IOException e) {
-            LOG.info("Cannot create HiddenService");
+            System.out.println("Cannot create HiddenService");
         }
 
         if (serviceDescriptor == null) {
@@ -324,17 +324,17 @@ public abstract class OnionProxyManager {
         // The Tor OP will die if it looses the connection to its socket so if there is no controlSocket defined
         // then Tor is dead. This assumes, of course, that takeOwnership works and we can't end up with Zombies.
         if (controlConnection != null) {
-            LOG.info("Tor is already running");
+            System.out.println("Tor is already running");
             return true;
         }
 
         // The code below is why this method is synchronized, we don't want two instances of it running at once
         // as the result would be a mess of screwed up files and connections.
-        LOG.info("Tor is not running");
+        System.out.println("Tor is not running");
 
         installAndConfigureFiles();
 
-        LOG.info("Starting Tor");
+        System.out.println("Starting Tor");
 //        Intent gcm_rec = new Intent("tor_status");
 //        gcm_rec.putExtra("tor_status","Starting Tor");
 //        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -411,7 +411,7 @@ public abstract class OnionProxyManager {
                 int exit = torProcess.waitFor();
                 torProcess = null;
                 if (exit != 0) {
-                    LOG.warn("Tor exited with value " + exit);
+                    System.out.println("Tor exited with value " + exit);
                     return false;
                 }
             }
@@ -443,10 +443,10 @@ public abstract class OnionProxyManager {
             this.controlConnection = controlConnection;
             return true;
         } catch (SecurityException e) {
-            LOG.warn(e.toString(), e);
+            System.out.println(e.toString()+ e);
             return false;
         } catch (InterruptedException e) {
-            LOG.warn("Interrupted while starting Tor", e);
+            System.out.println("Interrupted while starting Tor"+ e);
             Thread.currentThread().interrupt();
             return false;
         } finally {
@@ -472,7 +472,7 @@ public abstract class OnionProxyManager {
                 try {
                     while (scanner.hasNextLine()) {
                         if (stdError) {
-                            LOG.error(scanner.nextLine());
+                            System.out.println(scanner.nextLine());
                         } else {
                             String nextLine = scanner.nextLine();
                             // We need to find the line where it tells us what the control port is.
@@ -485,7 +485,7 @@ public abstract class OnionProxyManager {
                                         nextLine.substring(nextLine.lastIndexOf(" ") + 1, nextLine.length() - 1));
 //                                countDownLatch.countDown();
                             }
-                            LOG.info(nextLine);
+                            System.out.println(nextLine);
                             Intent gcm_rec = new Intent("tor_status");
                             gcm_rec.putExtra("tor_status",nextLine);
                             LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -516,7 +516,7 @@ public abstract class OnionProxyManager {
                     try {
                         inputStream.close();
                     } catch (IOException e) {
-                        LOG.error("Couldn't close input stream in eatStream", e);
+                        System.out.println("Couldn't close input stream in eatStream"+ e);
                     }
                 }
             }

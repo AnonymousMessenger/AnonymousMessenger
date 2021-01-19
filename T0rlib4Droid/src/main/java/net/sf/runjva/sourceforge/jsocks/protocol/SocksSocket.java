@@ -1,7 +1,7 @@
 package net.sf.runjva.sourceforge.jsocks.protocol;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,7 +57,7 @@ public class SocksSocket extends Socket {
 	protected int localPort, remotePort;
 
 	private Socket directSock = null;
-	private Logger log = LoggerFactory.getLogger(SocksSocket.class);
+//	private Logger log = LoggerFactory.getLogger(SocksSocket.class);
 
 	/**
 	 * Tryies to connect to given host and port using default proxy. If no
