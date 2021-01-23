@@ -270,5 +270,7 @@
     <string name="delete_note_question">Delete this note?</string>
     <string name="delete_note_details">this can\'t be undone</string>
     <string name="delete_note">Delete</string>
+    <string name="open_link_question">Open this link?</string>
+    <string name="open_link_describe">Opening links outside tor browser could deanonymize you, only do this if you trust the link or use tor browser</string>
 
 </resources>

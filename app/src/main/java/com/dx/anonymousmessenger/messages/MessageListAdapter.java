@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger.messages;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaDataSource;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
@@ -28,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.InternalLinkMovementMethod;
 import com.dx.anonymousmessenger.MessageListActivity;
 import com.dx.anonymousmessenger.PictureViewerActivity;
 import com.dx.anonymousmessenger.R;
@@ -672,6 +675,26 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             messageText.setText(span);
             timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
             messageText.setOnClickListener(new ListItemOnClickListener(message,itemView,messageText));
+            InternalLinkMovementMethod.OnLinkClickedListener linkClickedListener = linkText -> {
+                System.out.println(linkText);
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//                if (!linkText.startsWith("http://") && !linkText.startsWith("https://")){
+//                    linkText = "https://" + linkText;
+//                }
+//                String linkText2 = linkText;
+                new AlertDialog.Builder(mContext,R.style.AppAlertDialog)
+                        .setTitle(R.string.open_link_question)
+                        .setMessage(R.string.open_link_describe)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            Intent defaultIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkText));
+                            mContext.startActivity(defaultIntent);
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog, whichButton) ->{}).show();
+                // return true if handled, false otherwise
+                return true;
+            };
+            messageText.setMovementMethod(new InternalLinkMovementMethod(linkClickedListener));
         }
     }
 

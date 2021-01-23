@@ -14,11 +14,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.dx.anonymousmessenger.db.DbHelper;
-import com.dx.anonymousmessenger.util.Utils;
-
-import java.util.List;
-
 public class SetupInProcess extends AppCompatActivity implements ComponentCallbacks2 {
 
     private BroadcastReceiver mMyBroadcastReceiver;

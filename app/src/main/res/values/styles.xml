@@ -9,10 +9,17 @@
         <item name="android:textColor">@color/dx_white</item>
         <item name="android:textColorHint">@color/dx_white</item>
         <item name="colorAccent">@color/dx_night_940</item>
+        <item name="android:textColorLink">@color/dx_white</item>
         <item name="android:windowBackground">@color/dx_dark_purple</item>
         <item name="android:navigationBarColor">@color/dx_dark_purple</item>
         <item name="android:itemBackground">@color/dx_dark_purple</item>
+        <item name="placeholderTextColor">@color/dx_white</item>
+        <item name="android:textColorHighlight">@color/green_tor</item>
+        <item name="android:textColorTertiary">@color/dx_white</item>
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
+        <item name="colorControlNormal">@color/dx_white</item>
+        <item name="colorControlActivated">@color/dx_white</item>
+        <item name="colorControlHighlight">@color/dx_white</item>
     </style>
 
 <!--    <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">-->

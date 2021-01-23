@@ -4,6 +4,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import java.io.File;
+
 public class BootReminderService extends Service {
     public BootReminderService() {
     }
@@ -11,7 +13,12 @@ public class BootReminderService extends Service {
     @Override
     public void onCreate() {
         DxApplication app = (DxApplication) getApplication();
-        app.sendNotification(getString(R.string.decrypt_reminder_title),getString(R.string.decrypt_reminder_message),false);
+        try{
+            File databaseFile = new File(getFilesDir(), "demo.db");
+            if(databaseFile.exists()){
+                app.sendNotification(getString(R.string.decrypt_reminder_title),getString(R.string.decrypt_reminder_message),false);
+            }
+        }catch (Exception ignored) {}
         super.onCreate();
     }
 

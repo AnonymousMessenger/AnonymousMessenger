@@ -80,6 +80,7 @@ public class DxCallService extends Service {
                 (DxApplication) getApplication());
         String action = intent.getAction();
 
+        //todo maybe put this line somewhere else or directly change text
         createNotification(Objects.requireNonNull(address).substring(0,10),action);
 
         if (action != null) {
