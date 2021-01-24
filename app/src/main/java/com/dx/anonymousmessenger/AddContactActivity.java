@@ -27,6 +27,8 @@ import org.whispersystems.libsignal.SignalProtocolAddress;
 
 import java.util.Objects;
 
+import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
+
 public class AddContactActivity extends AppCompatActivity {
 
     TextView tv;
@@ -76,7 +78,7 @@ public class AddContactActivity extends AppCompatActivity {
                     contact.setText("");
                     return;
                 }
-                if(s.toString().endsWith(".onion") && s.toString().length()>48){
+                if(s.toString().endsWith(".onion") && s.toString().length()>55){
                     new AlertDialog.Builder(context,R.style.AppAlertDialog)
                         .setTitle(R.string.add_contact)
                         .setMessage(getString(R.string.confirm_add_contact)+s.toString()+" ?")
@@ -100,13 +102,11 @@ public class AddContactActivity extends AppCompatActivity {
                                     });
                                     return;
                                 }
-                                new Thread(()-> {
-                                    if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.toString().trim())){
-                                        if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.toString().trim(),1))){
-                                            MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.toString().trim());
-                                        }
+                                if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.toString().trim())){
+                                    if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.toString().trim(),1))){
+                                        MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.toString().trim());
                                     }
-                                }).start();
+                                }
                                 finish();
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -144,5 +144,58 @@ public class AddContactActivity extends AppCompatActivity {
             catch (InterruptedException ignored) {    }
             System.exit(2);
         });
+
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+         // If it does contain data, decide if you can handle the data.
+        if (clipboard.hasPrimaryClip()) {
+            if ((Objects.requireNonNull(clipboard.getPrimaryClipDescription()).hasMimeType(MIMETYPE_TEXT_PLAIN))) {
+                //since the clipboard contains plain text.
+                ClipData.Item item = Objects.requireNonNull(clipboard.getPrimaryClip()).getItemAt(0);
+                // Gets the clipboard as text.
+                String s = item.getText().toString();
+
+                if(s.equals(((DxApplication)getApplication()).getHostname())){
+                    System.out.println("same as hostname");
+                    return;
+                }
+                if(s.trim().length()<56 || !s.trim().endsWith(".onion")){
+                    System.out.println("not valid");
+                    return;
+                }
+                try{
+                    if(DbHelper.contactExists(s,(DxApplication)getApplication())){
+                        System.out.println("exists");
+                        return;
+                    }
+
+                    new AlertDialog.Builder(context,R.style.AppAlertDialog)
+                            .setTitle(R.string.add_contact)
+                            .setMessage(getString(R.string.confirm_add_contact)+s.toString()+" ?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(() ->
+                            {
+                                boolean b = DbHelper.saveContact(s.trim(), ((DxApplication) getApplication()));
+                                if(!b){
+                                    Log.e("FAILED TO SAVE CONTACT", "SAME " );
+                                    runOnUiThread(()->{
+                                        Snackbar.make(contact, R.string.cant_add_contact,Snackbar.LENGTH_SHORT).show();
+                                        contact.setText("");
+                                    });
+                                    return;
+                                }
+                                if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.trim())){
+                                    if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.trim(),1))){
+                                        MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.trim());
+                                    }
+                                }
+                                finish();
+                            }).start())
+                            .setNegativeButton(android.R.string.no, null).show();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Log.e("FAILED TO SAVE CONTACT", "SAME " );
+                }
+            }
+        }
     }
 }

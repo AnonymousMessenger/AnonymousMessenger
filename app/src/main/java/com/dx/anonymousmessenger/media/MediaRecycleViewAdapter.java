@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,6 +51,7 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
         //detect type as file selection to draw file icon
         if(holder.getLayoutPosition() == 0){
             holder.myView.setImageResource(R.drawable.ic_baseline_attach_file_24);
+            holder.myView.setLayoutParams(new LinearLayout.LayoutParams(180,280));
             holder.info.setText(R.string.file);
             return;
         }

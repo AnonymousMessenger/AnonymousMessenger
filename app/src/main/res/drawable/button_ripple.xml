@@ -4,8 +4,8 @@
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
             <gradient
-                android:startColor="@color/startGradientColor"
-                android:endColor="@color/endGradientColor"
+                android:startColor="#1C0018"
+                android:endColor="#17061E"
                 android:angle="-90"/>
 <!--            <solid android:color="@color/dx_brand_green" />-->
             <corners android:radius="300dp" />

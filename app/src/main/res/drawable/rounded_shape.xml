@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle"   >
     <gradient
-        android:startColor="@color/startGradientColor"
-        android:endColor="@color/endGradientColor"
+        android:startColor="#2E0027"
+        android:endColor="#17061E"
         android:angle="180"/>
 <!--    <solid-->
 <!--        android:color="@color/dx_brand_green" >-->
