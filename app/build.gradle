@@ -52,7 +52,9 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation project(path: ':T0rlib4Droid')
-    implementation 'org.whispersystems:signal-protocol-android:2.8.1'
+//    implementation project(path: ':libsignal-protocol-java')
+//    implementation 'org.whispersystems:signal-protocol-android:2.8.1'
+    implementation 'com.google.protobuf:protobuf-java:3.10.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     testImplementation 'junit:junit:4.13.1'

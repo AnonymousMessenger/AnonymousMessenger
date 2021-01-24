@@ -37,7 +37,7 @@ android {
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar','*.so'])
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.3.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 //    api 'org.slf4j:slf4j-android:1.7.30'

@@ -6,11 +6,14 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.1'
-
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.10'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
+
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
 
 allprojects {
     repositories {
@@ -19,7 +22,27 @@ allprojects {
     }
 }
 
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.10.0'
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option "lite"
+                }
+            }
+        }
+    }
 }
+
+sourceSets {
+    main.proto.srcDir '../protobuf'
+}
+
+
+
+//task clean(type: Delete) {
+//    delete rootProject.buildDir
+//}
