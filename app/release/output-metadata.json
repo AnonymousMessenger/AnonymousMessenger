@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.example.anonymousmessenger",
+  "applicationId": "com.dx.anonymousmessenger",
   "variantName": "processReleaseResources",
   "elements": [
     {
