@@ -51,12 +51,14 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
             if(s.equals(((DxApplication)getApplication()).getHostname())){
                 runOnUiThread(()->{
                     Snackbar.make(mScannerView, R.string.cant_add_self,Snackbar.LENGTH_SHORT).show();
-                    finish();
+                    mScannerView.resumeCameraPreview(this);
                 });
                 return;
             }
             if(s.trim().length()<56 || !s.trim().endsWith(".onion")){
                 runOnUiThread(()->{
+                    Snackbar.make(mScannerView, R.string.invalid_address,Snackbar.LENGTH_SHORT).show();
+                    //continue scanning
                     mScannerView.resumeCameraPreview(this);
                 });
                 return;
@@ -65,7 +67,7 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
                 if(DbHelper.contactExists(s,(DxApplication)getApplication())){
                     runOnUiThread(()->{
                         Snackbar.make(mScannerView, R.string.contact_exists,Snackbar.LENGTH_SHORT).show();
-                        finish();
+                        mScannerView.resumeCameraPreview(this);
                     });
                     return;
                 }
@@ -75,25 +77,29 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
                     Log.e("FAILED TO SAVE CONTACT", "SAME " );
                     runOnUiThread(()->{
                         Snackbar.make(mScannerView, R.string.cant_add_contact,Snackbar.LENGTH_SHORT).show();
-                        finish();
+                        mScannerView.resumeCameraPreview(this);
                     });
                     return;
                 }
+                new Thread(()->{
+                    if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.trim())){
+                        if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.trim(),1))){
+                            MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.trim());
+                        }
+                    }
+                }).start();
                 runOnUiThread(()->{
                     Snackbar.make(mScannerView, R.string.contact_added,Snackbar.LENGTH_SHORT).show();
+                });
+                Thread.sleep(500);
+                runOnUiThread(()->{
                     if (getParent() == null) {
                         setResult(Activity.RESULT_OK);
                     } else {
                         getParent().setResult(Activity.RESULT_OK);
                     }
+                    finish();
                 });
-                if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.trim())){
-                    if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.trim(),1))){
-                        MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.trim());
-                    }
-                }
-                finish();
-                return;
             }catch (Exception e){
                 e.printStackTrace();
                 Log.e("FAILED TO SAVE CONTACT", "SAME " );
@@ -102,8 +108,6 @@ public class SimpleScannerActivity extends Activity implements ZXingScannerView.
                     finish();
                 });
             }
-            // If you would like to resume scanning, call this method below:
-            mScannerView.resumeCameraPreview(this);
         }).start();
     }
 }

@@ -277,5 +277,6 @@
     <string name="cam_perm_ask_title">Camera permission</string>
     <string name="why_need_cam">QR scanning won\'t work without camera permission</string>
     <string name="ask_for_cam_btn">Ok</string>
+    <string name="invalid_address">Invalid address</string>
 
 </resources>
