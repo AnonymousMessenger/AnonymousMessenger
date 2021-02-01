@@ -36,9 +36,9 @@ public class VerifyIdentityActivity extends AppCompatActivity {
                 byte[] theirKey =
                         ((DxApplication) getApplication()).getEntity().getStore().getIdentity(new SignalProtocolAddress(fullAddress,1)).serialize();
                 if(myKey==theirKey){
-                    tv.setText(Hex.toString(myKey));
+                    runOnUiThread(()-> tv.setText(Hex.toString(myKey)));
                 }else{
-                    tv.setText(Hex.toString(myKey,theirKey));
+                    runOnUiThread(()-> tv.setText(Hex.toString(myKey,theirKey)));
                 }
             }catch (Exception ignored) {
                 runOnUiThread(()-> tv.setText(R.string.identity_verification_fail));

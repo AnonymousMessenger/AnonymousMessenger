@@ -774,6 +774,19 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 
     @Override
     public void onBackPressed() {
+        if(mediaRecyclerView.getVisibility()==View.VISIBLE){
+            mediaRecyclerView.setVisibility(View.GONE);
+            send.setVisibility(View.VISIBLE);
+            audio.setVisibility(View.VISIBLE);
+            file.setVisibility(View.VISIBLE);
+            txt.setVisibility(View.VISIBLE);
+            if(quoteTextTyping.getText().length()>0){
+                quoteTextTyping.setVisibility(View.VISIBLE);
+                quoteSenderTyping.setVisibility(View.VISIBLE);
+            }
+            picsHelp.setVisibility(View.GONE);
+            return;
+        }
         super.onBackPressed();
         onSupportNavigateUp();
     }
@@ -878,27 +891,15 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CODE) {// If request is cancelled, the result arrays are empty.
-//            if (grantResults.length > 0 &&
-//                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                // Permission is granted. Continue the action or workflow
-//                // in your app.
-//            } else {
-                new AlertDialog.Builder(this,R.style.AppAlertDialog)
-                        .setTitle(R.string.denied_microphone)
-                        .setMessage(R.string.denied_microphone_help)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getMicrophonePerms())
-                        .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-                        });
-                // Explain to the user that the feature is unavailable because
-                // the features requires a permission that the user has denied.
-                // At the same time, respect the user's decision. Don't link to
-                // system settings in an effort to convince the user to change
-                // their decision.
-//            }
-        }//else if(requestCode == READ_STORAGE_REQUEST_CODE){
-        //}
+        if (requestCode == REQUEST_CODE) {
+            new AlertDialog.Builder(this,R.style.AppAlertDialog)
+                .setTitle(R.string.denied_microphone)
+                .setMessage(R.string.denied_microphone_help)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getMicrophonePerms())
+                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+                });
+        }
     }
 
 //    @Override
@@ -939,17 +940,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     }
 
     public void getMicrophonePerms(){
-//        if (ContextCompat.checkSelfPermission(
-//                this, Manifest.permission.RECORD_AUDIO) ==
-//                PackageManager.PERMISSION_GRANTED) {
-//            // You can use the API that requires the permission.
-//
-//        } else
-            if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
-            // In an educational UI, explain to the user why your app requires this
-            // permission for a specific feature to behave as expected. In this UI,
-            // include a "cancel" or "no thanks" button that allows the user to
-            // continue using your app without granting the permission.
+        if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
             new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
                 .setTitle(R.string.mic_perm_ask_title)
                 .setMessage(R.string.why_need_mic)
@@ -958,14 +949,11 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                         new String[] { Manifest.permission.RECORD_AUDIO },
                         REQUEST_CODE))
                 .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-
                 });
         } else {
-            // You can directly ask for the permission.
-            // The registered ActivityResultCallback gets the result of this request.
             requestPermissions(
-                    new String[] { Manifest.permission.RECORD_AUDIO },
-                    REQUEST_CODE);
+                new String[] { Manifest.permission.RECORD_AUDIO },
+                REQUEST_CODE);
         }
     }
 

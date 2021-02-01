@@ -272,5 +272,10 @@
     <string name="delete_note">Delete</string>
     <string name="open_link_question">Open this link?</string>
     <string name="open_link_describe">Opening links outside tor browser could deanonymize you, only do this if you trust the link or use tor browser</string>
+    <string name="scan">Scan QR-code</string>
+    <string name="contact_added">Added contact</string>
+    <string name="cam_perm_ask_title">Camera permission</string>
+    <string name="why_need_cam">QR scanning won\'t work without camera permission</string>
+    <string name="ask_for_cam_btn">Ok</string>
 
 </resources>

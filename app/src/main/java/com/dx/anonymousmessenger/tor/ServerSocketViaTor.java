@@ -185,9 +185,9 @@ public class ServerSocketViaTor {
 //                    }
                     Socket sock = socket.accept();
                     if(sockets.get() >= ALLOWED_CONCURRENT_CONNECTIONS){
+                        sock.close();
                         Log.e("TOO MANY SOCKETS","open sockets: "+sockets);
 //                        Thread.sleep(200);
-                        sock.close();
                         continue;
                     }
                     sockets.getAndIncrement();

@@ -1,0 +1,63 @@
+1611573537|9fd0c24b-bumped to version 0.6.5 vc17, new release.
+1611525266|8ed98d90-bumped to version 0.6.5 vc17, new release.
+1611524489|9fc35385-design fixes, added auto add contact from clipboard in add contact view.
+1611513788|586468fd-added SignalProtocol to the project,
+1611429754|7a37fcfa-added a warning when opening links, made form colors better for visibility.
+1611014772|a3d2d8ec-took out a non-needed library
+1610889310|f9988e52-changed to com.dx.anonymousmessenger.
+1610822034|0729920c-added app metadata to repo for fdroid.
+1610801880|ca3b35d9-Merge branch 'master' of https://github.com/AnonymousMessenger/AnonymousMessenger
+1610801484|22ba6bf5-Merge branch 'master' of https://git.anonymousmessenger.ly/dx/AnonymousMessenger
+1610766042|cb0fd82d-many fixes and some design changes.
+1610568658|baac6e3e-Add 'LICENSE'
+1610562418|daf5185f-Update README.md
+1610562384|df0ac7e8-Update README.md
+1610561314|a3005bc0-Update README.md
+1610561257|9d7aba8e-Merge pull request #1 from AnonymousMessenger/add-license-1
+1610561218|53d4f150-Create LICENSE
+1610561031|3f130e59-Create README.md
+1610557920|b5811dc0-few fixes here n there.
+1610545656|cca85893-added Estonian with a friend's help, version bump to 0.6.4-15,
+1610543702|68364b50-fixed jniLibs for Android 11 which is required for the play store,
+1609597852|9246bc16-added notepad,
+1609516415|b7182e09-android broadcasts now only have the first 10 digits of addresses, added DbHelper.getFullAddress that takes those 10 digits,
+1609449602|f704dc08-emojis are now 3x bigger in messages,
+1609321916|c424b723-Fixed refreshing messages in MessageListActivity and AppFragment, randomized local onion service port to allow more instances to run, added icon but its not perfect on every phone yet, added tor output and i18ned it, bug fixes,
+1608963441|0bdf981d-Changed icons to fawkes mask public domain picture
+1608850291|b1aa400a-More security tips added
+1608783463|7b17b8e9-DOS protection fixed
+1608771328|b2e3e229-fixing git history
+1608706866|79e7729f-temporarily disabled file sending, many bug fixes (key exchange, views, animations), added security tips, added about text,
+1605920294|d1e472e6-added file messages views,
+1605770644|2e2ec86b-removed video, fixed message delivery update, less MessageListActivity animation,
+1605750418|15465ba2-boot receiver reworked and fixed
+1605578849|7fb72dbe-password now only stored in binary in memory
+1605491628|c4fd886a-semi dns leak fixed
+1604169606|0dd62a9e-auto key exchange fixed, bug fixes, boot reminder added,
+1603731665|1f877458-auto key exchange added with pinging, better syncing, bug fixes, attempt on video playing EncryptedDataSource failed but there's still hope, started using version code, more translations available, license view added but needs work, about and help pages to be filled with text later, less tor output to save memory,
+1602558888|e9d529ef-better syncing, my profile view added, can change nickname, AudioPlayer improved, bug fixes,
+1602499891|000b0f5b-saving images to shared storage done, bug fixes,
+1602187274|27dd5e36-added sending/displaying/fullscreen/receiving images with captions, bug fixes, removed extra images from apk,
+1602187159|7b7470b9-added sending/displaying/fullscreen/receiving images with captions, bug fixes, removed extra images from apk,
+1601730155|cf74945b-some design improvements (a few), global error catching, syncing stabilized,
+1601675844|47c0a841-some design improvements (a few), less output on hold up, split tor output into two intents, some memory management changes, syncing is done right after online checks in AppFragment, deleting files with messages done, some flow enhancements, more try's, more threads,
+1601136877|5f409f7b-many more design improvements (a few), scroll down button stabilized, added gotoContact and restart tor buttons to hold up, fixed AppActivity init bugs, fixed hold up  goto AppActivity, some memory management changes, some strings moved to values,
+1601101900|e2ecabab-many more design improvements (a lot), scroll down button added to MessageListActivity,
+1600990744|9655eb92-some design improvements (buttons n such), quoted message fast travel done, some cleaning work
+1600976093|e74b71e5-some design improvements (contact item), really really fixed an issue with changing contacts nickname in MessageListActivity
+1600972447|f199263e-some design improvements (send button), really fixed an issue with changing contacts nickname in MessageListActivity
+1600968945|3832050b-some design improvements, fixed an issue with changing contacts nickname in MessageListActivity fixed duplicate response key exchange message,
+1600967341|6ae3a930-finally the audio message part is fully functional now, needs some design improvements, AudioPlayer has an issue when ui updates, need to use same code for pictures, need to encrypt tor files,
+1599423032|f97b8838-better views for dark mode including dialog (again) other fixes and improvements like the mute/speaker buttons in call
+1599354570|907b8e21-better views for dark mode including dialog fixed tor restart (again)
+1599168840|b779e779-code inspection fixes
+1599164304|bf6216b9-minor improvements
+1599108985|f8aaa51f-calls are much better now memory leaks i think needs a full recheck views and performance i think still ok but do better keyexchange for users eyes calls are there but need some work do send files n pics n audio n video needs a profile view and settings view
+1598532109|11d9a9f4-memory leaks i think still ok views and performance i think still ok change AddContactFragment to activity done Signal protocol library added and working but do better keyexchange for users eyes calls are there but need ALOT of work do PTT, regular calls with resync every lag, stream mode do send files n pics n audio n video needs a profile view and settings view
+1597119495|73a98d2a-fixed memory leaks views and performance work done change AddContactFragment to activity Signal protocol library added needs a profile view and settings view
+1596913904|1f78a9d2-Messaging still fast, feels like the first time changed server and client code again (now very good) foreground service done with ConnectionStateMonitor all good fully recoverable from bad internet needs a better contact view ui with features like delete needs a profile view and settings view need to do seens n signal protocol
+1596224675|9fe8b881-Messaging changed to JsonObject for security but maybe slower? changed server and client code again (see if faster or not) redo login in MessageQueue need to do seens n signal protocol
+1596031835|9d17c88e-Messaging works really well n fast faster Server (by a lot) redo login in MessageQueue need to do seens n signal protocol
+1595926590|cd71b084-Messaging works needs deep debugging faster Server redo login in MessageQueue
+1595782258|9b3bc8ff-Setup is done secure storage is done need to work on design need to finish add contact
+1595113460|50ca6451-Setup is basically done need to do secure storage to save account and then go back to main activity and check if account is saved to start entry activity (to be written)

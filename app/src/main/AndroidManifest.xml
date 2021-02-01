@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.dx.anonymousmessenger">
 
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
@@ -28,6 +29,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup"
         android:extractNativeLibs="true">
+        <activity android:name=".qr.SimpleScannerActivity" />
         <activity android:name=".NotepadActivity" />
         <activity android:name=".FileViewerActivity" />
         <activity android:name=".TipsActivity" />

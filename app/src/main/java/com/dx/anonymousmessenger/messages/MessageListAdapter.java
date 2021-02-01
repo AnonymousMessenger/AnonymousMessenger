@@ -449,6 +449,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         notifyDataSetChanged();
                         notifyItemChanged(mMessageList.indexOf(message));
                         playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_play_arrow_24));
+                        //todo if screen on play the next one
                     }catch (Exception e) {e.printStackTrace();}
                 };
                 mainHandler.post(myRunnable);

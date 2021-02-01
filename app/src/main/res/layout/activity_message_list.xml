@@ -228,6 +228,8 @@
             android:id="@+id/layout_pics"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
             android:animateLayoutChanges="true"
             android:background="#DA221E2A"
             android:orientation="horizontal"
@@ -244,7 +246,7 @@
                 android:layout_weight="0.25"
                 android:animateLayoutChanges="true"
                 android:contentDescription="@string/recording"
-                app:srcCompat="@android:drawable/ic_menu_report_image" />
+                app:srcCompat="@android:drawable/ic_menu_revert" />
 
             <TextView
                 android:id="@+id/txt_pic_help"
@@ -256,6 +258,7 @@
                 android:gravity="center"
                 android:text="@string/pic_help"
                 android:textColor="@color/red_500"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </LinearLayout>
 

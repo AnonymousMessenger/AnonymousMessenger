@@ -4,7 +4,7 @@
     android:shape="rectangle"   >
     <gradient
         android:startColor="#2E0027"
-        android:endColor="#17061E"
+        android:endColor="#2E0027"
         android:angle="180"/>
 <!--    <solid-->
 <!--        android:color="@color/dx_brand_green" >-->

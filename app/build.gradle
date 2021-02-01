@@ -7,7 +7,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        applicationId "com.dx.anonymousmessenger"
+        applicationId "com.example.anonymousmessenger"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 17
@@ -54,7 +54,9 @@ dependencies {
     implementation project(path: ':T0rlib4Droid')
 //    implementation project(path: ':libsignal-protocol-java')
 //    implementation 'org.whispersystems:signal-protocol-android:2.8.1'
-    implementation 'com.google.protobuf:protobuf-java:3.9.2'
+    implementation 'com.google.zxing:core:3.0.1'
+    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
+    implementation 'com.google.protobuf:protobuf-java:3.9.2' //later versions min api 26+
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     testImplementation 'junit:junit:4.13.1'
