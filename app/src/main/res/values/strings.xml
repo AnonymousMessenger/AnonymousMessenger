@@ -278,5 +278,11 @@
     <string name="why_need_cam">QR scanning won\'t work without camera permission</string>
     <string name="ask_for_cam_btn">Ok</string>
     <string name="invalid_address">Invalid address</string>
+    <string name="action_log">Security log</string>
+    <string name="delete_log_question">Delete?</string>
+    <string name="delete_log_details">This can\'t be undone</string>
+    <string name="action_log_notice">Include Notice</string>
+    <string name="action_clear_log">Clear Log</string>
+    <string name="include_notice_logs">Include Notice Logs</string>
 
 </resources>

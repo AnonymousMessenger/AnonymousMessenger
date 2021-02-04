@@ -12,9 +12,6 @@ import net.sf.freehaven.tor.control.ConfigEntry;
 import net.sf.freehaven.tor.control.TorControlConnection;
 import net.sf.runjva.sourceforge.jsocks.protocol.Socks5Proxy;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -30,6 +27,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
+
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 
 public abstract class OnionProxyManager {

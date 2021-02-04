@@ -5,10 +5,10 @@ import android.content.Context;
 import net.sf.msopentech.thali.java.toronionproxy.OnionProxyManager;
 import net.sf.msopentech.thali.java.toronionproxy.android.AndroidOnionProxyManager;
 
+import java.io.IOException;
+
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 public class AndroidTorRelay {
     private OnionProxyManager onionProxyManager;

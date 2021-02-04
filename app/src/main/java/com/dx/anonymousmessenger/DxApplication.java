@@ -261,6 +261,7 @@ public class DxApplication extends Application {
                 new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
+
     public void setTorSocket(ServerSocketViaTor torSocket) {
         this.torSocket = torSocket;
     }

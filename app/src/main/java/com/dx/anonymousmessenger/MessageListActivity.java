@@ -581,7 +581,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         }
     }
 
-    public void updateUi(){
+    public void updateUi(boolean scrollDown, boolean animate){
         try{
             new Thread(()->{
                 DxApplication app = (DxApplication) getApplication();
@@ -643,22 +643,26 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                         mMessageAdapter.setMessageList(messageList);
                         mMessageAdapter.notifyDataSetChanged();
 //                        mMessageRecycler.scheduleLayoutAnimation();
-
-                        if(!messageList.isEmpty()){
-                            mMessageRecycler.scrollToPosition(messageList.size() - 1);
-                            scrollDownFab.setVisibility(View.GONE);
-                            ((DxApplication)getApplication()).clearMessageNotification();
-                            if(!messageList.get(messageList.size()-1).getAddress().equals(((DxApplication)getApplication()).getHostname())){
-                                String newName = messageList.get(messageList.size()-1).getSender();
-                                Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
-                                getIntent().putExtra("nickname",newName);
+                        if(scrollDown){
+                            if(!messageList.isEmpty()){
+                                System.out.println("not empty");
+                                mMessageRecycler.scrollToPosition(messageList.size() - 1);
+                                scrollDownFab.setVisibility(View.GONE);
+                                ((DxApplication)getApplication()).clearMessageNotification();
+                                if(!messageList.get(messageList.size()-1).getAddress().equals(((DxApplication)getApplication()).getHostname())){
+                                    String newName = messageList.get(messageList.size()-1).getSender();
+                                    Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
+                                    getIntent().putExtra("nickname",newName);
+                                }
+                                if(animate){
+                                    mMessageRecycler.scheduleLayoutAnimation();
+                                }
                             }
                         }
                     }catch (Exception ignored) {}
                 });
             }).start();
         }catch (Exception ignored) {}
-
     }
 
     public void updateUi(List<QuotedUserMessage> tmp){
@@ -668,8 +672,6 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         messageList = tmp;
         runOnUiThread(()->{
             try{
-//                    mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication());
-//                    mMessageRecycler.setAdapter(mMessageAdapter);
                 mMessageAdapter.setMessageList(messageList);
                 mMessageAdapter.notifyDataSetChanged();
                 mMessageRecycler.scheduleLayoutAnimation();
@@ -724,7 +726,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     return;
                 }
 
-                updateUi();
+                updateUi(true,false);
             }
         };
         try {
@@ -733,8 +735,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         {
             e.printStackTrace();
         }
-        updateUi();
-        mMessageRecycler.scheduleLayoutAnimation();
+        updateUi(true,true);
         ping();
         checkMessages();
     }
@@ -836,7 +837,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                                     return;
                                 }
                                 app.getEntity().getStore().deleteSession(new SignalProtocolAddress(address,1));
-                                updateUi();
+                                updateUi(true,true);
                             }catch (Exception ignored) {}
                         })
                         .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
@@ -863,7 +864,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                             }catch (Exception ignored) {}
                             runOnUiThread(()->{
                                 scrollDownFab.setVisibility(View.GONE);
-                                updateUi();
+                                updateUi(false,false);
                             });
                         }).start())
                         .setNegativeButton(R.string.no_thanks, (dialog, which) -> {

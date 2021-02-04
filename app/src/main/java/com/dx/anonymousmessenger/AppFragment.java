@@ -245,8 +245,9 @@ public class AppFragment extends Fragment {
                         }else{
                             noContacts.setVisibility(View.GONE);
                         }
-                        mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
-                        recyclerView.setAdapter(mAdapter);
+//                        mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
+                        mAdapter.mData = lst;
+//                        recyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
                         recyclerView.scheduleLayoutAnimation();
                         ((DxApplication)getActivity().getApplication()).clearMessageNotification();
@@ -273,8 +274,9 @@ public class AppFragment extends Fragment {
                         }else{
                             noContacts.setVisibility(View.GONE);
                         }
-                        mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
-                        recyclerView.setAdapter(mAdapter);
+//                        mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
+                        mAdapter.mData = lst;
+//                        recyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
                         if(animate){
                             recyclerView.scheduleLayoutAnimation();
@@ -459,6 +461,15 @@ public class AppFragment extends Fragment {
                 stopCheckingMessages();
                 try{
                     Intent intent = new Intent(getContext(), NotepadActivity.class);
+                    if(getContext()!=null){
+                        getContext().startActivity(intent);
+                    }
+                }catch (Exception ignored) {}
+                break;
+            case R.id.action_log:
+                stopCheckingMessages();
+                try{
+                    Intent intent = new Intent(getContext(), LogActivity.class);
                     if(getContext()!=null){
                         getContext().startActivity(intent);
                     }

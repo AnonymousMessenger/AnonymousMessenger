@@ -283,6 +283,7 @@ public class MessageSender {
                         !json.getString("address").endsWith(".onion") ||
                         !DbHelper.contactExists(json.getString("address"),app)){
                     Log.e("MSG RCVR","RECEIVED BAD/UNKNOWN ADDRESS, throwing away message");
+                    DbHelper.saveLog("RECEIVED BAD/UNKNOWN ADDRESS "+json.getString("address") ,new Date().getTime(),"SEVERE",app);
                     return;
                 }
             }else{

@@ -18,6 +18,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerSocketViaTor {
@@ -107,9 +108,11 @@ public class ServerSocketViaTor {
     }
 
     public void recurseJobs(DxApplication app){
+        System.out.println("!!!!!!!!!!!!!! RECURSE !!!!!!!!!!!!!!!!!!!!!!!!");
         //send queued messages and update online statuses and delete due messages
         if(TorClientSocks4.test(app)){
-            new Thread(app::queueAllUnsentMessages).start();
+            DbHelper.reduceLog(app);
+            app.queueAllUnsentMessages();
         }
         try{
             Thread.sleep(10*60*1000);
@@ -187,6 +190,7 @@ public class ServerSocketViaTor {
                     if(sockets.get() >= ALLOWED_CONCURRENT_CONNECTIONS){
                         sock.close();
                         Log.e("TOO MANY SOCKETS","open sockets: "+sockets);
+//                        DbHelper.saveLog("TOO MANY SOCKETS "+sockets,new Date().getTime(),"SEVERE",app);
 //                        Thread.sleep(200);
                         continue;
                     }
@@ -206,6 +210,7 @@ public class ServerSocketViaTor {
                                     }
                                     sock.close();
                                     sockets.getAndDecrement();
+                                    DbHelper.saveLog("PING FROM "+msg.replace("hello-",""),new Date().getTime(),"NOTICE",app);
                                     return;
                                 }else if(msg.equals("call")){
                                     try {
@@ -227,7 +232,7 @@ public class ServerSocketViaTor {
                                             sockets.getAndDecrement();
                                             return;
                                         }
-//                                        String address= msg.trim();
+                                        String address= msg.trim();
                                         if(!DbHelper.contactExists(msg.trim(),app)){
                                             //no bueno
                                             outputStream.writeUTF("nuf");
@@ -276,9 +281,11 @@ public class ServerSocketViaTor {
                                         Log.d("FILE RECEIVER", "TOTAL BYTES READ : "+total_read);
                                         Log.d("FILE RECEIVER", "FILE SIZE : "+fileSize);
                                         MessageSender.mediaMessageReceiver(cache.toByteArray(),recMsg,app);
+                                        DbHelper.saveLog("RECEIVED FILE FROM "+address+" SIZE "+fileSize,new Date().getTime(),"NOTICE",app);
                                     } catch (Exception e) {
                                         Log.e("RECEIVING MEDIA MESSAGE","ERROR BELOW");
                                         e.printStackTrace();
+                                        DbHelper.saveLog("ERROR WHILE RECEIVING FILE "+ e.getMessage(),new Date().getTime(),"NOTICE",app);
                                     }
                                     return;
                                 }
@@ -290,9 +297,11 @@ public class ServerSocketViaTor {
                                 outputStream.flush();
                                 outputStream.close();
                                 sockets.getAndDecrement();
+                                DbHelper.saveLog("RECEIVED MESSAGE",new Date().getTime(),"NOTICE",app);
                             }catch (Exception e){
                                 sockets.getAndDecrement();
                                 e.printStackTrace();
+                                DbHelper.saveLog("ERROR WHILE RECEIVING MESSAGE"+e.getMessage(),new Date().getTime(),"NOTICE",app);
                             }
                         }).start();
 
@@ -300,12 +309,14 @@ public class ServerSocketViaTor {
                         sockets.getAndDecrement();
                         Log.e("SERVER ERROR", "ERROR");
                         e.printStackTrace();
+                        DbHelper.saveLog("LOCAL SERVER ERROR"+e.getMessage(),new Date().getTime(),"SEVERE",app);
                     }
                 }
             } catch (Exception  e) {
                 e.printStackTrace();
                 Log.e("SERVER STOPPED","RESTARTING SERVER");
                 app.setServerReady(false);
+                DbHelper.saveLog("LOCAL SERVER STOPPED, RESTARTING SERVER"+e.getMessage(),new Date().getTime(),"SEVERE",app);
 
 //                run();
                 app.restartTor();

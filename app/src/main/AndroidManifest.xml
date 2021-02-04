@@ -21,14 +21,15 @@
     <application
         android:name=".DxApplication"
         android:allowBackup="false"
+        android:extractNativeLibs="true"
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup"
-        android:extractNativeLibs="true">
+        tools:replace="android:allowBackup">
+        <activity android:name=".LogActivity"></activity>
         <activity android:name=".qr.SimpleScannerActivity" />
         <activity android:name=".NotepadActivity" />
         <activity android:name=".FileViewerActivity" />

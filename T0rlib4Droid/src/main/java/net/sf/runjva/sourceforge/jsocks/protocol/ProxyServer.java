@@ -2,9 +2,6 @@ package net.sf.runjva.sourceforge.jsocks.protocol;
 
 import net.sf.runjva.sourceforge.jsocks.server.ServerAuthenticator;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +13,9 @@ import java.net.InetAddress;
 import java.net.NoRouteToHostException;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 
 public class ProxyServer implements Runnable {

@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 public class DbHelper {
+    public static final int LOG_LIMIT = 150;
     public static final String CONTACT_SQL_INSERT = "INSERT INTO contact(nickname,address) VALUES(?,?)";
     public static final String CONTACT_COLUMNS = "(nickname,address,unread)";
     public static final String CONTACT_SQL_UPDATE = "UPDATE contact SET nickname=? WHERE address=?";
@@ -351,6 +352,131 @@ public class DbHelper {
         }
     }
 
+    public static String getLogColumns(){
+        return "(msg,created_at,type)";
+    }
+
+    public static String getLogTableSqlCreate(){
+        return "CREATE TABLE IF NOT EXISTS log "+getLogColumns()+";";
+    }
+
+    public static String getLogSqlInsert(){
+        return "INSERT INTO log "+getLogColumns()+" VALUES(?"+giveMeQMarks(getLogColumns().split(",").length-1)+")";
+    }
+
+    public static Object[] getLogSqlValues(String msg, long createdAt, String type){
+        return new Object[]{msg,createdAt,type};
+    }
+
+    public static boolean saveLog(String msg, long createdAt, String type, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getLogTableSqlCreate());
+        database.execSQL(DbHelper.getLogSqlInsert(),DbHelper.getLogSqlValues(msg,createdAt,type));
+        return true;
+    }
+
+    public static void deleteLog(long createdAt, String msg, DxApplication app) {
+        SQLiteDatabase database = app.getDb();
+        database.beginTransaction();
+        try{
+            database.execSQL("DELETE FROM log WHERE created_at=? AND msg=?", new Object[]{createdAt,msg});
+            database.setTransactionSuccessful();
+        }catch (Exception e) {e.printStackTrace();}
+        finally {
+            database.endTransaction();
+        }
+    }
+
+    public static void deleteAllLogs(DxApplication app) {
+        SQLiteDatabase database = app.getDb();
+        database.beginTransaction();
+        try{
+            database.execSQL("DELETE FROM log",null);
+            database.setTransactionSuccessful();
+        }catch (Exception e) {e.printStackTrace();}
+        finally {
+            database.endTransaction();
+        }
+    }
+
+    public static List<Object[]> getLogList(DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getLogTableSqlCreate());
+        try{
+            database.query("SELECT "+DbHelper.getLogColumns().trim().substring(1,getLogColumns().length()-1)+" FROM log");
+        }catch (Exception e){
+            Log.w("getLogList", "updating DbSchema");
+            e.printStackTrace();
+            updateDbSchema(database);
+        }
+        Cursor cr = database.rawQuery("SELECT * FROM log WHERE type<>? ;",new Object[]{"NOTICE"});
+        List<Object[]> logs = new ArrayList<>();
+        if (cr.moveToFirst()) {
+            do {
+                if ((new Date().getTime() - cr.getLong(1)) < app.getTime2delete()) {
+                    logs.add(new Object[]{
+                            cr.getString(0),
+                            cr.getLong(1),
+                            cr.getString(2)
+                    });
+                }else{
+                    deleteLog(cr.getLong(1),cr.getString(0),app);
+                }
+
+            } while (cr.moveToNext());
+        }
+        cr.close();
+        return logs;
+    }
+
+    public static List<Object[]> getLogListWithNotice(DxApplication app) {
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getLogTableSqlCreate());
+        try{
+            database.query("SELECT "+DbHelper.getLogColumns().trim().substring(1,getLogColumns().length()-1)+" FROM log");
+        }catch (Exception e){
+            Log.w("getLogList", "updating DbSchema");
+            e.printStackTrace();
+            updateDbSchema(database);
+        }
+        Cursor cr = database.rawQuery("SELECT * FROM log ;",null);
+        List<Object[]> logs = new ArrayList<>();
+        if (cr.moveToFirst()) {
+            do {
+                if ((new Date().getTime() - cr.getLong(1)) < app.getTime2delete()) {
+                    logs.add(new Object[]{
+                            cr.getString(0),
+                            cr.getLong(1),
+                            cr.getString(2)
+                    });
+                }else{
+                    deleteLog(cr.getLong(1),cr.getString(0),app);
+                }
+
+            } while (cr.moveToNext());
+        }
+        cr.close();
+        return logs;
+    }
+
+    public static void reduceLog(DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getLogTableSqlCreate());
+        try{
+            database.query("SELECT "+DbHelper.getLogColumns().trim().substring(1,getLogColumns().length()-1)+" FROM log");
+        }catch (Exception e){
+            Log.w("getLogList", "updating DbSchema");
+            e.printStackTrace();
+            updateDbSchema(database);
+        }
+        int count = getNumberOfRows("log",database);
+        System.out.println(count);
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        if(count>LOG_LIMIT){
+            database.execSQL("DELETE FROM log WHERE rowid IN ( SELECT rowid FROM log LIMIT "+(count-LOG_LIMIT)+" )");
+        }
+    }
+
     public static String getNotepadColumns(){
         return "(msg,created_at,filename,path,type)";
     }
@@ -608,6 +734,19 @@ public class DbHelper {
                 database.setTransactionSuccessful();
                 database.endTransaction();
 
+                database.beginTransaction();
+                tmpName = "temp_log ";
+                createTemp = getLogTableSqlCreate().replace("log",tmpName);
+                database.execSQL(createTemp);
+                tmpColNum = getNumberOfColumns(tmpName,database);
+                oldColNum = getNumberOfColumns("log",database);
+                emptyCols = tmpColNum>oldColNum?giveMeNulls(tmpColNum-oldColNum):"";
+                database.execSQL("INSERT INTO "+tmpName+getLogColumns()+" SELECT *"+emptyCols+" FROM log;");
+                database.execSQL("DROP TABLE log;");
+                database.execSQL("ALTER TABLE "+tmpName+" RENAME TO log");
+                database.setTransactionSuccessful();
+                database.endTransaction();
+
                 Log.e("finishing the db update","good bye");
             }catch (SQLiteException e){
                 Log.e("ERROR UPDATING DB","THERE WAS AN ERROR UPDATING THE D B YO!");
@@ -691,6 +830,22 @@ public class DbHelper {
             } while (cr.moveToNext());
         }
         cr.close();
+    }
+
+    public static int getNumberOfRows(String tableName, SQLiteDatabase database) {
+        Cursor cursor = database.query(tableName, null, null, null, null, null, null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                int count = cursor.getCount();
+                cursor.close();
+                return count;
+            } else {
+                cursor.close();
+                return 0;
+            }
+        } else {
+            return 0;
+        }
     }
 
     public static int getNumberOfColumns(String tableName, SQLiteDatabase database) {

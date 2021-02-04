@@ -3,9 +3,6 @@ package net.sf.runjva.sourceforge.jsocks.protocol;
 
 import net.sf.runjva.sourceforge.jsocks.server.ServerAuthenticator;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.DatagramPacket;
@@ -13,6 +10,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 /**
  * UDP Relay server, used by ProxyServer to perform udp forwarding.

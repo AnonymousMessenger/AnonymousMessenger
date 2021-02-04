@@ -38,14 +38,14 @@ import android.net.NetworkInfo;
 
 import net.sf.msopentech.thali.java.toronionproxy.OnionProxyManager;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY;
+
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 public class AndroidOnionProxyManager extends OnionProxyManager {
 //    private static final Logger LOG = LoggerFactory.getLogger(AndroidOnionProxyManager.class);

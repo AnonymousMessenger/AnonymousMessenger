@@ -23,7 +23,7 @@ import static androidx.recyclerview.widget.RecyclerView.ViewHolder;
 public class MyRecyclerViewAdapter extends Adapter {
     private static final int VIEW_TYPE_READ = 1;
     private static final int VIEW_TYPE_UNREAD = 2;
-    private final List<String[]> mData;
+    public List<String[]> mData;
 //    private LayoutInflater mInflater;
     private View.OnClickListener mClickListener;
     private final DxApplication app;
