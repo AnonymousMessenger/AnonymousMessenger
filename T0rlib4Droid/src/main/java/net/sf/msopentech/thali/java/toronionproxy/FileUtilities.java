@@ -69,6 +69,8 @@ package net.sf.msopentech.thali.java.toronionproxy;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
+import android.os.RecoverySystem;
+
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -101,6 +103,24 @@ public class FileUtilities {
         }
     }
 
+//    public static void copyWithProgress(InputStream in, OutputStream out, RecoverySystem.ProgressListener progressListener, long length) throws IOException {
+//        try {
+//            copyDoNotCloseInputWithProgress(in, out, progressListener, length);
+//        } finally {
+//            try{
+//                in.close();
+//            }catch (Exception ignored) {}
+//        }
+//    }
+
+    public static void copyBinary(byte[] b, OutputStream out) throws IOException {
+        try {
+            out.write(b, 0, b.length);
+        } finally {
+            out.close();
+        }
+    }
+
     /**
      * Won't close the input stream when it's done, needed to handle
      * ZipInputStreams
@@ -121,6 +141,30 @@ public class FileUtilities {
             }
         } finally {
             out.close();
+        }
+    }
+
+    public static void copyWithProgress(InputStream in, OutputStream out, RecoverySystem.ProgressListener progressListener, long length) throws IOException {
+        try {
+            progressListener.onProgress(0);
+            int done = 0;
+            byte[] buf = new byte[8192];
+            int read;
+//            double perc;
+            while (-1 != (read = in.read(buf))) {
+                out.write(buf, 0, read);
+                done=done+read;
+                progressListener.onProgress(((int) (((double) done/(double) length)*100.0)));
+//                if((int) ((done/length)*100) %5 == 0){
+//                    progressListener.onProgress(((int) (((double) done/(double) length)*100.0)));
+//                }
+            }
+            progressListener.onProgress(100);
+        } finally {
+            try{
+                out.close();
+                in.close();
+            }catch (Exception ignored) {}
         }
     }
 

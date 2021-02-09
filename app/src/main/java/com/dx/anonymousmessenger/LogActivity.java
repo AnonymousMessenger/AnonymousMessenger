@@ -102,7 +102,8 @@ public class LogActivity extends AppCompatActivity {
                     findViewById(R.id.switch_notice).setVisibility(View.VISIBLE);
                 }
                 adapter.list = this.list;
-                adapter.notifyItemRangeInserted(oldSize,newSize);
+//                adapter.notifyItemRangeInserted(oldSize,newSize);
+                adapter.notifyDataSetChanged();
             });
         }).start();
     }

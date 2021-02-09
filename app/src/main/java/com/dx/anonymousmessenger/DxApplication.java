@@ -668,7 +668,14 @@ public class DxApplication extends Application {
             database.close();
             database = null;
         }
-        SQLiteDatabase.loadLibs(this);
+
+//        try{
+            SQLiteDatabase.loadLibs(this);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return getDb(password);
+//        }
+
         File databaseFile = new File(getFilesDir(), "demo.db");
         if(!databaseFile.exists()){
             databaseFile.mkdirs();

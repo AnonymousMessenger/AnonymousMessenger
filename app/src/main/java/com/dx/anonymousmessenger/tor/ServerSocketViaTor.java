@@ -7,6 +7,7 @@ import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.call.CallController;
 import com.dx.anonymousmessenger.crypto.Entity;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 
 import net.sf.controller.network.AndroidTorRelay;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerSocketViaTor {
@@ -71,9 +73,6 @@ public class ServerSocketViaTor {
 
         String fileLocation = "torfiles";
         try {
-//            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//            System.out.println(ctx.getApplicationInfo().nativeLibraryDir);
-//            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             node = new AndroidTorRelay(ctx, fileLocation);
         }catch (Exception e){
             e.printStackTrace();
@@ -100,6 +99,8 @@ public class ServerSocketViaTor {
         serverThread.start();
 
         this.jobsThread = new Thread(()->{
+            FileHelper.cleanDir(Objects.requireNonNull(app.getExternalCacheDir()));
+            FileHelper.cleanDir(Objects.requireNonNull(app.getCacheDir()));
             recurseJobs(app);
         });
         jobsThread.start();
@@ -108,7 +109,6 @@ public class ServerSocketViaTor {
     }
 
     public void recurseJobs(DxApplication app){
-        System.out.println("!!!!!!!!!!!!!! RECURSE !!!!!!!!!!!!!!!!!!!!!!!!");
         //send queued messages and update online statuses and delete due messages
         if(TorClientSocks4.test(app)){
             DbHelper.reduceLog(app);
@@ -316,10 +316,10 @@ public class ServerSocketViaTor {
                 e.printStackTrace();
                 Log.e("SERVER STOPPED","RESTARTING SERVER");
                 app.setServerReady(false);
-                DbHelper.saveLog("LOCAL SERVER STOPPED, RESTARTING SERVER"+e.getMessage(),new Date().getTime(),"SEVERE",app);
+                DbHelper.saveLog("LOCAL SERVER STOPPED"+e.getMessage(),new Date().getTime(),"SEVERE",app);
 
 //                run();
-                app.restartTor();
+//                app.restartTor();
             }
         }
     }

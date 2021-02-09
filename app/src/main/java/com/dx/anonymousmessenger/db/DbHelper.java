@@ -470,8 +470,6 @@ public class DbHelper {
             updateDbSchema(database);
         }
         int count = getNumberOfRows("log",database);
-        System.out.println(count);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         if(count>LOG_LIMIT){
             database.execSQL("DELETE FROM log WHERE rowid IN ( SELECT rowid FROM log LIMIT "+(count-LOG_LIMIT)+" )");
         }

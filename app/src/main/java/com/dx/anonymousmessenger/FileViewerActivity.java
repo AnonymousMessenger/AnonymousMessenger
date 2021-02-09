@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.util.Utils;
@@ -61,11 +62,34 @@ public class FileViewerActivity extends AppCompatActivity {
             if(fullAddress == null){
                 return;
             }
-            QuotedUserMessage qum = new QuotedUserMessage(app.getHostname(),
-                    app.getAccount().getNickname(),new Date().getTime(),false,fullAddress,
-                    getIntent().getStringExtra("filename"),getIntent().getStringExtra("path"),"file");
-            //send message and get received status
-            MessageSender.sendMediaMessage(qum,app,fullAddress);
+            String path;
+            try {
+                runOnUiThread(()->{
+                    send.setVisibility(View.GONE);
+                    findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+                });
+                //todo change to stream
+                byte[] byteArray = FileHelper.getUnencryptedFile(getIntent().getStringExtra("path"),app);
+                path = FileHelper.saveFile(byteArray,app, Objects.requireNonNull(getIntent().getStringExtra("filename")));
+                if(path==null){
+                    return;
+                }
+                QuotedUserMessage qum = new QuotedUserMessage(app.getHostname(),
+                        app.getAccount().getNickname(),new Date().getTime(),false,fullAddress,
+                        getIntent().getStringExtra("filename"),path,"file");
+
+                //send message and get received status
+                new Thread(()->{
+                    MessageSender.sendMediaMessage(qum,app,fullAddress);
+                }).start();
+                finish();
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(()->{
+                    send.setVisibility(View.VISIBLE);
+                    findViewById(R.id.progressBar).setVisibility(View.GONE);
+                });
+            }
         }).start());
 
     }

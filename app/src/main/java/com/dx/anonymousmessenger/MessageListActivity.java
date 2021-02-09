@@ -372,7 +372,8 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 String[] projection = {
                     MediaStore.Files.FileColumns.DATA,
                     MediaStore.Files.FileColumns.MEDIA_TYPE,
-                    MediaStore.Files.FileColumns.MIME_TYPE
+                    MediaStore.Files.FileColumns.MIME_TYPE,
+                    MediaStore.Files.FileColumns.SIZE
                 };
 
                 // Return only video and image metadata.
@@ -448,14 +449,14 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         }
         picsHelp.setVisibility(View.GONE);
         if(position == 0){
-            Toast.makeText(this, R.string.feature_unready,Toast.LENGTH_SHORT).show();
-//            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-//            chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-//            chooseFile.setType("*/*");
-//            this.startActivityForResult(
-//                    Intent.createChooser(chooseFile, "Choose a file"),
-//                    MessageListActivity.REQUEST_PICK_FILE
-//            );
+//            Toast.makeText(this, R.string.feature_unready,Toast.LENGTH_SHORT).show();
+            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+            chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
+            chooseFile.setType("*/*");
+            this.startActivityForResult(
+                    Intent.createChooser(chooseFile, "Choose a file"),
+                    MessageListActivity.REQUEST_PICK_FILE
+            );
             return;
         }
         Intent intent = new Intent(this,PictureViewerActivity.class);
@@ -469,31 +470,6 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
             startActivity(intent);
         }
     }
-
-//    public void pickImage() {
-//        try{
-//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//                Intent intent = new Intent(Intent.ACTION_PICK);
-//                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*");
-//                intent.putExtra("crop", "true");
-//                intent.putExtra("scale", true);
-//                intent.putExtra("outputX", 256);
-//                intent.putExtra("outputY", 256);
-//                intent.putExtra("aspectX", 1);
-//                intent.putExtra("aspectY", 1);
-//                intent.putExtra("return-data", true);
-//                if (intent.resolveActivity(getPackageManager()) != null) {
-//                    startActivityForResult(intent, READ_STORAGE_REQUEST_CODE);
-//                }else{
-//                    Snackbar.make(file,"You do not have a gallery application installed",Snackbar.LENGTH_LONG).show();
-//                }
-//            }else{
-//                getReadStoragePerms();
-//            }
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//    }
 
     public void ping(){
         new Thread(()->{
@@ -645,7 +621,6 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
 //                        mMessageRecycler.scheduleLayoutAnimation();
                         if(scrollDown){
                             if(!messageList.isEmpty()){
-                                System.out.println("not empty");
                                 mMessageRecycler.scrollToPosition(messageList.size() - 1);
                                 scrollDownFab.setVisibility(View.GONE);
                                 ((DxApplication)getApplication()).clearMessageNotification();
@@ -877,15 +852,17 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode == REQUEST_PICK_FILE){
-            if(data == null || data.getData() == null){
-                return;
-            }
-            Intent intent = new Intent(this,FileViewerActivity.class);
-            intent.putExtra("path",data.getData().getPath());
-            intent.putExtra("filename", FileHelper.getFileName(data.getData(),this));
-            intent.putExtra("size",FileHelper.getFileSize(data.getData(),this));
-            intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
-            startActivity(intent);
+            try{
+                if(data == null || data.getData() == null){
+                    return;
+                }
+                Intent intent = new Intent(this,FileViewerActivity.class);
+                intent.putExtra("path",FileHelper.getFilePath(data.getData(),this));
+                intent.putExtra("filename", FileHelper.getFileName(data.getData(),this));
+                intent.putExtra("size",FileHelper.getFileSize(data.getData(),this));
+                intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                startActivity(intent);
+            }catch (Exception e){e.printStackTrace();}
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -902,26 +879,6 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                 });
         }
     }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode != RESULT_OK) {
-//            return;
-//        }
-//        if (requestCode == READ_STORAGE_REQUEST_CODE) {
-//            final Bundle extras = data.getExtras();
-//            if (extras != null) {
-//                //Get image
-//                Bitmap image = extras.getParcelable("data");
-//                ImageView img2send = findViewById(R.id.img_to_send);
-//                ImageView img2sendIcon = findViewById(R.id.img_to_send_icon);
-//                img2sendIcon.setVisibility(View.VISIBLE);
-//                img2send.setVisibility(View.VISIBLE);
-//                img2send.setImageBitmap(image);
-//            }
-//        }
-//    }
 
     public void getReadStoragePerms(){
         if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {

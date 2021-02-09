@@ -284,5 +284,6 @@
     <string name="action_log_notice">Include Notice</string>
     <string name="action_clear_log">Clear Log</string>
     <string name="include_notice_logs">Include Notice Logs</string>
+    <string name="decrypting2">Decrypting</string>
 
 </resources>

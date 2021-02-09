@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger.messages;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -12,6 +13,7 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.RecoverySystem;
 import android.provider.MediaStore;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.DxApplication;
@@ -41,11 +44,15 @@ import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 
 import static androidx.core.content.ContextCompat.getDrawable;
+import static androidx.core.content.ContextCompat.getMainExecutor;
 import static androidx.core.content.ContextCompat.getSystemService;
+import static androidx.core.content.ContextCompat.startActivity;
 
 public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
@@ -281,7 +288,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case VIEW_TYPE_FILE_MESSAGE_RECEIVED:
             case VIEW_TYPE_FILE_MESSAGE_SENT:
             case VIEW_TYPE_FILE_MESSAGE_SENT_OK:
-                ((FileMessageHolder) holder).bind(message);
+                ((FileMessageHolder) holder).bind(message,app);
         }
     }
 
@@ -449,7 +456,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         notifyDataSetChanged();
                         notifyItemChanged(mMessageList.indexOf(message));
                         playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_play_arrow_24));
-                        //todo if screen on play the next one
+                        //todo if screen on : play the next one
                     }catch (Exception e) {e.printStackTrace();}
                 };
                 mainHandler.post(myRunnable);
@@ -469,17 +476,56 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             filenameText = itemView.findViewById(R.id.txt_filename);
         }
 
-        void bind(QuotedUserMessage message) {
+        void openFile(QuotedUserMessage message, DxApplication app){
+            new Thread(()->{
+                try{
+                    @SuppressLint("SetTextI18n") RecoverySystem.ProgressListener progressListener = progress -> {
+//                        System.out.println("DECRYPTING :::::::: "+progress);
+                        Executor exe = getMainExecutor(itemView.getContext());
+                        exe.execute(()->{
+                            if(progress>=100){
+                                filenameText.setText(message.getFilename());
+                            }else{
+                                filenameText.setText(app.getString(R.string.decrypting)+" "+progress+"%"+"...");
+                            }
+                        });
+                    };
+                    File tmp = FileHelper.getTempFileWithProgress(message.getPath(),message.getFilename(),app,progressListener);
+                    Uri uri;
+                    if (tmp != null) {
+                        uri = FileProvider.getUriForFile(app, "com.dx.anonymousmessenger.fileprovider", new File(tmp.getAbsolutePath()));
+                    }else{
+                        return;
+                    }
+                    app.grantUriPermission(app.getPackageName(), uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    //open tmp file with third party
+                    Intent objIntent = new Intent(Intent.ACTION_VIEW);
+                    objIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    objIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    objIntent.setDataAndType(uri, "*/*");
+                    startActivity(app,objIntent,null);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Executor exe = getMainExecutor(itemView.getContext());
+                    exe.execute(()->{
+                        filenameText.setText(message.getFilename());
+                        Toast.makeText(itemView.getContext(),"No default program found for this type of file",Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }).start();
+        }
+
+        void bind(QuotedUserMessage message, DxApplication app) {
             if(nameText!=null){
                 nameText.setText(message.getSender());
             }
             filenameText.setText(message.getFilename());
             timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
             imageHolder.setOnClickListener(v -> {
-                //open/save file
+                openFile(message,app);
             });
             filenameText.setOnClickListener(v -> {
-                //open/save file
+                openFile(message,app);
             });
         }
     }
@@ -677,8 +723,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
             messageText.setOnClickListener(new ListItemOnClickListener(message,itemView,messageText));
             InternalLinkMovementMethod.OnLinkClickedListener linkClickedListener = linkText -> {
-                System.out.println(linkText);
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 //                if (!linkText.startsWith("http://") && !linkText.startsWith("https://")){
 //                    linkText = "https://" + linkText;
 //                }

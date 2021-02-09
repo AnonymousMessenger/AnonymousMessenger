@@ -28,8 +28,9 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:largeHeap="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".LogActivity"></activity>
+        <activity android:name=".LogActivity" />
         <activity android:name=".qr.SimpleScannerActivity" />
         <activity android:name=".NotepadActivity" />
         <activity android:name=".FileViewerActivity" />
@@ -91,6 +92,16 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.dx.anonymousmessenger.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
     </application>
 
 </manifest>
