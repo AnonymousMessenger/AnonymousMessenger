@@ -258,12 +258,12 @@ public class AddContactActivity extends AppCompatActivity {
                                     });
                                     return;
                                 }
+                                finish();
                                 if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.trim())){
                                     if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.trim(),1))){
                                         MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.trim());
                                     }
                                 }
-                                finish();
                             }).start())
                             .setNegativeButton(android.R.string.no, null).show();
                 }catch (Exception e){

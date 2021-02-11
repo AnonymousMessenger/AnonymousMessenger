@@ -17,7 +17,7 @@
     <string name="myaddress">عنواني</string>
     <string name="hint_contact_address">أدخل عنوان الشخص</string>
     <string name="lbl_contact_address">أدخل عنوان الشخص</string>
-    <string name="enter_message">أرسل رسالة آمنة…</string>
+    <string name="enter_message">رسالة آمنة…</string>
     <string name="send_button">أرسل</string>
     <string name="reply">رد</string>
     <string name="pin">تثبيت</string>

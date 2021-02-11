@@ -113,6 +113,8 @@ public class DbHelper {
                         msg = app.getString(R.string.audio_message);
                     }else if(message.getType()!=null && message.getType().equals("image")){
                         msg = app.getString(R.string.media_message);
+                    }else if(message.getType()!=null && message.getType().equals("file")){
+                        msg = app.getString(R.string.file);
                     }else{
                         msg = message.getMessage();
                     }

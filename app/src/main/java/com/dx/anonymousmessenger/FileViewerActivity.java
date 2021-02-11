@@ -14,6 +14,7 @@ import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Objects;
 
@@ -48,11 +49,11 @@ public class FileViewerActivity extends AppCompatActivity {
             }catch (Exception ignored) {}
         }
 
-        if(getIntent().getStringExtra("path") == null || Objects.equals(getIntent().getStringExtra("path"), "")
-            || getIntent().getStringExtra("address") == null){
-            send.setVisibility(View.GONE);
-            return;
-        }
+//        if(getIntent().getStringExtra("path") == null || Objects.equals(getIntent().getStringExtra("path"), "")
+//            || getIntent().getStringExtra("address") == null){
+//            send.setVisibility(View.GONE);
+//            return;
+//        }
 
         send.setOnClickListener(v -> new Thread(()->{
             DxApplication app = (DxApplication) getApplication();
@@ -68,9 +69,8 @@ public class FileViewerActivity extends AppCompatActivity {
                     send.setVisibility(View.GONE);
                     findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
                 });
-                //todo change to stream
-                byte[] byteArray = FileHelper.getUnencryptedFile(getIntent().getStringExtra("path"),app);
-                path = FileHelper.saveFile(byteArray,app, Objects.requireNonNull(getIntent().getStringExtra("filename")));
+                InputStream is = FileHelper.getInputStreamFromUri(getIntent().getParcelableExtra("uri"),this);
+                path = FileHelper.saveFile(is,app, Objects.requireNonNull(getIntent().getStringExtra("filename")));
                 if(path==null){
                     return;
                 }

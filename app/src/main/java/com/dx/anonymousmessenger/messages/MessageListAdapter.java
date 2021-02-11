@@ -477,10 +477,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
         void openFile(QuotedUserMessage message, DxApplication app){
-            new Thread(()->{
+            new AlertDialog.Builder(itemView.getContext(),R.style.AppAlertDialog)
+                .setTitle(R.string.open_file_question)
+                .setMessage(app.getString(R.string.open_file_describe))
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(() -> {
                 try{
                     @SuppressLint("SetTextI18n") RecoverySystem.ProgressListener progressListener = progress -> {
-//                        System.out.println("DECRYPTING :::::::: "+progress);
                         Executor exe = getMainExecutor(itemView.getContext());
                         exe.execute(()->{
                             if(progress>=100){
@@ -512,7 +515,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         Toast.makeText(itemView.getContext(),"No default program found for this type of file",Toast.LENGTH_SHORT).show();
                     });
                 }
-            }).start();
+            }).start())
+            .setNegativeButton(android.R.string.no, null)
+            .show();
         }
 
         void bind(QuotedUserMessage message, DxApplication app) {

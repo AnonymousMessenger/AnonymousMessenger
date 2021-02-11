@@ -3,6 +3,7 @@ package com.dx.anonymousmessenger.file;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.RecoverySystem;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -19,8 +20,10 @@ import org.whispersystems.libsignal.InvalidKeyException;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -46,6 +49,16 @@ public class FileHelper {
 
             return Utils.join(iv, ciphertext);
         } catch (NoSuchAlgorithmException | java.security.InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    public static CipherInputStream encryptToStream(byte[] key, byte[] iv, InputStream data) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), new GCMParameterSpec(128, iv));
+            return new CipherInputStream(data,cipher);
+        } catch (NoSuchAlgorithmException | java.security.InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException e) {
             throw new AssertionError(e);
         }
     }
@@ -189,6 +202,26 @@ public class FileHelper {
         return null;
     }
 
+    public static String saveFile(InputStream data, DxApplication app, String filename) throws NoSuchAlgorithmException {
+        MessageDigest crypt = MessageDigest.getInstance("SHA-256");
+        crypt.reset();
+        crypt.update(app.getAccount().getPassword());
+        byte[] sha1b = crypt.digest();
+        byte[] iv     = Utils.getSecretBytes(IV_LENGTH);
+        CipherInputStream encrypted = encryptToStream(sha1b, iv, data);
+        String eFilename = Hex.toStringCondensed(encrypt(sha1b,filename.getBytes()));
+        try{
+            FileOutputStream out = app.openFileOutput(eFilename,Context.MODE_PRIVATE);
+            out.write(iv);
+            FileUtilities.copy(encrypted,out);
+            //return its "path"
+            return eFilename;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void deleteFile(String path, DxApplication app){
         try{
             //no need to use crypto to delete
@@ -225,7 +258,13 @@ public class FileHelper {
     }
 
     public static String getFilePath(Uri uri, Context context) {
-        return getRealPathFromURI_API19(context, uri);
+//        return getRealPathFromURI_API19(context, uri);
+//        context.getContentResolver().
+        return getPath(context,uri);
+    }
+
+    public static InputStream getInputStreamFromUri(Uri uri, Context context) throws FileNotFoundException {
+        return context.getContentResolver().openInputStream(uri);
     }
 
     public static String getFileSize(Uri uri, Context context) {
@@ -256,11 +295,16 @@ public class FileHelper {
     public static String getRealPathFromURI_API19(Context context, Uri uri){
         String filePath = "";
         String wholeID = DocumentsContract.getDocumentId(uri);
+        String id;
 
-        // Split at colon, use second item in the array
-        String id = wholeID.split(":")[1];
+        if(wholeID.contains(":")){
+            // Split at colon, use second item in the array
+            id = wholeID.split(":")[1];
+        }else{
+            id = wholeID.split("/")[wholeID.split("/").length-1];
+        }
 
-        String[] column = { MediaStore.Files.FileColumns.DATA };
+        String[] column = { MediaStore.Images.Media.DATA };
 
         // where id is equal to
         String sel = MediaStore.Files.FileColumns._ID + "=?";
@@ -289,5 +333,59 @@ public class FileHelper {
         }
     }
 
+    public static String getPath(final Context context, final Uri uri) {
+        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+//        Log.i("URI",uri+"");
+        String result = uri+"";
+        // DocumentProvider
+        //  if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (isKitKat && (result.contains("media.documents"))) {
+            String[] ary = result.split("/");
+            int length = ary.length;
+            String imgary = ary[length-1];
+            final String[] dat = imgary.split("%3A");
+            final String docId = dat[1];
+            final String type = dat[0];
+            Uri contentUri = null;
+            if ("image".equals(type)) {
+                contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            } else if ("video".equals(type)) {
+            } else if ("audio".equals(type)) {
+            }
+            final String selection = "_id=?";
+            final String[] selectionArgs = new String[] {
+                    dat[1]
+            };
+            return getDataColumn(context, contentUri, selection, selectionArgs);
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            return getDataColumn(context, uri, null, null);
+        }
+        // File
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+        return null;
+    }
+
+    public static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+        final String column = "_data";
+        final String[] projection = {
+                column
+        };
+        try {
+            Cursor cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int column_index = cursor.getColumnIndexOrThrow(column);
+                String data = cursor.getString(column_index);
+                if (cursor != null){
+                    cursor.close();
+                }
+                return data;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

@@ -20,7 +20,7 @@
     <string name="myaddress">Minu aadress</string>
     <string name="hint_contact_address">Sisestage Kontaktaadress (.onion)</string>
     <string name="lbl_contact_address">Sisestage Kontaktaadress</string>
-    <string name="enter_message">Saada turvaline sõnum</string>
+    <string name="enter_message">Turvaline sõnum</string>
     <string name="send_button">SAADA</string>
     <string name="reply">Vasta</string>
     <string name="pin">Pin</string>

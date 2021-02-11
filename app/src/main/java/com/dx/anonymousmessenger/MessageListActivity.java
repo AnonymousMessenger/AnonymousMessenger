@@ -94,6 +94,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_message_list);
@@ -857,7 +858,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                     return;
                 }
                 Intent intent = new Intent(this,FileViewerActivity.class);
-                intent.putExtra("path",FileHelper.getFilePath(data.getData(),this));
+                intent.putExtra("uri",data.getData());
                 intent.putExtra("filename", FileHelper.getFileName(data.getData(),this));
                 intent.putExtra("size",FileHelper.getFileSize(data.getData(),this));
                 intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));

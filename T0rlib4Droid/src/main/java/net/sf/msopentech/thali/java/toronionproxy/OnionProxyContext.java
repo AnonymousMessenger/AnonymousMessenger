@@ -200,7 +200,7 @@ abstract public class OnionProxyContext {
             case ANDROID:
             case LINUX_32:
             case LINUX_64:
-                //todo change for different arches
+                //this doesn't matter for android as it is being overridden
                 return "libtor.156.so";
             case WINDOWS:
             case MAC:

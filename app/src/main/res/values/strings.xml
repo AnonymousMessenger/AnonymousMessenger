@@ -19,7 +19,7 @@
     <string name="myaddress">My Address</string>
     <string name="hint_contact_address">Enter Contact Address (.onion)</string>
     <string name="lbl_contact_address">Enter Contact Address</string>
-    <string name="enter_message">Send secure message…</string>
+    <string name="enter_message">Secure message…</string>
     <string name="send_button">SEND</string>
     <string name="reply">Reply</string>
     <string name="pin">Pin</string>
@@ -285,5 +285,8 @@
     <string name="action_clear_log">Clear Log</string>
     <string name="include_notice_logs">Include Notice Logs</string>
     <string name="decrypting2">Decrypting</string>
+    <string name="open_file_question">Open file in another app ?</string>
+    <string name="open_file_describe">This will decrypt the file and give access to a third party
+        app that could compromise the file</string>
 
 </resources>
