@@ -457,19 +457,21 @@ public class DxApplication extends Application {
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notification = new Notification.Builder(this,CHANNEL_ID)
+            notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setColor(getResources().getColor(R.color.dx_night_940,getTheme()))
                     .setContentTitle(title)
-                    .setContentText(msg)
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(msg))
+//                    .setContentText(msg)
                     .setContentIntent(pendingIntent)
                     .setChannelId(CHANNEL_ID)
                     .build();
         }else{
             notification = new Notification.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher_foreground)
-                    .setContentTitle(title)
-                    .setContentText(msg)
+                    .setContentTitle(title + ", " + msg)
+//                    .setContentText(msg)
                     .setContentIntent(pendingIntent)
                     .build();
         }
