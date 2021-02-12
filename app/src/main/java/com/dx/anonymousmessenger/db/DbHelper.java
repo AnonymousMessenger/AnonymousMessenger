@@ -393,7 +393,7 @@ public class DbHelper {
         SQLiteDatabase database = app.getDb();
         database.beginTransaction();
         try{
-            database.execSQL("DELETE FROM log",null);
+            database.execSQL("DELETE FROM log",new Object[]{});
             database.setTransactionSuccessful();
         }catch (Exception e) {e.printStackTrace();}
         finally {

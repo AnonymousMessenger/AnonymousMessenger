@@ -57,6 +57,24 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_media"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#DA221E2A"
+            android:visibility="gone" />
+    </RelativeLayout>
+
     <FrameLayout
         android:id="@+id/frameLayout2"
         android:layout_width="0dp"
@@ -84,32 +102,40 @@
             android:id="@+id/constraintLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:minHeight="60dp"
             android:background="@drawable/rounded_rectangle_dark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fab_file"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintStart_toStartOf="parent">
 
-            <EditText
-                android:id="@+id/edittext_chatbox"
-                android:layout_width="0dp"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txt_container_chatbox"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:animateLayoutChanges="true"
-                android:autofillHints="@string/enter_message"
-                android:background="@drawable/rounded_rectangle_dark"
-                android:hint="@string/enter_message"
-                android:inputType="textMultiLine"
-                android:maxLines="6"
-                android:padding="5dp"
-                android:textColor="#ffffff"
-                android:textColorHint="#ffffff"
-                android:visibility="visible"
+                android:paddingStart="1dp"
+                android:paddingEnd="4dp"
+                app:errorEnabled="false"
+                app:hintEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edittext_chatbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:autoLink="all"
+                    android:autofillHints="@string/enter_message"
+                    android:hint="@string/enter_message"
+                    android:inputType="textMultiLine"
+                    android:lineSpacingExtra="4dp"
+                    android:maxLines="4"
+                    android:paddingBottom="14dp"
+                    android:textColor="#ffffff"
+                    android:textColorHint="#ffffff"
+                    android:visibility="visible" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/quote_sender_typing"
@@ -140,8 +166,8 @@
                 android:text="@string/textview"
                 android:textColor="#ffffff"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toTopOf="@+id/edittext_chatbox"
-                app:layout_constraintEnd_toEndOf="@+id/edittext_chatbox"
+                app:layout_constraintBottom_toTopOf="@+id/txt_container_chatbox"
+                app:layout_constraintEnd_toEndOf="@+id/txt_container_chatbox"
                 app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -295,23 +321,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_media"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#DA221E2A"
-            android:visibility="gone" />
-    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

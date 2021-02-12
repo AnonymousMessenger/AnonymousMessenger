@@ -10,11 +10,11 @@
     <Button
         android:id="@+id/btn_scan_contact"
         style="@style/DXSendButton"
-        android:layout_width="64dp"
-        android:layout_height="45dp"
+        android:layout_width="82dp"
+        android:layout_height="64dp"
         android:layout_margin="8dp"
         android:animateLayoutChanges="true"
-        android:background="@drawable/button_ripple"
+        android:background="@drawable/rounded_shape"
         android:text="@string/scan"
         app:layout_constraintBottom_toBottomOf="@+id/qr_my_address"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,7 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_lbl_myaddress" />
+        app:layout_constraintTop_toBottomOf="@+id/qr_my_address" />
 
     <TextView
         android:id="@+id/txt_lbl_contact_address"
@@ -88,7 +88,7 @@
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_myaddress"
-        app:srcCompat="@drawable/ic_stat_name" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_lbl_myaddress"
+        app:srcCompat="@drawable/ic_baseline_emoji_emotions_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

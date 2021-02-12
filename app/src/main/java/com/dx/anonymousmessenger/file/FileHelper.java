@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger.file;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.RecoverySystem;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.webkit.MimeTypeMap;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.crypto.CipherInputStream;
@@ -35,6 +37,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class FileHelper {
     private static final int IV_LENGTH = 12;
@@ -140,6 +144,33 @@ public class FileHelper {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void saveToStorageWithProgress(String path, String filename, DxApplication app, RecoverySystem.ProgressListener progressListener){
+        try{
+            //decrypt this stuff
+            MessageDigest crypt = MessageDigest.getInstance("SHA-256");
+            crypt.reset();
+            crypt.update(app.getAccount().getPassword());
+            byte[] sha1b = crypt.digest();
+            File f = new File(app.getFilesDir(),path);
+            if(!f.exists()){
+                return;
+            }
+            String suffix = "."+filename.split("\\.")[filename.split("\\.").length-1];
+            String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(suffix.replace(".",""));
+            if(mime==null){
+                mime = "*/*";
+            }
+            File file = File.createTempFile(filename.replace(suffix,""),suffix,app.getExternalCacheDir());
+            file.createNewFile();
+            FileUtilities.copyWithProgress(decryptToStream(sha1b,new FileInputStream(f)),new FileOutputStream(file),progressListener,f.length());
+            DownloadManager downloadManager = (DownloadManager) app.getSystemService(DOWNLOAD_SERVICE);
+            downloadManager.addCompletedDownload(file.getName(), file.getName(), true, mime,file.getAbsolutePath(),file.length(),true);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public static File getTempFileWithProgress(String path, String filename, DxApplication app, RecoverySystem.ProgressListener progressListener){

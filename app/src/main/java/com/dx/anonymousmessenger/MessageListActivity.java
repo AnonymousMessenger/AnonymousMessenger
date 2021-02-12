@@ -54,6 +54,7 @@ import com.dx.anonymousmessenger.messages.MessageListAdapter;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.util.CallBack;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -64,7 +65,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class MessageListActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, MyRecyclerViewAdapter.ItemClickListener {
+public class MessageListActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, MyRecyclerViewAdapter.ItemClickListener, CallBack {
 
     private static final int REQUEST_CODE = 1;
     private static final int READ_STORAGE_REQUEST_CODE = 2;
@@ -94,7 +95,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_message_list);
@@ -126,8 +127,9 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         frameOnline = findViewById(R.id.frame_online);
         scrollDownFab = findViewById(R.id.fab_scroll_down);
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
-        mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication(), mMessageRecycler);
+        mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication(), mMessageRecycler, this);
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
+//        ((LinearLayoutManager)mMessageRecycler.getLayoutManager()).setStackFromEnd(true);
         mMessageRecycler.setAdapter(mMessageAdapter);
         mMessageRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -437,6 +439,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         });
     }
 
+    //fires when clicking on media/file sending items
     @Override
     public void onItemClick(View view, int position) {
         mediaRecyclerView.setVisibility(View.GONE);
@@ -973,4 +976,10 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         }
     }
 
+    @Override
+    public void doStuff() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 1);
+        }
+    }
 }

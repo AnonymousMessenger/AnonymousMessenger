@@ -1,11 +1,13 @@
 package com.dx.anonymousmessenger.messages;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaDataSource;
@@ -23,12 +25,14 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -80,12 +84,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private final DxApplication app;
     private String nowPlaying;
     public AudioPlayer ap;
+    private final CallBack permissionCallback;
 
-    public MessageListAdapter(Context context, List<QuotedUserMessage> messageList, DxApplication app, RecyclerView mMessageRecycler) {
+    public MessageListAdapter(Context context, List<QuotedUserMessage> messageList, DxApplication app, RecyclerView mMessageRecycler, CallBack permissionCallback) {
         this.app = app;
         mContext = context;
         mMessageList = messageList;
         this.mMessageRecycler = mMessageRecycler;
+        this.permissionCallback = permissionCallback;
     }
 
     public void setMessageList(List<QuotedUserMessage> mMessageList) {
@@ -288,7 +294,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case VIEW_TYPE_FILE_MESSAGE_RECEIVED:
             case VIEW_TYPE_FILE_MESSAGE_SENT:
             case VIEW_TYPE_FILE_MESSAGE_SENT_OK:
-                ((FileMessageHolder) holder).bind(message,app);
+                ((FileMessageHolder) holder).bind(message,app,permissionCallback);
         }
     }
 
@@ -476,6 +482,45 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             filenameText = itemView.findViewById(R.id.txt_filename);
         }
 
+        void saveFile(QuotedUserMessage message, DxApplication app, CallBack permissionCallback){
+            new AlertDialog.Builder(itemView.getContext(),R.style.AppAlertDialog)
+                .setTitle(R.string.save_to_storage)
+                .setMessage(app.getString(R.string.save_to_storage_explain))
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(() -> {
+                try{
+                    @SuppressLint("SetTextI18n") RecoverySystem.ProgressListener progressListener = progress -> {
+                        Executor exe = getMainExecutor(itemView.getContext());
+                        exe.execute(()->{
+                            if(progress>=100){
+                                filenameText.setText(message.getFilename());
+                            }else{
+                                filenameText.setText(app.getString(R.string.saving)+" "+progress+"%"+"...");
+                            }
+                        });
+                    };
+                    if (ContextCompat.checkSelfPermission(itemView.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        //no external storage permission
+                        permissionCallback.doStuff();
+                        return;
+                    }
+                    FileHelper.saveToStorageWithProgress(message.getPath(),message.getFilename(),app,progressListener);
+
+                    Snackbar.make(itemView,R.string.saved_to_storage,Snackbar.LENGTH_SHORT).show();
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Executor exe = getMainExecutor(itemView.getContext());
+                    exe.execute(()->{
+                        filenameText.setText(message.getFilename());
+                        Toast.makeText(itemView.getContext(),"Something went wrong",Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }).start())
+            .setNegativeButton(android.R.string.no, null)
+            .show();
+        }
+
         void openFile(QuotedUserMessage message, DxApplication app){
             new AlertDialog.Builder(itemView.getContext(),R.style.AppAlertDialog)
                 .setTitle(R.string.open_file_question)
@@ -493,6 +538,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             }
                         });
                     };
+                    String suffix = "."+message.getFilename().split("\\.")[message.getFilename().split("\\.").length-1];
+                    String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(suffix.replace(".",""));
+                    if(mime==null){
+                        mime = "*/*";
+                    }
                     File tmp = FileHelper.getTempFileWithProgress(message.getPath(),message.getFilename(),app,progressListener);
                     Uri uri;
                     if (tmp != null) {
@@ -505,7 +555,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     Intent objIntent = new Intent(Intent.ACTION_VIEW);
                     objIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     objIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    objIntent.setDataAndType(uri, "*/*");
+                    objIntent.setDataAndType(uri, mime);
                     startActivity(app,objIntent,null);
                 }catch (Exception e){
                     e.printStackTrace();
@@ -520,18 +570,52 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             .show();
         }
 
-        void bind(QuotedUserMessage message, DxApplication app) {
+        void bind(QuotedUserMessage message, DxApplication app, CallBack permissionCallback) {
             if(nameText!=null){
                 nameText.setText(message.getSender());
             }
             filenameText.setText(message.getFilename());
             timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
-            imageHolder.setOnClickListener(v -> {
-                openFile(message,app);
+            itemView.setOnClickListener(v -> {
+//                openFile(message,app);
+                PopupMenu popup = new PopupMenu(v.getContext(), v);
+                popup.inflate(R.menu.file_menu);
+                if(message.isPinned()){
+                    MenuItem pinButton = popup.getMenu().findItem(R.id.navigation_drawer_item2);
+                    pinButton.setTitle(R.string.unpin);
+                }
+                popup.setOnMenuItemClickListener(item -> {
+                    if (item.getItemId() == R.id.navigation_drawer_item2) {
+                        //handle pin click
+                        try {
+                            if (message.isPinned()) {
+                                MessageSender.unPinMessage(message, app);
+                                message.setPinned(false);
+                                Snackbar.make(v, R.string.unpinned_message, Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                MessageSender.pinMessage(message, app);
+                                message.setPinned(true);
+                                Snackbar.make(v, R.string.pinned_message, Snackbar.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return true;
+                    }else if(item.getItemId() == R.id.open_file){
+                        //handle open file
+                        openFile(message,app);
+                    }else if(item.getItemId() == R.id.save_file){
+                        //handle save file
+                        saveFile(message,app,permissionCallback);
+                    }
+                    return false;
+                });
+                popup.show();
             });
-            filenameText.setOnClickListener(v -> {
-                openFile(message,app);
-            });
+//            itemView.setOnLongClickListener(v -> {
+//                saveFile(message,app, permissionCallback);
+//                return false;
+//            });
         }
     }
 
@@ -728,19 +812,15 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
             messageText.setOnClickListener(new ListItemOnClickListener(message,itemView,messageText));
             InternalLinkMovementMethod.OnLinkClickedListener linkClickedListener = linkText -> {
-//                if (!linkText.startsWith("http://") && !linkText.startsWith("https://")){
-//                    linkText = "https://" + linkText;
-//                }
-//                String linkText2 = linkText;
                 new AlertDialog.Builder(mContext,R.style.AppAlertDialog)
-                        .setTitle(R.string.open_link_question)
-                        .setMessage(R.string.open_link_describe)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                            Intent defaultIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkText));
-                            mContext.startActivity(defaultIntent);
-                        })
-                        .setNegativeButton(android.R.string.no, (dialog, whichButton) ->{}).show();
+                    .setTitle(R.string.open_link_question)
+                    .setMessage(R.string.open_link_describe)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                        Intent defaultIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkText));
+                        mContext.startActivity(defaultIntent);
+                    })
+                    .setNegativeButton(android.R.string.no, (dialog, whichButton) ->{}).show();
                 // return true if handled, false otherwise
                 return true;
             };

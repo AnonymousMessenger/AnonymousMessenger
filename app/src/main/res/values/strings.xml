@@ -271,7 +271,8 @@
     <string name="delete_note_details">this can\'t be undone</string>
     <string name="delete_note">Delete</string>
     <string name="open_link_question">Open this link?</string>
-    <string name="open_link_describe">Opening links outside tor browser could deanonymize you, only do this if you trust the link or use tor browser</string>
+    <string name="open_link_describe">Opening links outside private apps could deanonymize you,
+        only do this if you trust the link or use tor browser if possible</string>
     <string name="scan">Scan QR-code</string>
     <string name="contact_added">Added contact</string>
     <string name="cam_perm_ask_title">Camera permission</string>
@@ -288,5 +289,7 @@
     <string name="open_file_question">Open file in another app ?</string>
     <string name="open_file_describe">This will decrypt the file and give access to a third party
         app that could compromise the file</string>
+    <string name="deleted_logs">The log has been cleared</string>
+    <string name="saving">"Saving "</string>
 
 </resources>

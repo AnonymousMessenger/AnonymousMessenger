@@ -74,7 +74,7 @@ public abstract class OnionProxyManager {
 
     public synchronized boolean startWithRepeat(int secondsBeforeTimeOut, int numberOfRetries) throws
             InterruptedException, IOException {
-        if (secondsBeforeTimeOut <= 0 || numberOfRetries < 0) {
+        if (secondsBeforeTimeOut <= 10 || numberOfRetries < 0) {
             throw new IllegalArgumentException("secondsBeforeTimeOut >= 0 & numberOfRetries > 0");
         }
 

@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -86,7 +88,7 @@ public class LogActivity extends AppCompatActivity {
 
     public void updateUi(){
         new Thread(()->{
-            int oldSize = this.list.size();
+//            int oldSize = this.list.size();
             List<Object[]> newList;
             if(notice){
                 newList = DbHelper.getLogListWithNotice((DxApplication)getApplication());
@@ -108,10 +110,26 @@ public class LogActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void deleteLogs(){
-        new Thread(()->{
-            DbHelper.deleteAllLogs((DxApplication)getApplication());
-        }).start();
+    private void deleteLogs(MenuItem item){
+        new AlertDialog.Builder(this,R.style.AppAlertDialog)
+            .setTitle(R.string.delete_log_question)
+            .setMessage(getString(R.string.delete_log_details))
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(() ->{
+                DbHelper.deleteAllLogs((DxApplication)getApplication());
+                runOnUiThread(()->{
+                    try{
+                        Snackbar.make(item.getActionView(),R.string.deleted_logs,Snackbar.LENGTH_LONG).show();
+                        stopCheckingLogs();
+                        list = new ArrayList<>();
+                        adapter.list = this.list;
+                        adapter.notifyDataSetChanged();
+                        updateUi();
+                        checkLogs();
+                    }catch (Exception ignored){}
+                });
+            }).start())
+            .setNegativeButton(android.R.string.no, null).show();
     }
 
     @Override
@@ -136,7 +154,7 @@ public class LogActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==R.id.action_clear_log){
-            deleteLogs();
+            deleteLogs(item);
         }else if(item.getItemId()==R.id.action_log_notice){
             if(item.isChecked()){
                 notice = false;
