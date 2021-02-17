@@ -1,63 +1,65 @@
 package com.dx.anonymousmessenger.tor;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.StatFs;
 import android.util.Log;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.call.CallController;
 import com.dx.anonymousmessenger.crypto.Entity;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.file.FileHelper;
-import com.dx.anonymousmessenger.messages.MessageSender;
+import com.dx.anonymousmessenger.messages.MessageEncrypter;
+import com.dx.anonymousmessenger.messages.MessageReceiver;
+import com.dx.anonymousmessenger.messages.QuotedUserMessage;
+import com.dx.anonymousmessenger.util.Hex;
+import com.dx.anonymousmessenger.util.Utils;
 
 import net.sf.controller.network.AndroidTorRelay;
 import net.sf.controller.network.TorServerSocket;
 
+import org.whispersystems.libsignal.SignalProtocolAddress;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+import static com.dx.anonymousmessenger.file.FileHelper.IV_LENGTH;
+
 public class ServerSocketViaTor {
     private static final int hiddenservicedirport = 5780;
     private int localport = 5780;
-    private final Context ctx;
     AndroidTorRelay node;
-    Thread serverThread;
     Thread jobsThread;
     private TorServerSocket torServerSocket;
 
-    public ServerSocketViaTor(Context ctx) {
-        this.ctx = ctx;
+    public ServerSocketViaTor() {
     }
 
     public AndroidTorRelay getAndroidTorRelay(){
         return node;
     }
 
-//    public void setAndroidTorRelay(AndroidTorRelay atr) {this.node = atr;}
-
-//    public void setServerThread(Thread thread) {this.serverThread = thread;}
-
-//    public Thread getServerThread() {return serverThread;}
-
     public void init(DxApplication app) throws IOException {
-        if (ctx == null) {
-            return;
-        }
 
         if(node!=null){
-            if(serverThread!=null){
-                try{
-                    serverThread.interrupt();
-                    serverThread = null;
-                }catch (Exception ignored){}
-            }
             if(torServerSocket!=null){
                 torServerSocket.getServerSocket().close();
                 torServerSocket = null;
@@ -73,10 +75,16 @@ public class ServerSocketViaTor {
 
         String fileLocation = "torfiles";
         try {
-            node = new AndroidTorRelay(ctx, fileLocation);
+            node = new AndroidTorRelay(app.getApplicationContext(), fileLocation);
         }catch (Exception e){
             e.printStackTrace();
-            init(app);
+            try {
+                if(node!=null){
+                    node.shutDown();
+                }
+                Thread.sleep(3000);
+            } catch (Exception ignored) {}
+            app.restartTor();
             return;
         }
 
@@ -95,9 +103,6 @@ public class ServerSocketViaTor {
         ServerSocket ssocks = torServerSocket.getServerSocket();
         Server server = new Server(ssocks, app);
 
-        this.serverThread = new Thread(server);
-        serverThread.start();
-
         this.jobsThread = new Thread(()->{
             FileHelper.cleanDir(Objects.requireNonNull(app.getExternalCacheDir()));
             FileHelper.cleanDir(Objects.requireNonNull(app.getCacheDir()));
@@ -105,7 +110,7 @@ public class ServerSocketViaTor {
         });
         jobsThread.start();
 
-//        serverLatch.await();
+        server.run();
     }
 
     public void recurseJobs(DxApplication app){
@@ -125,12 +130,6 @@ public class ServerSocketViaTor {
     public void tryKill(){
         if(node!=null){
             boolean exit = false;
-            if(serverThread!=null){
-                try{
-                    serverThread.interrupt();
-                    serverThread = null;
-                }catch (Exception ignored){}
-            }
             if(jobsThread!=null){
                 try{
                     jobsThread.interrupt();
@@ -163,8 +162,8 @@ public class ServerSocketViaTor {
     }
 
     private static class Server implements Runnable {
+        private static final long MAX_BUFFER_LENGTH = 7*1024*1024;
         private final ServerSocket socket;
-//        private static final DateFormat df = new SimpleDateFormat("K:mm a, z", Locale.ENGLISH);
         private final DxApplication app;
         private final static int ALLOWED_CONCURRENT_CONNECTIONS = 50;
 
@@ -202,7 +201,6 @@ public class ServerSocketViaTor {
                                 DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
                                 DataInputStream in=new DataInputStream(sock.getInputStream());
                                 String msg = in.readUTF();
-//                                System.out.println(msg);
                                 if(msg.contains("hello-")){
                                     if(msg.replace("hello-","").length() > 54 && msg.replace("hello-","").endsWith(".onion") && DbHelper.contactExists(msg.replace("hello-",""),app)){
                                         app.addToOnlineList(msg.replace("hello-",""));
@@ -280,10 +278,161 @@ public class ServerSocketViaTor {
                                         sockets.getAndDecrement();
                                         Log.d("FILE RECEIVER", "TOTAL BYTES READ : "+total_read);
                                         Log.d("FILE RECEIVER", "FILE SIZE : "+fileSize);
-                                        MessageSender.mediaMessageReceiver(cache.toByteArray(),recMsg,app);
+                                        MessageReceiver.mediaMessageReceiver(cache.toByteArray(),recMsg,app);
                                         DbHelper.saveLog("RECEIVED FILE FROM "+address+" SIZE "+fileSize,new Date().getTime(),"NOTICE",app);
                                     } catch (Exception e) {
                                         Log.e("RECEIVING MEDIA MESSAGE","ERROR BELOW");
+                                        e.printStackTrace();
+                                        DbHelper.saveLog("ERROR WHILE RECEIVING FILE "+ e.getMessage(),new Date().getTime(),"NOTICE",app);
+                                    }
+                                    return;
+                                }else if(msg.equals("file")){
+                                    try {
+                                        outputStream.writeUTF("ok");
+                                        outputStream.flush();
+                                        msg = in.readUTF();
+                                        if(msg.length() < 54 || !msg.trim().endsWith(".onion")){
+                                            //no bueno
+                                            outputStream.writeUTF("nuf");
+                                            outputStream.flush();
+                                            sock.close();
+                                            sockets.getAndDecrement();
+                                            return;
+                                        }
+                                        String address= msg.trim();
+                                        if(!DbHelper.contactExists(address,app)){
+                                            //no bueno
+                                            outputStream.writeUTF("nuf");
+                                            outputStream.flush();
+                                            sock.close();
+                                            sockets.getAndDecrement();
+                                            return;
+                                        }
+                                        outputStream.writeUTF("ok");
+                                        outputStream.flush();
+                                        byte[] buffer = new byte[8];
+                                        in.read(buffer,0,buffer.length);
+                                        long length = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getLong();
+                                        //maximum file size 30MB
+                                        if(
+                                            length
+                                            >
+                                            Math.min(
+                                                new StatFs(app.getFilesDir().getAbsolutePath()).getAvailableBytes(),
+                                                3L*1024*1024*1024)
+                                        ){
+                                            //no bueno
+                                            outputStream.writeUTF("nuf");
+                                            outputStream.flush();
+                                            sock.close();
+                                            sockets.getAndDecrement();
+                                            return;
+                                        }
+                                        outputStream.writeUTF("ok");
+                                        outputStream.flush();
+                                        msg = in.readUTF();
+
+                                        QuotedUserMessage qum = QuotedUserMessage.fromEncryptedJson(msg,app);
+
+                                        if(qum==null){
+                                            //no bueno
+                                            outputStream.writeUTF("nuf");
+                                            outputStream.flush();
+                                            sock.close();
+                                            sockets.getAndDecrement();
+                                            return;
+                                        }
+
+                                        byte[] sha1b = app.getSha256();
+                                        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+                                        String eFilename = Hex.toStringCondensed(FileHelper.encrypt(sha1b,qum.getFilename().getBytes()));
+                                        FileOutputStream fos = app.openFileOutput(eFilename,Context.MODE_PRIVATE);
+
+                                        //need to set the new path
+                                        qum.setPath(eFilename);
+
+                                        outputStream.writeUTF("ok");
+                                        outputStream.flush();
+                                        // start receiving chunks
+
+                                        int done = 0;
+                                        while(true){
+                                            buffer = new byte[4];
+                                            in.read(buffer,0,buffer.length);
+                                            int chunkLength = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getInt();
+
+                                            System.out.println("CHUNK LENGTH:::: "+chunkLength);
+                                            if(chunkLength==0){
+                                                break;
+                                            }
+                                            if(chunkLength>MAX_BUFFER_LENGTH || chunkLength<0){
+                                                //no bueno
+                                                System.out.println("MAX_BUFFER_LENGTH");
+                                                System.out.println(chunkLength);
+                                                outputStream.writeUTF("nuf");
+                                                outputStream.flush();
+                                                sock.close();
+                                                FileHelper.deleteFile(eFilename,app);
+                                                sockets.getAndDecrement();
+                                                return;
+                                            }
+                                            buffer = new byte[chunkLength];
+                                            int read = 0;
+
+                                            if(done>(length+(length*0.20))){
+                                                //no bueno
+                                                outputStream.writeUTF("nuf");
+                                                outputStream.flush();
+                                                sock.close();
+                                                FileHelper.deleteFile(eFilename,app);
+                                                sockets.getAndDecrement();
+                                                return;
+                                            }
+
+                                            int chunkDone = 0;
+                                            while (chunkDone<chunkLength){
+                                                read = in.read(buffer,chunkDone,chunkLength-chunkDone);
+                                                chunkDone+=read;
+                                            }
+
+                                            if(read==-1 || read==0){
+                                                break;
+                                            }
+
+                                            System.out.println("DECRYPTING !!!!");
+                                            buffer = MessageEncrypter.decrypt(buffer,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
+
+                                            byte[] iv = Utils.getSecretBytes(IV_LENGTH);
+
+                                            System.out.println("WRITING IV !!!!");
+                                            fos.write(iv);
+                                            System.out.println("ENCRYPTING !!!!");
+
+                                            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
+                                            byte[] enc = cipher.doFinal(buffer);
+                                            System.out.println("WRITING LN !!!!");
+                                            fos.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(enc.length).array());
+                                            System.out.println("WRITING EN !!!!");
+                                            fos.write(enc);
+                                            fos.flush();
+                                            done += chunkDone;
+                                        }
+                                        in.close();
+                                        fos.close();
+                                        sockets.getAndDecrement();
+                                        Log.d("FILE RECEIVER", "TOTAL BYTES READ : "+done);
+                                        Log.d("FILE RECEIVER", "FILE SIZE : "+length);
+
+                                        DbHelper.saveMessage(qum,app,qum.getAddress(),true);
+                                        DbHelper.setContactNickname(qum.getSender(), qum.getAddress(), app);
+                                        DbHelper.setContactUnread(qum.getAddress(),app);
+
+                                        app.sendNotification(app.getString(R.string.new_message),app.getString(R.string.you_have_message));
+                                        Intent gcm_rec = new Intent("your_action");
+                                        LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+                                        DbHelper.saveLog("RECEIVED FILE FROM "+address+" SIZE "+length,new Date().getTime(),"NOTICE",app);
+                                    } catch (Exception e) {
+                                        Log.e("RECEIVING FILE","ERROR BELOW");
                                         e.printStackTrace();
                                         DbHelper.saveLog("ERROR WHILE RECEIVING FILE "+ e.getMessage(),new Date().getTime(),"NOTICE",app);
                                     }
@@ -292,7 +441,7 @@ public class ServerSocketViaTor {
 
                                 //todo fix this vulnerability which allows attacker to send long utf to dos maybe
                                 final String rec = msg;
-                                new Thread(()-> MessageSender.messageReceiver(rec,app)).start();
+                                new Thread(()-> MessageReceiver.messageReceiver(rec,app)).start();
                                 outputStream.writeUTF("ack3");
                                 outputStream.flush();
                                 outputStream.close();

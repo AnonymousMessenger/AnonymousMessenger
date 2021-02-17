@@ -291,5 +291,7 @@
         app that could compromise the file</string>
     <string name="deleted_logs">The log has been cleared</string>
     <string name="saving">"Saving "</string>
+    <string name="cancel">Cancel</string>
+    <string name="slide_to_cancel">Slide to cancel</string>
 
 </resources>

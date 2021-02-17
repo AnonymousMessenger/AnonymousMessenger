@@ -19,6 +19,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <ProgressBar
+                android:id="@+id/progress_file"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/img_holder" />
+
             <TextView
                 android:id="@+id/text_message_name"
                 android:layout_width="wrap_content"
@@ -43,44 +53,44 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/img_holder"
-                android:layout_width="30dp"
-                android:layout_height="19dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"
-                android:contentDescription="@string/image_to_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:backgroundTint="@color/dx_received"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/image_message_profile"
-                app:srcCompat="@drawable/ic_baseline_attach_file_24" />
+                app:srcCompat="@drawable/attach_file_big" />
 
             <ImageView
                 android:id="@+id/img_seen2"
                 android:layout_width="16dp"
                 android:layout_height="19dp"
                 android:layout_marginStart="2dp"
-                android:layout_marginTop="12dp"
                 android:contentDescription="@string/indicates_secure_messaging"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_filename"
+                app:layout_constraintTop_toBottomOf="@+id/img_holder"
                 app:srcCompat="@android:drawable/ic_lock_lock" />
 
             <TextView
                 android:id="@+id/text_message_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
                 android:text="@string/time_placeholder"
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintStart_toEndOf="@+id/img_seen2"
-                app:layout_constraintTop_toBottomOf="@+id/txt_filename" />
+                app:layout_constraintTop_toBottomOf="@+id/img_holder" />
 
             <TextView
                 android:id="@+id/txt_filename"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp"
                 android:maxLength="60"

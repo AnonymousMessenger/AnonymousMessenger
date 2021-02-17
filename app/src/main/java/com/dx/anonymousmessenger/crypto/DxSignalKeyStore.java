@@ -73,7 +73,7 @@ public class DxSignalKeyStore implements SignalProtocolStore {
                 return new SessionRecord();
             }
         }else{
-            //instead return a new session n save dat shit
+            //instead return a new session and save it
             return new SessionRecord();
 //            return null;
         }

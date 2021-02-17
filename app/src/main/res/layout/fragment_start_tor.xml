@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dx.anonymousmessenger.SetupInProcess">
+    tools:context="com.dx.anonymousmessenger.ui.view.setup.SetupInProcess">
 
     <TextView
         android:id="@+id/textView"

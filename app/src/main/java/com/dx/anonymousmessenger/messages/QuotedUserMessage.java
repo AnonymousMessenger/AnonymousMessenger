@@ -1,9 +1,13 @@
 package com.dx.anonymousmessenger.messages;
 
+import android.util.Log;
+
 import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.crypto.AddressedEncryptedMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.whispersystems.libsignal.SignalProtocolAddress;
 
 import java.util.Date;
 
@@ -140,5 +144,23 @@ public class QuotedUserMessage extends UserMessage {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public static QuotedUserMessage fromEncryptedJson(String msg, DxApplication app){
+        try{
+            JSONObject json = new JSONObject(msg);
+            AddressedEncryptedMessage aem = AddressedEncryptedMessage.fromJson(json);
+            if(aem==null){
+                Log.e("MESSAGE RECEIVER", "FAILED TO GET AddressedEncryptedMessage FROM MESSAGE" );
+                return null;
+            }
+            String address = json.getString("address");
+            String decrypted = MessageEncrypter.decrypt(aem,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
+            json = new JSONObject(decrypted);
+
+            return QuotedUserMessage.fromJson(json,app);
+        }catch (Exception e){
+            return null;
+        }
     }
 }

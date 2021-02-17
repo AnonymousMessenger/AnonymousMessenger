@@ -1,8 +1,12 @@
 package com.dx.anonymousmessenger.tor;
 
 import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.file.FileHelper;
+import com.dx.anonymousmessenger.messages.MessageEncrypter;
 
 import net.sf.msopentech.thali.java.toronionproxy.Utilities;
+
+import org.whispersystems.libsignal.SignalProtocolAddress;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -10,11 +14,24 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class TorClientSocks4 {
     public TorClientSocks4() {
     }
 
+    /**
+     * for getting a ready socket to call a peer
+     * @param OnionAddress address to get a socket connected to
+     * @param app an instance of DxApplication
+     * @param type type of call socket (constant in call service)
+     * @return returns a socket ready to send voice data to
+     */
     public static Socket getCallSocket(String OnionAddress, DxApplication app, String type){
         Socket socket;
         try {
@@ -97,50 +114,82 @@ public class TorClientSocks4 {
         }
     }
 
-    public static boolean sendFile(String onion, DxApplication app, String msg, FileInputStream file){
+    public static boolean sendFile(String onion, DxApplication app, String msg, FileInputStream fis, long length){
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection(onion, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
 
-            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream in =new DataInputStream(socket.getInputStream());
             String msg2;
 
-            outputStream.writeUTF("file");
-            outputStream.flush();
+            out.writeUTF("file");
+            out.flush();
+            msg2 = in.readUTF();
+            out.writeUTF(app.getHostname());
+            out.flush();
             msg2 = in.readUTF();
             if(msg2.contains("ok")){
-                outputStream.writeUTF(app.getHostname());
-                outputStream.flush();
+                byte[] approxSize = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(length).array();
+                out.write(approxSize);
+                out.flush();
                 msg2 = in.readUTF();
                 if(msg2.contains("ok")){
-                    outputStream.writeUTF(msg);
-                    outputStream.flush();
+                    out.writeUTF(msg);
+                    out.flush();
                     msg2 = in.readUTF();
                     if(msg2.contains("ok")){
-                        outputStream.writeInt(file.available());
-                        outputStream.flush();
-                        msg2 = in.readUTF();
-                        if(msg2.contains("ok")){
-                            byte[] buffer;
-                            while(file.available()>0){
-                                //System.out.println("sending part");
-                                if(file.available()<1024){
-                                    buffer = new byte[file.available()];
-                                }else{
-                                    buffer = new byte[1024];
-                                }
-                                file.read(buffer,0,buffer.length);
-                                outputStream.write(buffer,0,buffer.length);
+                        byte[] sha1b = app.getSha256();
+                        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+                        int done = 0;
+
+                        while(true){
+                            byte[] iv = new byte[FileHelper.IV_LENGTH];
+                            fis.read(iv,0,FileHelper.IV_LENGTH);
+                            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
+                            byte[] chunkSize = new byte[4];
+                            fis.read(chunkSize,0,chunkSize.length);
+                            int casted = ByteBuffer.wrap(chunkSize).order(ByteOrder.LITTLE_ENDIAN).getInt();
+                            if(casted==0){
+                                break;
                             }
-                            outputStream.flush();
-                            outputStream.close();
-                            return true;
+                            byte[] buf = new byte[casted];
+                            int read;
+                            if(length-done >= buf.length){
+                                read = fis.read(buf,0,buf.length);
+                            }else{
+                                read = fis.read(buf);
+                            }
+                            if(read==-1){
+                                break;
+                            }
+
+                            if(read==0){
+                                out.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(0).array());
+                                out.flush();
+                                break;
+                            }
+
+                            buf = cipher.doFinal(buf,0,buf.length);
+                            buf = MessageEncrypter.encrypt(buf,app.getEntity().getStore(),new SignalProtocolAddress(onion,1));
+
+                            System.out.println("!!!!!!!!!!!!! chunk length !!!!!!");
+                            System.out.println(buf.length);
+                            out.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(buf.length).array());
+                            out.flush();
+                            out.write(buf);
+                            out.flush();
+                            done=done+read;
                         }
+                        out.flush();
+                        out.close();
+                        fis.close();
+                        return true;
                     }
                 }
             }
-            outputStream.close();
+            out.close();
+            fis.close();
             return false;
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,7 +197,7 @@ public class TorClientSocks4 {
         }
     }
 
-    public static boolean Init(String OnionAddress, DxApplication app, String msg) {
+    public static boolean sendMessage(String OnionAddress, DxApplication app, String msg) {
         Socket socket;
         try {
             socket = Utilities.socks4aSocketConnection(OnionAddress, 5780, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
@@ -175,6 +224,8 @@ public class TorClientSocks4 {
     public static boolean test(DxApplication app){
         Socket socket;
         try {
+            //this is th ddg onion v2 site to check if we are online
+            //todo put address in settings
             socket = Utilities.socks4aSocketConnection("3g2upl4pq6kufc4m.onion", 80, "127.0.0.1",app.getAndroidTorRelay().getSocksPort());
             boolean b = socket.isConnected() && !socket.isClosed();
             socket.close();

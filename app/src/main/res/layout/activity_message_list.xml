@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dx.anonymousmessenger.MessageListActivity">
+    tools:context="com.dx.anonymousmessenger.ui.view.message_list.MessageListActivity">
 
 
     <!-- A horizontal line between the chatbox and RecyclerView -->
@@ -114,6 +114,7 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="1dp"
                 android:paddingEnd="4dp"
+                android:visibility="visible"
                 app:errorEnabled="false"
                 app:hintEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -146,6 +147,7 @@
                 android:paddingEnd="6dp"
                 android:text="@string/textview"
                 android:textColor="#ffffff"
+                android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@+id/quote_text_typing"
                 app:layout_constraintEnd_toEndOf="@+id/quote_text_typing"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -166,9 +168,11 @@
                 android:text="@string/textview"
                 android:textColor="#ffffff"
                 android:textSize="14sp"
+                android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@+id/txt_container_chatbox"
                 app:layout_constraintEnd_toEndOf="@+id/txt_container_chatbox"
                 app:layout_constraintStart_toStartOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -198,6 +202,7 @@
             android:clickable="true"
             android:contentDescription="@string/send_file"
             android:focusable="true"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fab_audio"
             app:layout_constraintTop_toTopOf="parent"
@@ -221,10 +226,11 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true"
+            android:background="@drawable/glow_red"
             android:orientation="horizontal"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+            app:layout_constraintEnd_toEndOf="@+id/fab_audio"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -248,6 +254,19 @@
                 android:text="@string/_00_00"
                 android:textColor="@color/red_500"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_cancel_explain"
+                android:layout_width="159dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:animateLayoutChanges="true"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:text="@string/slide_to_cancel"
+                android:textColor="@color/red_500"
+                android:textStyle="bold" />
+
         </LinearLayout>
 
         <LinearLayout

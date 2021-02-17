@@ -30,28 +30,28 @@
         android:theme="@style/AppTheme"
         android:largeHeap="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".LogActivity" />
-        <activity android:name=".qr.SimpleScannerActivity" />
-        <activity android:name=".NotepadActivity" />
-        <activity android:name=".FileViewerActivity" />
-        <activity android:name=".TipsActivity" />
-        <activity android:name=".AboutActivity" />
-        <activity android:name=".ContactProfileActivity" />
-        <activity android:name=".LicenseActivity" />
-        <activity android:name=".MyProfileActivity" />
-        <activity android:name=".PictureViewerActivity" />
-        <activity android:name=".RingingActivity" />
-        <activity android:name=".CallActivity" />
-        <activity android:name=".AddContactActivity" />
-        <activity android:name=".VerifyIdentityActivity" />
-        <activity android:name=".MyIdentityActivity" />
-        <activity android:name=".SetupInProcess" />
+        <activity android:name=".ui.view.log.LogActivity" />
+        <activity android:name=".ui.view.single_activity.SimpleScannerActivity" />
+        <activity android:name=".ui.view.notepad.NotepadActivity" />
+        <activity android:name=".ui.view.single_activity.FileViewerActivity" />
+        <activity android:name=".ui.view.tips.TipsActivity" />
+        <activity android:name=".ui.view.single_activity.AboutActivity" />
+        <activity android:name=".ui.view.single_activity.ContactProfileActivity" />
+        <activity android:name=".ui.view.single_activity.LicenseActivity" />
+        <activity android:name=".ui.view.single_activity.MyProfileActivity" />
+        <activity android:name=".ui.view.single_activity.PictureViewerActivity" />
+        <activity android:name=".ui.view.call.RingingActivity" />
+        <activity android:name=".ui.view.call.CallActivity" />
+        <activity android:name=".ui.view.single_activity.AddContactActivity" />
+        <activity android:name=".ui.view.single_activity.VerifyIdentityActivity" />
+        <activity android:name=".ui.view.single_activity.MyIdentityActivity" />
+        <activity android:name=".ui.view.setup.SetupInProcess" />
         <activity
-            android:name=".MessageListActivity"
+            android:name=".ui.view.message_list.MessageListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
-        <activity android:name=".AppActivity" />
-        <activity android:name=".CreateUserActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.view.app.AppActivity" />
+        <activity android:name=".ui.view.setup.CreateUserActivity" />
+        <activity android:name=".ui.view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,9 +59,9 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".NotificationHiderReceiver" />
+        <receiver android:name=".receiver.NotificationHiderReceiver" />
         <receiver
-            android:name=".StartMyServiceAtBootReceiver"
+            android:name=".receiver.StartMyServiceAtBootReceiver"
             android:label="StartMyServiceAtBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -69,23 +69,23 @@
         </receiver>
 
         <service
-            android:name=".BootReminderService"
+            android:name=".service.BootReminderService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".AudioRecordingService"
+            android:name=".media.AudioRecordingService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".MyService"
+            android:name=".service.MyService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".CallService"
+            android:name=".call.CallService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".DxCallService"
+            android:name=".call.DxCallService"
             android:enabled="true"
             android:exported="false" />
 

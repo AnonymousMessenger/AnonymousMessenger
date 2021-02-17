@@ -4,15 +4,13 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Environment;
 import android.os.RecoverySystem;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.webkit.MimeTypeMap;
 
 import com.dx.anonymousmessenger.DxApplication;
-import com.dx.anonymousmessenger.crypto.CipherInputStream;
 import com.dx.anonymousmessenger.util.Hex;
 import com.dx.anonymousmessenger.util.Utils;
 
@@ -26,8 +24,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
@@ -41,8 +40,31 @@ import javax.crypto.spec.SecretKeySpec;
 import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class FileHelper {
-    private static final int IV_LENGTH = 12;
+    public static final int IV_LENGTH = 12;
 
+    /**
+    * This function deletes a file from the app's internal storage
+    * */
+    public static void deleteFile(String path, DxApplication app){
+        try{
+            //no need to use crypto to delete
+            File f = new File(app.getFilesDir(),path);
+            if(!f.exists()){
+                return;
+            }
+            f.delete();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     * this part is for dealing with bytes
+     * */
+
+    /**
+    * This function encrypts a byte array and returns the result
+    * */
     public static byte[] encrypt(byte[] key, byte[] data) {
         try {
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
@@ -57,16 +79,10 @@ public class FileHelper {
         }
     }
 
-    public static CipherInputStream encryptToStream(byte[] key, byte[] iv, InputStream data) {
-        try {
-            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), new GCMParameterSpec(128, iv));
-            return new CipherInputStream(data,cipher);
-        } catch (NoSuchAlgorithmException | java.security.InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException e) {
-            throw new AssertionError(e);
-        }
-    }
 
+    /**
+    * This function decrypts a byte array and returns the result
+    * */
     public static byte[] decrypt(byte[] key, byte[] data) throws InvalidKeyException {
         try {
             Cipher   cipher     = Cipher.getInstance("AES/GCM/NoPadding");
@@ -83,57 +99,14 @@ public class FileHelper {
         }
     }
 
-    public static com.dx.anonymousmessenger.crypto.CipherInputStream decryptToStream(byte[] key, FileInputStream data) throws IOException, InvalidAlgorithmParameterException, java.security.InvalidKeyException, NoSuchPaddingException, NoSuchAlgorithmException {
-        Cipher   cipher     = Cipher.getInstance("AES/GCM/NoPadding");
-        byte[] iv = new byte[IV_LENGTH];
-        data.read(iv,0,IV_LENGTH);
-
-        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new GCMParameterSpec(128, iv));
-        return new com.dx.anonymousmessenger.crypto.CipherInputStream(data,cipher);
-    }
-
-    public static CipherInputStream getFileStream(String path, DxApplication app){
-        try{
-            //decrypt this shit
-            MessageDigest crypt = MessageDigest.getInstance("SHA-256");
-            crypt.reset();
-            crypt.update(app.getAccount().getPassword());
-            byte[] sha1b = crypt.digest();
-            File f = new File(app.getFilesDir(),path);
-            if(!f.exists()){
-                return null;
-            }
-            return decryptToStream(sha1b, new FileInputStream(f));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static FileInputStream getSharedFileStream(String path, DxApplication app){
-        try{
-            File f = new File(app.getFilesDir(),path);
-            if(!f.exists()){
-                return null;
-            }
-            return new FileInputStream(f);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /*
+    /**
     * this function takes the path and app
     * returns a decrypted byte array representation of the file
     * */
     public static byte[] getFile(String path, DxApplication app){
         try{
-            //decrypt this shit
-            MessageDigest crypt = MessageDigest.getInstance("SHA-256");
-            crypt.reset();
-            crypt.update(app.getAccount().getPassword());
-            byte[] sha1b = crypt.digest();
+            //decrypt this stuff
+            byte[] sha1b = app.getSha256();
             File f = new File(app.getFilesDir(),path);
             if(!f.exists()){
                 return null;
@@ -146,79 +119,12 @@ public class FileHelper {
         return null;
     }
 
-    public static void saveToStorageWithProgress(String path, String filename, DxApplication app, RecoverySystem.ProgressListener progressListener){
-        try{
-            //decrypt this stuff
-            MessageDigest crypt = MessageDigest.getInstance("SHA-256");
-            crypt.reset();
-            crypt.update(app.getAccount().getPassword());
-            byte[] sha1b = crypt.digest();
-            File f = new File(app.getFilesDir(),path);
-            if(!f.exists()){
-                return;
-            }
-            String suffix = "."+filename.split("\\.")[filename.split("\\.").length-1];
-            String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(suffix.replace(".",""));
-            if(mime==null){
-                mime = "*/*";
-            }
-            File file = File.createTempFile(filename.replace(suffix,""),suffix,app.getExternalCacheDir());
-            file.createNewFile();
-            FileUtilities.copyWithProgress(decryptToStream(sha1b,new FileInputStream(f)),new FileOutputStream(file),progressListener,f.length());
-            DownloadManager downloadManager = (DownloadManager) app.getSystemService(DOWNLOAD_SERVICE);
-            downloadManager.addCompletedDownload(file.getName(), file.getName(), true, mime,file.getAbsolutePath(),file.length(),true);
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public static File getTempFileWithProgress(String path, String filename, DxApplication app, RecoverySystem.ProgressListener progressListener){
-        try{
-            //decrypt this stuff
-            MessageDigest crypt = MessageDigest.getInstance("SHA-256");
-            crypt.reset();
-            crypt.update(app.getAccount().getPassword());
-            byte[] sha1b = crypt.digest();
-            File f = new File(app.getFilesDir(),path);
-            if(!f.exists()){
-                return null;
-            }
-            String suffix = "."+filename.split("\\.")[filename.split("\\.").length-1];
-            if(new File(app.getExternalCacheDir(),filename).exists()){
-                return new File(app.getExternalCacheDir(),filename);
-            }
-            cleanDir(Objects.requireNonNull(app.getExternalCacheDir()));
-            cleanDir(Objects.requireNonNull(app.getCacheDir()));
-            File tmp = File.createTempFile(filename.replace(suffix,""),suffix,app.getExternalCacheDir());
-            FileUtilities.copyWithProgress(decryptToStream(sha1b,new FileInputStream(f)),new FileOutputStream(tmp),progressListener,f.length());
-            tmp.deleteOnExit();
-            return tmp;
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static byte[] getUnencryptedFile(String path, DxApplication app){
-        try{
-            File f = new File(path);
-            if(!f.exists()){
-                System.out.println("file doesn't exist");
-                return null;
-            }
-            return FileUtilities.read(f);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
+    /**
+    * This function encrypts and saves a byte array into a file and returns it's path
+    * */
     public static String saveFile(byte[] data, DxApplication app, String filename) throws NoSuchAlgorithmException {
-        MessageDigest crypt = MessageDigest.getInstance("SHA-256");
-        crypt.reset();
-        crypt.update(app.getAccount().getPassword());
-        byte[] sha1b = crypt.digest();
+        byte[] sha1b = app.getSha256();
         byte[] encrypted = encrypt(sha1b, data);
         String eFilename = Hex.toStringCondensed(encrypt(sha1b,filename.getBytes()));
         try{
@@ -233,18 +139,221 @@ public class FileHelper {
         return null;
     }
 
-    public static String saveFile(InputStream data, DxApplication app, String filename) throws NoSuchAlgorithmException {
-        MessageDigest crypt = MessageDigest.getInstance("SHA-256");
-        crypt.reset();
-        crypt.update(app.getAccount().getPassword());
-        byte[] sha1b = crypt.digest();
-        byte[] iv     = Utils.getSecretBytes(IV_LENGTH);
-        CipherInputStream encrypted = encryptToStream(sha1b, iv, data);
-        String eFilename = Hex.toStringCondensed(encrypt(sha1b,filename.getBytes()));
+    /*
+     * this part deals with streaming
+     * */
+
+    /**
+    * This function returns a raw FIS from encrypted app storage using the provided path
+    * */
+    public static FileInputStream getSharedFileStream(String path, DxApplication app){
         try{
-            FileOutputStream out = app.openFileOutput(eFilename,Context.MODE_PRIVATE);
-            out.write(iv);
-            FileUtilities.copy(encrypted,out);
+            File f = new File(app.getFilesDir(),path);
+            if(!f.exists()){
+                return null;
+            }
+            return new FileInputStream(f);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+    * This function encrypts and saves a file from shared storage while reporting progress to a progressListener
+    * */
+    public static void saveToStorageWithProgress(String path, String filename, DxApplication app, RecoverySystem.ProgressListener progressListener){
+        try{
+            //decrypt this stuff
+            byte[] sha1b = app.getSha256();
+            File f = new File(app.getFilesDir(),path);
+            String suffix = "."+filename.split("\\.")[filename.split("\\.").length-1];
+            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/AM",filename);
+//            file.mkdirs();
+            file.createNewFile();
+            FileInputStream fis = new FileInputStream(f);
+            FileOutputStream out = new FileOutputStream(file);
+            Cipher   cipher     = Cipher.getInstance("AES/GCM/NoPadding");
+            try {
+                progressListener.onProgress(0);
+                int done = 0;
+                while(true){
+                    byte[] iv = new byte[IV_LENGTH];
+                    fis.read(iv,0,IV_LENGTH);
+                    cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
+                    byte[] chunkSize = new byte[4];
+                    fis.read(chunkSize,0,chunkSize.length);
+                    int casted = ByteBuffer.wrap(chunkSize).order(ByteOrder.LITTLE_ENDIAN).getInt();
+                    if(casted==0){
+                        break;
+                    }
+                    byte[] buf = new byte[casted];
+                    int read;
+                    if(f.length()-done >= buf.length){
+                        read = fis.read(buf,0,buf.length);
+                    }else{
+                        read = fis.read(buf);
+                    }
+                    if(read==-1){
+                        break;
+                    }
+                    out.write(cipher.doFinal(buf,0,read));
+                    out.flush();
+                    done=done+read;
+                    progressListener.onProgress(((int) (((double) done/(double) f.length())*100.0)));
+                }
+                progressListener.onProgress(100);
+            } finally {
+                try{
+                    out.close();
+                    fis.close();
+                }catch (Exception ignored) {}
+            }
+
+            String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(suffix.replace(".",""));
+            if(mime==null){
+                mime = "*/*";
+            }
+
+            DownloadManager downloadManager = (DownloadManager) app.getSystemService(DOWNLOAD_SERVICE);
+            downloadManager.addCompletedDownload(file.getName(), file.getName(), true, mime,file.getAbsolutePath(),file.length(),true);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+    * This function decrypts and saves a temp file using a file from the app's storage to be used by a third party app while reporting progress to a progressListener
+    * */
+    public static File getTempFileWithProgress(String path, String filename, DxApplication app, RecoverySystem.ProgressListener progressListener){
+        try{
+            //decrypt this stuff
+            byte[] sha1b = app.getSha256();
+            File f = new File(app.getFilesDir(),path);
+            if(!f.exists()){
+                return null;
+            }
+            String suffix = "."+filename.split("\\.")[filename.split("\\.").length-1];
+            if(new File(app.getExternalCacheDir(),filename).exists()){
+                return new File(app.getExternalCacheDir(),filename);
+            }
+            cleanDir(Objects.requireNonNull(app.getExternalCacheDir()));
+            cleanDir(Objects.requireNonNull(app.getCacheDir()));
+            File tmp = File.createTempFile(filename.replace(suffix,""),suffix,app.getExternalCacheDir());
+            FileInputStream fis = new FileInputStream(f);
+            FileOutputStream out = new FileOutputStream(tmp);
+            Cipher   cipher     = Cipher.getInstance("AES/GCM/NoPadding");
+            try {
+                progressListener.onProgress(0);
+                int done = 0;
+                while(true){
+                    byte[] iv = new byte[IV_LENGTH];
+                    fis.read(iv,0,IV_LENGTH);
+//                    System.out.println("IV: "+ Arrays.toString(iv));
+                    cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
+                    byte[] chunkSize = new byte[4];
+                    fis.read(chunkSize,0,chunkSize.length);
+                    int casted = ByteBuffer.wrap(chunkSize).order(ByteOrder.LITTLE_ENDIAN).getInt();
+//                    System.out.println("length of next chapter: "+casted);
+                    if(casted==0){
+                        break;
+                    }
+                    byte[] buf = new byte[casted];
+                    int read;
+//                    System.out.println("avail: "+fis.available());
+                    if(f.length()-done >= buf.length){
+//                        System.out.println("a lot more is left");
+//                        while(fis.available()<buf.length){
+//                            System.out.println("waiting for availability");
+//                        }
+                        read = fis.read(buf,0,buf.length);
+                    }else{
+//                        System.out.println("not much is left");
+                        read = fis.read(buf);
+                    }
+                    if(read==-1){
+//                        System.out.println("nothing is left");
+                        break;
+                    }
+//                    System.out.println("read: "+read);
+                    out.write(cipher.doFinal(buf,0,read));
+                    out.flush();
+                    done=done+read;
+//                    System.out.println("done: "+done);
+//                    System.out.println("left: "+(f.length()-done));
+                    progressListener.onProgress(((int) (((double) done/(double) f.length())*100.0)));
+                }
+                progressListener.onProgress(100);
+            } finally {
+                try{
+                    out.close();
+                    fis.close();
+                }catch (Exception ignored) {}
+            }
+            tmp.deleteOnExit();
+            return tmp;
+        }catch (Exception e){
+            e.printStackTrace();
+            progressListener.onProgress(100);
+        }
+        return null;
+    }
+
+    /**
+     * This function takes an InputStream and encrypts it and stores it in a new file
+     * */
+    public static String saveFile(InputStream in, DxApplication app, String filename, int length) throws NoSuchAlgorithmException, NoSuchPaddingException, IOException {
+        byte[] sha1b = app.getSha256();
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        String eFilename = Hex.toStringCondensed(encrypt(sha1b,filename.getBytes()));
+        FileOutputStream fos = app.openFileOutput(eFilename,Context.MODE_PRIVATE);
+
+        try{
+            int done = 0;
+            while(true){
+                Runtime.getRuntime().gc();
+                byte[] iv = Utils.getSecretBytes(IV_LENGTH);
+//                System.out.println("iv:" + Arrays.toString(iv));
+                cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
+                byte[] buf = new byte[1024*1024*5];
+                int read;
+//                System.out.println("done: "+done);
+//                System.out.println("length: "+length);
+//                System.out.println("avail: "+in.available());
+                if(length-done >= buf.length){
+//                    System.out.println("a lot is left");
+                    if(in.available()>=buf.length){
+//                        System.out.println("its more than enough");
+                        read = in.read(buf,0,buf.length);
+                    }else{
+//                        System.out.println("its not enough");
+                        continue;
+                    }
+                }else{
+//                    System.out.println("not much is left");
+                    read = in.read(buf);
+                }
+//                read = in.read(buf);
+                if(read==-1){
+//                    System.out.println("nothing is left");
+                    break;
+                }
+                fos.write(iv);
+                byte[] enc = cipher.doFinal(buf,0,read);
+
+                fos.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(enc.length).array());
+                fos.write(enc);
+                fos.flush();
+                done += read;
+//                System.out.println("encrypted chunk size: "+enc.length);
+//                System.out.println("done: "+done);
+//                System.out.println("------- STARTING ALL OVER AGAIN ------");
+            }
+
+//            System.out.println(eFilename);
+            fos.close();
             //return its "path"
             return eFilename;
         }catch (Exception e){
@@ -253,18 +362,17 @@ public class FileHelper {
         return null;
     }
 
-    public static void deleteFile(String path, DxApplication app){
-        try{
-            //no need to use crypto to delete
-            File f = new File(app.getFilesDir(),path);
-            if(!f.exists()){
-                return;
-            }
-            f.delete();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+    /**
+    * This function returns an InputStream from a uri belonging to a file in shared storage
+     */
+    public static InputStream getInputStreamFromUri(Uri uri, Context context) throws FileNotFoundException {
+        return context.getContentResolver().openInputStream(uri);
     }
+
+
+    /*
+     * Utility functions
+     * */
 
     public static String getFileName(Uri uri, Context context) {
         String result = null;
@@ -288,68 +396,37 @@ public class FileHelper {
         return result;
     }
 
-    public static String getFilePath(Uri uri, Context context) {
-//        return getRealPathFromURI_API19(context, uri);
-//        context.getContentResolver().
-        return getPath(context,uri);
-    }
-
-    public static InputStream getInputStreamFromUri(Uri uri, Context context) throws FileNotFoundException {
-        return context.getContentResolver().openInputStream(uri);
-    }
-
     public static String getFileSize(Uri uri, Context context) {
         String result = null;
-        if (uri.getScheme().equals("content")) {
+        if (Objects.equals(uri.getScheme(), "content")) {
             String[] projection = {
                     MediaStore.Files.FileColumns.SIZE,
             };
-            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-            try {
+            try (Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
                     result = cursor.getString(cursor.getColumnIndex(OpenableColumns.SIZE));
                 }
-            } finally {
-                cursor.close();
             }
         }
         if (result == null) {
             result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
+            int cut;
+            if (result != null) {
+                cut = result.lastIndexOf('/');
+                if (cut != -1) {
+                    result = result.substring(cut + 1);
+                }
             }
         }
         return result;
     }
 
-    public static String getRealPathFromURI_API19(Context context, Uri uri){
-        String filePath = "";
-        String wholeID = DocumentsContract.getDocumentId(uri);
-        String id;
-
-        if(wholeID.contains(":")){
-            // Split at colon, use second item in the array
-            id = wholeID.split(":")[1];
-        }else{
-            id = wholeID.split("/")[wholeID.split("/").length-1];
+    public static long getFileSize(String path, Context context){
+        File f = new File(context.getFilesDir(),path);
+        if(!f.exists()){
+            return 0;
         }
-
-        String[] column = { MediaStore.Images.Media.DATA };
-
-        // where id is equal to
-        String sel = MediaStore.Files.FileColumns._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().query(uri,
-                column, sel, new String[]{ id }, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-        }
-        cursor.close();
-        return filePath;
+        return f.length();
     }
 
     public static void cleanDir(File dir) {
@@ -362,61 +439,6 @@ public class FileHelper {
 //                break;
 //            }
         }
-    }
-
-    public static String getPath(final Context context, final Uri uri) {
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-//        Log.i("URI",uri+"");
-        String result = uri+"";
-        // DocumentProvider
-        //  if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-        if (isKitKat && (result.contains("media.documents"))) {
-            String[] ary = result.split("/");
-            int length = ary.length;
-            String imgary = ary[length-1];
-            final String[] dat = imgary.split("%3A");
-            final String docId = dat[1];
-            final String type = dat[0];
-            Uri contentUri = null;
-            if ("image".equals(type)) {
-                contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            } else if ("video".equals(type)) {
-            } else if ("audio".equals(type)) {
-            }
-            final String selection = "_id=?";
-            final String[] selectionArgs = new String[] {
-                    dat[1]
-            };
-            return getDataColumn(context, contentUri, selection, selectionArgs);
-        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            return getDataColumn(context, uri, null, null);
-        }
-        // File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-        return null;
-    }
-
-    public static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
-        final String column = "_data";
-        final String[] projection = {
-                column
-        };
-        try {
-            Cursor cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                final int column_index = cursor.getColumnIndexOrThrow(column);
-                String data = cursor.getString(column_index);
-                if (cursor != null){
-                    cursor.close();
-                }
-                return data;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
     }
 
 }

@@ -14,7 +14,6 @@ import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.dx.anonymousmessenger.CallService;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
@@ -314,7 +313,7 @@ public class CallController {
         Log.e("SERVER CONNECTION", "its a call");
         DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
         DataInputStream in=new DataInputStream(sock.getInputStream());
-        //todo check to see if busy or some shit
+        //todo check to see if busy or something
         outputStream.writeUTF("ok");
         outputStream.flush();
         String msg = in.readUTF();

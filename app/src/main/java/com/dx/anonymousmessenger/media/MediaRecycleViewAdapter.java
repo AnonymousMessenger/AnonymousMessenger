@@ -16,8 +16,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.dx.anonymousmessenger.MessageListActivity;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.ui.view.message_list.MessageListActivity;
 
 import java.util.List;
 

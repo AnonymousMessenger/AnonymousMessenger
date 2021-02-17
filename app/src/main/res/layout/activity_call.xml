@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dx.anonymousmessenger.CallActivity">
+    tools:context="com.dx.anonymousmessenger.ui.view.call.CallActivity">
 
     <include layout="@layout/call_screen"/>
 

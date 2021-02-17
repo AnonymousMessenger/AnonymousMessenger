@@ -155,9 +155,6 @@ public class FileUtilities {
                 out.write(buf, 0, read);
                 done=done+read;
                 progressListener.onProgress(((int) (((double) done/(double) length)*100.0)));
-//                if((int) ((done/length)*100) %5 == 0){
-//                    progressListener.onProgress(((int) (((double) done/(double) length)*100.0)));
-//                }
             }
             progressListener.onProgress(100);
         } finally {

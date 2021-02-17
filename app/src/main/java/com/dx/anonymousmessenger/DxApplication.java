@@ -18,19 +18,28 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.dx.anonymousmessenger.account.DxAccount;
 import com.dx.anonymousmessenger.call.CallController;
+import com.dx.anonymousmessenger.call.CallService;
+import com.dx.anonymousmessenger.call.DxCallService;
 import com.dx.anonymousmessenger.crypto.Entity;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
+import com.dx.anonymousmessenger.receiver.NotificationHiderReceiver;
+import com.dx.anonymousmessenger.service.MyService;
 import com.dx.anonymousmessenger.tor.ServerSocketViaTor;
 import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.ui.view.MainActivity;
+import com.dx.anonymousmessenger.ui.view.call.CallActivity;
 
 import net.sf.controller.network.AndroidTorRelay;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,24 +47,44 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class DxApplication extends Application {
 
-    private ServerSocketViaTor torSocket;
     private String hostname;
+    public ServerSocketViaTor torSocket;
+    private boolean serverReady = false;
+    private boolean exitingHoldup;
+
     private DxAccount account;
-    private Thread torThread;
+    private Entity entity;
+
     private SQLiteDatabase database;
     private long time2delete = 86400000;
-//    private long time2delete = 10000;
-    private boolean serverReady = false;
-    private boolean lockTorStart = false;
     private boolean weAsked = false;
-    private Entity entity;
+
     private CallController cc;
-    private boolean exitingHoldup;
+
     private final List<QuotedUserMessage> messageQueue = new ArrayList<>();
     private volatile boolean syncing;
     private volatile String syncingAddress;
     private volatile boolean pinging;
     public List<String> onlineList = new ArrayList<>();
+
+    private boolean sendingFile;
+    public List<String> sendingTo = new ArrayList<>();
+
+    /*
+     * Tracking sending messages
+     */
+    public boolean isSendingFile(){
+        return sendingFile;
+    }
+
+    public void setSendingFile(boolean b){
+        sendingFile = b;
+    }
+
+
+    /*
+     * Syncing related functions
+     * */
 
     public void addToOnlineList(String address){
         if(!onlineList.contains(address)){
@@ -85,6 +114,10 @@ public class DxApplication extends Application {
         for (QuotedUserMessage msg:messageQueue){
             System.out.println("sending a message");
             if(msg.getPath()!=null && !msg.getPath().equals("")){
+                if(msg.getType().equals("file")){
+                    MessageSender.sendQueuedFile(msg,this,msg.getTo());
+                    continue;
+                }
                 MessageSender.sendQueuedMediaMessage(msg,this,msg.getTo());
                 continue;
             }
@@ -183,6 +216,10 @@ public class DxApplication extends Application {
         this.exitingHoldup = exitingHoldup;
     }
 
+    /*
+     * Call related functions
+     * */
+
     public boolean isInCall(){
         return cc!=null;
     }
@@ -198,6 +235,97 @@ public class DxApplication extends Application {
     public void setCc(CallController cc) {
         this.cc = cc;
     }
+
+    public Notification getCallInProgressNotification(Context context, String type, String address) {
+        Intent contentIntent = new Intent(context, CallActivity.class);
+        contentIntent.putExtra("address",address.substring(0,10));
+        contentIntent.setAction(type);
+        contentIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, 0);
+
+        Intent answerIntent = new Intent(context, DxCallService.class);
+        answerIntent.putExtra("address",address.substring(0,10));
+        answerIntent.setAction("answer");
+        PendingIntent answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, 0);
+
+        Intent hangupIntent = new Intent(context, DxCallService.class);
+        hangupIntent.putExtra("address",address.substring(0,10));
+        hangupIntent.setAction("hangup");
+        PendingIntent hangupPendingIntent = PendingIntent.getService(context, 0, hangupIntent, 0);
+
+        String CHANNEL_ID = "calls";
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_baseline_call_24)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true)
+                .setContentTitle(address);
+
+        try {
+            builder.setFullScreenIntent(pendingIntent, true);
+            builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+            builder.setCategory(NotificationCompat.CATEGORY_CALL);
+        } catch (Exception ignored) {}
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setChannelId(CHANNEL_ID);
+        }
+
+        Intent gcm_rec = new Intent("call_action");
+
+        switch (type) {
+            case CallService.ACTION_START_OUTGOING_CALL_RESPONSE:
+                gcm_rec.putExtra("action",CallService.ACTION_START_OUTGOING_CALL_RESPONSE);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+                builder.setContentText(context.getString(R.string.ringing));
+                builder.setPriority(NotificationCompat.PRIORITY_MIN);
+                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
+                break;
+            case CallService.ACTION_START_INCOMING_CALL:
+                gcm_rec.putExtra("action",CallService.ACTION_START_INCOMING_CALL);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+                builder.setContentText(context.getString(R.string.NotificationBarManager__incoming_call));
+                builder.addAction(R.drawable.ic_baseline_call_24, "Answer", answerPendingIntent);
+                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
+                break;
+            case CallService.ACTION_START_OUTGOING_CALL:
+                gcm_rec.putExtra("action",CallService.ACTION_START_OUTGOING_CALL);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+                builder.setContentText(context.getString(R.string.connecting));
+                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
+                break;
+            default:
+                gcm_rec.putExtra("action",context.getString(R.string.NotificationBarManager_call_in_progress));
+                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+                builder.setContentText(context.getString(R.string.NotificationBarManager_call_in_progress));
+                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
+                break;
+        }
+
+        Notification notification = builder.build();
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mNotificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID,
+                    CHANNEL_ID,NotificationManager.IMPORTANCE_HIGH));
+        }
+        return notification;
+    }
+
+    public void commandCallService(String address, String type) {
+        Intent serviceIntent = new Intent(this, DxCallService.class);
+        serviceIntent.setAction(type);
+        serviceIntent.putExtra("address", address.substring(0,10));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        }else{
+            startService(serviceIntent);
+        }
+    }
+
+    /*
+     * Account related functions
+     * */
 
     public DxAccount getAccount() {
         return account;
@@ -239,9 +367,9 @@ public class DxApplication extends Application {
                 this.setAccount(account);
 
                 if (!isServerReady()) {
-                    if (getTorThread() != null) {
-                        getTorThread().interrupt();
-                        setTorThread(null);
+                    if (isServiceRunningInForeground(this, MyService.class)) {
+                        Intent serviceIntent = new Intent(this, MyService.class);
+                        stopService(serviceIntent);
                     }
                     startTor();
                 }
@@ -252,8 +380,57 @@ public class DxApplication extends Application {
         }).start();
     }
 
-    public ServerSocketViaTor getTorSocket() {
-        return torSocket;
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
+    /*
+     * General functions
+     * */
+
+    public byte[] getSha256() throws NoSuchAlgorithmException {
+        MessageDigest crypt = MessageDigest.getInstance("SHA-256");
+        crypt.reset();
+        crypt.update(getAccount().getPassword());
+        return crypt.digest();
+    }
+
+    public SQLiteDatabase getDb(){
+        if(this.database==null){
+            SQLiteDatabase.loadLibs(this);
+            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase("demo.db",
+                    account.getPassword(),null);
+            this.database = database;
+            return database;
+        }else{
+            return this.database;
+        }
+    }
+
+    public SQLiteDatabase getDb(byte[] password){
+        if(database!=null){
+            database.close();
+            database = null;
+        }
+
+        SQLiteDatabase.loadLibs(this);
+
+        File databaseFile = new File(getFilesDir(), "demo.db");
+        if(!databaseFile.exists()){
+            databaseFile.mkdirs();
+            databaseFile.delete();
+        }
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, new String(password,StandardCharsets.UTF_8),null);
+        this.database = database;
+        return database;
+    }
+
+    public void setDb(SQLiteDatabase database){
+        this.database = database;
     }
 
     public void enableStrictMode(){
@@ -262,32 +439,20 @@ public class DxApplication extends Application {
         StrictMode.setThreadPolicy(policy);
     }
 
-    public void setTorSocket(ServerSocketViaTor torSocket) {
-        this.torSocket = torSocket;
+    public long getTime2delete() {
+        return time2delete;
     }
 
-    public String getHostname() {
-        return hostname;
+    public void setTime2delete(long time2delete) {
+        this.time2delete = time2delete;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public void setWeAsked(boolean b){
+        this.weAsked = b;
     }
 
-    public boolean isServerReady() {
-        System.out.println("isServerReady: "+serverReady);
-        return serverReady;
-    }
-
-    public void setServerReady(boolean serverReady) {
-        this.serverReady = serverReady;
-        if (!serverReady) {
-            return;
-        }
-        this.lockTorStart = false;
-//        Intent gcm_rec = new Intent("tor_status");
-//        gcm_rec.putExtra("tor_status","ALL GOOD");
-//        LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+    public boolean isWeAsked() {
+        return weAsked;
     }
 
     public void clearMessageNotification(){
@@ -371,82 +536,6 @@ public class DxApplication extends Application {
         mNotificationManager.notify(2 , notification);
     }
 
-    public Notification getCallInProgressNotification(Context context, String type, String address) {
-        Intent contentIntent = new Intent(context, CallActivity.class);
-        contentIntent.putExtra("address",address.substring(0,10));
-        contentIntent.setAction(type);
-        contentIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, 0);
-
-        Intent answerIntent = new Intent(context, DxCallService.class);
-        answerIntent.putExtra("address",address.substring(0,10));
-        answerIntent.setAction("answer");
-        PendingIntent answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, 0);
-
-        Intent hangupIntent = new Intent(context, DxCallService.class);
-        hangupIntent.putExtra("address",address.substring(0,10));
-        hangupIntent.setAction("hangup");
-        PendingIntent hangupPendingIntent = PendingIntent.getService(context, 0, hangupIntent, 0);
-
-        String CHANNEL_ID = "calls";
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_baseline_call_24)
-                .setContentIntent(pendingIntent)
-                .setOngoing(true)
-                .setContentTitle(address);
-
-        try {
-            builder.setFullScreenIntent(pendingIntent, true);
-            builder.setPriority(NotificationCompat.PRIORITY_HIGH);
-            builder.setCategory(NotificationCompat.CATEGORY_CALL);
-        } catch (Exception ignored) {}
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setChannelId(CHANNEL_ID);
-        }
-
-        Intent gcm_rec = new Intent("call_action");
-
-        switch (type) {
-            case CallService.ACTION_START_OUTGOING_CALL_RESPONSE:
-                gcm_rec.putExtra("action",CallService.ACTION_START_OUTGOING_CALL_RESPONSE);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
-                builder.setContentText(context.getString(R.string.ringing));
-                builder.setPriority(NotificationCompat.PRIORITY_MIN);
-                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
-                break;
-            case CallService.ACTION_START_INCOMING_CALL:
-                gcm_rec.putExtra("action",CallService.ACTION_START_INCOMING_CALL);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
-                builder.setContentText(context.getString(R.string.NotificationBarManager__incoming_call));
-                builder.addAction(R.drawable.ic_baseline_call_24, "Answer", answerPendingIntent);
-                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
-                break;
-            case CallService.ACTION_START_OUTGOING_CALL:
-                gcm_rec.putExtra("action",CallService.ACTION_START_OUTGOING_CALL);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
-                builder.setContentText(context.getString(R.string.connecting));
-                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
-                break;
-            default:
-                gcm_rec.putExtra("action",context.getString(R.string.NotificationBarManager_call_in_progress));
-                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
-                builder.setContentText(context.getString(R.string.NotificationBarManager_call_in_progress));
-                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
-                break;
-        }
-
-        Notification notification = builder.build();
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mNotificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID,
-                    CHANNEL_ID,NotificationManager.IMPORTANCE_HIGH));
-        }
-        return notification;
-    }
-
     public Notification getServiceNotification(String title, String msg, String CHANNEL_ID){
         Notification notification;
         Intent intent = new Intent(this, NotificationHiderReceiver.class);
@@ -482,214 +571,6 @@ public class DxApplication extends Application {
                     CHANNEL_ID,NotificationManager.IMPORTANCE_NONE));
         }
         return notification;
-    }
-
-//    public Notification getCallNotification(String title, String msg, String CHANNEL_ID){
-//        Notification notification;
-//        Intent intent = new Intent(this, CallActivity.class);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-//                this,
-//                1,
-//                intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT
-//        );
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            notification = new Notification.Builder(this,CHANNEL_ID)
-//                    .setSmallIcon(R.drawable.notification)
-//                    .setContentTitle(title)
-//                    .setContentText(msg)
-//                    .setContentIntent(pendingIntent)
-//                    .setAutoCancel(true)
-//                    .setChannelId(CHANNEL_ID).build();
-//        }else{
-//            notification = new Notification.Builder(this)
-//                    .setSmallIcon(R.drawable.notification)
-//                    .setContentTitle(title)
-//                    .setContentText(msg)
-//                    .setContentIntent(pendingIntent)
-//                    .setAutoCancel(true)
-//                    .build();
-//        }
-//        NotificationManager mNotificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            mNotificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID,
-//                    CHANNEL_ID,NotificationManager.IMPORTANCE_NONE));
-//        }
-////        // Issue the notification.
-////        mNotificationManager.notify(1 , notification);
-//        return notification;
-//    }
-
-    public AndroidTorRelay getAndroidTorRelay(){
-        if(torSocket==null){
-            return null;
-        }
-        return torSocket.getAndroidTorRelay();
-    }
-
-    public Thread getTorThread() {
-        return torThread;
-    }
-
-    public void setTorThread(Thread torThread) {
-        this.torThread = torThread;
-    }
-
-    public void startTor(){
-        System.out.println("start tor requested");
-        if(isServiceRunningInForeground(this,MyService.class)){
-            System.out.println("Service already running, not starting tor");
-            return;
-        }
-//        if(lockTorStart){
-//            System.out.println("tor locked, not starting tor");
-//            return;
-//        }
-//        lockTorStart();
-        Intent serviceIntent = new Intent(this, MyService.class);
-        serviceIntent.putExtra("inputExtra", "wtf bitch");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        }else{
-            startService(serviceIntent);
-        }
-    }
-
-    public void restartTor(){
-//        if(lockTorStart){
-//            return;
-//        }
-        Intent serviceIntent = new Intent(this, MyService.class);
-        serviceIntent.putExtra("inputExtra", "reconnect now");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        }else{
-            startService(serviceIntent);
-        }
-    }
-
-    public void startTor(int num){
-        if(num==2&&torThread!=null){
-            if(torSocket!=null&&torSocket.getAndroidTorRelay()!=null){
-                new Thread(()->{
-                    try {
-                        torSocket.getAndroidTorRelay().shutDown();
-                        torSocket.tryKill();
-                        Thread.sleep(1000);
-                        startTor(1);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }).start();
-            }
-            return;
-        }
-        lockTorStart();
-        enableStrictMode();
-        Thread torThread = new Thread(() -> {
-            try {
-                setTorSocket(new ServerSocketViaTor(getApplicationContext()));
-                getTorSocket().init(this);
-                lockTorStart = false;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        torThread.start();
-        setTorThread(torThread);
-//        System.out.println("beautiful day");
-//        if(lockTorStart){
-//            return;
-//        }
-//        System.out.println("locking it");
-//        lockTorStart();
-//        if(num==2&&torThread!=null){
-//            Log.e("RESTART","doing it");
-//            if (getTorThread() != null) {
-//                getTorThread().interrupt();
-//                setTorThread(null);
-//            }
-//            lockTorStart = false;
-//            startTor(1);
-//            return;
-//            if(torSocket!=null&&torSocket.getAndroidTorRelay()!=null){
-//                new Thread(()->{
-//                    try {
-//                        torSocket.getAndroidTorRelay().shutDown();
-//                        torSocket.getServerThread().interrupt();
-//                        torThread.interrupt();
-//                        torThread = null;
-//                        torSocket.setServerThread(null);
-//                        torSocket.setAndroidTorRelay(null);
-//                        torSocket = null;
-//                        Thread.sleep(1000);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }).start();
-//            }
-//            return null;
-//        }
-//        Log.e("AGAIN","doing it");
-//        enableStrictMode();
-//        Thread torThread = new Thread(() -> {
-//            try {
-//                setTorSocket(new ServerSocketViaTor(getApplicationContext()));
-//                ServerSocketViaTor ssvt = getTorSocket();
-//                ssvt.init(this);
-//            } catch (InterruptedException | IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//        torThread.start();
-//        setTorThread(torThread);
-//        lockTorStart = false;
-//        return;
-    }
-
-    public SQLiteDatabase getDb(){
-        //Log.e("SOMEONE ASKED FOR DB","YES INDEED");
-        if(this.database==null){
-            SQLiteDatabase.loadLibs(this);
-//            File databaseFile = new File(getFilesDir(), "demo.db");
-//            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile,
-//                    account.getPassword(),
-//                    null);
-            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase("demo.db",
-                    account.getPassword(),null);
-            this.database = database;
-            return database;
-        }else{
-            return this.database;
-        }
-    }
-
-    public SQLiteDatabase getDb(byte[] password){
-        if(database!=null){
-            database.close();
-            database = null;
-        }
-
-//        try{
-            SQLiteDatabase.loadLibs(this);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            return getDb(password);
-//        }
-
-        File databaseFile = new File(getFilesDir(), "demo.db");
-        if(!databaseFile.exists()){
-            databaseFile.mkdirs();
-            databaseFile.delete();
-        }
-        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, new String(password,StandardCharsets.UTF_8),null);
-        this.database = database;
-        return database;
-    }
-
-    public void setDb(SQLiteDatabase database){
-        this.database = database;
     }
 
     @SuppressLint("BatteryLife")
@@ -729,33 +610,12 @@ public class DxApplication extends Application {
         return false;
     }
 
-    public long getTime2delete() {
-        return time2delete;
-    }
-
-    public void setTime2delete(long time2delete) {
-        this.time2delete = time2delete;
-    }
-
-    public void lockTorStart() {
-        this.lockTorStart = true;
-    }
-
-    public boolean isTorStartLocked(){
-        return this.lockTorStart;
-    }
-
-    public void setWeAsked(boolean b){
-        this.weAsked = b;
-    }
-
-    public boolean isWeAsked() {
-        return weAsked;
-    }
-
     public void emptyVars() {
         if(database!=null){
             database.close();
+        }
+        if (torSocket != null){
+            torSocket = null;
         }
         database = null;
         if(account!=null){
@@ -766,13 +626,7 @@ public class DxApplication extends Application {
         hostname = "";
         hostname = null;
         serverReady = false;
-        lockTorStart = false;
         weAsked = false;
-        torSocket = null;
-        if(torThread!=null && torThread.isAlive()){
-            torThread.interrupt();
-        }
-        torThread = null;
         System.gc();
     }
 
@@ -781,8 +635,63 @@ public class DxApplication extends Application {
     }
 
     public void shutdown(){
+        emptyVars();
         Intent serviceIntent = new Intent(this, MyService.class);
-        serviceIntent.putExtra("inputExtra", "shutdown now");
+        stopService(serviceIntent);
+        shutdown(0);
+    }
+
+
+    /*
+     * tor related functions
+     */
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public AndroidTorRelay getAndroidTorRelay(){
+        if(torSocket==null){
+            return null;
+        }
+        return torSocket.getAndroidTorRelay();
+    }
+
+    public ServerSocketViaTor getTorSocket() {
+        return torSocket;
+    }
+
+    public void setTorSocket(ServerSocketViaTor torSocket) {
+        this.torSocket = torSocket;
+    }
+
+    public boolean isServerReady() {
+        System.out.println("isServerReady: "+serverReady);
+        return serverReady;
+    }
+
+    public void setServerReady(boolean serverReady) {
+        this.serverReady = serverReady;
+//        if (!serverReady) {
+//            return;
+//        }
+//        Intent gcm_rec = new Intent("tor_status");
+//        gcm_rec.putExtra("tor_status","ALL GOOD");
+//        LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+    }
+
+    public void startTor(){
+        System.out.println("start tor requested");
+        if(isServiceRunningInForeground(this,MyService.class)){
+            System.out.println("Service already running, not starting tor");
+            return;
+        }
+        Intent serviceIntent = new Intent(this, MyService.class);
+        serviceIntent.putExtra("inputExtra", "inputExtra");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);
         }else{
@@ -790,22 +699,16 @@ public class DxApplication extends Application {
         }
     }
 
-    public Entity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
-    public void commandCallService(String address, String type) {
-        Intent serviceIntent = new Intent(this, DxCallService.class);
-        serviceIntent.setAction(type);
-        serviceIntent.putExtra("address", address.substring(0,10));
+    public void restartTor(){
+        Intent serviceIntent = new Intent(this, MyService.class);
+        serviceIntent.putExtra("inputExtra", "inputExtra");
+//        serviceIntent.putExtra("inputExtra", "reconnect now");
+        stopService(serviceIntent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);
         }else{
             startService(serviceIntent);
         }
     }
+
 }

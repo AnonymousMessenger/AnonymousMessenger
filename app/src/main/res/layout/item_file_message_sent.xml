@@ -17,15 +17,25 @@
             android:layout_height="wrap_content"
             android:padding="2dp">
 
-            <ImageView
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/img_holder"
-                android:layout_width="30dp"
-                android:layout_height="19dp"
-                android:background="@drawable/rounded_rectangle_dark"
-                android:contentDescription="@string/image_to_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_attach_file_24" />
+                app:srcCompat="@drawable/attach_file_big"
+                android:focusable="true" />
+
+            <ProgressBar
+                android:id="@+id/progress_file"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/img_seen"
@@ -53,6 +63,7 @@
                 android:id="@+id/txt_filename"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:background="@drawable/rounded_rectangle_dark"
                 android:maxLength="60"
                 android:maxLines="2"

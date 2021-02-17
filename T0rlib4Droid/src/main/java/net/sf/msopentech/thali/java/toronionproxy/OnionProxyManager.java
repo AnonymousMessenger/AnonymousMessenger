@@ -81,6 +81,8 @@ public abstract class OnionProxyManager {
         try {
             for (int retryCount = 0; retryCount < numberOfRetries; ++retryCount) {
                 if (!installAndStartTorOp()) {
+                    stop();
+                    onionProxyContext.deleteAllFilesButHiddenServices();
                     return false;
                 }
                 enableNetwork(true);
