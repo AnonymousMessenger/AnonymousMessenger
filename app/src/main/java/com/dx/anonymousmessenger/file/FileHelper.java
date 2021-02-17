@@ -335,7 +335,6 @@ public class FileHelper {
 //                    System.out.println("not much is left");
                     read = in.read(buf);
                 }
-//                read = in.read(buf);
                 if(read==-1){
 //                    System.out.println("nothing is left");
                     break;
