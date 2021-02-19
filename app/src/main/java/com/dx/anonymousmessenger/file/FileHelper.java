@@ -169,7 +169,10 @@ public class FileHelper {
             File f = new File(app.getFilesDir(),path);
             String suffix = "."+filename.split("\\.")[filename.split("\\.").length-1];
             File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/AM",filename);
-//            file.mkdirs();
+            file.getParentFile().mkdir();
+            if(file.exists()){
+                file.delete();
+            }
             file.createNewFile();
             FileInputStream fis = new FileInputStream(f);
             FileOutputStream out = new FileOutputStream(file);
