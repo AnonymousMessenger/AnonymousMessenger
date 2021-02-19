@@ -1,8 +1,10 @@
 package com.dx.anonymousmessenger.tor;
 
 import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.messages.MessageEncrypter;
+import com.dx.anonymousmessenger.util.Utils;
 
 import net.sf.msopentech.thali.java.toronionproxy.Utilities;
 
@@ -16,6 +18,7 @@ import java.io.FileInputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Date;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -125,7 +128,7 @@ public class TorClientSocks4 {
 
             out.writeUTF("file");
             out.flush();
-            msg2 = in.readUTF();
+            in.readUTF();
             out.writeUTF(app.getHostname());
             out.flush();
             msg2 = in.readUTF();
@@ -142,6 +145,8 @@ public class TorClientSocks4 {
                         byte[] sha1b = app.getSha256();
                         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
                         int done = 0;
+
+                        app.sendNotificationWithProgress(app.getString(R.string.sending_file),app.getString(R.string.sending_part_one),done);
 
                         while(true){
                             byte[] iv = new byte[FileHelper.IV_LENGTH];
@@ -173,25 +178,32 @@ public class TorClientSocks4 {
                             buf = cipher.doFinal(buf,0,buf.length);
                             buf = MessageEncrypter.encrypt(buf,app.getEntity().getStore(),new SignalProtocolAddress(onion,1));
 
-                            System.out.println("!!!!!!!!!!!!! chunk length !!!!!!");
-                            System.out.println(buf.length);
                             out.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(buf.length).array());
                             out.flush();
+                            long time = new Date().getTime();
                             out.write(buf);
                             out.flush();
                             done=done+read;
+
+                            app.sendNotificationWithProgress
+                                    (app.getString(R.string.sending_file),
+                                    Utils.humanReadableSpeed(buf.length,time),
+                                    ((int) (((double) done/(double) length)*100.0)));
                         }
                         out.flush();
                         out.close();
                         fis.close();
+                        app.clearNotification(2);
                         return true;
                     }
                 }
             }
             out.close();
             fis.close();
+            app.clearNotification(2);
             return false;
         } catch (Exception e) {
+            app.clearNotification(2);
             e.printStackTrace();
             return false;
         }

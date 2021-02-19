@@ -456,9 +456,13 @@ public class DxApplication extends Application {
     }
 
     public void clearMessageNotification(){
+        clearNotification(1);
+    }
+
+    public void clearNotification(int id){
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(1);
+        mNotificationManager.cancel(id);
     }
 
     public void sendNotification(String title, String msg){
@@ -536,6 +540,42 @@ public class DxApplication extends Application {
         mNotificationManager.notify(2 , notification);
     }
 
+    public void sendNotificationWithProgress(String title, String msg, int progress){
+        String CHANNEL_ID = "status_messages";
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notification = new Notification.Builder(this,CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setContentTitle(title)
+                    .setContentText(msg)
+                    .setProgress(100,progress,false)
+                    .setContentIntent(resultPendingIntent)
+                    .setAutoCancel(true)
+                    .setChannelId(CHANNEL_ID).build();
+        }else{
+            notification = new Notification.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setContentTitle(title)
+                    .setContentText(msg)
+                    .setProgress(100,progress,false)
+                    .setContentIntent(resultPendingIntent)
+                    .setAutoCancel(true)
+                    .build();
+        }
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mNotificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID,
+                    CHANNEL_ID,NotificationManager.IMPORTANCE_HIGH));
+        }
+        // Issue the notification.
+        mNotificationManager.notify(2 , notification);
+    }
+
     public Notification getServiceNotification(String title, String msg, String CHANNEL_ID){
         Notification notification;
         Intent intent = new Intent(this, NotificationHiderReceiver.class);
@@ -547,7 +587,7 @@ public class DxApplication extends Application {
         );
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification = new NotificationCompat.Builder(this,CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setColor(getResources().getColor(R.color.dx_night_940,getTheme()))
                     .setContentTitle(title)
                     .setStyle(new NotificationCompat.BigTextStyle()

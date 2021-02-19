@@ -293,5 +293,7 @@
     <string name="saving">"Saving "</string>
     <string name="cancel">Cancel</string>
     <string name="slide_to_cancel">Slide to cancel</string>
+    <string name="sending_file">Sending file</string>
+    <string name="sending_part_one">Sending part 1</string>
 
 </resources>

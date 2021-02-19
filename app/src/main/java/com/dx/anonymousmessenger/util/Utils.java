@@ -99,4 +99,15 @@ public class Utils {
         }
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
+
+    public static String humanReadableSpeed(int length, long time) {
+        /* download rate in bits per second */
+        float bitsPerSec = (length*8)
+                / ((System.currentTimeMillis() - time) / (float)1000);
+        float mbPerSec = bitsPerSec / (1024) / (1024);
+        String str = (mbPerSec+"").split("\\.")[0]+".";
+        String part2 = (mbPerSec+"").split("\\.")[1];
+        str += part2.length()>2?part2.substring(0,2):part2;
+        return str+" mbps";
+    }
 }
