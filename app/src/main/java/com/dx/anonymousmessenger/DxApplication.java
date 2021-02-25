@@ -477,7 +477,7 @@ public class DxApplication extends Application {
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification = new Notification.Builder(this,CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setContentIntent(resultPendingIntent)
@@ -485,7 +485,7 @@ public class DxApplication extends Application {
                     .setChannelId(CHANNEL_ID).build();
         }else{
             notification = new Notification.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setContentIntent(resultPendingIntent)
@@ -515,7 +515,7 @@ public class DxApplication extends Application {
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification = new Notification.Builder(this,CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setContentIntent(resultPendingIntent)
@@ -523,7 +523,7 @@ public class DxApplication extends Application {
                     .setChannelId(CHANNEL_ID).build();
         }else{
             notification = new Notification.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setContentIntent(resultPendingIntent)
@@ -545,24 +545,24 @@ public class DxApplication extends Application {
         Intent resultIntent = new Intent(this, MainActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+//        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification = new Notification.Builder(this,CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setProgress(100,progress,false)
-                    .setContentIntent(resultPendingIntent)
+//                    .setContentIntent(resultPendingIntent)
                     .setAutoCancel(true)
                     .setChannelId(CHANNEL_ID).build();
         }else{
             notification = new Notification.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setProgress(100,progress,false)
-                    .setContentIntent(resultPendingIntent)
+//                    .setContentIntent(resultPendingIntent)
                     .setAutoCancel(true)
                     .build();
         }
@@ -579,7 +579,11 @@ public class DxApplication extends Application {
     public Notification getServiceNotification(String title, String msg, String CHANNEL_ID){
         Notification notification;
         Intent intent = new Intent(this, NotificationHiderReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+        PendingIntent gotoApp = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent hideNotification = PendingIntent.getBroadcast(
                 this,
                 1,
                 intent,
@@ -587,28 +591,28 @@ public class DxApplication extends Application {
         );
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification = new NotificationCompat.Builder(this,CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setColor(getResources().getColor(R.color.dx_night_940,getTheme()))
                     .setContentTitle(title)
-                    .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(msg))
+                    .addAction(0, msg, hideNotification)
+                    .setPriority(NotificationManager.IMPORTANCE_LOW)
 //                    .setContentText(msg)
-                    .setContentIntent(pendingIntent)
+                    .setContentIntent(gotoApp)
                     .setChannelId(CHANNEL_ID)
                     .build();
         }else{
             notification = new Notification.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title + ", " + msg)
-//                    .setContentText(msg)
-                    .setContentIntent(pendingIntent)
+                    .setContentText(msg)
+                    .setContentIntent(hideNotification)
                     .build();
         }
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mNotificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID,
-                    CHANNEL_ID,NotificationManager.IMPORTANCE_NONE));
+                    CHANNEL_ID,NotificationManager.IMPORTANCE_LOW));
         }
         return notification;
     }

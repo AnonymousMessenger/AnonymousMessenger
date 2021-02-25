@@ -113,7 +113,7 @@
     <string name="media_message">media message</string>
     <string name="caption">Caption this</string>
     <string name="still_background">Still running in background</string>
-    <string name="click_to_hide">click here to hide notification</string>
+    <string name="click_to_hide">Hide notification</string>
     <string name="unpin">Unpin</string>
     <string name="profile_contact">View Profile</string>
     <string name="save_picture">Save Picture</string>
