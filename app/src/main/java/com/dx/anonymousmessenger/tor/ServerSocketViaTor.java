@@ -395,6 +395,7 @@ public class ServerSocketViaTor {
 
                 app.sendNotification(app.getString(R.string.new_message),app.getString(R.string.you_have_message));
                 Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("address",qum.getAddress().substring(0,10));
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 DbHelper.saveLog("RECEIVED FILE FROM: "+address+" SIZE: "+length,new Date().getTime(),"NOTICE",app);
             } catch (Exception e) {

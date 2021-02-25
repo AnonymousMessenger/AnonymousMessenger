@@ -752,8 +752,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                         }
                     }
                     return;
-                }
-                if(intent.getStringExtra("error")!=null){
+                }else if(intent.getStringExtra("error")!=null){
                     try{
                         Snackbar.make(send, Objects.requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).show();
                     }catch (Exception ignored) {}
@@ -768,6 +767,9 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                             return;
                         }
                     }
+                    return;
+                }else if(intent.getStringExtra("address")!=null && Objects.equals(intent.getStringExtra("address"), getIntent().getStringExtra("address"))){
+                    updateUi(true,false);
                     return;
                 }
 

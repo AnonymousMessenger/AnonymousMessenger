@@ -54,6 +54,7 @@ public class MessageReceiver {
 
                         DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.resp_key_exchange), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
                         Intent gcm_rec = new Intent("your_action");
+                        gcm_rec.putExtra("address",json.getString("address").substring(0,10));
                         LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
 
                     } catch (UntrustedIdentityException | InvalidKeyException | StaleKeyExchangeException e) {
@@ -69,6 +70,7 @@ public class MessageReceiver {
                                 json.getString("address"),
                                 false),app,json.getString("address"),false);
                         Intent gcm_rec = new Intent("your_action");
+                        gcm_rec.putExtra("address",json.getString("address").substring(0,10));
                         LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                         e.printStackTrace();
                         Log.e("MESSAGE RECEIVER", "FAILED!!! Received Response Key Exchange Message : ");
@@ -101,12 +103,14 @@ public class MessageReceiver {
                     new Thread(()-> DbHelper.setContactUnread(um.getAddress(),app)).start();
                     DbHelper.saveMessage(um,app,um.getAddress(),true);
                     Intent gcm_rec = new Intent("your_action");
+                    gcm_rec.putExtra("address",um.getAddress().substring(0,10));
                     LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
 
                 } catch (Exception e) {
                     DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.failed_to_decrypt), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
 
                     Intent gcm_rec = new Intent("your_action");
+                    gcm_rec.putExtra("address",json.getString("address").substring(0,10));
                     LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                     e.printStackTrace();
                     Log.e("MESSAGE RECEIVER", "FAILED TO DECRYPT MESSAGE" );
@@ -148,6 +152,7 @@ public class MessageReceiver {
 
             app.sendNotification(app.getString(R.string.new_message),app.getString(R.string.you_have_message));
             Intent gcm_rec = new Intent("your_action");
+            gcm_rec.putExtra("address",um.getAddress().substring(0,10));
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
 
         } catch (Exception e) {
