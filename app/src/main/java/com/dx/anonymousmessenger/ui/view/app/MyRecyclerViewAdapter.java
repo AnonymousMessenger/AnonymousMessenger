@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import com.dx.anonymousmessenger.DxApplication;
@@ -23,6 +24,7 @@ import com.dx.anonymousmessenger.ui.view.single_activity.ContactProfileActivity;
 import com.dx.anonymousmessenger.util.Utils;
 
 import java.util.List;
+import java.util.Objects;
 
 import static androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
@@ -166,10 +168,13 @@ public class MyRecyclerViewAdapter extends Adapter {
 
         @Override
         public boolean onLongClick(View v) {
+            Objects.requireNonNull(appFragment.getActivity()).findViewById(R.id.top_bar).setVisibility(View.GONE);
+            v.setBackgroundColor(v.getResources().getColor(R.color.dx_night_700,null));
             v.startActionMode(new ActionMode.Callback() {
                 @Override
                 public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                     mode.getMenuInflater().inflate(R.menu.contextual_contact_bar, menu);
+                    mode.setTitle("1");
                     return true;
                 }
 
@@ -213,7 +218,8 @@ public class MyRecyclerViewAdapter extends Adapter {
 
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
-
+                    v.setBackground(ResourcesCompat.getDrawable(v.getResources(),R.drawable.contact_background,null));
+                    Objects.requireNonNull(appFragment.getActivity()).findViewById(R.id.top_bar).setVisibility(View.VISIBLE);
                 }
             });
 //            PopupMenu popup = new PopupMenu(v.getContext(), itemView);

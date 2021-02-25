@@ -20,12 +20,22 @@
         <item name="colorControlNormal">@color/dx_white</item>
         <item name="colorControlActivated">@color/dx_white</item>
         <item name="colorControlHighlight">@color/dx_white</item>
+        <item name="android:actionModeStyle">@style/Theme.App</item>
+        <item name="actionModeBackground">@color/dx_night_950</item>
     </style>
 
-    <style name="Widget.App.ActionMode" parent="Widget.AppCompat.Light.ActionMode.Inverse">
+    <style name="Widget.App.ActionMode" parent="Widget.AppCompat.ActionMode">
         <item name="titleTextStyle">?attr/textAppearanceHeadline6</item>
         <item name="subtitleTextStyle">?attr/textAppearanceSubtitle1</item>
         <item name="background">@color/material_grey_900</item>
+        <item name="backgroundColor">@color/material_grey_900</item>
+        <item name="colorOnBackground">@color/material_grey_900</item>
+        <item name="actionModeBackground">@drawable/app_bar_background</item>
+        <item name="android:background">?android:attr/actionModeBackground</item>
+        <item name="android:backgroundSplit">?android:attr/actionModeSplitBackground</item>
+        <item name="android:height">?android:attr/actionBarSize</item>
+<!--        <item name="android:titleTextStyle">@android:style/TextAppearance.Widget.ActionMode.Title</item>-->
+<!--        <item name="android:subtitleTextStyle">@android:style/TextAppearance.Widget.ActionMode.Subtitle</item>-->
     </style>
 
     <style name="ThemeOverlay.App.NavigationView" parent="">
