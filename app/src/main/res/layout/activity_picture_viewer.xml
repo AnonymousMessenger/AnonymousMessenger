@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context="com.dx.anonymousmessenger.ui.view.single_activity.PictureViewerActivity">
 
+    <include
+        android:id="@+id/top_bar"
+        layout="@layout/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/txt_caption_view"
         android:layout_width="wrap_content"
@@ -44,12 +51,12 @@
         android:id="@+id/img_to_send"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/image_to_send"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_report_image"
-        android:contentDescription="@string/image_to_send" />
+        app:layout_constraintTop_toBottomOf="@+id/top_bar"
+        app:srcCompat="@android:drawable/ic_menu_report_image" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_send_media"

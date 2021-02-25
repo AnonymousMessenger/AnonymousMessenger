@@ -7,14 +7,14 @@ import android.os.Looper;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.setup.SetupInProcess;
 
-public class AppActivity extends AppCompatActivity implements ComponentCallbacks2 {
+public class AppActivity extends DxActivity implements ComponentCallbacks2 {
 
     private boolean isAppFragmentShown;
 

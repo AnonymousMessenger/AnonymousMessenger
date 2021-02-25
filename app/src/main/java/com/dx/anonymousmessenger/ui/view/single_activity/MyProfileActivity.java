@@ -10,17 +10,16 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
-public class MyProfileActivity extends AppCompatActivity {
+public class MyProfileActivity extends DxActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -35,10 +34,8 @@ public class MyProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_profile);
 
         try{
-            if(getSupportActionBar()!=null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(R.string.action_my_profile);
-            }
+            setTitle(R.string.action_my_profile);
+            setBackEnabled(true);
         }catch (Exception ignored){}
 
         TextView nickname = findViewById(R.id.txt_nickname);

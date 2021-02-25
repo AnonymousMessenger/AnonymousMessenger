@@ -10,6 +10,13 @@
 
     <!-- A horizontal line between the chatbox and RecyclerView -->
 
+    <include
+        android:id="@+id/top_bar"
+        layout="@layout/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <FrameLayout
         android:id="@+id/frame_online"
         android:layout_width="match_parent"
@@ -18,7 +25,7 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/top_bar">
 
     </FrameLayout>
 

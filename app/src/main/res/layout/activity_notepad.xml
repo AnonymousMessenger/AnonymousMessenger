@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.view.notepad.NotepadActivity">
 
+    <include
+        android:id="@+id/top_bar"
+        layout="@layout/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reyclerview_notes"
         android:layout_width="match_parent"
@@ -15,7 +22,7 @@
         app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/top_bar" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_chatbox"

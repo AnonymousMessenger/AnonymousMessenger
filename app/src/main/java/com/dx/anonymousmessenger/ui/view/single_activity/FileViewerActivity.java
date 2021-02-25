@@ -5,14 +5,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -20,14 +19,13 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Objects;
 
-public class FileViewerActivity extends AppCompatActivity {
+public class FileViewerActivity extends DxActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-//            Objects.requireNonNull(getSupportActionBar()).hide();
         }catch (Exception ignored){}
         setContentView(R.layout.activity_file_viewer);
 

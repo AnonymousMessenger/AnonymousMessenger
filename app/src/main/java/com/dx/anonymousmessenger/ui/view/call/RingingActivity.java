@@ -3,13 +3,12 @@ package com.dx.anonymousmessenger.ui.view.call;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 
 import java.util.Objects;
 
-public class RingingActivity extends AppCompatActivity {
+public class RingingActivity extends DxActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

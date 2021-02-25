@@ -9,14 +9,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.transition.Explode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.dx.anonymousmessenger.DxApplication;
@@ -25,6 +26,7 @@ import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -36,33 +38,32 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Objects;
 
-public class PictureViewerActivity extends AppCompatActivity {
+public class PictureViewerActivity extends DxActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-//            Objects.requireNonNull(getSupportActionBar()).hide();
         }catch (Exception ignored){}
+        getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
+        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_picture_viewer);
 
         try{
-            if(getSupportActionBar()!=null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                if(getIntent().getStringExtra("address")==null || Objects.equals(getIntent().getStringExtra("address"), "")){
-                    getSupportActionBar().setTitle(R.string.picure_view);
-                }else{
-                    getSupportActionBar().setTitle(Objects.equals(getIntent().getStringExtra("nickname"), "") ? (Objects.equals(getIntent().getStringExtra("address"),
-                            ((DxApplication) getApplication()).getHostname()) ?
-                            getString(R.string.you)
-                            :getIntent().getStringExtra("address"))
-                        : (Objects.equals(getIntent().getStringExtra("nickname"), ((DxApplication) getApplication()).getAccount().getNickname()) ?
-                            getString(R.string.you)
-                            :getIntent().getStringExtra("nickname")));
-                    if(getIntent().getLongExtra("time",0)!=0){
-                        getSupportActionBar().setSubtitle(Utils.formatDateTime(getIntent().getLongExtra("time",0)));
-                    }
+            setBackEnabled(true);
+            if(getIntent().getStringExtra("address")==null || Objects.equals(getIntent().getStringExtra("address"), "")){
+                setTitle(R.string.picure_view);
+            }else{
+                setTitle(Objects.equals(getIntent().getStringExtra("nickname"), "") ? (Objects.equals(getIntent().getStringExtra("address"),
+                        ((DxApplication) getApplication()).getHostname()) ?
+                        getString(R.string.you)
+                        :getIntent().getStringExtra("address"))
+                    : (Objects.equals(getIntent().getStringExtra("nickname"), ((DxApplication) getApplication()).getAccount().getNickname()) ?
+                        getString(R.string.you)
+                        :getIntent().getStringExtra("nickname")));
+                if(getIntent().getLongExtra("time",0)!=0){
+                    setSubtitle(Utils.formatDateTime(getIntent().getLongExtra("time",0)));
                 }
             }
         }catch (Exception ignored){}

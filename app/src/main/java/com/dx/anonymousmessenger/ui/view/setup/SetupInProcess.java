@@ -11,14 +11,14 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.app.AppActivity;
 
-public class SetupInProcess extends AppCompatActivity implements ComponentCallbacks2 {
+public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
 
     private BroadcastReceiver mMyBroadcastReceiver;
     private TextView statusText;

@@ -7,6 +7,13 @@
     android:layout_marginTop="0dp"
     android:layout_marginBottom="8dp">
 
+    <include
+        android:id="@+id/top_bar"
+        layout="@layout/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/btn_scan_contact"
         style="@style/DXSendButton"

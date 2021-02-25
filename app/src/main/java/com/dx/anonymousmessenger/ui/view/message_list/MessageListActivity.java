@@ -38,7 +38,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -56,12 +55,14 @@ import com.dx.anonymousmessenger.media.MediaRecycleViewAdapter;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.app.MyRecyclerViewAdapter;
 import com.dx.anonymousmessenger.ui.view.call.CallActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.FileViewerActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.PictureViewerActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.VerifyIdentityActivity;
 import com.dx.anonymousmessenger.util.CallBack;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -73,7 +74,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class MessageListActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, MyRecyclerViewAdapter.ItemClickListener, CallBack {
+public class MessageListActivity extends DxActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, MyRecyclerViewAdapter.ItemClickListener, CallBack {
 
     private static final int REQUEST_CODE = 1;
     private static final int READ_STORAGE_REQUEST_CODE = 2;
@@ -108,9 +109,16 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_message_list);
-        Objects.requireNonNull(getSupportActionBar()).setTitle(getIntent().getStringExtra("nickname"));
-        getSupportActionBar().setSubtitle(getIntent().getStringExtra("address"));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        try{
+            setTitle(getIntent().getStringExtra("nickname"));
+            setSubtitle(getIntent().getStringExtra("address"));
+            setBackEnabled(true);
+        }catch (Exception ignored){}
+        ((MaterialToolbar)findViewById(R.id.toolbar)).inflateMenu(R.menu.message_list_menu);
+        ((MaterialToolbar)findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
+            onOptionsItemSelected(item);
+            return false;
+        });
         final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
                 "address"),
                 (DxApplication) getApplication());
@@ -688,7 +696,7 @@ public class MessageListActivity extends AppCompatActivity implements ActivityCo
                                 ((DxApplication)getApplication()).clearMessageNotification();
                                 if(!messageList.get(messageList.size()-1).getAddress().equals(((DxApplication)getApplication()).getHostname())){
                                     String newName = messageList.get(messageList.size()-1).getSender();
-                                    Objects.requireNonNull(getSupportActionBar()).setTitle(newName);
+                                    setTitle(newName);
                                     getIntent().putExtra("nickname",newName);
                                 }
                                 if(animate){

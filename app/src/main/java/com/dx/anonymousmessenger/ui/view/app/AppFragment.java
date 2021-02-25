@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -42,6 +43,7 @@ import com.dx.anonymousmessenger.ui.view.single_activity.MyIdentityActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.MyProfileActivity;
 import com.dx.anonymousmessenger.ui.view.tips.TipsActivity;
 import com.dx.anonymousmessenger.util.Utils;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -167,7 +169,114 @@ public class AppFragment extends Fragment {
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             v.getContext().startActivity(intent);
         });
-
+        ((MaterialToolbar)Objects.requireNonNull(getActivity()).findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_baseline_menu_24);
+        ((MaterialToolbar)Objects.requireNonNull(getActivity()).findViewById(R.id.toolbar)).setNavigationOnClickListener((v)->{
+            PopupMenu popup = new PopupMenu(v.getContext(), v);
+            popup.inflate(R.menu.app_menu);
+            popup.setOnMenuItemClickListener(item -> {
+                if(item.getItemId()==R.id.action_restart_tor){
+                    new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
+                        .setTitle(R.string.restart_tor)
+                        .setMessage(R.string.restart_tor_explain)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).restartTor();
+                            mainThread.post(()->{
+                                try{
+                                    onlineTxt.setText(R.string.offline);
+                                    onlineImg.setVisibility(View.GONE);
+                                    offlineImg.setVisibility(View.VISIBLE);
+                                    onlineToolbar.setVisibility(View.VISIBLE);
+                                    Intent intent = new Intent(getActivity().getApplication(), SetupInProcess.class);
+                                    intent.putExtra("first_time",false);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                } catch (Exception ignored) {}
+                            });
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
+                    return true;
+                }else if(item.getItemId()==R.id.action_shutdown){
+                    new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
+                        .setTitle(R.string.shut_app)
+                        .setMessage(R.string.shut_app_explain)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).shutdown();
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
+                    return true;
+                }else if(item.getItemId()==R.id.action_my_identity){
+                    stopCheckingMessages();
+                    try{
+                        Intent intent = new Intent(getContext(), MyIdentityActivity.class);
+                        if(getContext()!=null){
+                            getContext().startActivity(intent);
+                        }
+                    }catch (Exception ignored) {}
+                    return true;
+                }else if(item.getItemId()==R.id.action_my_profile){
+                    stopCheckingMessages();
+                    try{
+                        Intent intent = new Intent(getContext(), MyProfileActivity.class);
+                        if(getContext()!=null){
+                            getContext().startActivity(intent);
+                        }
+                    }catch (Exception ignored) {}
+                    return true;
+                }else if(item.getItemId()==R.id.action_about){
+                    stopCheckingMessages();
+                    try{
+                        Intent intent = new Intent(getContext(), AboutActivity.class);
+                        if(getContext()!=null){
+                            getContext().startActivity(intent);
+                        }
+                    }catch (Exception ignored) {}
+                    return true;
+                }else if(item.getItemId()==R.id.action_notepad){
+                    stopCheckingMessages();
+                    try{
+                        Intent intent = new Intent(getContext(), NotepadActivity.class);
+                        if(getContext()!=null){
+                            getContext().startActivity(intent);
+                        }
+                    }catch (Exception ignored) {}
+                    return true;
+                }else if(item.getItemId()==R.id.action_log){
+                    stopCheckingMessages();
+                    try{
+                        Intent intent = new Intent(getContext(), LogActivity.class);
+                        if(getContext()!=null){
+                            getContext().startActivity(intent);
+                        }
+                    }catch (Exception ignored) {}
+                    return true;
+                }else if(item.getItemId()==R.id.action_tips){
+                    stopCheckingMessages();
+                    try{
+                        Intent intent = new Intent(getContext(), TipsActivity.class);
+                        if(getContext()!=null){
+                            getContext().startActivity(intent);
+                        }
+                    }catch (Exception ignored) {}
+                    return true;
+                }else if(item.getItemId()==R.id.action_license){
+                    stopCheckingMessages();
+                    try{
+                        Intent intent = new Intent(getContext(), LicenseActivity.class);
+                        if(getContext()!=null){
+                            getContext().startActivity(intent);
+                        }
+                    }catch (Exception ignored) {}
+                    return true;
+                }else{
+                    return false;
+                }
+            });
+            //displaying the popup
+            popup.show();
+        });
         onlineImg = rootView.findViewById(R.id.synced_image);
         offlineImg = rootView.findViewById(R.id.unsynced_image);
         onlineTxt = rootView.findViewById(R.id.sync_text);
@@ -406,7 +515,7 @@ public class AppFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.app_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+        super.onCreateOptionsMenu(menu, inflater);//activity_fragment_container_toolbar
     }
 
     @Override

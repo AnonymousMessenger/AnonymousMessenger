@@ -7,20 +7,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LogActivity extends AppCompatActivity {
+public class LogActivity extends DxActivity {
     private Thread logChecker = null;
     List<Object[]> list = new ArrayList<>();
     RecyclerView recyclerView;
@@ -37,10 +37,8 @@ public class LogActivity extends AppCompatActivity {
         }catch (Exception ignored){}
         setContentView(R.layout.activity_log);
         try{
-            if(getSupportActionBar()!=null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(R.string.action_log);
-            }
+            setTitle(R.string.action_log);
+            setBackEnabled(true);
         }catch (Exception ignored){}
 
 //        List<Object[]> list = DbHelper.getLogList((DxApplication)getApplication());

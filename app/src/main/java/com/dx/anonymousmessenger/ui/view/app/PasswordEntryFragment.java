@@ -161,7 +161,9 @@ public class PasswordEntryFragment extends Fragment {
 
         txtPassword.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //see if we can detect screen obstructed here
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {

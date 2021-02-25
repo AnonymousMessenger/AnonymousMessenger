@@ -9,6 +9,7 @@ import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.Result;
 
@@ -16,7 +17,7 @@ import org.whispersystems.libsignal.SignalProtocolAddress;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class SimpleScannerActivity extends Activity implements ZXingScannerView.ResultHandler {
+public class SimpleScannerActivity extends DxActivity implements ZXingScannerView.ResultHandler {
     private ZXingScannerView mScannerView;
 
     @Override

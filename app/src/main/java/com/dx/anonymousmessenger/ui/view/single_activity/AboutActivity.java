@@ -5,13 +5,12 @@ import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 
 import java.text.MessageFormat;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends DxActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +21,8 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         try{
-            if(getSupportActionBar()!=null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(R.string.action_about);
-            }
+            setTitle(R.string.action_about);
+            setBackEnabled(true);
         }catch (Exception ignored){}
 
         try {
@@ -40,4 +37,6 @@ public class AboutActivity extends AppCompatActivity {
         finish();
         return super.onSupportNavigateUp();
     }
+
+
 }

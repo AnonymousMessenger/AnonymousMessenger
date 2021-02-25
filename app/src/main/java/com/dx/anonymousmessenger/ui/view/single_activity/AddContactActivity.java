@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.dx.anonymousmessenger.DxApplication;
@@ -34,6 +33,7 @@ import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.zxing.BarcodeFormat;
@@ -47,7 +47,7 @@ import java.util.Objects;
 
 import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
-public class AddContactActivity extends AppCompatActivity {
+public class AddContactActivity extends DxActivity {
 
     TextView tv;
     TextInputEditText contact;
@@ -69,10 +69,8 @@ public class AddContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact);
 
         try{
-            if(getSupportActionBar()!=null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(R.string.add_contact);
-            }
+            setTitle(R.string.add_contact);
+            setBackEnabled(true);
         }catch (Exception ignored){}
 
         tv = findViewById(R.id.txt_myaddress);
@@ -122,14 +120,12 @@ public class AddContactActivity extends AppCompatActivity {
                                     });
                                     return;
                                 }
+                                runOnUiThread(()-> finish());
                                 if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.toString().trim())){
                                     if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.toString().trim(),1))){
                                         MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.toString().trim());
                                     }
                                 }
-                                runOnUiThread(()->{
-                                    finish();
-                                });
                             }catch (Exception e){
                                 e.printStackTrace();
                                 Log.e("FAILED TO SAVE CONTACT", "SAME " );
@@ -174,7 +170,7 @@ public class AddContactActivity extends AppCompatActivity {
                     bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
                 }
             }
-            ImageView qr = ((ImageView) findViewById(R.id.qr_my_address));
+            ImageView qr = findViewById(R.id.qr_my_address);
             qr.setImageBitmap(bmp);
             qr.setOnClickListener((v) -> {
                 try{

@@ -5,18 +5,18 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 
 import java.util.Date;
 import java.util.List;
 
-public class NotepadActivity extends AppCompatActivity {
+public class NotepadActivity extends DxActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +26,8 @@ public class NotepadActivity extends AppCompatActivity {
         }catch (Exception ignored){}
         setContentView(R.layout.activity_notepad);
         try{
-            if(getSupportActionBar()!=null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(R.string.action_notepad);
-            }
+            setTitle(R.string.action_notepad);
+            setBackEnabled(true);
         }catch (Exception ignored){}
 
         EditText txt = findViewById(R.id.edittext_chatbox);

@@ -3,13 +3,13 @@ package com.dx.anonymousmessenger.ui.view.tips;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 
-public class TipsActivity extends AppCompatActivity {
+public class TipsActivity extends DxActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,10 +19,8 @@ public class TipsActivity extends AppCompatActivity {
         }catch (Exception ignored){}
         setContentView(R.layout.activity_tips);
         try{
-            if(getSupportActionBar()!=null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(R.string.action_tips);
-            }
+            setTitle(R.string.action_tips);
+            setBackEnabled(true);
         }catch (Exception ignored){}
 
         String[] strings = getResources().getStringArray(R.array.security_tips);

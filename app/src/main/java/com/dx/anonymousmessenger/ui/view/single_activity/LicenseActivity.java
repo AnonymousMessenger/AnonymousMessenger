@@ -3,11 +3,10 @@ package com.dx.anonymousmessenger.ui.view.single_activity;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 
-public class LicenseActivity extends AppCompatActivity {
+public class LicenseActivity extends DxActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -22,10 +21,8 @@ public class LicenseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_license);
 
         try{
-            if(getSupportActionBar()!=null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(R.string.action_license);
-            }
+            setTitle(R.string.action_license);
+            setBackEnabled(true);
         }catch (Exception ignored){}
     }
 }

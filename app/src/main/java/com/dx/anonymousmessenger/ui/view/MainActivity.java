@@ -8,8 +8,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.service.MyService;
@@ -19,14 +17,13 @@ import com.dx.anonymousmessenger.ui.view.setup.SetupInProcess;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends DxActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-//            Objects.requireNonNull(getSupportActionBar()).hide();
         }catch (Exception ignored){}
         setContentView(R.layout.activity_main);
 

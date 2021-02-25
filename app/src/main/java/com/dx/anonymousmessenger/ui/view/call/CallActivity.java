@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -25,12 +24,13 @@ import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.call.CallService;
 import com.dx.anonymousmessenger.call.DxCallService;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
 
-public class CallActivity extends AppCompatActivity {
+public class CallActivity extends DxActivity {
 
     private static final int REQUEST_CODE = 1;
     TextView name;

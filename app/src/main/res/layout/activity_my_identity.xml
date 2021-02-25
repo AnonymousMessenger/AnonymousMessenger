@@ -21,20 +21,26 @@
 android:layout_width="fill_parent"
 android:layout_height="fill_parent">
 
-<LinearLayout android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="16dip"
-    android:layout_marginRight="16dip"
-    android:layout_gravity="center"
-    android:orientation="vertical">
-
-    <TextView android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:typeface="monospace"
-        android:id="@+id/txt_identity_key"
-        android:text=""
-        android:padding="7dip" />
+        android:layout_gravity="center|top"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <include
+            android:id="@+id/top_bar"
+            layout="@layout/toolbar" />
+
+        <TextView
+            android:id="@+id/txt_identity_key"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:gravity="center|start"
+            android:padding="15dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:typeface="monospace" />
+
+    </LinearLayout>
 </ScrollView>

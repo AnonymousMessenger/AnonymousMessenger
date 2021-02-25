@@ -295,5 +295,12 @@
     <string name="slide_to_cancel">Slide to cancel</string>
     <string name="sending_file">Sending file</string>
     <string name="sending_part_one">Sending part 1</string>
+    <string name="screen_filter_body">Another app is drawing on top of AnonymousMessenger,
+        the screen is blocked to protect your privacy</string>
+    <string name="screen_filter_title">Screen overlay detected</string>
+    <string name="try_now">Try now</string>
+    <string name="mic_in_use">Mic may be in use by another app</string>
+    <string name="back_image">go back</string>
+    <string name="subtitle">Subtitle</string>
 
 </resources>

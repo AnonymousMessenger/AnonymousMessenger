@@ -104,11 +104,11 @@ public class DxApplication extends Application {
         }
     }
 
-    public void addToMessageQueue(QuotedUserMessage message){
-        if(!messageQueue.contains(message)){
-            messageQueue.add(message);
-        }
-    }
+//    public void addToMessageQueue(QuotedUserMessage message){
+//        if(!messageQueue.contains(message)){
+//            messageQueue.add(message);
+//        }
+//    }
 
     public void sendQueuedMessages(){
         for (QuotedUserMessage msg:messageQueue){

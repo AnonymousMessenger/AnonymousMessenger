@@ -8,15 +8,12 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.util.Hex;
 
-import java.util.Objects;
-
-public class MyIdentityActivity extends AppCompatActivity {
+public class MyIdentityActivity extends DxActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +22,11 @@ public class MyIdentityActivity extends AppCompatActivity {
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_my_identity);
-        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.action_my_identity);
-        getSupportActionBar().setSubtitle(R.string.my_identity_explanation);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        try{
+            setTitle(R.string.action_my_identity);
+            setSubtitle(R.string.my_identity_explanation);
+            setBackEnabled(true);
+        }catch (Exception ignored){}
         TextView tv = findViewById(R.id.txt_identity_key);
         new Thread(()->{
             try{

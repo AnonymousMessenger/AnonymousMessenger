@@ -4,27 +4,24 @@ import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.util.Hex;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
 
-import java.util.Objects;
-
-public class VerifyIdentityActivity extends AppCompatActivity {
+public class VerifyIdentityActivity extends DxActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_verify_identity);
-        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.action_verify_identity);
-        getSupportActionBar().setSubtitle(R.string.verify_identity_explanation);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle(R.string.action_verify_identity);
+        setSubtitle(R.string.verify_identity_explanation);
+        setBackEnabled(true);
         TextView tv = findViewById(R.id.txt_identity_key);
         new Thread(()->{
             try{

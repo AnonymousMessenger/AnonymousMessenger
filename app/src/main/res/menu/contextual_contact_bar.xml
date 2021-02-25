@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/delete_contact"
+        android:icon="@drawable/ic_baseline_delete_24"
+        android:title="@string/delete_contact"
+        android:contentDescription="@string/delete_contact"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/profile_contact"
+        android:icon="@drawable/ic_baseline_emoji_emotions_24"
+        android:title="@string/profile_contact"
+        android:contentDescription="@string/profile_contact"
+        app:showAsAction="ifRoom" />
+
+</menu>

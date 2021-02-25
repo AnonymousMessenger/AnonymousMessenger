@@ -8,16 +8,15 @@ import android.os.Looper;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Objects;
 
-public class ContactProfileActivity extends AppCompatActivity {
+public class ContactProfileActivity extends DxActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -32,10 +31,8 @@ public class ContactProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_contact_profile);
 
         try{
-            if(getSupportActionBar()!=null){
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(R.string.action_my_profile);
-            }
+            setTitle(R.string.action_my_profile);
+            setBackEnabled(true);
         }catch (Exception ignored){}
 
         final TextView address = findViewById(R.id.txt_myaddress);
@@ -52,9 +49,7 @@ public class ContactProfileActivity extends AppCompatActivity {
                 try{
                     address.setText(fullAddress);
                     nickname.setText(nickname1);
-                    if(getSupportActionBar()!=null){
-                        getSupportActionBar().setTitle(nickname1);
-                    }
+                    setTitle(nickname1);
                 }catch (Exception ignored){}
             });
         }).start();

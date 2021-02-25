@@ -3,11 +3,13 @@ package com.dx.anonymousmessenger.ui.view.app;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -164,40 +166,90 @@ public class MyRecyclerViewAdapter extends Adapter {
 
         @Override
         public boolean onLongClick(View v) {
-            PopupMenu popup = new PopupMenu(v.getContext(), itemView);
-            popup.inflate(R.menu.contact_menu);
-
-            popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.profile_contact:
-                        try{
-                            Intent intent = new Intent(itemView.getContext(), ContactProfileActivity.class);
-                            intent.putExtra("address",address.substring(0,10));
-                            itemView.getContext().startActivity(intent);
-                        }catch (Exception ignored) {}
-                        break;
-                    case R.id.delete_contact:
-                        new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
-                            .setTitle(R.string.delete_contact_question)
-                            .setMessage(R.string.delete_contact_details)
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                                try {
-                                    DbHelper.deleteContact(address, app);
-                                    DbHelper.clearConversation(address, app);
-                                    mData.remove(pos);
-                                    notifyItemRemoved(pos);
-                                } catch (Exception ignored) {
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
-
-                            }).show();
-                        break;
+            v.startActionMode(new ActionMode.Callback() {
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    mode.getMenuInflater().inflate(R.menu.contextual_contact_bar, menu);
+                    return true;
                 }
-                return false;
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    mode.finish();
+                    switch (item.getItemId()) {
+                        case R.id.profile_contact:
+                            try{
+                                Intent intent = new Intent(itemView.getContext(), ContactProfileActivity.class);
+                                intent.putExtra("address",address.substring(0,10));
+                                v.getContext().startActivity(intent);
+                            }catch (Exception ignored) {}
+                            break;
+                        case R.id.delete_contact:
+                            new AlertDialog.Builder(v.getContext(), R.style.AppAlertDialog)
+                                    .setTitle(R.string.delete_contact_question)
+                                    .setMessage(R.string.delete_contact_details)
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                                        try {
+                                            DbHelper.deleteContact(address, app);
+                                            DbHelper.clearConversation(address, app);
+                                            mData.remove(pos);
+                                            notifyItemRemoved(pos);
+                                        } catch (Exception ignored) {
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
+
+                                    }).show();
+                            break;
+                    }
+                    return true;
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+
+                }
             });
-            popup.show();
+//            PopupMenu popup = new PopupMenu(v.getContext(), itemView);
+//            popup.inflate(R.menu.contact_menu);
+//
+//            popup.setOnMenuItemClickListener(item -> {
+//                switch (item.getItemId()) {
+//                    case R.id.profile_contact:
+//                        try{
+//                            Intent intent = new Intent(itemView.getContext(), ContactProfileActivity.class);
+//                            intent.putExtra("address",address.substring(0,10));
+//                            itemView.getContext().startActivity(intent);
+//                        }catch (Exception ignored) {}
+//                        break;
+//                    case R.id.delete_contact:
+//                        new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
+//                            .setTitle(R.string.delete_contact_question)
+//                            .setMessage(R.string.delete_contact_details)
+//                            .setIcon(android.R.drawable.ic_dialog_alert)
+//                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+//                                try {
+//                                    DbHelper.deleteContact(address, app);
+//                                    DbHelper.clearConversation(address, app);
+//                                    mData.remove(pos);
+//                                    notifyItemRemoved(pos);
+//                                } catch (Exception ignored) {
+//                                }
+//                            })
+//                            .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
+//
+//                            }).show();
+//                        break;
+//                }
+//                return false;
+//            });
+//            popup.show();
             return true;
         }
     }
