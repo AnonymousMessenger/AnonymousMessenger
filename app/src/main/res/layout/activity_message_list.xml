@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/coordinatorLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.dx.anonymousmessenger.ui.view.message_list.MessageListActivity">
-
-
-    <!-- A horizontal line between the chatbox and RecyclerView -->
 
     <include
         android:id="@+id/top_bar"
@@ -82,21 +85,11 @@
             android:visibility="gone" />
     </RelativeLayout>
 
-    <FrameLayout
-        android:id="@+id/frameLayout2"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:background="@drawable/chatbox_background"
-        app:layout_constraintBottom_toTopOf="@id/txt_key_status"
-        app:layout_constraintEnd_toEndOf="@+id/reyclerview_message_list"
-        app:layout_constraintStart_toStartOf="@+id/reyclerview_message_list">
-
-    </FrameLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_chatbox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/app_bar_background"
         android:orientation="horizontal"
         android:paddingStart="3dp"
         android:paddingEnd="3dp"
@@ -105,82 +98,67 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
+        <TextView
+            android:id="@+id/quote_sender_typing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:paddingStart="10dp"
+            android:paddingEnd="6dp"
+            android:text="@string/textview"
+            android:textColor="#ffffff"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/quote_text_typing"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/quote_text_typing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.75"
+            android:animateLayoutChanges="true"
+            android:background="@drawable/rounded_rectangle_dark"
+            android:maxWidth="@android:dimen/thumbnail_width"
+            android:maxLines="4"
+            android:padding="8dp"
+            android:text="@string/textview"
+            android:textColor="#ffffff"
+            android:textSize="14sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/txt_container_chatbox"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txt_container_chatbox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minHeight="60dp"
-            android:background="@drawable/rounded_rectangle_dark"
+            android:paddingStart="1dp"
+            android:paddingEnd="4dp"
+            android:visibility="visible"
+            app:errorEnabled="false"
+            app:hintEnabled="false"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/fab_file"
+            app:layout_constraintEnd_toStartOf="@+id/button_chatbox_send"
             app:layout_constraintStart_toStartOf="parent">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/txt_container_chatbox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="1dp"
-                android:paddingEnd="4dp"
-                android:visibility="visible"
-                app:errorEnabled="false"
-                app:hintEnabled="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edittext_chatbox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true"
-                    android:autoLink="all"
-                    android:autofillHints="@string/enter_message"
-                    android:hint="@string/enter_message"
-                    android:inputType="textMultiLine"
-                    android:lineSpacingExtra="4dp"
-                    android:maxLines="4"
-                    android:paddingBottom="14dp"
-                    android:textColor="#ffffff"
-                    android:textColorHint="#ffffff"
-                    android:visibility="visible" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                android:id="@+id/quote_sender_typing"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edittext_chatbox"
+                android:layout_width="fill_parent"
+                android:layout_height="64dp"
                 android:animateLayoutChanges="true"
-                android:paddingStart="10dp"
-                android:paddingEnd="6dp"
-                android:text="@string/textview"
-                android:textColor="#ffffff"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/quote_text_typing"
-                app:layout_constraintEnd_toEndOf="@+id/quote_text_typing"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
-
-            <TextView
-                android:id="@+id/quote_text_typing"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:alpha="0.75"
-                android:animateLayoutChanges="true"
-                android:background="@drawable/rounded_rectangle_dark"
-                android:maxWidth="300dp"
+                android:autoLink="all"
+                android:autofillHints="@string/enter_message"
+                android:hint="@string/enter_message"
+                android:inputType="textMultiLine"
+                android:lineSpacingExtra="4dp"
                 android:maxLines="4"
-                android:padding="8dp"
-                android:text="@string/textview"
+                android:paddingBottom="14dp"
                 android:textColor="#ffffff"
-                android:textSize="14sp"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/txt_container_chatbox"
-                app:layout_constraintEnd_toEndOf="@+id/txt_container_chatbox"
-                app:layout_constraintStart_toStartOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:textColorHint="#ffffff"
+                android:visibility="visible" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_audio"
@@ -188,13 +166,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:animateLayoutChanges="true"
-            android:backgroundTint="@android:color/transparent"
             android:clickable="true"
             android:contentDescription="@string/record_audio"
             android:focusable="true"
+            app:fabSize="mini"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_chatbox_send"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/txt_container_chatbox"
             app:rippleColor="@color/red_500"
             app:srcCompat="@drawable/ic_baseline_mic_24" />
 
@@ -205,28 +183,29 @@
             android:layout_margin="4dp"
             android:layout_marginEnd="1dp"
             android:animateLayoutChanges="true"
-            android:backgroundTint="@android:color/transparent"
             android:clickable="true"
             android:contentDescription="@string/send_file"
             android:focusable="true"
             android:visibility="visible"
+            app:fabSize="mini"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fab_audio"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/txt_container_chatbox"
             app:rippleColor="@color/red_500"
             app:srcCompat="@drawable/ic_baseline_attach_file_24" />
 
         <Button
             android:id="@+id/button_chatbox_send"
             style="@style/DXSendButton"
-            android:layout_width="64dp"
-            android:layout_height="45dp"
+            android:layout_width="48dp"
+            android:layout_height="40dp"
+            android:layout_margin="8dp"
             android:animateLayoutChanges="true"
             android:background="@drawable/button_ripple"
             android:text="@string/send"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/txt_container_chatbox" />
 
         <LinearLayout
             android:id="@+id/layout_audio"
@@ -279,15 +258,16 @@
         <LinearLayout
             android:id="@+id/layout_pics"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
             android:animateLayoutChanges="true"
             android:background="#DA221E2A"
+            android:gravity="center"
             android:orientation="horizontal"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -311,7 +291,8 @@
                 android:text="@string/pic_help"
                 android:textColor="@color/red_500"
                 android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="visible" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -320,17 +301,16 @@
         android:id="@+id/fab_scroll_down"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:alpha="@dimen/material_emphasis_medium"
         android:backgroundTint="@color/dx_night_950"
         android:clickable="true"
+        android:contentDescription="@string/scroll_down"
         android:focusable="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/frameLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_baseline_arrow_downward_24"
-        android:contentDescription="@string/scroll_down" />
+        app:srcCompat="@drawable/ic_baseline_arrow_downward_24" />
 
     <TextView
         android:id="@+id/txt_status"
@@ -349,3 +329,77 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--This is the backdrop's content with a BottomSheetBehaviour applied to it-->
+<!--    <LinearLayout-->
+<!--        android:id="@+id/contentLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:orientation="vertical"-->
+<!--        app:behavior_peekHeight="56dp"-->
+<!--        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">-->
+
+<!--        &lt;!&ndash;This is the backdrop's header with a title and icon&ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:clickable="true"-->
+<!--            android:background="@drawable/ic_list_header_background"-->
+<!--            android:padding="10dp"-->
+<!--            android:elevation="4dp"-->
+<!--            android:focusable="true">-->
+
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="0 items(s)"/>-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/filterIcon"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="end"-->
+<!--                android:contentDescription="@string/anonymous_messenger"-->
+<!--                app:srcCompat="@drawable/ic_baseline_attach_file_24" />-->
+
+<!--        </LinearLayout>-->
+
+<!--        <ScrollView-->
+<!--            android:background="@color/dx_night_700"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent">-->
+
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/txt_version"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_margin="8dp"-->
+<!--                    android:padding="8dp"-->
+<!--                    android:text="v3.54.56.64"-->
+<!--                    android:textSize="14sp"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+<!--        </ScrollView>-->
+
+<!--        &lt;!&ndash;And finally this is the body of the backdrop's content. You can add here whatever you need inside a view group (LinearLayout, RelativeLayout, SwipeRefreshLayout, ConstraintLayout, etc.)&ndash;&gt;-->
+<!--&lt;!&ndash;        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout&ndash;&gt;-->
+<!--&lt;!&ndash;            android:id="@+id/swiperefresh"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_width="match_parent"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_height="wrap_content"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:background="@color/dx_night_950">&ndash;&gt;-->
+
+<!--&lt;!&ndash;            &lt;!&ndash;The content's body goes here&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>&ndash;&gt;-->
+
+<!--    </LinearLayout>-->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

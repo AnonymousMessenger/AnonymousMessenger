@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -367,12 +368,47 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 View viewParent = (View)arg0.getParent();
                 int parentWidth = viewParent.getWidth();
 
-                //todo allow swiping right for arabic and rtl i18n
                 float newX = arg1.getRawX() + dX.get();
                 newX = Math.min(parentWidth - viewWidth , newX);
 
+                Configuration config = getResources().getConfiguration();
+
                 if(newX>=x.get()){
+                    if(config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+                        //in Right To Left layout
+                        if(newX>=(x.get()+100)){
+                            audioLayout.setVisibility(View.GONE);
+                            txt.setVisibility(View.VISIBLE);
+                            file.setVisibility(View.VISIBLE);
+                            if(quoteTextTyping.getText().length()>0){
+                                quoteTextTyping.setVisibility(View.VISIBLE);
+                                quoteSenderTyping.setVisibility(View.VISIBLE);
+                            }
+                            Intent intent = new Intent(this, AudioRecordingService.class);
+                            intent.setAction("stop_recording");
+                            startService(intent);
+                            LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
+                            timeBroadcastReceiver = null;
+                            txtAudioTimer.setText(getString(R.string._00_00));
+                            arg0.animate()
+                                    .x(x.get())
+                                    .y(arg0.getY())
+                                    .setDuration(0)
+                                    .start();
+                        }else{
+                            arg0.animate()
+                                    .x(newX)
+                                    .y(arg0.getY())
+                                    .setDuration(0)
+                                    .start();
+                        }
+                    }
                     return true;
+                }
+                if(newX<=(x.get())){
+                    if(config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+                        return true;
+                    }
                 }
                 if(newX<=(x.get()-100)){
                     audioLayout.setVisibility(View.GONE);
@@ -481,7 +517,19 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             }).start();
         });
 
+/*
+        CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinatorLayout);
 
+        LinearLayout contentLayout = coordinatorLayout.findViewById(R.id.contentLayout);
+
+//        BottomSheetBehavior sheetBehavior = BottomSheetBehavior.from(contentLayout);
+//        BottomSheetBehavior.from(contentLayout).setDraggable(true);
+        BottomSheetBehavior.from(contentLayout).setFitToContents(false);
+        BottomSheetBehavior.from(contentLayout).setHideable(true);//prevents the bottom sheet from completely hiding off the screen
+        BottomSheetBehavior.from(contentLayout).setState(BottomSheetBehavior.STATE_HIDDEN);
+
+//        BottomSheetBehavior.from(contentLayout).setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+*/
 
         //run db message checker to delete any old messages then tell us to update ui
 //        checkMessages();

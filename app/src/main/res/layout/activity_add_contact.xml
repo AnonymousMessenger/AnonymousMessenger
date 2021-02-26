@@ -14,6 +14,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/txt_lbl_myaddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:padding="20dp"
+        android:text="@string/myaddress"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_bar" />
+
+    <ImageView
+        android:id="@+id/qr_my_address"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_lbl_myaddress"
+        app:srcCompat="@drawable/ic_baseline_emoji_emotions_24"
+        android:contentDescription="@string/qr_code_image" />
+
     <Button
         android:id="@+id/btn_scan_contact"
         style="@style/DXSendButton"
@@ -27,18 +50,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/qr_my_address"
         app:layout_constraintTop_toTopOf="@+id/qr_my_address" />
-
-    <TextView
-        android:id="@+id/txt_lbl_myaddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="monospace"
-        android:padding="20dp"
-        android:text="@string/myaddress"
-        android:textSize="22sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txt_myaddress"
@@ -87,15 +98,5 @@
             android:imeOptions="actionDone"
             android:textSize="@dimen/text_size_medium" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <ImageView
-        android:id="@+id/qr_my_address"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_margin="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_lbl_myaddress"
-        app:srcCompat="@drawable/ic_baseline_emoji_emotions_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

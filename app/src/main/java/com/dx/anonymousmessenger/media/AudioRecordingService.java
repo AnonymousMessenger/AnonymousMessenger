@@ -34,7 +34,6 @@ public class AudioRecordingService extends Service {
     private boolean status = true;
     AudioManager audioManager;
     private int callTimer = 0;
-    private boolean timerOn;
     ByteArrayOutputStream outputStream;
     private String address;
 
@@ -48,68 +47,22 @@ public class AudioRecordingService extends Service {
 
     @Override
     public void onCreate() {
-        byte[] buffer = new byte[minBufSize];
-        try{
-            recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,channelConfig,audioFormat,buffer.length);
-            if(recorder.getRecordingState() != AudioRecord.RECORDSTATE_STOPPED ){
-                Handler handler = new Handler(getMainLooper());
-                handler.post(()->{
-                    Toast.makeText(this, R.string.mic_in_use, Toast.LENGTH_LONG).show();
-                });
-                stopRecording();
-                return;
-            }
-        }catch (Exception e){Handler handler = new Handler(getMainLooper());
-            handler.post(()->{
-                Toast.makeText(this, R.string.recording_failed, Toast.LENGTH_LONG).show();
-            });
-            stopRecording();
-            return;
-        }
-        new Thread(this::startTiming).start();
-        outputStream = new ByteArrayOutputStream();
 
-        new Thread(()->{
-            try{
-                recorder.startRecording();
-                if(recorder.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING ){
-                    Handler handler = new Handler(getMainLooper());
-                    handler.post(()->{
-                        Toast.makeText(this, R.string.mic_in_use, Toast.LENGTH_LONG).show();
-                    });
-                    stopRecording();
-                    return;
-                }
-                while(status) {
-                    if(outputStream.size() >= Runtime.getRuntime().freeMemory()){
-                        status = false;
-                        outputStream = null;
-                        return;
-                    }
-                    //reading data from MIC into buffer
-                    recorder.read(buffer, 0, buffer.length);
-                    //add buffer to recorded bytes
-                    outputStream.write(buffer);
-                }
-            }catch (Exception ignored){
-                recorder.release();
-                onDestroy();
-//            stopRecording(true);
-            }
-        }).start();
 
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(Objects.equals(intent.getAction(), "stop_recording")){
-            status = false;
             outputStream = null;
+            status = false;
+            stopRecording();
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
         }
         this.address = DbHelper.getFullAddress(intent.getStringExtra("address"),
                 (DxApplication) getApplication());
+        startRecording();
 //        String action = intent.getAction();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -127,13 +80,15 @@ public class AudioRecordingService extends Service {
     }
 
     public void stopRecording() {
-        timerOn = false;
         status = false;
         if(recorder==null || recorder.getState()==AudioRecord.STATE_UNINITIALIZED){
             return;
         }
-        recorder.stop();
-        recorder.release();
+        try{
+            recorder.stop();
+            recorder.release();
+        }catch (Exception ignored){}
+
         if(outputStream==null){
             return;
         }
@@ -192,8 +147,7 @@ public class AudioRecordingService extends Service {
 
     public void startTiming(){
         try{
-            timerOn = true;
-            while(timerOn){
+            while(status){
                 try {
                     Thread.sleep(1000);
                 }catch (Exception ignored) {}
@@ -204,7 +158,60 @@ public class AudioRecordingService extends Service {
                 LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(gcm_rec);
             }
         }catch (Exception ignored){
-            timerOn = false;
         }
+    }
+
+    public void startRecording(){
+        byte[] buffer = new byte[minBufSize];
+        try{
+            recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,channelConfig,audioFormat,buffer.length);
+//            if(recorder.getRecordingState() != AudioRecord.RECORDSTATE_STOPPED ){
+//                Handler handler = new Handler(getMainLooper());
+//                handler.post(()->{
+//                    Toast.makeText(this, R.string.mic_in_use, Toast.LENGTH_SHORT).show();
+//                });
+//                stopRecording();
+//                return;
+//            }
+        }catch (Exception e){Handler handler = new Handler(getMainLooper());
+            handler.post(()->{
+                Toast.makeText(this, R.string.recording_failed, Toast.LENGTH_LONG).show();
+            });
+            stopRecording();
+            return;
+        }
+
+        outputStream = new ByteArrayOutputStream();
+
+        new Thread(()->{
+            try{
+                if(!status){
+                    return;
+                }
+                recorder.startRecording();
+                if(recorder.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING ){
+                    Handler handler = new Handler(getMainLooper());
+                    handler.post(()-> Toast.makeText(this, R.string.mic_in_use, Toast.LENGTH_SHORT).show());
+                    stopRecording();
+                    return;
+                }
+                new Thread(this::startTiming).start();
+                while(status) {
+                    if(outputStream.size() >= Runtime.getRuntime().freeMemory()){
+                        status = false;
+                        outputStream = null;
+                        return;
+                    }
+                    //reading data from MIC into buffer
+                    recorder.read(buffer, 0, buffer.length);
+                    //add buffer to recorded bytes
+                    outputStream.write(buffer);
+                }
+            }catch (Exception ignored){
+                recorder.release();
+                onDestroy();
+//            stopRecording(true);
+            }
+        }).start();
     }
 }

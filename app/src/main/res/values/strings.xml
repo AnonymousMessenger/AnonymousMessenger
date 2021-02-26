@@ -302,5 +302,6 @@
     <string name="mic_in_use">Mic may be in use by another app</string>
     <string name="back_image">go back</string>
     <string name="subtitle">Subtitle</string>
+    <string name="qr_code_image">Image containing QR code</string>
 
 </resources>
