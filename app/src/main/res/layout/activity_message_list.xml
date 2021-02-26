@@ -151,6 +151,7 @@
                 android:autoLink="all"
                 android:autofillHints="@string/enter_message"
                 android:hint="@string/enter_message"
+                android:imeOptions="flagNoPersonalizedLearning"
                 android:inputType="textMultiLine"
                 android:lineSpacingExtra="4dp"
                 android:maxLines="4"

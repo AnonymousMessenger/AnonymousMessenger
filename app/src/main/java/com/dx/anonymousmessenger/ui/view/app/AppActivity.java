@@ -3,9 +3,7 @@ package com.dx.anonymousmessenger.ui.view.app;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Looper;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -59,27 +57,6 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
                 loadPasswordEntryFragment();
             }
         }).start();
-
-        Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
-
-            new Thread() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-//                    Toast.makeText(getApplicationContext(),R.string.crash_message, Toast.LENGTH_LONG).show();
-                    Toast.makeText(getApplicationContext(), paramThrowable.getMessage(), Toast.LENGTH_LONG).show();
-                    Looper.loop();
-                    Looper.loop();
-                }
-            }.start();
-            try
-            {
-                Thread.sleep(4000); // Let the Toast display before app will get shutdown
-            }
-            catch (InterruptedException ignored) {    }
-            System.exit(2);
-        });
-
     }
 
     public void goToTorActivity() {

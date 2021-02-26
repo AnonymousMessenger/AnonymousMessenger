@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,6 +39,8 @@ import java.io.ByteArrayOutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 public class PictureViewerActivity extends DxActivity {
 
@@ -142,6 +145,9 @@ public class PictureViewerActivity extends DxActivity {
         TextInputLayout textInputLayout = findViewById(R.id.txt_layout_caption);
         textInputLayout.setVisibility(View.VISIBLE);
         TextInputEditText msg = findViewById(R.id.txt_caption);
+        InputMethodManager imm = requireNonNull(
+                ContextCompat.getSystemService(this, InputMethodManager.class));
+        imm.hideSoftInputFromWindow(msg.getWindowToken(), 0);
         FloatingActionButton fabSendMedia = findViewById(R.id.btn_send_media);
         fabSendMedia.setVisibility(View.VISIBLE);
         fabSendMedia.setOnClickListener(v -> {

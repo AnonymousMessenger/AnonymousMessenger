@@ -1,9 +1,12 @@
 package com.dx.anonymousmessenger.ui.view;
 
+import android.os.Bundle;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
@@ -23,6 +26,28 @@ import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static java.util.Objects.requireNonNull;
 
 public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.OnTapFilteredListener{
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
+            new Thread() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    Toast.makeText(getApplicationContext(),R.string.crash_message, Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                }
+            }.start();
+            try
+            {
+                Thread.sleep(4000); // Let the Toast display before app will get shutdown
+            }
+            catch (InterruptedException ignored) {    }
+            System.exit(2);
+        });
+    }
 
     /*
      * Wraps the given view in a wrapper that notifies this activity when an

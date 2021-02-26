@@ -57,6 +57,7 @@
                 android:autofillHints="@string/enter_note"
                 android:background="@drawable/rounded_rectangle_dark"
                 android:hint="@string/enter_note"
+                android:imeOptions="flagNoPersonalizedLearning"
                 android:inputType="textMultiLine"
                 android:maxLines="6"
                 android:padding="5dp"

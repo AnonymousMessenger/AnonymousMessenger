@@ -36,7 +36,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -555,24 +554,6 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
         //run db message checker to delete any old messages then tell us to update ui
 //        checkMessages();
-
-        Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
-            new Thread() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-//                    Toast.makeText(getApplicationContext(), R.string.crash_message, Toast.LENGTH_LONG).show();
-                    Toast.makeText(getApplicationContext(), paramThrowable.getMessage(), Toast.LENGTH_LONG).show();
-                    Looper.loop();
-                }
-            }.start();
-            try
-            {
-                Thread.sleep(4000); // Let the Toast display before app will get shutdown
-            }
-            catch (InterruptedException ignored) {    }
-            System.exit(2);
-        });
     }
 
     //fires when clicking on media/file sending items
