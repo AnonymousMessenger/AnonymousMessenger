@@ -238,7 +238,8 @@
     <string name="slide_to_cancel">أسحب للإلغاء</string>
     <string name="sending_file">يتم إرسال ملف</string>
     <string name="sending_part_one">يتم إرسال الجزء الأول</string>
-    <string name="screen_filter_body">برنامج آخر يقوم بالرسم على الشاشة, تم حجب الشاشة لحماية خصوصيتك.</string>
+    <string name="screen_filter_body">يوجد برنامج آخر يقوم بالرسم على الشاشة, تم حجب الشاشة لحماية
+        خصوصيتك.</string>
     <string name="screen_filter_title">تم اكتشاف غطاء على الشاشة</string>
     <string name="try_now">جرٍٍٍب الآن</string>
     <string name="mic_in_use">قد يكون اللاقط الصوتي مستخدم من قبل برنامج آخر</string>

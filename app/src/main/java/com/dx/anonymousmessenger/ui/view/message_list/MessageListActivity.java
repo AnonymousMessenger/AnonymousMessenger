@@ -466,7 +466,6 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     ContextCompat.getSystemService(v.getContext(), InputMethodManager.class));
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
-
             ConstraintLayout cl = findViewById(R.id.layout_chatbox);
 //            cl.setVisibility(View.GONE);
 

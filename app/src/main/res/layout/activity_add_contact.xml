@@ -14,89 +14,99 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/txt_lbl_myaddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="monospace"
-        android:padding="20dp"
-        android:text="@string/myaddress"
-        android:textSize="22sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_bar" />
-
-    <ImageView
-        android:id="@+id/qr_my_address"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_margin="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_lbl_myaddress"
-        app:srcCompat="@drawable/ic_baseline_emoji_emotions_24"
-        android:contentDescription="@string/qr_code_image" />
-
-    <Button
-        android:id="@+id/btn_scan_contact"
-        style="@style/DXSendButton"
-        android:layout_width="82dp"
-        android:layout_height="64dp"
-        android:layout_margin="8dp"
-        android:animateLayoutChanges="true"
-        android:background="@drawable/rounded_shape"
-        android:text="@string/scan"
-        app:layout_constraintBottom_toBottomOf="@+id/qr_my_address"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/qr_my_address"
-        app:layout_constraintTop_toTopOf="@+id/qr_my_address" />
-
-    <TextView
-        android:id="@+id/txt_myaddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="@drawable/button_ripple"
-        android:padding="24dp"
-        android:text="@string/myaddress"
-        android:textSize="@dimen/text_size_large"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/qr_my_address" />
-
-    <TextView
-        android:id="@+id/txt_lbl_contact_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:fontFamily="monospace"
-        android:padding="20dp"
-        android:text="@string/lbl_contact_address"
-        android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@+id/txt_container_contact_address"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/txt_container_contact_address"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        app:errorEnabled="false"
-        app:hintEnabled="true"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_bar">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txt_contact_address"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_contact_address"
-            android:imeOptions="flagNoPersonalizedLearning|actionDone"
-            android:textSize="@dimen/text_size_medium" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_lbl_myaddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="@string/myaddress"
+                android:textSize="22sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/qr_my_address"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:contentDescription="@string/qr_code_image"
+                    app:srcCompat="@drawable/ic_baseline_emoji_emotions_24" />
+
+                <Button
+                    android:id="@+id/btn_scan_contact"
+                    style="@style/DXSendButton"
+                    android:layout_width="82dp"
+                    android:layout_height="64dp"
+                    android:layout_margin="8dp"
+                    android:animateLayoutChanges="true"
+                    android:background="@drawable/rounded_shape"
+                    android:gravity="center"
+                    android:text="@string/scan" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_myaddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/button_ripple"
+                android:gravity="center"
+                android:padding="24dp"
+                android:text="@string/myaddress"
+                android:textSize="@dimen/text_size_large" />
+
+            <TextView
+                android:id="@+id/txt_lbl_contact_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="@string/lbl_contact_address"
+                android:textSize="22sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txt_container_contact_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:errorEnabled="false"
+                app:hintEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txt_contact_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="@string/hint_contact_address"
+                    android:imeOptions="flagNoPersonalizedLearning|actionDone"
+                    android:textSize="@dimen/text_size_medium" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
