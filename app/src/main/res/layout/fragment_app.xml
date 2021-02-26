@@ -15,7 +15,7 @@
             android:layout_width="0dp"
             android:layout_height="26dp"
             android:layout_margin="4dp"
-            android:background="@drawable/glow_back"
+            android:background="@drawable/chat_box_background"
             android:fontFamily="sans-serif-condensed"
             android:gravity="center"
             android:padding="4dp"
