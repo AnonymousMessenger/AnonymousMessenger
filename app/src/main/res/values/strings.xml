@@ -107,7 +107,7 @@
         stored on your phone</string>
     <string name="icon_for_image_to_send">icon for image to send</string>
     <string name="image">image</string>
-    <string name="pic_help">Cancel</string>
+    <string name="pic_help">Close</string>
     <string name="send_media_to">"Send Media to "</string>
     <string name="picure_view">Image View</string>
     <string name="media_message">media message</string>

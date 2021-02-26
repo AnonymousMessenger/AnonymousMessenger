@@ -280,7 +280,7 @@
                 android:layout_weight="0.25"
                 android:animateLayoutChanges="true"
                 android:contentDescription="@string/recording"
-                app:srcCompat="@android:drawable/ic_menu_revert" />
+                app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
             <TextView
                 android:id="@+id/txt_pic_help"

@@ -211,6 +211,11 @@ public class PictureViewerActivity extends DxActivity {
         return super.onSupportNavigateUp();
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     private void saveToStorage(){
         try{
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {

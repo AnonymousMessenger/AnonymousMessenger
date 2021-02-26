@@ -557,16 +557,16 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     //fires when clicking on media/file sending items
     @Override
     public void onItemClick(View view, int position) {
-        mediaRecyclerView.setVisibility(View.GONE);
-        send.setVisibility(View.VISIBLE);
-        audio.setVisibility(View.VISIBLE);
-        file.setVisibility(View.VISIBLE);
-        txt.setVisibility(View.VISIBLE);
-        if(quoteTextTyping.getText().length()>0){
-            quoteTextTyping.setVisibility(View.VISIBLE);
-            quoteSenderTyping.setVisibility(View.VISIBLE);
-        }
-        picsHelp.setVisibility(View.GONE);
+//        mediaRecyclerView.setVisibility(View.GONE);
+//        send.setVisibility(View.VISIBLE);
+//        audio.setVisibility(View.VISIBLE);
+//        file.setVisibility(View.VISIBLE);
+//        txt.setVisibility(View.VISIBLE);
+//        if(quoteTextTyping.getText().length()>0){
+//            quoteTextTyping.setVisibility(View.VISIBLE);
+//            quoteSenderTyping.setVisibility(View.VISIBLE);
+//        }
+//        picsHelp.setVisibility(View.GONE);
         if(position == 0){
 //            Toast.makeText(this, R.string.feature_unready,Toast.LENGTH_SHORT).show();
             Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
