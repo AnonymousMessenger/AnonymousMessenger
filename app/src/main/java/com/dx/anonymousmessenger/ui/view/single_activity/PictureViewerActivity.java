@@ -28,6 +28,7 @@ import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.util.Utils;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -69,6 +70,11 @@ public class PictureViewerActivity extends DxActivity {
         }catch (Exception ignored){}
 
         if(getIntent().getBooleanExtra("appData",false)){
+            ((MaterialToolbar)findViewById(R.id.toolbar)).inflateMenu(R.menu.picture_menu);
+            ((MaterialToolbar)findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
+                onOptionsItemSelected(item);
+                return false;
+            });
             new Thread(()->{
                 Bitmap image;
                 try{
