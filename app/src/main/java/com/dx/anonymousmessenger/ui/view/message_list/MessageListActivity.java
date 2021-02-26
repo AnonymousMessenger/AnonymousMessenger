@@ -100,6 +100,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     private String address;
     private String nickname;
     private AtomicReference<Float> x = null;
+    private boolean started = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -821,7 +822,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     return;
                 }
 
-                updateUi(true,false);
+                updateUi(true,true);
             }
         };
         try {
@@ -830,8 +831,15 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         {
             e.printStackTrace();
         }
-        updateUi(true,true);
-        ping();
+
+        if(started){
+            updateUi(false,false);
+        }else{
+            updateUi(true,false);
+            started = true;
+            ping();
+        }
+
         checkMessages();
     }
 
