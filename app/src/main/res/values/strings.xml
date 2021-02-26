@@ -287,16 +287,14 @@
     <string name="include_notice_logs">Include Notice Logs</string>
     <string name="decrypting2">Decrypting</string>
     <string name="open_file_question">Open file in another app ?</string>
-    <string name="open_file_describe">This will decrypt the file and give access to a third party
-        app that could compromise the file</string>
+    <string name="open_file_describe">This will decrypt the file and give access to a third party         app that could compromise the file</string>
     <string name="deleted_logs">The log has been cleared</string>
     <string name="saving">"Saving "</string>
     <string name="cancel">Cancel</string>
     <string name="slide_to_cancel">Slide to cancel</string>
     <string name="sending_file">Sending file</string>
     <string name="sending_part_one">Sending part 1</string>
-    <string name="screen_filter_body">Another app is drawing on top of AnonymousMessenger,
-        the screen is blocked to protect your privacy</string>
+    <string name="screen_filter_body">Another app is drawing on top of AnonymousMessenger,         the screen is blocked to protect your privacy</string>
     <string name="screen_filter_title">Screen overlay detected</string>
     <string name="try_now">Try now</string>
     <string name="mic_in_use">Mic may be in use by another app</string>

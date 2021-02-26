@@ -91,8 +91,6 @@
     <string name="waiting_for_tor">tor -i järgi ootamas</string>
     <string name="oh_no">Oi Ei!</string>
     <string name="did_you_forget_your_password">Kas sa unustasid oma salasõna?</string>
-    <string name="hello_hello" translatable="false">tere, tere!</string>
-    <string name="_11_40" translatable="false">11:40</string>
     <string name="crash_message">Anonüümne Sõnumi Saatja: sa oled RAM -ist otsas.</string>
     <string name="no_encryption_yet">Pole enkrüptsiooniks valmis veel</string>
     <string name="no_session">Seanssi ei eksisteeri, loon seanssi nüüd</string>
@@ -286,5 +284,35 @@
     <string name="delete_note_question">Kas kustutada see märge?</string>
     <string name="delete_note_details">seda ei saa tagasi võtta</string>
     <string name="delete_note">Kustuta</string>
+    <string name="open_link_question">Kas avada see link?</string>
+    <string name="open_link_describe">Linkide avamine väljaspool erarakendusi võib teid deanonüümseks muuta, tehke seda ainult siis, kui usaldate linki või kasutate võimaluse korral Tori brauserit</string>
+    <string name="scan">"Skannige QR-koodi "</string>
+    <string name="contact_added">Lisatud kontakt</string>
+    <string name="cam_perm_ask_title">"Kaamera luba "</string>
+    <string name="why_need_cam">"QR-skannimine ei toimi ilma kaamera loata "</string>
+    <string name="ask_for_cam_btn">Ok</string>
+    <string name="invalid_address">"Vale aadress "</string>
+    <string name="action_log">Turvalogi</string>
+    <string name="delete_log_question">"Kustutada? "</string>
+    <string name="delete_log_details">"Seda ei saa tagasi võtta "</string>
+    <string name="action_log_notice">"Kaasa teade "</string>
+    <string name="action_clear_log">"Kustuta logi "</string>
+    <string name="include_notice_logs">"Kaasa teatelogid "</string>
+    <string name="decrypting2">Krüptimine</string>
+    <string name="open_file_question">"Kas avada fail teises rakenduses? "</string>
+    <string name="open_file_describe">"See dekrüpteerib faili ja annab juurdepääsu kolmanda osapoole rakendusele, mis võib faili ohustada "</string>
+    <string name="deleted_logs">"Logi on kustutatud "</string>
+    <string name="saving">Säästmine</string>
+    <string name="cancel">Tühista</string>
+    <string name="slide_to_cancel">"Tühistamiseks libistage "</string>
+    <string name="sending_file">"Faili saatmine "</string>
+    <string name="sending_part_one">"Esimese osa saatmine "</string>
+    <string name="screen_filter_body">"Teine rakendus joonistab Anonymous Messengeri peale, teie privaatsuse kaitsmiseks on ekraan blokeeritud "</string>
+    <string name="screen_filter_title">"Tuvastati ekraani ülekate "</string>
+    <string name="try_now">"Proovige nüüd "</string>
+    <string name="mic_in_use">"Mikrofoni võib mõni teine rakendus kasutada "</string>
+    <string name="back_image">"mine tagasi "</string>
+    <string name="subtitle">Alapealkiri</string>
+    <string name="qr_code_image">"Pilt, mis sisaldab QR-koodi "</string>
 
-    </resources>
+</resources>
