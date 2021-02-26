@@ -192,8 +192,19 @@ public class ServerSocketViaTor {
                             Log.e("TOO MANY SOCKETS","open sockets: "+sockets);
                             continue;
                         }
+                        if(!sock.getInetAddress().toString().contains("127.0.0.1")){
+                            sock.close();
+                            continue;
+                        }
                         sockets.getAndIncrement();
                         Log.d("SERVER CONNECTION", "RECEIVING SOMETHING");
+//                        System.out.println("Address: ");
+//                        System.out.println(sock.getInetAddress());
+//
+//                        System.out.println("Port: ");
+//                        System.out.println(sock.getPort());
+//                        System.out.println("Buffer Size: ");
+//                        System.out.println(sock.getSendBufferSize());
 
                         new Thread(()->{
                             try{

@@ -30,6 +30,7 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -74,6 +75,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static java.util.Objects.requireNonNull;
 
 public class MessageListActivity extends DxActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, MyRecyclerViewAdapter.ItemClickListener, CallBack {
 
@@ -459,13 +462,31 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_CODE);
                 return;
             }
-            mediaRecyclerView.setVisibility(View.VISIBLE);
+
+            InputMethodManager imm = requireNonNull(
+                    ContextCompat.getSystemService(v.getContext(), InputMethodManager.class));
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+
+            ConstraintLayout cl = findViewById(R.id.layout_chatbox);
+//            cl.setVisibility(View.GONE);
+
             send.setVisibility(View.GONE);
             audio.setVisibility(View.GONE);
             file.setVisibility(View.GONE);
             txt.setVisibility(View.GONE);
             quoteTextTyping.setVisibility(View.GONE);
             quoteSenderTyping.setVisibility(View.GONE);
+
+            Animation bottomUp = AnimationUtils.loadAnimation(this,
+                    R.anim.bottom_up);
+            cl.startAnimation(bottomUp);
+            cl.setVisibility(View.VISIBLE);
+
+//            mediaRecyclerView.startAnimation(bottomUp);
+            mediaRecyclerView.setVisibility(View.VISIBLE);
+
+//            mediaRecyclerView.setVisibility(View.VISIBLE);
             picsHelp.setVisibility(View.VISIBLE);
 
             new Thread(()->{
