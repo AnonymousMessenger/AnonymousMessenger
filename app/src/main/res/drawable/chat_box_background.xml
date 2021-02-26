@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/dx_white">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#1B012B"
+                android:endColor="#21082B"
+                android:angle="-90"/>
+            <!--                        <solid android:color="@color/dx_brand_green" />-->
+            <corners android:radius="9dp" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/rounded_from_top" />
+</ripple>
