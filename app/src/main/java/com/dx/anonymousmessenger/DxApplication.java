@@ -476,10 +476,11 @@ public class DxApplication extends Application {
         String CHANNEL_ID = "messages";
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notification = new Notification.Builder(this,CHANNEL_ID)
+            notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title)
-                    .setContentText(msg)
+                    .setSubText(msg)
+//                    .setContentText(msg)
                     .setContentIntent(resultPendingIntent)
                     .setAutoCancel(true)
                     .setChannelId(CHANNEL_ID).build();
@@ -514,7 +515,7 @@ public class DxApplication extends Application {
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notification = new Notification.Builder(this,CHANNEL_ID)
+            notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title)
                     .setContentText(msg)
@@ -548,10 +549,11 @@ public class DxApplication extends Application {
 //        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notification = new Notification.Builder(this,CHANNEL_ID)
+            notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title)
-                    .setContentText(msg)
+                    .setSubText(msg)
+//                    .setContentText(msg)
                     .setProgress(100,progress,false)
 //                    .setContentIntent(resultPendingIntent)
                     .setAutoCancel(true)
@@ -594,7 +596,7 @@ public class DxApplication extends Application {
                     .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setColor(getResources().getColor(R.color.dx_night_940,getTheme()))
                     .setContentTitle(title)
-                    .addAction(0, msg, hideNotification)
+                    .addAction(R.drawable.ic_baseline_settings_24, msg, hideNotification)
                     .setPriority(NotificationManager.IMPORTANCE_LOW)
 //                    .setContentText(msg)
                     .setContentIntent(gotoApp)

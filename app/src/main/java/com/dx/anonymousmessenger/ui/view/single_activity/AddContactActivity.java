@@ -95,6 +95,9 @@ public class AddContactActivity extends DxActivity {
                     return;
                 }
                 if(s.toString().endsWith(".onion") && s.toString().length()>55){
+                    if(context==null){
+                        return;
+                    }
                     new AlertDialog.Builder(context,R.style.AppAlertDialog)
                         .setTitle(R.string.add_contact)
                         .setMessage(getString(R.string.confirm_add_contact)+s.toString()+" ?")

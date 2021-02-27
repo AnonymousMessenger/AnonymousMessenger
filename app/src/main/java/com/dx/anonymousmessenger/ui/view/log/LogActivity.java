@@ -14,6 +14,7 @@ import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -40,6 +41,11 @@ public class LogActivity extends DxActivity {
             setTitle(R.string.action_log);
             setBackEnabled(true);
         }catch (Exception ignored){}
+        ((MaterialToolbar)findViewById(R.id.toolbar)).inflateMenu(R.menu.log_main_menu);
+        ((MaterialToolbar)findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
+            onOptionsItemSelected(item);
+            return false;
+        });
 
 //        List<Object[]> list = DbHelper.getLogList((DxApplication)getApplication());
         switchNotice = findViewById(R.id.switch_notice);

@@ -821,6 +821,8 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 }else if(intent.getStringExtra("address")!=null && Objects.equals(intent.getStringExtra("address"), getIntent().getStringExtra("address"))){
                     updateUi(true,false);
                     return;
+                }else if(intent.getStringExtra("address")!=null){
+                    return;
                 }
 
                 updateUi(true,true);
