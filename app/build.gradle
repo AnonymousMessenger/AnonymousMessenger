@@ -7,11 +7,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        applicationId "com.example.anonymousmessenger"
+        applicationId "com.dx.anonymousmessenger"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 22
-        versionName "0.7.0"
+        versionCode 23
+        versionName "0.7.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
