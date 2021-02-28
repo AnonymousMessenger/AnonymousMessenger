@@ -1,95 +1,76 @@
 
 package net.sf.msopentech.thali.java.toronionproxy;
 
-import net.sf.runjva.sourceforge.jsocks.protocol.Socks5Proxy;
-import net.sf.runjva.sourceforge.jsocks.protocol.SocksSocket;
+import net.sf.runjva.sourceforge.jsocks.protocol.Socks5Message;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.nio.ByteBuffer;
-
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 public class Utilities {
     private static final int READ_TIMEOUT_MILLISECONDS = 30000;
     private static final int CONNECT_TIMEOUT_MILLISECONDS = 60000;
-//    private static final Logger LOG = LoggerFactory.getLogger(Utilities.class);
 
     private Utilities() {
     }
 
     public static Socket socks4aSocketConnection(String networkHost, int networkPort, String socksHost, int socksPort)
             throws IOException {
-        SocketAddress proxyAddress = InetSocketAddress.createUnresolved(socksHost,socksPort);
-        SocketAddress onion = InetSocketAddress.createUnresolved(networkHost,networkPort);
-        java.net.Proxy proxy = new java.net.Proxy(Proxy.Type.SOCKS,proxyAddress);
-        Socket socket = new Socket(proxy);
-        socket.connect(onion,CONNECT_TIMEOUT_MILLISECONDS);
-        return socket;
-    }
-
-
-    public static Socket socks5rawSocketConnection(String networkHost, int networkPort, String socksHost, int socksPort)
-            throws IOException {
-
-        int bytesRead;
-        boolean end = false;
-        String messageString = "";
-        final byte[] messageByte = new byte[1000];
-
         Socket socket = new Socket();
         socket.setSoTimeout(READ_TIMEOUT_MILLISECONDS);
         SocketAddress socksAddress = new InetSocketAddress(socksHost, socksPort);
         socket.connect(socksAddress, CONNECT_TIMEOUT_MILLISECONDS);
 
+        ///////////////////////////////////////////////////////////////
+        DataInputStream inputStream = new DataInputStream(socket.getInputStream());
         DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
         outputStream.write((byte) 0x05);
         outputStream.write((byte) 0x01);
         outputStream.write((byte) 0x00);
-        outputStream.write((byte) 0x01);
-        outputStream.write(networkHost.getBytes());
-        outputStream.writeShort((short) networkPort);
+        outputStream.flush();
 
-        DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-        messageByte[0] = inputStream.readByte();
-        messageByte[1] = inputStream.readByte();
-        if (messageByte[0] != (byte) 0x05 || messageByte[1] != (byte) 0x00) {
-            socket.close();
-            throw new IOException("SOCKS4a connect failed, got " + messageByte[0] + " - " + messageByte[1] +
-                    ", but expected 0x00 - 0x5a");
+        byte[] response = new byte[2];
+        inputStream.readFully(response);
+        // check if server responded with correct version and no-authentication method
+        if (response[0] != (byte) 0x05 || response[1] != (byte) 0x00) {
+            throw new IOException("SOCKS5 connect failed, got " + response[0] + " - " + response[1] +
+                    ", but expected 0x05 - 0x00");
         }
 
-        ByteBuffer byteBuffer = ByteBuffer.wrap(messageByte, 0, 2);
+        Socks5Message socks5Message = new Socks5Message(1,networkHost,networkPort);
+        socks5Message.write(outputStream);
+        outputStream.flush();
+        ///////////////////////////////////////////////////////////////
 
-        int bytesToRead = byteBuffer.getShort();
-        System.out.println("About to read " + bytesToRead + " octets");
+        byte[] header = new byte[4];
+        inputStream.readFully(header, 0, 4);
 
-        while (!end) {
-            bytesRead = inputStream.read(messageByte);
-            messageString += new String(messageByte, 0, bytesRead);
-            if (messageString.length() == bytesToRead) {
-                end = true;
-            }
+        if (header[1] != (byte) 0x00) {
+            System.out.println("ERROR REQUEST NOT OK: "+header[1]);
+            throw new IOException("SOCKS5 connect failed");
         }
 
-        return socket;
+        if (header[3] == (byte) 0x01) {
+            System.out.println("GOT IP ADDRESS BACK");
+            byte[] addr = new byte[4];
+            inputStream.readFully(addr, 0, 4);
+            header = new byte[2];
+            inputStream.readFully(header, 0, 2);
+            return socket;
+        }else if(header[3] == (byte) 0x03){
+            System.out.println("GOT ADDRESS BACK");
+            int len = header[1];
+            byte[] host = new byte[len];
+            inputStream.readFully(host, 0, len);
+            header = new byte[2];
+            inputStream.readFully(header, 0, 2);
+            return  socket;
+        }
 
-    }
-
-    public static Socket Socks5connection(Socks5Proxy proxy, String onionUrl, int HiddenServicePort) throws IOException {
-        Socket ssock = new SocksSocket(proxy, onionUrl, HiddenServicePort);
-        ssock.setTcpNoDelay(true);
-        return ssock;
-    }
-
-    public static Socket Socks5connection(String networkHost, int networkPort, String socksHost, int socksPort) throws IOException {
-        return Socks5connection(new Socks5Proxy(socksHost,socksPort),networkHost, networkPort);
+        throw new IOException("SOCKS5 connect failed");
     }
 
 }

@@ -14,7 +14,7 @@ import java.net.UnknownHostException;
  * SOCKS5 request/response message.
  */
 
-class Socks5Message extends ProxyMessage {
+public class Socks5Message extends ProxyMessage {
 	/** Address type of given message */
 	public int addrType;
 
