@@ -10,8 +10,8 @@ android {
         applicationId "com.example.anonymousmessenger"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 23
-        versionName "0.7.1"
+        versionCode 24
+        versionName "0.7.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
