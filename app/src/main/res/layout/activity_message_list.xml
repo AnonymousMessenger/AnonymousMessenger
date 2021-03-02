@@ -214,22 +214,26 @@
             android:id="@+id/layout_audio"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
             android:animateLayoutChanges="true"
             android:background="@drawable/glow_red"
             android:orientation="horizontal"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/fab_audio"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/txt_container_chatbox"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/imageView3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.25"
+                android:layout_marginStart="4dp"
+                android:layout_weight="0.50"
                 android:animateLayoutChanges="true"
                 android:contentDescription="@string/recording"
+                android:paddingStart="3dp"
+                android:paddingEnd="1dp"
                 app:srcCompat="@drawable/ic_baseline_mic_red_36" />
 
             <TextView
@@ -246,12 +250,13 @@
 
             <TextView
                 android:id="@+id/txt_cancel_explain"
-                android:layout_width="159dp"
+                android:layout_width="135dp"
                 android:layout_height="match_parent"
+                android:layout_marginEnd="65dp"
                 android:layout_weight="1"
                 android:animateLayoutChanges="true"
-                android:fontFamily="sans-serif-condensed"
-                android:gravity="center"
+                android:fontFamily="casual"
+                android:gravity="center|end"
                 android:text="@string/slide_to_cancel"
                 android:textColor="@color/red_500"
                 android:textStyle="bold" />

@@ -301,5 +301,6 @@
     <string name="back_image">go back</string>
     <string name="subtitle">Subtitle</string>
     <string name="qr_code_image">Image containing QR code</string>
+    <string name="go_to_app">open app</string>
 
 </resources>

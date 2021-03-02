@@ -54,7 +54,7 @@ public class Utilities {
         }
 
         if (header[3] == (byte) 0x01) {
-            System.out.println("GOT IP ADDRESS BACK");
+            // tor will respond with a 0.0.0.0 IP address
             byte[] addr = new byte[4];
             inputStream.readFully(addr, 0, 4);
             header = new byte[2];

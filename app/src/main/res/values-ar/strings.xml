@@ -109,7 +109,7 @@
     <string name="media_message">رسالة وسائط</string>
     <string name="caption">عنوان</string>
     <string name="still_background">ما يزال يشتغل فالخلفية</string>
-    <string name="click_to_hide">إضغط هنا لإخفاء هذا الإشعار</string>
+    <string name="click_to_hide">إخفاء هذا الإشعار</string>
     <string name="unpin">إلغاء التثبيت</string>
     <string name="profile_contact">رؤية البروفايل</string>
     <string name="save_picture">تخزين الصورة</string>
@@ -186,7 +186,8 @@
     <string name="unknown_file_size">حجم الملف غير معروف</string>
     <string name="recording_failed">ﻻ يمكن التسجيل اﻵن, ربما توجد مكالمة جارية؟</string>
     <string name="security_tips01">إستعمل كيبورد يحترم حريتك وﻻ يتصل بالإنترنت, نحن ننصح بإستعمال OpenBoard</string>
-    <string name="security_tips02">أمنك يعتمد بشكل كبير على التطبيقات المثبتة على جهازك, نحن ننصح بتغيير برامجك الإفترضية لبرامج من مخزن f-doid</string>
+    <string name="security_tips02">أمنك يعتمد بشكل كبير على التطبيقات المثبتة على جهازك, نحن ننصح
+        بتغيير برامجك الإفترضية لبرامج من مخزن f-droid</string>
     <string name="feature_unready">ستكون هذه الميزة متوفرة في الإصدار القادم</string>
     <string name="security_tips03">حاول أﻻ تلصق عنوان صديقك في المتصفح لأن هذا قد يضع مجهوليتكما في خطر</string>
     <string name="security_tips04">قم بإزالة المسنجر المجهول ليتم حذف حسابك و كافة البيانات نهائيا</string>
@@ -246,4 +247,5 @@
     <string name="back_image">الرجوع إلى الخلف</string>
     <string name="subtitle">عنوان فرعي</string>
     <string name="qr_code_image">صورة تحتوي على كود QRز</string>
+    <string name="go_to_app">فتح التطبيق</string>
 </resources>

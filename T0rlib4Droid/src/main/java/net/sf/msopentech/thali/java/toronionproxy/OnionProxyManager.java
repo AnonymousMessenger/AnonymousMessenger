@@ -378,9 +378,10 @@ public abstract class OnionProxyManager {
             }
         }
 
-        if(new File(torPath).exists()){
+//        if(new File(torPath).exists()){
 //            System.out.println(torPath+" exists !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        }else{
+//        }
+        if(new File(torPath).exists()){
             System.out.println(torPath+" doesn't exist !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 

@@ -595,11 +595,12 @@ public class DxApplication extends Application {
             notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setColor(getResources().getColor(R.color.dx_night_940,getTheme()))
-                    .setContentTitle(title)
+                    .setSubText(title)
                     .addAction(R.drawable.ic_baseline_settings_24, msg, hideNotification)
+                    .addAction(R.drawable.ic_baseline_settings_24, getString(R.string.go_to_app), gotoApp)
                     .setPriority(NotificationManager.IMPORTANCE_LOW)
 //                    .setContentText(msg)
-                    .setContentIntent(gotoApp)
+//                    .setContentIntent(gotoApp)
                     .setChannelId(CHANNEL_ID)
                     .build();
         }else{

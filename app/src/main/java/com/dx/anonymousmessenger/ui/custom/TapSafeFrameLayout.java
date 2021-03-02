@@ -1,4 +1,4 @@
-package com.dx.anonymousmessenger.ui.view.util;
+package com.dx.anonymousmessenger.ui.custom;
 
 import android.content.Context;
 import android.util.AttributeSet;

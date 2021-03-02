@@ -99,6 +99,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     private FrameLayout frameOnline;
     private RecyclerView mediaRecyclerView;
     private LinearLayout picsHelp;
+    private ConstraintLayout chatbox;
     private String address;
     private String nickname;
     private AtomicReference<Float> x = null;
@@ -148,6 +149,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         frameOnline = findViewById(R.id.frame_online);
         scrollDownFab = findViewById(R.id.fab_scroll_down);
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
+        mMessageRecycler.setHasFixedSize(true);
         mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication(), mMessageRecycler, this);
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
 //        ((LinearLayoutManager)mMessageRecycler.getLayoutManager()).setStackFromEnd(true);
@@ -220,6 +222,11 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             }catch (Exception ignored){
                 scrollDownFab.setVisibility(View.GONE);
             }
+        });
+        chatbox = findViewById(R.id.layout_chatbox);
+        chatbox.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            mMessageRecycler.scrollBy(0,-10);
+            mMessageRecycler.scrollBy(0,20);
         });
         send.setOnClickListener(v -> {
             if(((DxApplication) getApplication()).getEntity()==null){
@@ -456,7 +463,6 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             picsHelp.setVisibility(View.GONE);
         });
         file.setOnClickListener(v -> {
-//            pickImage();
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_CODE);
                 return;
@@ -466,7 +472,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     ContextCompat.getSystemService(v.getContext(), InputMethodManager.class));
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
-            ConstraintLayout cl = findViewById(R.id.layout_chatbox);
+            chatbox = findViewById(R.id.layout_chatbox);
 //            cl.setVisibility(View.GONE);
 
             send.setVisibility(View.GONE);
@@ -478,8 +484,8 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
             Animation bottomUp = AnimationUtils.loadAnimation(this,
                     R.anim.bottom_up);
-            cl.startAnimation(bottomUp);
-            cl.setVisibility(View.VISIBLE);
+            chatbox.startAnimation(bottomUp);
+            chatbox.setVisibility(View.VISIBLE);
 
 //            mediaRecyclerView.startAnimation(bottomUp);
             mediaRecyclerView.setVisibility(View.VISIBLE);

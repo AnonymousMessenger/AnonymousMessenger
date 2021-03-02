@@ -17,9 +17,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.dx.anonymousmessenger.R;
-import com.dx.anonymousmessenger.ui.view.util.ScreenFilterDialogFragment;
-import com.dx.anonymousmessenger.ui.view.util.TapSafeFrameLayout;
-import com.dx.anonymousmessenger.ui.view.util.TapSafeToolbar;
+import com.dx.anonymousmessenger.ui.custom.ScreenFilterDialogFragment;
+import com.dx.anonymousmessenger.ui.custom.TapSafeFrameLayout;
+import com.dx.anonymousmessenger.ui.custom.TapSafeToolbar;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -144,7 +144,6 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
         }
     }
 
-
     @Override
     public boolean shouldAllowTap() {
         return showScreenFilterWarning();
@@ -179,5 +178,21 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
         InputMethodManager imm = requireNonNull(
                 ContextCompat.getSystemService(view.getContext(), InputMethodManager.class));
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    @Override
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
+        if(isInMultiWindowMode){
+            showScreenFilterWarning();
+        }
+        super.onMultiWindowModeChanged(isInMultiWindowMode);
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        if(isInPictureInPictureMode){
+            showScreenFilterWarning();
+        }
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
     }
 }
