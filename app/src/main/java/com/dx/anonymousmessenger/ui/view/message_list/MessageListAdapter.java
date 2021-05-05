@@ -1,6 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.message_list;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -59,6 +60,7 @@ import static androidx.core.content.ContextCompat.getDrawable;
 import static androidx.core.content.ContextCompat.getMainExecutor;
 import static androidx.core.content.ContextCompat.getSystemService;
 import static androidx.core.content.ContextCompat.startActivity;
+import static com.dx.anonymousmessenger.file.FileHelper.getFileSize;
 
 public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
@@ -768,7 +770,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private class AudioMessageHolder extends RecyclerView.ViewHolder {
-        TextView timeText,nameText;
+        TextView timeText,nameText,sizeText;
         FloatingActionButton playPauseButton;
 
         AudioMessageHolder(View itemView){
@@ -776,11 +778,16 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             timeText = itemView.findViewById(R.id.text_message_time);
             playPauseButton = itemView.findViewById(R.id.btn_play_pause);
             nameText = itemView.findViewById(R.id.text_message_name);
+            sizeText = itemView.findViewById(R.id.txt_audio_size);
         }
 
+        @SuppressLint("DefaultLocale")
         void bind(QuotedUserMessage message) {
             if(nameText!=null){
                 nameText.setText(message.getSender());
+            }
+            if(sizeText!=null){
+                sizeText.setText(String.format("%db", getFileSize(message.getPath(), mContext)));
             }
             if(nowPlaying!=null && nowPlaying.equals(message.getPath())){
                 playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_pause_24));

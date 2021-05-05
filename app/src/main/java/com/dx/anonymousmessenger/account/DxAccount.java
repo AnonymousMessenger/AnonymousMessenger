@@ -7,6 +7,7 @@ import com.dx.anonymousmessenger.DxApplication;
 import net.sqlcipher.database.SQLiteDatabase;
 
 public class DxAccount {
+    private String address;
     private String nickname;
     private byte[] password;
 
@@ -39,6 +40,11 @@ public class DxAccount {
         this.nickname = nickname;
     }
 
+    public DxAccount(String nickname, String address){
+        this.address = address;
+        this.nickname = nickname;
+    }
+
     public DxAccount(String nickname, byte[] password){
         this.nickname = nickname;
         this.password = password;
@@ -63,4 +69,11 @@ public class DxAccount {
         }
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

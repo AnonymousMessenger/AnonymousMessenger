@@ -32,14 +32,20 @@ import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.tor.TorClientSocks4;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
+import com.dx.anonymousmessenger.util.NetworkUtils;
+import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import net.sf.msopentech.thali.java.toronionproxy.FileUtilities;
+import net.sf.msopentech.thali.java.toronionproxy.Utilities;
+
 import org.whispersystems.libsignal.SignalProtocolAddress;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -72,7 +78,9 @@ public class AddContactActivity extends DxActivity {
         }catch (Exception ignored){}
 
         tv = findViewById(R.id.txt_myaddress);
-        tv.setText(((DxApplication)getApplication()).getHostname()==null?"waiting for tor":((DxApplication)getApplication()).getHostname());
+
+
+        tv.setText(((DxApplication)getApplication()).getHostname()==null?getMyAddressOffline():((DxApplication)getApplication()).getHostname());
         tv.setOnClickListener(v -> {
             ClipboardManager clipboard = getSystemService(ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", tv.getText().toString());
@@ -89,56 +97,15 @@ public class AddContactActivity extends DxActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.toString().equals(((DxApplication)getApplication()).getHostname())){
+                if(s.toString().equals(getMyAddressOffline())){
                     Snackbar.make(contact, R.string.cant_add_self,Snackbar.LENGTH_SHORT).show();
                     contact.setText("");
                     return;
                 }
-                if(s.toString().endsWith(".onion") && s.toString().length()>55){
-                    if(context==null){
-                        return;
-                    }
-                    new AlertDialog.Builder(context,R.style.AppAlertDialog)
-                        .setTitle(R.string.add_contact)
-                        .setMessage(getString(R.string.confirm_add_contact)+s.toString()+" ?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(() ->
-                        {
-                            try{
-                                if(DbHelper.contactExists(s.toString(),(DxApplication)getApplication())){
-                                    runOnUiThread(()->{
-                                        Snackbar.make(contact, R.string.contact_exists,Snackbar.LENGTH_SHORT).show();
-                                        contact.setText("");
-                                    });
-                                    return;
-                                }
-                                boolean b = DbHelper.saveContact(s.toString().trim(), ((DxApplication) getApplication()));
-                                if(!b){
-                                    Log.e("FAILED TO SAVE CONTACT", "SAME " );
-                                    runOnUiThread(()->{
-                                        Snackbar.make(contact, R.string.cant_add_contact,Snackbar.LENGTH_SHORT).show();
-                                        contact.setText("");
-                                    });
-                                    return;
-                                }
-                                runOnUiThread(()-> finish());
-                                if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.toString().trim())){
-                                    if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.toString().trim(),1))){
-                                        MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.toString().trim());
-                                    }
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                                Log.e("FAILED TO SAVE CONTACT", "SAME " );
-                                runOnUiThread(()->{
-                                    Snackbar.make(contact, R.string.cant_add_contact,Snackbar.LENGTH_SHORT).show();
-                                    contact.setText("");
-                                });
-                            }
-                        }
-                        ).start())
-                        .setNegativeButton(android.R.string.no, null).show();
+                if(context==null){
+                    return;
                 }
+                tryAddContact(s.toString());
             }
 
             @Override
@@ -162,7 +129,12 @@ public class AddContactActivity extends DxActivity {
 
         QRCodeWriter writer = new QRCodeWriter();
         try {
-            BitMatrix bitMatrix = writer.encode(((DxApplication)getApplication()).getHostname(), BarcodeFormat.QR_CODE, 512, 512);
+            BitMatrix bitMatrix;
+            try{
+                bitMatrix = writer.encode(((DxApplication)getApplication()).getHostname(), BarcodeFormat.QR_CODE, 512, 512);
+            }catch (Exception ignored){
+                bitMatrix = writer.encode(getMyAddressOffline(), BarcodeFormat.QR_CODE, 512, 512);
+            }
             int width = bitMatrix.getWidth();
             int height = bitMatrix.getHeight();
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
@@ -210,48 +182,74 @@ public class AddContactActivity extends DxActivity {
                 // Gets the clipboard as text.
                 String s = item.getText().toString();
 
-                if(s.equals(((DxApplication)getApplication()).getHostname())){
-                    System.out.println("same as hostname");
-                    return;
-                }
-                if(s.trim().length()<56 || !s.trim().endsWith(".onion")){
-                    System.out.println("not valid");
-                    return;
-                }
-                try{
-                    if(DbHelper.contactExists(s,(DxApplication)getApplication())){
-                        System.out.println("exists");
+                tryAddContact(s);
+            }
+        }
+    }
+
+    private void tryAddContact(String str){
+
+        String s;
+        //get just the address if it was preceded by some string
+        //as in the security logs that a user can copy
+        if(str.contains(" ") && str.endsWith(".onion") && str.length()>56){
+            s = str.split(" ")[str.split(" ").length-1];
+        }else{
+            s = str;
+        }
+        if(s.equals(((DxApplication)getApplication()).getHostname())){
+            System.out.println("same as hostname");
+            return;
+        }
+        if(s.equals(getMyAddressOffline())){
+            System.out.println("same as hostname");
+            return;
+        }
+        if(s.trim().length()<56 || !s.trim().endsWith(".onion")){
+            System.out.println("not valid");
+            return;
+        }
+        try{
+            if(DbHelper.contactExists(s,(DxApplication)getApplication())){
+                System.out.println("exists");
+                return;
+            }
+
+            new AlertDialog.Builder(this,R.style.AppAlertDialog)
+                .setTitle(R.string.add_contact)
+                .setMessage(getString(R.string.confirm_add_contact)+s+" ?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(() ->
+                {
+                    boolean b = DbHelper.saveContact(s.trim(), ((DxApplication) getApplication()));
+                    if(!b){
+                        Log.e("FAILED TO SAVE CONTACT", "SAME " );
+                        runOnUiThread(()->{
+                            Snackbar.make(contact, R.string.cant_add_contact,Snackbar.LENGTH_SHORT).show();
+                            contact.setText("");
+                        });
                         return;
                     }
+                    finish();
+                    if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.trim())){
+                        if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.trim(),1))){
+                            MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.trim());
+                        }
+                    }
+                }).start())
+                .setNegativeButton(android.R.string.no, null).show();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("FAILED TO SAVE CONTACT", "SAME " );
+        }
+    }
 
-                    new AlertDialog.Builder(context,R.style.AppAlertDialog)
-                            .setTitle(R.string.add_contact)
-                            .setMessage(getString(R.string.confirm_add_contact)+s+" ?")
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(() ->
-                            {
-                                boolean b = DbHelper.saveContact(s.trim(), ((DxApplication) getApplication()));
-                                if(!b){
-                                    Log.e("FAILED TO SAVE CONTACT", "SAME " );
-                                    runOnUiThread(()->{
-                                        Snackbar.make(contact, R.string.cant_add_contact,Snackbar.LENGTH_SHORT).show();
-                                        contact.setText("");
-                                    });
-                                    return;
-                                }
-                                finish();
-                                if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.trim())){
-                                    if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.trim(),1))){
-                                        MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.trim());
-                                    }
-                                }
-                            }).start())
-                            .setNegativeButton(android.R.string.no, null).show();
-                }catch (Exception e){
-                    e.printStackTrace();
-                    Log.e("FAILED TO SAVE CONTACT", "SAME " );
-                }
-            }
+    private String getMyAddressOffline(){
+        try{
+            return new String(FileUtilities.read(new File(this.getDir("torfiles", MODE_PRIVATE),"/hiddenservice/hostname")),"UTF-8").trim();
+        }catch (Exception e){
+            e.printStackTrace();
+            return "Couldn't read hostname file";
         }
     }
 

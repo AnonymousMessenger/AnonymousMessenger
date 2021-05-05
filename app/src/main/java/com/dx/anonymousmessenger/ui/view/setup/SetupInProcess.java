@@ -15,6 +15,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.crypto.Entity;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.app.AppActivity;
 
@@ -39,6 +40,8 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
             gotoContact.setVisibility(View.VISIBLE);
             gotoContact.setOnClickListener(v -> {
                 ((DxApplication)getApplication()).setExitingHoldup(true);
+                Entity myEntity = new Entity((DxApplication)getApplication());
+                ((DxApplication)getApplication()).setEntity(myEntity);
                 Intent intent = new Intent(this, AppActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.putExtra("force_app",true);

@@ -21,11 +21,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
+                android:focusable="true"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_play_arrow_24"
-                android:focusable="true" />
+                app:srcCompat="@drawable/ic_baseline_play_arrow_24" />
+
+            <TextView
+                android:id="@+id/txt_audio_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1011b"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_play_pause"
+                app:layout_constraintEnd_toStartOf="@+id/btn_play_pause"
+                app:layout_constraintTop_toTopOf="@+id/btn_play_pause" />
 
             <ImageView
                 android:id="@+id/img_seen"
@@ -46,7 +54,7 @@
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageView4"
                 app:layout_constraintTop_toBottomOf="@+id/btn_play_pause" />
 
             <ImageView
@@ -55,7 +63,6 @@
                 android:layout_height="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/img_seen"
-                app:layout_constraintStart_toEndOf="@+id/text_message_time"
                 app:srcCompat="@drawable/ic_launcher_foreground" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

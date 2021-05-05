@@ -31,6 +31,16 @@
                 app:srcCompat="@drawable/ic_baseline_play_arrow_24" />
 
             <TextView
+                android:id="@+id/txt_audio_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1011b"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_play_pause"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btn_play_pause"
+                app:layout_constraintTop_toTopOf="@+id/btn_play_pause" />
+
+            <TextView
                 android:id="@+id/text_message_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

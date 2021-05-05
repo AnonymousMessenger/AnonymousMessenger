@@ -183,7 +183,8 @@ public abstract class OnionProxyManager {
         // Use the control connection to update the Tor config
         List<String> config = Arrays.asList(
                 "HiddenServiceDir " + hostnameFile.getParentFile().getAbsolutePath(),
-                "HiddenServicePort " + hiddenServicePort + " 127.0.0.1:" + localPort);
+                "HiddenServicePort " + hiddenServicePort + " 127.0.0.1:" + localPort,
+                "HiddenServiceMaxStreams " + 50);
         controlConnection.setConf(config);
         controlConnection.saveConf();
         // Wait for the hostname file to be created/updated
