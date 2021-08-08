@@ -82,7 +82,7 @@ public class DxApplication extends Application {
     private boolean isReceivingFilesAllowed;
     private long fileSizeLimit;
     //the ddg site to check if we are online (can be overridden in the settings)
-    private String testAddress = DEFAULT_SETTINGS[5].toString();
+    private String testAddress = DEFAULT_SETTINGS[4].toString();
 
     public String getTestAddress() {
         return testAddress;
@@ -421,8 +421,14 @@ public class DxApplication extends Application {
     }
 
     public void reloadSettings(){
+        System.out.println(isAcceptingCallsAllowed);
         try{
             Object[] settings = DbHelper.getSettingsList(this);
+            if(settings == null){
+                System.out.println("settings were null when got from the db");
+                settings = DEFAULT_SETTINGS;
+                DbHelper.saveSettings((int)settings[0]>0,(int)settings[1]>0,(int)settings[2]>0,(int)settings[3]>0,(String)settings[4],(String)settings[5],this);
+            }
             this.bridgesEnabled = (int)settings[0]>0;
             this.isAcceptingUnknownContactsEnabled = (int)settings[1]>0;
             this.isAcceptingCallsAllowed = (int)settings[2]>0;

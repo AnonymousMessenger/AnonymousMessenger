@@ -117,6 +117,7 @@ public class SetupSettingsFragment extends Fragment {
         });
 
         reset.setOnClickListener(v -> {
+            DbHelper.deleteSettings((DxApplication)requireActivity().getApplication());
             Object[] settings = ((DxApplication)requireActivity().getApplication()).DEFAULT_SETTINGS;
             bridgesSwitch.setChecked(((int)settings[0]>0));
             bridgesLayout.setVisibility((int)settings[0]>0?View.VISIBLE:View.GONE);
@@ -170,6 +171,7 @@ public class SetupSettingsFragment extends Fragment {
             try{
                 Object[] settings = DbHelper.getSettingsList((DxApplication)requireActivity().getApplication());
                 if (settings == null || settings.length <= 5) {
+                    System.out.println("not right");
                     settings = ((DxApplication) requireActivity().getApplication()).DEFAULT_SETTINGS;
                 }
                 bridgesSwitch.setChecked(((int)settings[0]>0));
@@ -329,8 +331,6 @@ public class SetupSettingsFragment extends Fragment {
             list = DbHelper.getBridgeList((DxApplication) requireActivity().getApplication());
 
             done.setVisibility(View.GONE);
-//            done.setText(R.string.done_button);
-//            done.setOnClickListener(v -> requireActivity().onBackPressed());
         }
 
         LinearLayoutManager layoutManager
