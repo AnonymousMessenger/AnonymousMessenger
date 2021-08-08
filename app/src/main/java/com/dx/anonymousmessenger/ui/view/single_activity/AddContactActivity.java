@@ -30,22 +30,16 @@ import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
-import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
-import com.dx.anonymousmessenger.util.NetworkUtils;
-import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-import net.sf.msopentech.thali.java.toronionproxy.FileUtilities;
-import net.sf.msopentech.thali.java.toronionproxy.Utilities;
-
 import org.whispersystems.libsignal.SignalProtocolAddress;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -80,7 +74,7 @@ public class AddContactActivity extends DxActivity {
         tv = findViewById(R.id.txt_myaddress);
 
 
-        tv.setText(((DxApplication)getApplication()).getHostname()==null?getMyAddressOffline():((DxApplication)getApplication()).getHostname());
+        tv.setText(((DxApplication)getApplication()).getHostname()==null?((DxApplication)getApplication()).getMyAddressOffline():((DxApplication)getApplication()).getHostname());
         tv.setOnClickListener(v -> {
             ClipboardManager clipboard = getSystemService(ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", tv.getText().toString());
@@ -97,12 +91,9 @@ public class AddContactActivity extends DxActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.toString().equals(getMyAddressOffline())){
+                if(s.toString().equals(((DxApplication)getApplication()).getMyAddressOffline())){
                     Snackbar.make(contact, R.string.cant_add_self,Snackbar.LENGTH_SHORT).show();
                     contact.setText("");
-                    return;
-                }
-                if(context==null){
                     return;
                 }
                 tryAddContact(s.toString());
@@ -133,7 +124,7 @@ public class AddContactActivity extends DxActivity {
             try{
                 bitMatrix = writer.encode(((DxApplication)getApplication()).getHostname(), BarcodeFormat.QR_CODE, 512, 512);
             }catch (Exception ignored){
-                bitMatrix = writer.encode(getMyAddressOffline(), BarcodeFormat.QR_CODE, 512, 512);
+                bitMatrix = writer.encode(((DxApplication)getApplication()).getMyAddressOffline(), BarcodeFormat.QR_CODE, 512, 512);
             }
             int width = bitMatrix.getWidth();
             int height = bitMatrix.getHeight();
@@ -201,11 +192,11 @@ public class AddContactActivity extends DxActivity {
             System.out.println("same as hostname");
             return;
         }
-        if(s.equals(getMyAddressOffline())){
+        if(s.equals(((DxApplication)getApplication()).getMyAddressOffline())){
             System.out.println("same as hostname");
             return;
         }
-        if(s.trim().length()<56 || !s.trim().endsWith(".onion")){
+        if(s.trim().length()!=62 || !s.trim().endsWith(".onion")){
             System.out.println("not valid");
             return;
         }
@@ -231,7 +222,7 @@ public class AddContactActivity extends DxActivity {
                         return;
                     }
                     finish();
-                    if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.trim())){
+                    if(TorClient.testAddress((DxApplication)getApplication(),s.trim())){
                         if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.trim(),1))){
                             MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.trim());
                         }
@@ -241,15 +232,6 @@ public class AddContactActivity extends DxActivity {
         }catch (Exception e){
             e.printStackTrace();
             Log.e("FAILED TO SAVE CONTACT", "SAME " );
-        }
-    }
-
-    private String getMyAddressOffline(){
-        try{
-            return new String(FileUtilities.read(new File(this.getDir("torfiles", MODE_PRIVATE),"/hiddenservice/hostname")),"UTF-8").trim();
-        }catch (Exception e){
-            e.printStackTrace();
-            return "Couldn't read hostname file";
         }
     }
 
@@ -283,14 +265,15 @@ public class AddContactActivity extends DxActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_REQUEST_CODE) {
-            new AlertDialog.Builder(this,R.style.AppAlertDialog)
-                .setTitle(R.string.denied_microphone)
-                .setMessage(R.string.denied_microphone_help)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getCameraPerms())
-                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-                });
+            new AlertDialog.Builder(this, R.style.AppAlertDialog)
+                    .setTitle(R.string.denied_microphone)
+                    .setMessage(R.string.denied_microphone_help)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getCameraPerms())
+                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+                    });
         }
     }
 }

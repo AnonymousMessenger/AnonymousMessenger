@@ -19,8 +19,9 @@ import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.util.Hex;
 import com.dx.anonymousmessenger.util.Utils;
 
-import net.sf.controller.network.AndroidTorRelay;
-import net.sf.controller.network.TorServerSocket;
+import net.sf.controller.network.ServiceDescriptor;
+import net.sf.msopentech.thali.java.toronionproxy.OnionProxyContext;
+import net.sf.msopentech.thali.java.toronionproxy.OnionProxyManager;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
 
@@ -31,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -45,53 +47,68 @@ import javax.crypto.spec.SecretKeySpec;
 import static com.dx.anonymousmessenger.file.FileHelper.IV_LENGTH;
 
 public class ServerSocketViaTor {
+    private static final int TOTAL_SEC_PER_STARTUP = 4 * 60;
     private static final int hiddenservicedirport = 5780;
     private int localport = 5780;
-    AndroidTorRelay node;
-    Thread jobsThread;
-    private TorServerSocket torServerSocket;
+    private OnionProxyManager node;
+    private Thread jobsThread;
+    private ServiceDescriptor torServerSocket;
+    private Thread serverThread;
 
     public ServerSocketViaTor() {
     }
 
-    public AndroidTorRelay getAndroidTorRelay(){
+    public OnionProxyManager getOnionProxyManager(){
         return node;
     }
 
-    public void init(DxApplication app) throws IOException {
+    public synchronized void init(DxApplication app) {
 
         if(node!=null){
-            if(torServerSocket!=null){
-                torServerSocket.getServerSocket().close();
-                torServerSocket = null;
-            }
-            try {
-                node.shutDown();
-                Thread.sleep(1000);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            tryKill();
             node = null;
         }
+            /*
 
-        String fileLocation = "torfiles";
+            meek_lite 0.0.2.0:3 97700DFE9F483596DDA6264C4D7DF7641E1E39CE url=https://meek.azureedge.net/ front=ajax.aspnetcdn.com
+
+            obfs4 2.202.156.114:41902 9BA4CF70177E315D0F1CBF2DC8DED4FF761A5AB6 cert=8ru1uyWl5C1w9r/+BQ1TArNVzAEahiNTZUIUdNIcPxg3lrgl+y7NnoiH5Bt+j7aivw2uAQ iat-mode=0
+
+            obfs4 185.185.251.73:443 EEE6E19E6C5E572D7830A9CCB5A9588623A37D63 cert=TIKryCwDjEiNnuq7pFymYqq8V1iACyBTMq8kPjV6WP1YxDq7nXvkms8x1sXMDp7U58ZTUw iat-mode=0
+
+            obfs4 185.82.202.15:443 07E3239A6C8C589318FF2E8DFD3D1CEE496B1C13 cert=yT8pfL2Nr8m3Z7NFWq2cENOS4ZHZsZBugepxUbemM6+2su2+4QSjB6AR+cblRIGGjWORVw iat-mode=0
+
+            */
+
         try {
-            node = new AndroidTorRelay(app.getApplicationContext(), fileLocation);
+            node = new OnionProxyManager(new OnionProxyContext(app.getApplicationContext(), "torfiles"));
+
+            if (!node.startWithoutRepeat(TOTAL_SEC_PER_STARTUP, DbHelper.getBridgeList(app), app.isBridgesEnabled())) {
+                System.out.println("Could not Start Tor.");
+                tryKill();
+                throw new IOException("Could not Start Tor.");
+            } else {
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    public void run() {
+                    System.out.println("shutdown hook");
+                    tryKill();
+                    }
+                });
+            }
         }catch (Exception e){
             e.printStackTrace();
-            try {
-                if(node!=null){
-                    node.shutDown();
-                }
-                Thread.sleep(3000);
-            } catch (Exception ignored) {}
-            app.restartTor();
+            System.out.println("exception with tor start");
+            tryKill();
+            //todo: tell user about the error, and let him press restart
+//            app.restartTor();
+//            init(app);
             return;
         }
 
         while(torServerSocket==null){
             try{
-                this.torServerSocket = node.createHiddenService(localport, hiddenservicedirport);
+                final String hiddenServiceName = node.publishHiddenService(hiddenservicedirport, localport);
+                this.torServerSocket = new ServiceDescriptor(hiddenServiceName, localport, hiddenservicedirport);
             }catch (IOException ignored){
                 localport++;
             }
@@ -111,12 +128,13 @@ public class ServerSocketViaTor {
         });
         jobsThread.start();
 
-        server.run();
+        this.serverThread = new Thread(server);
+        serverThread.start();
     }
 
     public void recurseJobs(DxApplication app){
         //send queued messages and update online statuses and delete due messages
-        if(TorClientSocks4.test(app)){
+        if(TorClient.test(app)){
             DbHelper.reduceLog(app);
             app.queueAllUnsentMessages();
         }
@@ -129,36 +147,38 @@ public class ServerSocketViaTor {
     }
 
     public void tryKill(){
+        if(jobsThread!=null){
+            try{
+                jobsThread.interrupt();
+                jobsThread = null;
+            }catch (Exception ignored){}
+        }
         if(node!=null){
-            boolean exit = false;
-            if(jobsThread!=null){
-                try{
-                    jobsThread.interrupt();
-                    jobsThread = null;
-                }catch (Exception ignored){}
+            try {
+                System.out.println("starting node stop");
+                node.stop();
+                System.out.println("done with node stop");
+            }catch (Exception e){
+                e.printStackTrace();
+                System.out.println("exception with node stop");
             }
-            if(torServerSocket!=null){
-                try {
-                    torServerSocket.getServerSocket().close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                torServerSocket = null;
+            node = null;
+        }
+        if(torServerSocket!=null){
+            try {
+                torServerSocket.getServerSocket().close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            while (!exit){
-                try {
-                    node.shutDown();
-                    Thread.sleep(1000);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                try {
-                    node = null;
-                    exit = true;
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+            torServerSocket = null;
+        }
+        if(serverThread != null){
+            try {
+                serverThread.interrupt();
+            }catch (Exception e){
+                e.printStackTrace();
             }
+            serverThread = null;
         }
     }
 
@@ -173,7 +193,6 @@ public class ServerSocketViaTor {
             this.app = app;
         }
 
-        @SuppressWarnings("InfiniteLoopStatement")
         @Override
         public void run() {
             app.setServerReady(true);
@@ -198,13 +217,6 @@ public class ServerSocketViaTor {
                         }
                         sockets.getAndIncrement();
                         Log.d("SERVER CONNECTION", "RECEIVING SOMETHING");
-//                        System.out.println("Address: ");
-//                        System.out.println(sock.getInetAddress());
-//
-//                        System.out.println("Port: ");
-//                        System.out.println(sock.getPort());
-//                        System.out.println("Buffer Size: ");
-//                        System.out.println(sock.getSendBufferSize());
 
                         new Thread(()->{
                             try{
@@ -218,6 +230,12 @@ public class ServerSocketViaTor {
                                     return;
                                 }else if(msg.equals("call")){
                                     try {
+                                        if(!app.isAcceptingCallsAllowed()){
+                                            //no bueno
+                                            refuseSocket(outputStream,sock,sockets);
+                                            DbHelper.saveLog("REFUSED CALL BECAUSE RECEIVING CALLS IS DISABLED",new Date().getTime(),"NOTICE",app);
+                                            return;
+                                        }
                                         CallController.callReceiveHandler(sock,app);
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -246,6 +264,9 @@ public class ServerSocketViaTor {
                                 DbHelper.saveLog("ERROR WHILE RECEIVING MESSAGE: "+ Arrays.toString(e.getStackTrace()),new Date().getTime(),"NOTICE",app);
                             }
                         }).start();
+                    }catch (SocketException se){
+                        DbHelper.saveLog("LOCAL SERVER CRASHED DUE TO LOCAL SOCKET CLOSED ",new Date().getTime(),"SEVERE",app);
+                        break;
                     }catch (Exception e){
                         sockets.getAndDecrement();
                         Log.e("SERVER ERROR", "ERROR");
@@ -255,15 +276,11 @@ public class ServerSocketViaTor {
                 }
             } catch (Exception  e) {
                 e.printStackTrace();
-                Log.e("SERVER STOPPED","RESTARTING SERVER");
+                Log.e("SERVER STOPPED","LOCAL SERVER NOT READY");
                 app.setServerReady(false);
                 DbHelper.saveLog("LOCAL SERVER STOPPED "+e.getMessage(),new Date().getTime(),"SEVERE",app);
                 //app.restartTor();
             }
-        }
-
-        private boolean isValidAddress(String address){
-            return address.length() >= 54 && address.trim().endsWith(".onion");
         }
 
         private void refuseSocket(DataOutputStream outputStream, Socket sock, AtomicInteger sockets) throws IOException {
@@ -274,7 +291,7 @@ public class ServerSocketViaTor {
         }
 
         private void handleHello(String msg, Socket sock, AtomicInteger sockets) throws IOException {
-            if(isValidAddress(msg.replace("hello-","")) && DbHelper.contactExists(msg.replace("hello-",""),app)){
+            if(app.isValidAddress(msg.replace("hello-","")) && DbHelper.contactExists(msg.replace("hello-",""),app)){
                 app.addToOnlineList(msg.replace("hello-",""));
                 app.queueUnsentMessages(msg.replace("hello-",""));
             }
@@ -286,10 +303,16 @@ public class ServerSocketViaTor {
         private void handleFile(DataOutputStream outputStream, DataInputStream in, Socket sock, AtomicInteger sockets){
             String address = null;
             try {
+                if(!app.isReceivingFilesAllowed()){
+                    //no bueno
+                    refuseSocket(outputStream,sock,sockets);
+                    DbHelper.saveLog("REFUSED FILE BECAUSE RECEIVING FILES IS DISABLED",new Date().getTime(),"NOTICE",app);
+                    return;
+                }
                 outputStream.writeUTF("ok");
                 outputStream.flush();
                 String msg = in.readUTF();
-                if(!isValidAddress(msg)){
+                if(!app.isValidAddress(msg)){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
                     DbHelper.saveLog("REFUSED FILE FROM: "+address,new Date().getTime(),"NOTICE",app);
@@ -307,13 +330,14 @@ public class ServerSocketViaTor {
                 byte[] buffer = new byte[8];
                 in.read(buffer,0,buffer.length);
                 long length = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getLong();
-                //maximum file size 3GB or storage limit
+                //maximum file size 3GB or set by user or storage limit
+                //3L*1024*1024*1024 old value
                 if(
                         length
                                 >
                                 Math.min(
                                         new StatFs(app.getFilesDir().getAbsolutePath()).getAvailableBytes(),
-                                        3L*1024*1024*1024)
+                                        app.getFileSizeLimit())
                 ){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
@@ -416,13 +440,14 @@ public class ServerSocketViaTor {
             }
         }
 
+        //todo: decide if we want to disable media when file receiving is disabled
         private void handleMedia(DataOutputStream outputStream, DataInputStream in, Socket sock, AtomicInteger sockets){
             String address = "";
             try {
                 outputStream.writeUTF("ok");
                 outputStream.flush();
                 String msg = in.readUTF();
-                if(!isValidAddress(msg)){
+                if(!app.isValidAddress(msg)){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
                     DbHelper.saveLog("REFUSED MEDIA FROM: "+msg+" REASON: BAD ADDRESS",new Date().getTime(),"NOTICE",app);

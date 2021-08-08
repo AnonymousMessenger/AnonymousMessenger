@@ -2,6 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_contact_profile"
+        android:icon="@drawable/circle"
+        android:title="@string/profile_contact"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/action_call"
         android:icon="@drawable/ic_baseline_call_24"
         android:title="@string/action_call"
@@ -26,9 +32,9 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_reset_session"
         android:icon="@drawable/ic_baseline_settings_24"
-        android:title="@string/action_settings"
+        android:title="@string/action_reset_session"
         app:showAsAction="never"/>
 
 </menu>

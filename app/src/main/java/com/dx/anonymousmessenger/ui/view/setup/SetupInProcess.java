@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger.ui.view.setup;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
@@ -35,7 +36,16 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
         Button gotoContact = findViewById(R.id.btn_goto_contacts);
         Button restartTorButton = findViewById(R.id.btn_restart_tor);
         restartTorButton.setVisibility(View.VISIBLE);
-        restartTorButton.setOnClickListener(v -> ((DxApplication)getApplication()).restartTor());
+        restartTorButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(this,R.style.AppAlertDialog)
+                .setTitle(R.string.restart_tor)
+                .setMessage(R.string.restart_tor_explain)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                    ((DxApplication) getApplication()).restartTor();
+                })
+                .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
+        });
         if(!getIntent().getBooleanExtra("first_time",true)){
             gotoContact.setVisibility(View.VISIBLE);
             gotoContact.setOnClickListener(v -> {

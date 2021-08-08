@@ -41,7 +41,7 @@ public class MyProfileActivity extends DxActivity {
         TextView nickname = findViewById(R.id.txt_nickname);
         nickname.setText(((DxApplication)getApplication()).getAccount().getNickname());
         TextView address = findViewById(R.id.txt_myaddress);
-        address.setText(((DxApplication)getApplication()).getHostname());
+        address.setText(((DxApplication)getApplication()).getHostname()==null?((DxApplication)getApplication()).getMyAddressOffline():((DxApplication)getApplication()).getHostname());
         address.setOnClickListener(v -> {
             ClipboardManager clipboard = getSystemService(ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", address.getText().toString());

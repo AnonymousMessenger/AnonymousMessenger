@@ -60,7 +60,7 @@ import static androidx.core.content.ContextCompat.getDrawable;
 import static androidx.core.content.ContextCompat.getMainExecutor;
 import static androidx.core.content.ContextCompat.getSystemService;
 import static androidx.core.content.ContextCompat.startActivity;
-import static com.dx.anonymousmessenger.file.FileHelper.getFileSize;
+import static com.dx.anonymousmessenger.file.FileHelper.getAudioFileLengthInSeconds;
 
 public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
@@ -342,11 +342,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             if(message.isPinned()){
                                 DbHelper.unPinMessage(message,app);
                                 message.setPinned(false);
-                                Snackbar.make(rv, R.string.unpinned_message, Snackbar.LENGTH_SHORT).show();
+                                Snackbar sb = Snackbar.make(rv, R.string.unpinned_message, Snackbar.LENGTH_SHORT).setAnchorView(((MessageListActivity) mContext).findViewById(R.id.layout_chatbox));
+                                sb.show();
                             }else{
                                 DbHelper.pinMessage(message,app);
                                 message.setPinned(true);
-                                Snackbar.make(rv, R.string.pinned_message, Snackbar.LENGTH_SHORT).show();
+                                Snackbar sb = Snackbar.make(rv, R.string.pinned_message, Snackbar.LENGTH_SHORT).setAnchorView(((MessageListActivity) mContext).findViewById(R.id.layout_chatbox));
+                                sb.show();
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -357,7 +359,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         ClipboardManager clipboard = getSystemService(Objects.requireNonNull(mContext), ClipboardManager.class);
                         ClipData clip = ClipData.newPlainText("label", messageText.getText().toString());
                         Objects.requireNonNull(clipboard).setPrimaryClip(clip);
-                        Snackbar.make(rv, R.string.copied, Snackbar.LENGTH_SHORT).show();
+                        Snackbar sb = Snackbar.make(rv, R.string.copied, Snackbar.LENGTH_SHORT).setAnchorView(((MessageListActivity) mContext).findViewById(R.id.layout_chatbox));
+                        sb.show();
                         return true;
                     default:
                         return false;
@@ -517,7 +520,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     }
                     FileHelper.saveToStorageWithProgress(message.getPath(),message.getFilename(),app,progressListener);
 
-                    Snackbar.make(itemView,R.string.saved_to_storage,Snackbar.LENGTH_SHORT).show();
+                    Snackbar sb = Snackbar.make(itemView,R.string.saved_to_storage,Snackbar.LENGTH_SHORT).setAnchorView(itemView.findViewById(R.id.layout_chatbox));
+                    sb.show();
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -600,11 +604,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         if (message.isPinned()) {
                             DbHelper.unPinMessage(message, app);
                             message.setPinned(false);
-                            Snackbar.make(v, R.string.unpinned_message, Snackbar.LENGTH_SHORT).show();
+                            Snackbar sb = Snackbar.make(v, R.string.unpinned_message, Snackbar.LENGTH_SHORT).setAnchorView(v.findViewById(R.id.layout_chatbox));
+                            sb.show();
                         } else {
                             DbHelper.pinMessage(message, app);
                             message.setPinned(true);
-                            Snackbar.make(v, R.string.pinned_message, Snackbar.LENGTH_SHORT).show();
+                            Snackbar sb = Snackbar.make(v, R.string.pinned_message, Snackbar.LENGTH_SHORT).setAnchorView(v.findViewById(R.id.layout_chatbox));
+                            sb.show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -787,7 +793,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 nameText.setText(message.getSender());
             }
             if(sizeText!=null){
-                sizeText.setText(String.format("%db", getFileSize(message.getPath(), mContext)));
+                sizeText.setText(String.format("%ds", getAudioFileLengthInSeconds(message.getPath(), mContext)));
             }
             if(nowPlaying!=null && nowPlaying.equals(message.getPath())){
                 playPauseButton.setImageDrawable(getDrawable(mContext,R.drawable.ic_baseline_pause_24));

@@ -55,10 +55,11 @@ import com.dx.anonymousmessenger.media.AudioRecordingService;
 import com.dx.anonymousmessenger.media.MediaRecycleViewAdapter;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
-import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.app.MyRecyclerViewAdapter;
 import com.dx.anonymousmessenger.ui.view.call.CallActivity;
+import com.dx.anonymousmessenger.ui.view.single_activity.ContactProfileActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.FileViewerActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.PictureViewerActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.VerifyIdentityActivity;
@@ -120,6 +121,9 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             setBackEnabled(true);
         }catch (Exception ignored){}
         ((MaterialToolbar)findViewById(R.id.toolbar)).inflateMenu(R.menu.message_list_menu);
+        if(!((DxApplication)getApplication()).isAcceptingCallsAllowed()){
+            ((MaterialToolbar)findViewById(R.id.toolbar)).getMenu().removeItem(R.id.action_call);
+        }
         ((MaterialToolbar)findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
             onOptionsItemSelected(item);
             return false;
@@ -149,7 +153,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         frameOnline = findViewById(R.id.frame_online);
         scrollDownFab = findViewById(R.id.fab_scroll_down);
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
-        mMessageRecycler.setHasFixedSize(true);
+//        mMessageRecycler.setHasFixedSize(true);
         mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication(), mMessageRecycler, this);
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
 //        ((LinearLayoutManager)mMessageRecycler.getLayoutManager()).setStackFromEnd(true);
@@ -230,16 +234,16 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         });
         send.setOnClickListener(v -> {
             if(((DxApplication) getApplication()).getEntity()==null){
-                Snackbar.make(send, R.string.no_encryption_yet,Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(send, R.string.no_encryption_yet,Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
                 return;
             }
             if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(fullAddress,1))){
-                Snackbar.make(send, R.string.no_session,Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(send, R.string.no_session,Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
                 new Thread(()-> MessageSender.sendKeyExchangeMessage(((DxApplication)getApplication()),fullAddress)).start();
                 return;
             }
             if(((DxApplication)getApplication()).getEntity().getStore().loadSession(new SignalProtocolAddress(fullAddress,1)).getSessionState().hasPendingKeyExchange() || ((DxApplication)getApplication()).getEntity().getStore().getIdentity(new SignalProtocolAddress(fullAddress,1)) == null){
-                Snackbar.make(send, R.string.cant_encrypt_message,Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(send, R.string.cant_encrypt_message,Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
                 return;
             }
             TextView quoteSenderTyping = findViewById(R.id.quote_sender_typing);
@@ -305,7 +309,8 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         AtomicReference<Float> downRawX = new AtomicReference<>((float) 0);
         AtomicReference<Float> dX = new AtomicReference<>((float) 0);
         audio.setOnTouchListener((arg0, arg1) -> {
-            // user has his/her thumb on the button
+            //todo : add wakelock here
+            // while user has his/her thumb on the button
             if (arg1.getAction()== MotionEvent.ACTION_DOWN){
                 downRawX.set(arg1.getRawX());
                 if(x==null){
@@ -614,7 +619,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     frameOnline.startAnimation(slideUp);
                 }catch (Exception ignored) {}
             });
-            boolean b = TorClientSocks4.testAddress(((DxApplication) getApplication()), address);
+            boolean b = TorClient.testAddress(((DxApplication) getApplication()), address);
             if(b){
                 ((DxApplication)getApplication()).addToOnlineList(address);
                 ((DxApplication)getApplication()).queueUnsentMessages(address);
@@ -810,7 +815,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     return;
                 }else if(intent.getStringExtra("error")!=null){
                     try{
-                        Snackbar.make(send, Objects.requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(send, Objects.requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
                     }catch (Exception ignored) {}
                     return;
                 }else if(intent.getStringExtra("type")!=null && Objects.equals(intent.getStringExtra("type"), "online_status")){
@@ -920,6 +925,12 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.action_contact_profile:
+                stopCheckingMessages();
+                Intent intent = new Intent(this, ContactProfileActivity.class);
+                intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                startActivity(intent);
+                break;
             case R.id.action_call:
                 new Thread(()->{
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
@@ -927,20 +938,20 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                             runOnUiThread(()-> Snackbar.make(send,"Already in a call",Snackbar.LENGTH_SHORT).show());
                             return;
                         }
-                        Intent intent = new Intent(this, CallActivity.class);
-                        intent.setAction("start_out_call");
-                        intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
-                        intent.putExtra("nickname",getIntent().getStringExtra("nickname"));
-                        startActivity(intent);
+                        Intent callIntent = new Intent(this, CallActivity.class);
+                        callIntent.setAction("start_out_call");
+                        callIntent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                        callIntent.putExtra("nickname",getIntent().getStringExtra("nickname"));
+                        startActivity(callIntent);
                     }else{
                         requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
                     }
                 }).start();
                 break;
-            case R.id.action_settings:
+            case R.id.action_reset_session:
                 //reset session
                 new AlertDialog.Builder(this,R.style.AppAlertDialog)
-                        .setTitle(R.string.action_settings)
+                        .setTitle(R.string.action_reset_session)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(R.string.yes, (dialog, which) -> {
                             try{
@@ -960,7 +971,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 break;
             case R.id.action_verify_identity:
                 stopCheckingMessages();
-                Intent intent = new Intent(this, VerifyIdentityActivity.class);
+                intent = new Intent(this, VerifyIdentityActivity.class);
                 intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                 startActivity(intent);
                 break;
@@ -1006,14 +1017,15 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE) {
-            new AlertDialog.Builder(this,R.style.AppAlertDialog)
-                .setTitle(R.string.denied_microphone)
-                .setMessage(R.string.denied_microphone_help)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getMicrophonePerms())
-                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-                });
+            new AlertDialog.Builder(this, R.style.AppAlertDialog)
+                    .setTitle(R.string.denied_microphone)
+                    .setMessage(R.string.denied_microphone_help)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getMicrophonePerms())
+                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+                    });
         }
     }
 

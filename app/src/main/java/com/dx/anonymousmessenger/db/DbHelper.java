@@ -352,6 +352,167 @@ public class DbHelper {
     }
 
     /**
+     *  Settings related
+     */
+
+    private static String getSettingsColumns(){
+        return "(bridgesEnabled,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit)";
+    }
+
+    private static String getSettingsTableSqlCreate(){
+        return "CREATE TABLE IF NOT EXISTS settings "+getSettingsColumns()+";";
+    }
+
+    private static String getSettingsSqlInsert(){
+        return "INSERT INTO settings "+getSettingsColumns()+" VALUES(?"+giveMeQMarks(getSettingsColumns().split(",").length-1)+")";
+    }
+
+    private static Object[] getSettingsSqlValues(boolean bridgesEnabled, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed, boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit){
+        return new Object[]{bridgesEnabled?1:0,isAcceptingUnknownContactsEnabled?1:0,isAcceptingCallsAllowed?1:0,isReceivingFilesAllowed?1:0,checkAddress,fileSizeLimit};
+    }
+
+    public static void saveSettings(boolean bridgesEnabled, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed, boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL(DbHelper.getSettingsSqlInsert(),DbHelper.getSettingsSqlValues(bridgesEnabled,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit));
+    }
+
+    public static void saveEnableBridges(boolean bridgesEnabled, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET bridgesEnabled=?", new Object[]{bridgesEnabled?1:0});
+    }
+
+    public static void saveIsAcceptingUnknownContactsEnabled(boolean isAcceptingUnknownContactsEnabled, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET isAcceptingUnknownContactsEnabled=?", new Object[]{isAcceptingUnknownContactsEnabled?1:0});
+    }
+
+    public static void saveIsAcceptingCallsAllowed(boolean isAcceptingCallsAllowed, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET isAcceptingCallsAllowed=?", new Object[]{isAcceptingCallsAllowed?1:0});
+    }
+
+    public static void saveIsReceivingFilesAllowed(boolean isReceivingFilesAllowed, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET isReceivingFilesAllowed=?", new Object[]{isReceivingFilesAllowed?1:0});
+    }
+
+    public static void saveCheckAddress(String checkAddress, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET checkAddress=?", new Object[]{checkAddress});
+    }
+
+    public static void saveFileSizeLimit(String fileSizeLimit, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET fileSizeLimit=?", new Object[]{fileSizeLimit});
+    }
+
+    public static void deleteSettings(DxApplication app) {
+        SQLiteDatabase database = app.getDb();
+        database.beginTransaction();
+        try{
+            database.execSQL("DELETE FROM settings");
+            database.setTransactionSuccessful();
+        }catch (Exception e) {e.printStackTrace();}
+        finally {
+            database.endTransaction();
+        }
+    }
+
+    public static Object[] getSettingsList(DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        try{
+            database.query("SELECT "+DbHelper.getSettingsColumns().trim().substring(1,getSettingsColumns().length()-1)+" FROM settings");
+        }catch (Exception e){
+            Log.w("getSettingsList", "updating DbSchema");
+            e.printStackTrace();
+            updateDbSchema(database);
+        }
+        Cursor cr = database.rawQuery("SELECT * FROM settings ;",null);
+        Object[] settings = null;
+        if (cr.moveToFirst()) {
+            settings = new Object[6];
+            settings[0] = cr.getInt(0);//enable bridges
+            settings[1] = cr.getInt(1);//isAcceptingUnknownContacts
+            settings[2] = cr.getInt(2);//isAcceptingCallsAllowed
+            settings[3] = cr.getInt(3);//isReceivingFilesAllowed
+            settings[4] = cr.getString(4);//checkAddress
+            settings[5] = cr.getString(5);//fileSizeLimit
+        }
+        cr.close();
+        return settings;
+    }
+
+    /**
+     * Bridge related
+     */
+
+    private static String getBridgeColumns(){
+        return "(line)";
+    }
+
+    private static String getBridgeTableSqlCreate(){
+        return "CREATE TABLE IF NOT EXISTS bridge "+getBridgeColumns()+";";
+    }
+
+    private static String getBridgeSqlInsert(){
+        return "INSERT INTO bridge "+getBridgeColumns()+" VALUES(?"+giveMeQMarks(getBridgeColumns().split(",").length-1)+")";
+    }
+
+    private static Object[] getBridgeSqlValues(String line){
+        return new Object[]{line};
+    }
+
+    public static void saveBridge(String line, DxApplication app){
+        if(line.startsWith("bridge ") || line.startsWith("Bridge ") || line.startsWith("BRIDGE ")){
+            line = line.substring(6);
+        }
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getBridgeTableSqlCreate());
+        database.execSQL(DbHelper.getBridgeSqlInsert(),DbHelper.getBridgeSqlValues(line));
+    }
+
+    public static void deleteBridge(String line, DxApplication app) {
+        SQLiteDatabase database = app.getDb();
+        database.beginTransaction();
+        try{
+            database.execSQL("DELETE FROM bridge WHERE line=?", new Object[]{line});
+            database.setTransactionSuccessful();
+        }catch (Exception e) {e.printStackTrace();}
+        finally {
+            database.endTransaction();
+        }
+    }
+
+    public static List<String> getBridgeList(DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getBridgeTableSqlCreate());
+        try{
+            database.query("SELECT "+DbHelper.getBridgeColumns().trim().substring(1,getBridgeColumns().length()-1)+" FROM bridge");
+        }catch (Exception e){
+            Log.w("getBridgeList", "updating DbSchema");
+            e.printStackTrace();
+            updateDbSchema(database);
+        }
+        Cursor cr = database.rawQuery("SELECT * FROM bridge ;",null);
+        List<String> bridges = new ArrayList<>();
+        if (cr.moveToFirst()) {
+            do {
+                bridges.add(cr.getString(0));
+            } while (cr.moveToNext());
+        }
+        cr.close();
+        return bridges;
+    }
+
+    /**
      * Log related
      */
 
@@ -840,6 +1001,32 @@ public class DbHelper {
                 database.execSQL("INSERT INTO "+tmpName+getLogColumns()+" SELECT *"+emptyCols+" FROM log;");
                 database.execSQL("DROP TABLE log;");
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO log");
+                database.setTransactionSuccessful();
+                database.endTransaction();
+
+                database.beginTransaction();
+                tmpName = "temp_bridge ";
+                createTemp = getBridgeTableSqlCreate().replace("bridge",tmpName);
+                database.execSQL(createTemp);
+                tmpColNum = getNumberOfColumns(tmpName,database);
+                oldColNum = getNumberOfColumns("bridge",database);
+                emptyCols = tmpColNum>oldColNum?giveMeNulls(tmpColNum-oldColNum):"";
+                database.execSQL("INSERT INTO "+tmpName+getBridgeColumns()+" SELECT *"+emptyCols+" FROM bridge;");
+                database.execSQL("DROP TABLE bridge;");
+                database.execSQL("ALTER TABLE "+tmpName+" RENAME TO bridge");
+                database.setTransactionSuccessful();
+                database.endTransaction();
+
+                database.beginTransaction();
+                tmpName = "temp_settings ";
+                createTemp = getSettingsTableSqlCreate().replace("settings",tmpName);
+                database.execSQL(createTemp);
+                tmpColNum = getNumberOfColumns(tmpName,database);
+                oldColNum = getNumberOfColumns("settings",database);
+                emptyCols = tmpColNum>oldColNum?giveMeNulls(tmpColNum-oldColNum):"";
+                database.execSQL("INSERT INTO "+tmpName+getSettingsColumns()+" SELECT *"+emptyCols+" FROM settings;");
+                database.execSQL("DROP TABLE settings;");
+                database.execSQL("ALTER TABLE "+tmpName+" RENAME TO settings");
                 database.setTransactionSuccessful();
                 database.endTransaction();
 

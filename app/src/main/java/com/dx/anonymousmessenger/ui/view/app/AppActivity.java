@@ -11,6 +11,7 @@ import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.setup.SetupInProcess;
+import com.dx.anonymousmessenger.ui.view.setup.SetupSettingsFragment;
 
 public class AppActivity extends DxActivity implements ComponentCallbacks2 {
 
@@ -67,6 +68,10 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
         finish();
     }
 
+    public void changeToSettingsFragment(){
+        showNextFragment(SetupSettingsFragment.newInstance(false));
+    }
+
     private void loadAppFragment(){
         if(isAppFragmentShown){
             return;
@@ -83,19 +88,24 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
         getSupportFragmentManager().beginTransaction()
             .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
             .replace(R.id.fragment_container, f)
+            .addToBackStack(null)
             .commit();
     }
 
     @Override
     public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1){
             finish();
+        }else{
+            super.onBackPressed();
+        }
     }
 
-//    @Override
-//    public boolean onSupportNavigateUp() {
-//        onBackPressed();
-//        return true;
-//    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
     /**
      * Release memory when the UI becomes hidden or when system resources become low.

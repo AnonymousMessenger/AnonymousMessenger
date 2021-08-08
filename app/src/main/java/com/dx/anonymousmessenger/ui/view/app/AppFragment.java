@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger.ui.view.app;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,7 +14,6 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -32,13 +34,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
-import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.log.LogActivity;
 import com.dx.anonymousmessenger.ui.view.notepad.NotepadActivity;
 import com.dx.anonymousmessenger.ui.view.setup.SetupInProcess;
-import com.dx.anonymousmessenger.ui.view.single_activity.AboutActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.AddContactActivity;
-import com.dx.anonymousmessenger.ui.view.single_activity.LicenseActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.MyIdentityActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.MyProfileActivity;
 import com.dx.anonymousmessenger.ui.view.tips.TipsActivity;
@@ -111,14 +111,14 @@ public class AppFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent)
             {
-            if(intent.getStringExtra("tor_status1")!=null){
+            if(intent.getStringExtra("tor_status")!=null){
                 if(onlineTxt.getText().toString().equals(getString(R.string.offline))){
                     checkConnectivity();
                 }
-//                if(Objects.requireNonNull(intent.getStringExtra("tor_status1")).equals("ALL GOOD")){
+//                if(Objects.requireNonNull(intent.getStringExtra("tor_status")).equals("ALL GOOD")){
 //                    checkConnectivity();
 //                }
-                updateTorOutput(Objects.requireNonNull(intent.getStringExtra("tor_status1")));
+                updateTorOutput(Objects.requireNonNull(intent.getStringExtra("tor_status")));
             }else{
                 if(intent.getLongExtra("delete",-1)>-1 || Objects.equals(intent.getStringExtra("type"), "online_status")){
                     updateUi(false);
@@ -139,7 +139,7 @@ public class AppFragment extends Fragment {
         }
         try {
             LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("your_action"));
-            LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status1"));
+            LocalBroadcastManager.getInstance(rootView.getContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -149,6 +149,7 @@ public class AppFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        ((AppActivity)requireActivity()).setTitle(getString(R.string.app_name));
         updateUi(false);
     }
 
@@ -158,6 +159,7 @@ public class AppFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -169,29 +171,51 @@ public class AppFragment extends Fragment {
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             v.getContext().startActivity(intent);
         });
-        ((MaterialToolbar)Objects.requireNonNull(getActivity()).findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_baseline_menu_24);
-        ((MaterialToolbar)Objects.requireNonNull(getActivity()).findViewById(R.id.toolbar)).setNavigationOnClickListener((v)->{
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).getMenu().clear();
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).inflateMenu(R.menu.app_menu2);
+
+//        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(new byte[5],0,0)));//todo icon here is the profile picture
+
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
+            if(item.getItemId()==R.id.action_my_profile){
+                stopCheckingMessages();
+                try{
+                    Intent intent = new Intent(getContext(), MyProfileActivity.class);
+                    if(getContext()!=null){
+                        getContext().startActivity(intent);
+                    }
+                }catch (Exception ignored) {}
+                return true;
+            }
+            return false;
+        });
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_baseline_menu_24);
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setNavigationOnClickListener((v)->{
             PopupMenu popup = new PopupMenu(v.getContext(), v);
+//            popup.getMenuInflater()
             popup.inflate(R.menu.app_menu);
             popup.setOnMenuItemClickListener(item -> {
-                if(item.getItemId()==R.id.action_restart_tor){
+                if(item.getItemId()==R.id.action_settings){
+                    ((AppActivity)requireActivity()).changeToSettingsFragment();
+                    return true;
+                }else if(item.getItemId()==R.id.action_restart_tor){
                     new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
                         .setTitle(R.string.restart_tor)
                         .setMessage(R.string.restart_tor_explain)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                            ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).restartTor();
+                            ((DxApplication) requireActivity().getApplication()).restartTor();
                             mainThread.post(()->{
                                 try{
                                     onlineTxt.setText(R.string.offline);
                                     onlineImg.setVisibility(View.GONE);
                                     offlineImg.setVisibility(View.VISIBLE);
                                     onlineToolbar.setVisibility(View.VISIBLE);
-                                    Intent intent = new Intent(getActivity().getApplication(), SetupInProcess.class);
+                                    Intent intent = new Intent(requireActivity().getApplication(), SetupInProcess.class);
                                     intent.putExtra("first_time",false);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                     startActivity(intent);
-                                    getActivity().finish();
+                                    requireActivity().finish();
                                 } catch (Exception ignored) {}
                             });
                         })
@@ -202,9 +226,7 @@ public class AppFragment extends Fragment {
                         .setTitle(R.string.shut_app)
                         .setMessage(R.string.shut_app_explain)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                            ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).shutdown();
-                        })
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> ((DxApplication) requireActivity().getApplication()).shutdown())
                         .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
                     return true;
                 }else if(item.getItemId()==R.id.action_my_identity){
@@ -216,7 +238,7 @@ public class AppFragment extends Fragment {
                         }
                     }catch (Exception ignored) {}
                     return true;
-                }else if(item.getItemId()==R.id.action_my_profile){
+                }/*else if(item.getItemId()==R.id.action_my_profile){
                     stopCheckingMessages();
                     try{
                         Intent intent = new Intent(getContext(), MyProfileActivity.class);
@@ -225,7 +247,7 @@ public class AppFragment extends Fragment {
                         }
                     }catch (Exception ignored) {}
                     return true;
-                }else if(item.getItemId()==R.id.action_about){
+                }*//*else if(item.getItemId()==R.id.action_about){
                     stopCheckingMessages();
                     try{
                         Intent intent = new Intent(getContext(), AboutActivity.class);
@@ -234,7 +256,7 @@ public class AppFragment extends Fragment {
                         }
                     }catch (Exception ignored) {}
                     return true;
-                }else if(item.getItemId()==R.id.action_notepad){
+                }*/else if(item.getItemId()==R.id.action_notepad){
                     stopCheckingMessages();
                     try{
                         Intent intent = new Intent(getContext(), NotepadActivity.class);
@@ -261,7 +283,7 @@ public class AppFragment extends Fragment {
                         }
                     }catch (Exception ignored) {}
                     return true;
-                }else if(item.getItemId()==R.id.action_license){
+                }/*else if(item.getItemId()==R.id.action_license){
                     stopCheckingMessages();
                     try{
                         Intent intent = new Intent(getContext(), LicenseActivity.class);
@@ -270,12 +292,16 @@ public class AppFragment extends Fragment {
                         }
                     }catch (Exception ignored) {}
                     return true;
-                }else{
+                }*/else{
                     return false;
                 }
             });
             //displaying the popup
-            popup.show();
+            @SuppressLint("RestrictedApi") MenuPopupHelper menuHelper = new MenuPopupHelper(v.getContext(), (MenuBuilder) popup.getMenu(), v);
+            menuHelper.setForceShowIcon(true);
+            menuHelper.show();
+
+//            popup.show();
         });
         onlineImg = rootView.findViewById(R.id.synced_image);
         offlineImg = rootView.findViewById(R.id.unsynced_image);
@@ -288,7 +314,7 @@ public class AppFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         lst = new ArrayList<>();
-        mAdapter = new MyRecyclerViewAdapter((DxApplication) Objects.requireNonNull(getActivity()).getApplication(),lst,this);
+        mAdapter = new MyRecyclerViewAdapter((DxApplication) requireActivity().getApplication(),lst,this);
         recyclerView.setAdapter(mAdapter);
         ((SwipeRefreshLayout)rootView.findViewById(R.id.refresh)).setOnRefreshListener(
                 () -> {
@@ -298,22 +324,22 @@ public class AppFragment extends Fragment {
                 }
         );
 
-        if(!((DxApplication)getActivity().getApplication()).isWeAsked()){
+        if(!((DxApplication) requireActivity().getApplication()).isWeAsked()){
             new Thread(()->{
                 try{
                     Thread.sleep(1000);
                 }catch (Exception ignored){}
                 try{
-                    if(!((DxApplication)getActivity().getApplication()).isIgnoringBatteryOptimizations()){
-                        getActivity().runOnUiThread(()-> new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
+                    if(!((DxApplication) requireActivity().getApplication()).isIgnoringBatteryOptimizations()){
+                        requireActivity().runOnUiThread(()-> new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
                             .setTitle(R.string.turn_off_battery)
                             .setMessage(R.string.allow_in_background)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                                ((DxApplication)getActivity().getApplication()).requestBatteryOptimizationOff();
-                                ((DxApplication)getActivity().getApplication()).setWeAsked(true);
+                                ((DxApplication) requireActivity().getApplication()).requestBatteryOptimizationOff();
+                                ((DxApplication) requireActivity().getApplication()).setWeAsked(true);
                             })
-                            .setNegativeButton(android.R.string.no, (dialog, whichButton)-> ((DxApplication)getActivity().getApplication()).setWeAsked(true)).show());
+                            .setNegativeButton(android.R.string.no, (dialog, whichButton)-> ((DxApplication) requireActivity().getApplication()).setWeAsked(true)).show());
                     }
                 }catch (Exception ignored){}
             }).start();
@@ -439,7 +465,7 @@ public class AppFragment extends Fragment {
 
     public boolean isOnline() {
         if(getActivity() !=null) {
-            return TorClientSocks4.test((DxApplication) Objects.requireNonNull(getActivity()).getApplication());
+            return TorClient.test((DxApplication) requireActivity().getApplication());
         }
         return false;
     }
@@ -458,7 +484,7 @@ public class AppFragment extends Fragment {
             onlineTxt.setText(R.string.checking);
             onlineTxt.setVisibility(View.GONE);
             onlineToolbar.setVisibility(View.VISIBLE);
-            ColorDrawable[] color = {new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.startGradientColor)), new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.endGradientColor))};
+            ColorDrawable[] color = {new ColorDrawable(requireContext().getColor(R.color.startGradientColor)), new ColorDrawable(requireContext().getColor(R.color.endGradientColor))};
             TransitionDrawable trans = new TransitionDrawable(color);
             onlineToolbar.setBackground(trans);
             trans.startTransition(1500);
@@ -482,13 +508,13 @@ public class AppFragment extends Fragment {
 //                            onlineImg.setVisibility(View.VISIBLE);
 //                            offlineImg.setVisibility(View.GONE);
                             onlineToolbar.setVisibility(View.VISIBLE);
-                            ColorDrawable[] color = {new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.endGradientColor)), new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.green_tor))};
+                            ColorDrawable[] color = {new ColorDrawable(requireContext().getColor(R.color.endGradientColor)), new ColorDrawable(requireContext().getColor(R.color.green_tor))};
                             TransitionDrawable trans = new TransitionDrawable(color);
                             onlineToolbar.setBackground(trans);
                             trans.startTransition(1500);
                         }catch (Exception ignored) {}
                     });
-                    new Thread(()-> ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).queueAllUnsentMessages()).start();
+                    new Thread(()-> ((DxApplication) requireActivity().getApplication()).queueAllUnsentMessages()).start();
                 }else{
                     mainThread.post(()->{
                         try{
@@ -496,7 +522,7 @@ public class AppFragment extends Fragment {
 //                            onlineImg.setVisibility(View.GONE);
 //                            offlineImg.setVisibility(View.VISIBLE);
                             onlineToolbar.setVisibility(View.VISIBLE);
-                            ColorDrawable[] color = {new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.endGradientColor)), new ColorDrawable(Objects.requireNonNull(getContext()).getColor(R.color.red_500))};
+                            ColorDrawable[] color = {new ColorDrawable(requireContext().getColor(R.color.endGradientColor)), new ColorDrawable(requireContext().getColor(R.color.red_500))};
                             TransitionDrawable trans = new TransitionDrawable(color);
                             onlineToolbar.setBackground(trans);
                             trans.startTransition(1500);
@@ -518,106 +544,4 @@ public class AppFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);//activity_fragment_container_toolbar
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.action_restart_tor:
-                new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
-                    .setTitle(R.string.restart_tor)
-                    .setMessage(R.string.restart_tor_explain)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                        ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).restartTor();
-                        mainThread.post(()->{
-                            try{
-                                onlineTxt.setText(R.string.offline);
-                                onlineImg.setVisibility(View.GONE);
-                                offlineImg.setVisibility(View.VISIBLE);
-                                onlineToolbar.setVisibility(View.VISIBLE);
-                                Intent intent = new Intent(getActivity().getApplication(), SetupInProcess.class);
-                                intent.putExtra("first_time",false);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                startActivity(intent);
-                                getActivity().finish();
-                            } catch (Exception ignored) {}
-                        });
-                    })
-                    .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
-                break;
-            case R.id.action_shutdown:
-                new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
-                    .setTitle(R.string.shut_app)
-                    .setMessage(R.string.shut_app_explain)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                        ((DxApplication) Objects.requireNonNull(getActivity()).getApplication()).shutdown();
-                    })
-                    .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
-                break;
-            case R.id.action_my_identity:
-                stopCheckingMessages();
-                try{
-                    Intent intent = new Intent(getContext(), MyIdentityActivity.class);
-                    if(getContext()!=null){
-                        getContext().startActivity(intent);
-                    }
-                }catch (Exception ignored) {}
-                break;
-            case R.id.action_my_profile:
-                stopCheckingMessages();
-                try{
-                    Intent intent = new Intent(getContext(), MyProfileActivity.class);
-                    if(getContext()!=null){
-                        getContext().startActivity(intent);
-                    }
-                }catch (Exception ignored) {}
-                break;
-            case R.id.action_about:
-                stopCheckingMessages();
-                try{
-                    Intent intent = new Intent(getContext(), AboutActivity.class);
-                    if(getContext()!=null){
-                        getContext().startActivity(intent);
-                    }
-                }catch (Exception ignored) {}
-                break;
-            case R.id.action_notepad:
-                stopCheckingMessages();
-                try{
-                    Intent intent = new Intent(getContext(), NotepadActivity.class);
-                    if(getContext()!=null){
-                        getContext().startActivity(intent);
-                    }
-                }catch (Exception ignored) {}
-                break;
-            case R.id.action_log:
-                stopCheckingMessages();
-                try{
-                    Intent intent = new Intent(getContext(), LogActivity.class);
-                    if(getContext()!=null){
-                        getContext().startActivity(intent);
-                    }
-                }catch (Exception ignored) {}
-                break;
-            case R.id.action_tips:
-                stopCheckingMessages();
-                try{
-                    Intent intent = new Intent(getContext(), TipsActivity.class);
-                    if(getContext()!=null){
-                        getContext().startActivity(intent);
-                    }
-                }catch (Exception ignored) {}
-                break;
-            case R.id.action_license:
-                stopCheckingMessages();
-                try{
-                    Intent intent = new Intent(getContext(), LicenseActivity.class);
-                    if(getContext()!=null){
-                        getContext().startActivity(intent);
-                    }
-                }catch (Exception ignored) {}
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

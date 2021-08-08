@@ -17,7 +17,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
-import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.tor.TorClient;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -91,7 +91,7 @@ public class CallController {
     public CallController(String address, DxApplication app){
         // start service and notification and get actions ready
         app.commandCallService(address,CallService.ACTION_START_OUTGOING_CALL);
-        this.outgoing = TorClientSocks4.getCallSocket(address,app, CallService.ACTION_START_INCOMING_CALL);
+        this.outgoing = TorClient.getCallSocket(address,app, CallService.ACTION_START_INCOMING_CALL);
         this.address = address;
         this.app = app;
         if(outgoing==null){
@@ -106,7 +106,7 @@ public class CallController {
     //for new incoming calls
     public CallController(String address, Socket incoming, DxApplication app){
         app.commandCallService(address, app.getString(R.string.NotificationBarManager_call_in_progress));
-        this.outgoing = TorClientSocks4.getCallSocket(address,app, CallService.ACTION_START_OUTGOING_CALL_RESPONSE);
+        this.outgoing = TorClient.getCallSocket(address,app, CallService.ACTION_START_OUTGOING_CALL_RESPONSE);
         this.incoming = incoming;
         this.address = address;
         this.app = app;

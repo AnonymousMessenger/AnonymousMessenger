@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.dx.anonymousmessenger">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -25,10 +26,10 @@
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:largeHeap="true"
         tools:replace="android:allowBackup">
         <activity android:name=".ui.view.log.LogActivity" />
         <activity android:name=".ui.view.single_activity.SimpleScannerActivity" />
@@ -77,7 +78,7 @@
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".service.MyService"
+            android:name=".service.DxService"
             android:enabled="true"
             android:exported="false" />
         <service
@@ -95,9 +96,9 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.dx.anonymousmessenger.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:authorities="@string/file_provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />

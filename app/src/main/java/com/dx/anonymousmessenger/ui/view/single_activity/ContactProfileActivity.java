@@ -2,6 +2,7 @@ package com.dx.anonymousmessenger.ui.view.single_activity;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -37,6 +38,7 @@ public class ContactProfileActivity extends DxActivity {
 
         final TextView address = findViewById(R.id.txt_myaddress);
         final TextView nickname = findViewById(R.id.txt_nickname);
+        final TextView verifyIdentity = findViewById(R.id.btn_verify_identity);
         new Thread(()->{
             final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
                     "address"),
@@ -59,6 +61,12 @@ public class ContactProfileActivity extends DxActivity {
             ClipData clip = ClipData.newPlainText("label", address.getText().toString());
             Objects.requireNonNull(clipboard).setPrimaryClip(clip);
             Snackbar.make(address, R.string.copied_address, Snackbar.LENGTH_LONG).show();
+        });
+
+        verifyIdentity.setOnClickListener(v -> {
+            Intent intent = new Intent(this, VerifyIdentityActivity.class);
+            intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+            startActivity(intent);
         });
     }
 }

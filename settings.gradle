@@ -1,3 +1,2 @@
-include ':T0rlib4Droid'
 include ':app'
 rootProject.name = "Anonymous Messenger"

@@ -40,7 +40,7 @@ public class PasswordEntryFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static PasswordEntryFragment newInstance(String param1, String param2) {
+    public static PasswordEntryFragment newInstance() {
         return new PasswordEntryFragment();
     }
 
@@ -78,7 +78,7 @@ public class PasswordEntryFragment extends Fragment {
         progressBar = rootView.findViewById(R.id.progress2);
         btn_next = rootView.findViewById(R.id.next);
         errorBox = rootView.findViewById(R.id.error_box);
-        app = ((DxApplication) Objects.requireNonNull(getActivity()).getApplication());
+        app = ((DxApplication) requireActivity().getApplication());
         btn_next.setOnClickListener(v -> {
             btn_next.setEnabled(false);
             txtPassword.setEnabled(false);
@@ -88,7 +88,7 @@ public class PasswordEntryFragment extends Fragment {
                 try {
                     SQLiteDatabase database = isPasswordCorrect(Objects.requireNonNull(txtPassword.getText()).toString().getBytes(StandardCharsets.UTF_8));
                     if (getActivity() != null) {
-                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> ((AppActivity) getActivity()).goToTorActivity());
+                        requireActivity().runOnUiThread(() -> ((AppActivity) getActivity()).goToTorActivity());
                     }
                     String pass = txtPassword.getText().toString();
                     txtPassword = null;
@@ -126,7 +126,7 @@ public class PasswordEntryFragment extends Fragment {
                 } catch (SQLiteException e) {
                     e.printStackTrace();
                     if (getActivity() != null) {
-                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                        requireActivity().runOnUiThread(() -> {
                             try{
                                 txtPassword.setText("");
                                 txtPassword.setEnabled(true);
@@ -151,7 +151,7 @@ public class PasswordEntryFragment extends Fragment {
                         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(intent);
                         try{
-                            Objects.requireNonNull(getActivity()).finish();
+                            requireActivity().finish();
                         }catch (Exception ignored) {}
                     }
                     e.printStackTrace();

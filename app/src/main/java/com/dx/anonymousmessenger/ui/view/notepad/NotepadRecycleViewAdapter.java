@@ -82,7 +82,7 @@ public class NotepadRecycleViewAdapter extends RecyclerView.Adapter<NotepadRecyc
                             ClipboardManager clipboard = getSystemService(Objects.requireNonNull(holder.itemView.getContext()), ClipboardManager.class);
                             ClipData clip = ClipData.newPlainText("label", holder.note.getText().toString());
                             Objects.requireNonNull(clipboard).setPrimaryClip(clip);
-                            Snackbar.make(v, R.string.copied, Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(v, R.string.copied, Snackbar.LENGTH_SHORT).setAnchorView(((NotepadActivity)context).findViewById(R.id.layout_chatbox)).show();
                         }catch (Exception ignored) {}
                         break;
                 }

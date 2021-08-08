@@ -26,7 +26,7 @@
     <string name="pin">Pin</string>
     <string name="copy">Kopeeri</string>
     <string name="you">sina</string>
-    <string name="action_settings">Algseadista Seanss</string>
+    <string name="action_reset_session">Algseadista Seanss</string>
     <string name="action_verify_identity">Kinnita Identiteet</string>
     <string name="action_clear_conversation">Puhasta Vestlus</string>
     <string name="action_search">Otsi</string>
@@ -65,7 +65,6 @@
     <string name="welcome_to">tere tulemast</string>
     <string name="recording">Salvestus</string>
     <string name="send">SAADA</string>
-    <string name="_00_00" translatable="false">00:00</string>
     <string name="to_show_when_it_is_unread">näidata, kui see on lugemata</string>
     <string name="text_msg_placeholder">unustasin sulle seda asja seal meelde tuletada</string>
     <string name="profile_image">profiili pilt</string>
@@ -77,7 +76,6 @@
     <string name="textview">TekstiVaade</string>
     <string name="john_doe">John Doe</string>
     <string name="hi_man_how_are_you">tere, kuidas läheb?</string>
-    <string name="time_placeholder" translatable="false">11:40</string>
     <string name="offline">ühenduseta</string>
     <string name="picture_of_contact">pilt kontaktist</string>
     <string name="hold_on">Pea kinni!</string>
@@ -314,5 +312,24 @@
     <string name="back_image">"mine tagasi "</string>
     <string name="subtitle">Alapealkiri</string>
     <string name="qr_code_image">"Pilt, mis sisaldab QR-koodi "</string>
+    <string name="go_to_app">"ava rakendus "</string>
+    <string name="use_bridges">"Kasutage sildu "</string>
+    <string name="add_bridge">"Lisa sild "</string>
+    <string name="request_bridge">"Taotle silda "</string>
+    <string name="done_button">"Valmis "</string>
+    <string name="allow_unknown">"Võtke vastu tundmatuid kontakte "</string>
+    <string name="allow_files">"Luba failide vastuvõtmine "</string>
+    <string name="file_limit">"Faili suuruse piirang "</string>
+    <string name="allow_calls">"Luba kõned "</string>
+    <string name="action_settings">"Seaded "</string>
+    <string name="delete_bridge_question">"Kas kustutada see sild? "</string>
+    <string name="delete_bridge_details">"seda ei saa tagasi võtta "</string>
+    <string name="online_check_address">"Veebikontrolli aadress "</string>
+    <string name="reset_settings">"Lähtesta seaded "</string>
+    <string name="bridges">"Sillad "</string>
+    <string name="other">Muu</string>
+    <string name="reset">"Lähtesta "</string>
+    <string name="security">Turvalisus</string>
+    <string name="connectivity">Ühenduvus</string>
 
 </resources>

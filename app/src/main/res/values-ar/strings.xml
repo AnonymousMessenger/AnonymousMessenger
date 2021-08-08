@@ -23,7 +23,7 @@
     <string name="pin">تثبيت</string>
     <string name="copy">نسخ</string>
     <string name="you">أنت</string>
-    <string name="action_settings">إنهاء جلسة التشفير</string>
+    <string name="action_reset_session">إنهاء جلسة التشفير</string>
     <string name="action_verify_identity">التثبت من الهوية</string>
     <string name="action_clear_conversation">إفراغ المحادثة</string>
     <string name="action_search">بحث</string>
@@ -59,7 +59,7 @@
     <string name="tor_output">معلومات تور</string>
     <string name="anonymous_messenger">المسنجر المجهول</string>
     <string name="by_drxtreme">من قبل سفيان بن عيسى</string>
-    <string name="welcome_to">مرحبا إلى</string>
+    <string name="welcome_to">مرحبا بك في</string>
     <string name="recording">تسجيل</string>
     <string name="send">أرسل</string>
     <string name="to_show_when_it_is_unread">ليتم عرضه عندما لم تقرء</string>
@@ -248,4 +248,22 @@
     <string name="subtitle">عنوان فرعي</string>
     <string name="qr_code_image">صورة تحتوي على كود QRز</string>
     <string name="go_to_app">فتح التطبيق</string>
+    <string name="use_bridges">إستعمال الجسور</string>
+    <string name="add_bridge">إضافة جسر</string>
+    <string name="request_bridge">طلب جسر</string>
+    <string name="done_button">تم</string>
+    <string name="allow_unknown">قبول الرسائل من أي أحد</string>
+    <string name="allow_files">السماح بإستلام الملفات</string>
+    <string name="file_limit">اكبر حجم ملفات المسموح</string>
+    <string name="allow_calls">السماح بالمكالمات</string>
+    <string name="action_settings">الإعدادات</string>
+    <string name="delete_bridge_question">إزالة هذا الجسر</string>
+    <string name="delete_bridge_details">لا يمكن إلغاء هذه العملية</string>
+    <string name="online_check_address">عنوان التحقق من الإتصال</string>
+    <string name="reset_settings">إعادة ظبط الإعدادات</string>
+    <string name="bridges">الجسور</string>
+    <string name="other">غير ذلك</string>
+    <string name="reset">إعادة الظبط</string>
+    <string name="security">الآمان</string>
+    <string name="connectivity">الإتصال</string>
 </resources>

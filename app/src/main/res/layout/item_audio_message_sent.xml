@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -32,7 +31,9 @@
                 android:id="@+id/txt_audio_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1011b"
+                android:padding="6dp"
+                android:text="23s"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/btn_play_pause"
                 app:layout_constraintEnd_toStartOf="@+id/btn_play_pause"
                 app:layout_constraintTop_toTopOf="@+id/btn_play_pause" />

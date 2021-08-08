@@ -1,48 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/action_my_identity"
         android:title="@string/action_my_identity"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_my_profile"
-        android:title="@string/action_my_profile"
+        android:icon="@drawable/ic_baseline_lock_24"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_notepad"
         android:title="@string/action_notepad"
+        android:icon="@drawable/ic_baseline_menu_book_24"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_tips"
         android:title="@string/action_tips"
+        android:icon="@drawable/ic_stat_name"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_log"
         android:title="@string/action_log"
+        android:icon="@drawable/ic_baseline_warning_24"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_about"
-        android:title="@string/action_about"
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_baseline_settings_24"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/action_license"
-        android:title="@string/action_license"
-        app:showAsAction="never"/>
+<!--    <item-->
+<!--        android:id="@+id/action_about"-->
+<!--        android:title="@string/action_about"-->
+<!--        app:showAsAction="never"/>-->
+
+<!--    <item-->
+<!--        android:id="@+id/action_license"-->
+<!--        android:title="@string/action_license"-->
+<!--        android:icon="@drawable/ic_baseline_legal_24"-->
+<!--        app:showAsAction="never"/>-->
 
     <item
         android:id="@+id/action_restart_tor"
         android:title="@string/action_restart_tor"
+        android:icon="@drawable/ic_baseline_refresh_24"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_shutdown"
         android:title="@string/action_shutdown"
+        android:icon="@drawable/ic_baseline_power_settings_new_24"
         app:showAsAction="never"/>
 </menu>

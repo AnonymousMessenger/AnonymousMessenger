@@ -431,6 +431,10 @@ public class FileHelper {
         return f.length();
     }
 
+    public static long getAudioFileLengthInSeconds(String path, Context context){
+        return getFileSize(path,context)/16000;
+    }
+
     public static void cleanDir(File dir) {
 //        long bytesDeleted = 0;
         File[] files = dir.listFiles();

@@ -128,7 +128,7 @@ public class PictureViewerActivity extends DxActivity {
         new Thread(()->{
             Bitmap image;
             try{
-                image = BitmapFactory.decodeFile(getIntent().getStringExtra("path"));
+                image = Utils.rotateBitmap(BitmapFactory.decodeFile(getIntent().getStringExtra("path")),getIntent().getStringExtra("path"));
             }catch (Exception e){
                 e.printStackTrace();
                 return;
@@ -160,7 +160,7 @@ public class PictureViewerActivity extends DxActivity {
                 String filename = String.valueOf(time);
                 String path = null;
                 try {
-                    Bitmap image = BitmapFactory.decodeFile(getIntent().getStringExtra("path"));
+                    Bitmap image = Utils.rotateBitmap(BitmapFactory.decodeFile(getIntent().getStringExtra("path")),getIntent().getStringExtra("path"));
                     if(image==null){
                         return;
                     }

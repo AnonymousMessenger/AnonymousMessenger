@@ -31,11 +31,28 @@ public class MessageReceiver {
         try {
             JSONObject json = new JSONObject(msg);
             if(json.has("address")){
-                //make isValid function dude
-                if(json.getString("address").length() < 54 ||
-                        json.getString("address").length() > 64 ||
-                        !json.getString("address").endsWith(".onion") ||
-                        !DbHelper.contactExists(json.getString("address"),app)){
+                if(!app.isValidAddress(json.getString("address")) || !DbHelper.contactExists(json.getString("address"),app)){
+
+                    if(app.isAcceptingUnknownContactsEnabled() && app.isValidAddress(json.getString("address"))){
+                        //add the contact and re-receive the message because user wants to receive from anyone
+
+                        String s = json.getString("address");
+                        boolean b = DbHelper.saveContact(s.trim(), app);
+                        if(!b){
+                            Log.e("FAILED TO SAVE CONTACT", "SAME " );
+                            return;
+                        }
+                        //we can send a key exchange request now but the message itself could be a key exchange request from the contact so it's best to just re-receive it instead
+//                        if(TorClient.testAddress(app,s.trim())){
+//                            if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(s.trim(),1))){
+//                                MessageSender.sendKeyExchangeMessage(app,s.trim());
+//                            }
+//                        }
+                        Log.d("MSG RCVR","RECEIVED UNKNOWN ADDRESS, adding to contacts");
+                        DbHelper.saveLog("RECEIVED UNKNOWN ADDRESS "+json.getString("address")+" added to contacts" ,new Date().getTime(),"SEVERE",app);
+                        messageReceiver(msg,app);
+                        return;
+                    }
                     Log.e("MSG RCVR","RECEIVED BAD/UNKNOWN ADDRESS, throwing away message");
                     DbHelper.saveLog("RECEIVED BAD/UNKNOWN ADDRESS "+json.getString("address") ,new Date().getTime(),"SEVERE",app);
                     return;

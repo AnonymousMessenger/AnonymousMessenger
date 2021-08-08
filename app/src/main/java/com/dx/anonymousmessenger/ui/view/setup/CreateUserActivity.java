@@ -13,10 +13,76 @@ import com.dx.anonymousmessenger.ui.view.MainActivity;
 import com.dx.anonymousmessenger.ui.view.app.AppActivity;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class CreateUserActivity extends DxActivity {
     private String nickname;
-//    private boolean noBack = false;
+    private List<String> bridgeList = new ArrayList<>();
+    private boolean bridgesEnabled = false;
+    private boolean isAcceptingUnknownContactsEnabled = false;
+    private boolean isAcceptingCallsAllowed = true;
+    private boolean isReceivingFilesAllowed = true;
+    private String checkAddress = "duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion";
+    private String fileSizeLimit = "3gb";
+
+    public String getCheckAddress() {
+        return checkAddress;
+    }
+
+    public void setCheckAddress(String checkAddress) {
+        this.checkAddress = checkAddress;
+    }
+
+    public boolean areBridgesEnabled() {
+        return bridgesEnabled;
+    }
+
+    public void setBridgesEnabled(boolean bridgesEnabled) {
+        this.bridgesEnabled = bridgesEnabled;
+    }
+
+    public boolean isAcceptingUnknownContactsEnabled() {
+        return isAcceptingUnknownContactsEnabled;
+    }
+
+    public void setAcceptingUnknownContactsEnabled(boolean acceptingUnknownContactsEnabled) {
+        isAcceptingUnknownContactsEnabled = acceptingUnknownContactsEnabled;
+    }
+
+    public boolean isAcceptingCallsAllowed() {
+        return isAcceptingCallsAllowed;
+    }
+
+    public void setAcceptingCallsAllowed(boolean acceptingCallsAllowed) {
+        isAcceptingCallsAllowed = acceptingCallsAllowed;
+    }
+
+    public boolean isReceivingFilesAllowed() {
+        return isReceivingFilesAllowed;
+    }
+
+    public void setReceivingFilesAllowed(boolean receivingFilesAllowed) {
+        isReceivingFilesAllowed = receivingFilesAllowed;
+    }
+
+    public String getFileSizeLimit() {
+        return fileSizeLimit;
+    }
+
+    public void setFileSizeLimit(String fileSizeLimit) {
+        this.fileSizeLimit = fileSizeLimit;
+    }
+
+
+    public List<String> getBridgeList() {
+        return bridgeList;
+    }
+
+    public void setBridgeList(List<String> bridgeList) {
+        this.bridgeList = bridgeList;
+    }
 
     public String getNickname() {
         return nickname;
@@ -26,7 +92,11 @@ public class CreateUserActivity extends DxActivity {
         this.nickname = nickname;
     }
 
-    public void changeToPasswordActivity(){
+    public void changeToSettingsFragment(){
+        showNextFragment(SetupSettingsFragment.newInstance(true));
+    }
+
+    public void changeToPasswordFragment(){
         showNextFragment(new SetupPasswordFragment());
     }
 
@@ -53,7 +123,7 @@ public class CreateUserActivity extends DxActivity {
         }
     }
 
-    public void showNextFragment(Fragment f) {
+    private void showNextFragment(Fragment f) {
         //if (!getLifecycle().getCurrentState().isAtLeast(STARTED)) return;
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
@@ -62,7 +132,7 @@ public class CreateUserActivity extends DxActivity {
                 .commit();
     }
 
-    public static void setError(TextInputLayout til, String error,
+    private static void setError(TextInputLayout til, String error,
                                 boolean set) {
 		if (set) {
 			if (til.getError() == null) til.setError(error);
@@ -71,12 +141,13 @@ public class CreateUserActivity extends DxActivity {
 		}
 	}
 
-    public void createAccount(byte[] password){
+    protected void createAccount(byte[] password){
         if(nickname==null || password==null){
             return;
         }
         try{
-            ((DxApplication)getApplication()).createAccount(password,nickname);
+            //create account and start tor
+            ((DxApplication)getApplication()).createAccount(password,nickname,bridgesEnabled,bridgeList,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit);
             Intent intent = new Intent(this, SetupInProcess.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
@@ -86,14 +157,14 @@ public class CreateUserActivity extends DxActivity {
         }
     }
 
-    public void switchToAppView(){
+    private void switchToAppView(){
         Intent intent = new Intent(this, AppActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();
     }
 
-    public void switchToMainView(){
+    private void switchToMainView(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

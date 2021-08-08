@@ -12,7 +12,7 @@ import com.dx.anonymousmessenger.crypto.AddressedKeyExchangeMessage;
 import com.dx.anonymousmessenger.crypto.KeyExchangeMessage;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.file.FileHelper;
-import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.tor.TorClient;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
 import org.whispersystems.libsignal.StaleKeyExchangeException;
@@ -44,7 +44,7 @@ public class MessageSender {
                     return;
                 }
                 app.sendingTo.add(to);
-                received = TorClientSocks4.sendMessage(to,app,aem.toJson().toString());
+                received = TorClient.sendMessage(to,app,aem.toJson().toString());
                 app.sendingTo.remove(to);
             }catch (Exception e){
                 app.sendingTo.remove(to);
@@ -85,7 +85,7 @@ public class MessageSender {
                     return;
                 }
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
-                received = TorClientSocks4.sendMessage(to,app,aem.toJson().toString());
+                received = TorClient.sendMessage(to,app,aem.toJson().toString());
                 app.sendingTo.remove(to);
             }catch (Exception e){
 //                Intent gcm_rec = new Intent("your_action");
@@ -137,7 +137,7 @@ public class MessageSender {
 
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
-                received = TorClientSocks4.sendFile(
+                received = TorClient.sendFile(
                         to,app,aem.toJson().toString(),
                         fis,FileHelper.getFileSize(msg.getPath(),app)
                 );
@@ -187,7 +187,7 @@ public class MessageSender {
 
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
-                received = TorClientSocks4.sendFile(
+                received = TorClient.sendFile(
                         to,app,aem.toJson().toString(),
                         fis,FileHelper.getFileSize(msg.getPath(),app)
                 );
@@ -237,7 +237,7 @@ public class MessageSender {
 
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
-                received = TorClientSocks4.sendMedia(to,app,aem.toJson().toString(), MessageEncrypter.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
+                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncrypter.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
                 app.sendingTo.remove(to);
             }catch (Exception e){
 //                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
@@ -280,7 +280,7 @@ public class MessageSender {
 
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
-                received = TorClientSocks4.sendMedia(to,app,aem.toJson().toString(), MessageEncrypter.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
+                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncrypter.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
                 app.sendingTo.remove(to);
             }catch (Exception e){
 //                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
@@ -309,7 +309,7 @@ public class MessageSender {
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
             KeyExchangeMessage kem = MessageEncrypter.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1));
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),false);
-            boolean received = TorClientSocks4.sendMessage(to,app,akem.toJson().toString());
+            boolean received = TorClient.sendMessage(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
             if(received){
 //                gcm_rec.putExtra("delivery",msg.getCreatedAt());
@@ -328,7 +328,7 @@ public class MessageSender {
             Intent gcm_rec = new Intent("your_action");
             KeyExchangeMessage kem = MessageEncrypter.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1));
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),false);
-            boolean received = TorClientSocks4.sendMessage(to,app,akem.toJson().toString());
+            boolean received = TorClient.sendMessage(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
             if(received){
 //                gcm_rec.putExtra("delivery",msg.getCreatedAt());
@@ -348,7 +348,7 @@ public class MessageSender {
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
             KeyExchangeMessage kem = MessageEncrypter.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1),ikem);
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),true);
-            boolean received = TorClientSocks4.sendMessage(to,app,akem.toJson().toString());
+            boolean received = TorClient.sendMessage(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
             if(received){
 //                gcm_rec.putExtra("delivery",msg.getCreatedAt());

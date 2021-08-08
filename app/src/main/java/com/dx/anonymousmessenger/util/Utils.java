@@ -1,5 +1,9 @@
 package com.dx.anonymousmessenger.util;
 
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -109,5 +113,71 @@ public class Utils {
         String part2 = (mbPerSec+"").split("\\.")[1];
         str += part2.length()>2?part2.substring(0,2):part2;
         return str+" mbps";
+    }
+
+    //takes a file size such as: '3gb' and returns the size in bytes
+    public static long parseFileSize(String fileSize){
+        String substring = fileSize.trim().substring(0, fileSize.length() - 2).trim();
+        long n = Integer.parseInt(substring);
+        if(fileSize.endsWith("gb") || fileSize.endsWith("GB")){
+            n = n * 1024*1024*1024;
+        }else if(fileSize.endsWith("mb") || fileSize.endsWith("MB")){
+            n = n * 1024*1024;
+        }else if(fileSize.endsWith("kb") || fileSize.endsWith("KB")){
+            n = n * 1024;
+        }
+        System.out.println("file size in bytes is : " + n);
+        return n;
+    }
+
+    public static Bitmap rotateBitmap(Bitmap bm, String path){
+        ExifInterface exif = null;
+        int orientation = 1;
+        try {
+            exif = new ExifInterface(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (exif != null) {
+            orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+        }
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case 2:
+                matrix.setScale(-1, 1);
+                break;
+            case 3:
+                matrix.setRotate(180);
+                break;
+            case 4:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case 5:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case 6:
+                matrix.setRotate(90);
+                break;
+            case 7:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case 8:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bm;
+        }
+        try {
+            Bitmap oriented = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+            bm.recycle();
+            return oriented;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bm;
     }
 }

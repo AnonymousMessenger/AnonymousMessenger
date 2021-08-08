@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
-import com.dx.anonymousmessenger.service.MyService;
+import com.dx.anonymousmessenger.service.DxService;
 import com.dx.anonymousmessenger.ui.view.app.AppActivity;
 import com.dx.anonymousmessenger.ui.view.setup.CreateUserActivity;
 import com.dx.anonymousmessenger.ui.view.setup.SetupInProcess;
@@ -40,7 +40,7 @@ public class MainActivity extends DxActivity {
                     switchToAppView();
                 }else{
                     //still setting up account
-                    if(((DxApplication)getApplication()).isServiceRunningInForeground(this, MyService.class)){
+                    if(((DxApplication)getApplication()).isServiceRunningInForeground(this, DxService.class)){
                         switchToSetupInProcess();
                     }else{
                         //first time user

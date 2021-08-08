@@ -8,7 +8,7 @@ import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
-import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.Result;
@@ -83,7 +83,7 @@ public class SimpleScannerActivity extends DxActivity implements ZXingScannerVie
                     return;
                 }
                 new Thread(()->{
-                    if(TorClientSocks4.testAddress((DxApplication)getApplication(),s.trim())){
+                    if(TorClient.testAddress((DxApplication)getApplication(),s.trim())){
                         if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(s.trim(),1))){
                             MessageSender.sendKeyExchangeMessage((DxApplication)getApplication(),s.trim());
                         }

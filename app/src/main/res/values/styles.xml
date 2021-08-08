@@ -22,6 +22,7 @@
         <item name="colorControlHighlight">@color/dx_white</item>
         <item name="android:actionModeStyle">@style/Theme.App</item>
         <item name="actionModeBackground">@color/dx_night_950</item>
+        <item name="switchTextAppearance">@color/dx_white</item>
     </style>
 
     <style name="Widget.App.ActionMode" parent="Widget.AppCompat.ActionMode">

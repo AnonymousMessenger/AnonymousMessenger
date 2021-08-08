@@ -234,15 +234,7 @@ public class DxSignalKeyStore implements SignalProtocolStore {
     @Override
     public boolean isTrustedIdentity(SignalProtocolAddress address, IdentityKey identityKey, Direction direction) {
 
-        /*
-            Not sure what this method is for but you can refer this file in the original repo
-            TextSecureIdentityKeyStore.java
-        */
-//        if(getIdentity(address)==null||getIdentity(address).getPublicKey()==identityKey.getPublicKey()){
-//            return true;
-//        }
-
-        return true;
+        return getIdentity(address) == null || getIdentity(address).getFingerprint().equals(identityKey.getFingerprint());
     }
 
     @Override

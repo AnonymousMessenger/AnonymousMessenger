@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.ui.view.message_list.MessageListActivity;
+import com.dx.anonymousmessenger.util.Utils;
 
 import java.util.List;
 
@@ -60,18 +61,21 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
         new Thread(()->{
-            Bitmap image;
-            if(types.get(position).equals(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO+"")){
-                image = ThumbnailUtils.createVideoThumbnail(path,
-                        MediaStore.Images.Thumbnails.MINI_KIND);
-            }else{
-                image = BitmapFactory.decodeFile(path,options);
-            }
-            new Handler(Looper.getMainLooper()).post(()->{
-                try{
-                    holder.myView.setImageBitmap(image);
-                }catch (Exception ignored) {}
-            });
+            try{
+                Bitmap image;
+                if(types.get(position).equals(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO+"")){
+                    image = ThumbnailUtils.createVideoThumbnail(path,
+                            MediaStore.Images.Thumbnails.MINI_KIND);
+                }else{
+                    image = Utils.rotateBitmap(BitmapFactory.decodeFile(path,options),path);
+                }
+
+                new Handler(Looper.getMainLooper()).post(()->{
+                    try{
+                        holder.myView.setImageBitmap(image);
+                    }catch (Exception ignored) {}
+                });
+            }catch (Exception ignored){}
         }).start();
     }
 
@@ -115,4 +119,6 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
+
+
 }

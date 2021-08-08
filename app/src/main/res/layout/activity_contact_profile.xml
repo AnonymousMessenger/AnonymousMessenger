@@ -9,6 +9,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <Button
+            android:id="@+id/btn_verify_identity"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="154dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="40dp"
+            android:background="@drawable/button_ripple"
+            android:enabled="true"
+            android:text="@string/action_verify_identity"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_myaddress" />
+
         <include
             android:id="@+id/top_bar"
             layout="@layout/toolbar"

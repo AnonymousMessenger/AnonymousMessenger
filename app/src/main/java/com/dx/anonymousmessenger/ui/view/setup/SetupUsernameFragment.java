@@ -58,14 +58,14 @@ public class SetupUsernameFragment extends Fragment {
                     Button next = Objects.requireNonNull(getView()).findViewById(R.id.next);
                     next.setEnabled(true);
                     error = getString(R.string.nickname_okay);
-                    TextView errorview = getView().findViewById(R.id.txt_error);
-                    errorview.setText(error);
+                    TextView errorView = getView().findViewById(R.id.txt_error);
+                    errorView.setText(error);
                 }else {
                     Button next = Objects.requireNonNull(getView()).findViewById(R.id.next);
                     next.setEnabled(false);
                     error = getString(R.string.nickname_error);
-                    TextView errorview = getView().findViewById(R.id.txt_error);
-                    errorview.setText(error);
+                    TextView errorView = getView().findViewById(R.id.txt_error);
+                    errorView.setText(error);
                 }
             }
 
@@ -81,7 +81,7 @@ public class SetupUsernameFragment extends Fragment {
                 txtNickname.setEnabled(false);
                 new Thread(()->{
                     ((CreateUserActivity) Objects.requireNonNull(getActivity())).setNickname(txtNickname.getText().toString());
-                    ((CreateUserActivity)getActivity()).changeToPasswordActivity();
+                    ((CreateUserActivity)getActivity()).changeToSettingsFragment();
                 }).start();
             }
         });

@@ -27,13 +27,15 @@ import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.receiver.NotificationHiderReceiver;
-import com.dx.anonymousmessenger.service.MyService;
+import com.dx.anonymousmessenger.service.DxService;
 import com.dx.anonymousmessenger.tor.ServerSocketViaTor;
-import com.dx.anonymousmessenger.tor.TorClientSocks4;
+import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.MainActivity;
 import com.dx.anonymousmessenger.ui.view.call.CallActivity;
+import com.dx.anonymousmessenger.util.Utils;
 
-import net.sf.controller.network.AndroidTorRelay;
+import net.sf.msopentech.thali.java.toronionproxy.FileUtilities;
+import net.sf.msopentech.thali.java.toronionproxy.OnionProxyManager;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.File;
@@ -51,6 +53,7 @@ public class DxApplication extends Application {
     public ServerSocketViaTor torSocket;
     private boolean serverReady = false;
     private boolean exitingHoldup;
+    private volatile boolean restartingTor;
 
     private DxAccount account;
     private Entity entity;
@@ -70,6 +73,41 @@ public class DxApplication extends Application {
     private boolean sendingFile;
     public List<String> sendingTo = new ArrayList<>();
 
+    //settings
+    //settings array: bridgesEnabled,acceptUnknown,acceptCalls,receiveFiles,testAddress,fileSizeLimit
+    public final Object[] DEFAULT_SETTINGS = {0,0,1,1,"duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion","3gb"};
+    private boolean bridgesEnabled;
+    private boolean isAcceptingUnknownContactsEnabled;
+    private boolean isAcceptingCallsAllowed;
+    private boolean isReceivingFilesAllowed;
+    private long fileSizeLimit;
+    //the ddg site to check if we are online (can be overridden in the settings)
+    private String testAddress = DEFAULT_SETTINGS[5].toString();
+
+    public String getTestAddress() {
+        return testAddress;
+    }
+
+    public boolean isBridgesEnabled() {
+        return bridgesEnabled;
+    }
+
+    public boolean isAcceptingUnknownContactsEnabled() {
+        return isAcceptingUnknownContactsEnabled;
+    }
+
+    public boolean isAcceptingCallsAllowed() {
+        return isAcceptingCallsAllowed;
+    }
+
+    public boolean isReceivingFilesAllowed() {
+        return isReceivingFilesAllowed;
+    }
+
+    public long getFileSizeLimit() {
+        return fileSizeLimit;
+    }
+
     /*
      * Tracking sending messages
      */
@@ -80,7 +118,6 @@ public class DxApplication extends Application {
     public void setSendingFile(boolean b){
         sendingFile = b;
     }
-
 
     /*
      * Syncing related functions
@@ -139,7 +176,7 @@ public class DxApplication extends Application {
                 return;
             }
             for (String[] contact: contactsList){
-                boolean b = TorClientSocks4.testAddress(this, contact[1]);
+                boolean b = TorClient.testAddress(this, contact[1]);
                 if(!b){
                     if(onlineList.contains(contact[1])){
                         onlineList.remove(contact[1]);
@@ -338,14 +375,14 @@ public class DxApplication extends Application {
         }
     }
 
-    public void setAccount(DxAccount account, boolean b) {
+    public void setAccount(DxAccount account, boolean saveToDb) {
         this.account = account;
-        if(account!=null && b){
+        if(account!=null && saveToDb){
             DxAccount.saveAccount(account,this);
         }
     }
 
-    public void createAccount(byte[] password, String nickname){
+    public void createAccount(byte[] password, String nickname, boolean bridgesEnabled, List<String> bridgeList, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed,boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit){
         new Thread(() -> {
             try{
                 if(nickname==null || password==null){
@@ -364,20 +401,37 @@ public class DxApplication extends Application {
                 account.setNickname(nickname);
                 account.setPassword(password);
 
+                //set and save the account to DB
                 this.setAccount(account);
 
-                if (!isServerReady()) {
-                    if (isServiceRunningInForeground(this, MyService.class)) {
-                        Intent serviceIntent = new Intent(this, MyService.class);
-                        stopService(serviceIntent);
-                    }
-                    startTor();
+                //save the bridge list to DB
+                for(int i=0; i<bridgeList.size(); i++){
+                    DbHelper.saveBridge(bridgeList.get(i),this);
                 }
+
+                //save the settings to DB
+                DbHelper.saveSettings(bridgesEnabled, isAcceptingUnknownContactsEnabled, isAcceptingCallsAllowed, isReceivingFilesAllowed,checkAddress,fileSizeLimit,this);
+
+                startTor();
 
             }catch(Exception e){
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    public void reloadSettings(){
+        try{
+            Object[] settings = DbHelper.getSettingsList(this);
+            this.bridgesEnabled = (int)settings[0]>0;
+            this.isAcceptingUnknownContactsEnabled = (int)settings[1]>0;
+            this.isAcceptingCallsAllowed = (int)settings[2]>0;
+            this.isReceivingFilesAllowed = (int)settings[3]>0;
+            this.testAddress = (String) settings[4];
+            this.fileSizeLimit = Utils.parseFileSize((String) settings[5]);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public Entity getEntity() {
@@ -386,6 +440,15 @@ public class DxApplication extends Application {
 
     public void setEntity(Entity entity) {
         this.entity = entity;
+    }
+
+    public String getMyAddressOffline(){
+        try{
+            return new String(FileUtilities.read(new File(this.getDir("torfiles", MODE_PRIVATE),"/hiddenservice/hostname")),"UTF-8").trim();
+        }catch (Exception e){
+            e.printStackTrace();
+            return "Couldn't read hostname file";
+        }
     }
 
     /*
@@ -683,11 +746,10 @@ public class DxApplication extends Application {
 
     public void shutdown(){
         emptyVars();
-        Intent serviceIntent = new Intent(this, MyService.class);
+        Intent serviceIntent = new Intent(this, DxService.class);
         stopService(serviceIntent);
         shutdown(0);
     }
-
 
     /*
      * tor related functions
@@ -701,11 +763,11 @@ public class DxApplication extends Application {
         this.hostname = hostname;
     }
 
-    public AndroidTorRelay getAndroidTorRelay(){
+    public OnionProxyManager getAndroidTorRelay(){
         if(torSocket==null){
             return null;
         }
-        return torSocket.getAndroidTorRelay();
+        return torSocket.getOnionProxyManager();
     }
 
     public ServerSocketViaTor getTorSocket() {
@@ -733,11 +795,12 @@ public class DxApplication extends Application {
 
     public void startTor(){
         System.out.println("start tor requested");
-        if(isServiceRunningInForeground(this,MyService.class)){
+        reloadSettings();
+        if(isServiceRunningInForeground(this, DxService.class)){
             System.out.println("Service already running, not starting tor");
             return;
         }
-        Intent serviceIntent = new Intent(this, MyService.class);
+        Intent serviceIntent = new Intent(this, DxService.class);
         serviceIntent.putExtra("inputExtra", "inputExtra");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);
@@ -747,15 +810,50 @@ public class DxApplication extends Application {
     }
 
     public void restartTor(){
-        Intent serviceIntent = new Intent(this, MyService.class);
-        serviceIntent.putExtra("inputExtra", "inputExtra");
-//        serviceIntent.putExtra("inputExtra", "reconnect now");
-        stopService(serviceIntent);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        }else{
-            startService(serviceIntent);
+        if(restartingTor){
+            System.out.println("still restarting, abort");
+            return;
         }
+        System.out.println("starting restart now");
+        restartingTor = true;
+        new Thread(()->{
+        if(torSocket!=null){
+            try {
+                System.out.println("starting trykill");
+                torSocket.tryKill();
+                System.out.println("trykill ok");
+                Thread.sleep(1500);
+            } catch (Exception ignored) {}
+            if(serverReady){
+                serverReady = false;
+            }
+        }
+
+        try{
+            System.out.println("stopping service");
+            Intent serviceIntent = new Intent(this, DxService.class);
+            stopService(serviceIntent);
+            System.out.println("service stopped");
+
+            try {
+                Thread.sleep(3500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("restarting service");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            }else{
+                startService(serviceIntent);
+            }
+        }catch (Exception ignored){}
+
+        restartingTor = false;
+        }).start();
     }
 
+    public boolean isValidAddress(String address){
+        return address.trim().length() == 62 && address.trim().endsWith(".onion");
+    }
 }

@@ -4,14 +4,14 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.dx.anonymousmessenger",
-  "variantName": "processReleaseResources",
+  "applicationId": "com.example.anonymousmessenger",
+  "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 24,
-      "versionName": "0.7.2",
+      "versionCode": 25,
+      "versionName": "0.7.3",
       "outputFile": "app-release.apk"
     }
   ]
