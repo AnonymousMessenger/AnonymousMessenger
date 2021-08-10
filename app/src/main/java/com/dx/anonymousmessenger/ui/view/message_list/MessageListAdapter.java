@@ -121,6 +121,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public int getItemViewType(int position) {
         QuotedUserMessage message = mMessageList.get(position);
         // If the current user is the sender of the message
+        if(message.getAddress()==null){
+            DbHelper.deleteMessage(message,app);
+            return VIEW_TYPE_MESSAGE_RECEIVED;
+        }
         if (message.getAddress().equals(app.getHostname())) {
             if(message.isReceived()){
                 if(message.getType()!=null && message.getType().equals("file")){

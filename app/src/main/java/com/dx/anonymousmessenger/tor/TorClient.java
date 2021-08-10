@@ -197,7 +197,7 @@ public class TorClient {
                                     Utils.humanReadableSpeed(buf.length,time),
                                     ((int) (((double) done/(double) length)*100.0)));
                         }
-                        out.flush();
+//                        out.flush();
                         out.close();
                         fis.close();
                         app.clearNotification(2);

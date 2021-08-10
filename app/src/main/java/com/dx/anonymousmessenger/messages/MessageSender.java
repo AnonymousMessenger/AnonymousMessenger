@@ -122,7 +122,7 @@ public class MessageSender {
                     return;
                 }
 
-                while (app.sendingTo.contains(to) || app.isSendingFile()){
+                while (app.isSendingFile()){
                     try{
                         Thread.sleep(500);
                     }catch (Exception ignored){}
@@ -130,7 +130,6 @@ public class MessageSender {
                 if(DbHelper.getMessageReceived(msg,app,to)){
                     return;
                 }
-                app.sendingTo.add(to);
                 app.setSendingFile(true);
                 //split message to file and metadata (msg is metadata)
                 FileInputStream fis = FileHelper.getSharedFileStream(msg.getPath(),app);
@@ -141,11 +140,9 @@ public class MessageSender {
                         to,app,aem.toJson().toString(),
                         fis,FileHelper.getFileSize(msg.getPath(),app)
                 );
-                app.sendingTo.remove(to);
                 app.setSendingFile(false);
             }catch (Exception e){
 //                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
-                app.sendingTo.remove(to);
                 app.setSendingFile(false);
                 e.printStackTrace();
                 Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
@@ -172,7 +169,7 @@ public class MessageSender {
                     return;
                 }
 
-                while (app.sendingTo.contains(to) || app.isSendingFile()){
+                while (app.isSendingFile()){
                     try{
                         Thread.sleep(500);
                     }catch (Exception ignored){}
@@ -180,7 +177,6 @@ public class MessageSender {
                 if(DbHelper.getMessageReceived(msg,app,to)){
                     return;
                 }
-                app.sendingTo.add(to);
                 app.setSendingFile(true);
                 //split message to file and metadata (msg is metadata)
                 FileInputStream fis = FileHelper.getSharedFileStream(msg.getPath(),app);
@@ -191,21 +187,23 @@ public class MessageSender {
                         to,app,aem.toJson().toString(),
                         fis,FileHelper.getFileSize(msg.getPath(),app)
                 );
-                app.sendingTo.remove(to);
+                System.out.println("received: ?????????????????????");
+                System.out.println(received);
+                DbHelper.setMessageReceived(msg,app,to,received);
                 app.setSendingFile(false);
             }catch (Exception e){
-                app.sendingTo.remove(to);
                 app.setSendingFile(false);
                 e.printStackTrace();
                 Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
             }finally {
-                DbHelper.setMessageReceived(msg,app,to,received);
+//                DbHelper.setMessageReceived(msg,app,to,received);
+                if(received){
+                    Intent gcm_rec = new Intent("your_action");
+                    gcm_rec.putExtra("delivery",msg.getCreatedAt());
+                    LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+                }
             }
-            if(received){
-                Intent gcm_rec = new Intent("your_action");
-                gcm_rec.putExtra("delivery",msg.getCreatedAt());
-                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
-            }
+
         } catch (Exception e) {
             Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
             e.printStackTrace();

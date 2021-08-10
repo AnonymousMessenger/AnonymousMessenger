@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Anonymous Messenger</string>
-    <string name="create_account_button">Create Account</string>
+    <string name="create_account_button">Start</string>
     <string name="nickname">Nickname</string>
     <string name="nickname_error">Invalid Nickname</string>
     <string name="nickname_help">Enter Nickname to continue</string>

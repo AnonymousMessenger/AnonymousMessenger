@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Anonymous Messenger</string>
-    <string name="create_account_button">حساب جديد</string>
+    <string name="create_account_button">بدء</string>
     <string name="nickname">إسم مستعار</string>
     <string name="nickname_error">إسم مستعار خاطيء</string>
     <string name="nickname_help">أدخل أسمًًَا مستعارََا للإستمرار</string>
@@ -78,7 +78,7 @@
     <string name="hold_on">انتظر!</string>
     <string name="starting_up_tor">يتم بدء تشغيل تور</string>
     <string name="doing_stuff">العمل على جعلك مجهولاََ…</string>
-    <string name="go_to_contacts">انتقل إلى جهات الاتصال</string>
+    <string name="go_to_contacts">تجاوز</string>
     <string name="checking">تدقيق</string>
     <string name="online">متصل</string>
     <string name="hello_blank_fragment">مرحبا جزء فارغ</string>

@@ -17,8 +17,7 @@
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textView2"
@@ -35,10 +34,11 @@
 
     <ProgressBar
         android:id="@+id/progressBar2"
-        style="?android:attr/progressBarStyle"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
+        android:indeterminate="true"
         android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +66,7 @@
     <Button
         android:id="@+id/btn_goto_contacts"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="154dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/button_ripple"
         android:enabled="true"
@@ -74,7 +74,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar2"
         tools:enabled="true" />
 
     <Button

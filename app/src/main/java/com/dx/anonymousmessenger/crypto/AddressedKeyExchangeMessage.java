@@ -2,6 +2,7 @@ package com.dx.anonymousmessenger.crypto;
 
 import android.util.Log;
 
+import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.util.Base64;
 
 import org.json.JSONException;
@@ -28,18 +29,18 @@ public class AddressedKeyExchangeMessage {
         this.address = address;
     }
 
-    public AddressedKeyExchangeMessage(KeyExchangeMessage kem, String address) throws Exception {
-        if(!address.trim().endsWith(".onion")){
-            throw new Exception("Invalid Address");
+    public AddressedKeyExchangeMessage(KeyExchangeMessage kem, String address) throws IllegalStateException {
+        if(!DxApplication.isValidAddress(address)){
+            throw new IllegalStateException("Invalid Address");
         }
         this.kem = kem;
         this.address = address;
         this.response = false;
     }
 
-    public AddressedKeyExchangeMessage(KeyExchangeMessage kem, String address, boolean response) throws Exception {
-        if(!address.trim().endsWith(".onion")){
-            throw new Exception("Invalid Address");
+    public AddressedKeyExchangeMessage(KeyExchangeMessage kem, String address, boolean response) throws IllegalStateException{
+        if(!DxApplication.isValidAddress(address)){
+            throw new IllegalStateException("Invalid Address");
         }
         this.kem = kem;
         this.address = address;
@@ -62,12 +63,15 @@ public class AddressedKeyExchangeMessage {
     public static AddressedKeyExchangeMessage fromJson(JSONObject input){
         try {
             String address = input.getString("address");
+            if(!DxApplication.isValidAddress(address)){
+                throw new IllegalStateException();
+            }
             KeyExchangeMessage kem = new KeyExchangeMessage(Base64.decodeWithoutPadding(input.getString("kem")));
             boolean response = input.getBoolean("response");
             return new AddressedKeyExchangeMessage(kem, address,response);
         } catch (Exception i) {
             i.printStackTrace();
-            Log.e("FROM JSON", "fromJson: EROREOROOROROROEOROERORO");
+            Log.e("FROM JSON", "fromJson: AddressedKeyExchangeMessage had invalid input");
         }
         return null;
     }

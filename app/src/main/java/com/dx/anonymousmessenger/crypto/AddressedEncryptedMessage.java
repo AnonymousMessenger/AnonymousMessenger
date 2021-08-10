@@ -2,6 +2,7 @@ package com.dx.anonymousmessenger.crypto;
 
 import android.util.Log;
 
+import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.util.Base64;
 
 import org.json.JSONException;
@@ -51,6 +52,9 @@ public class AddressedEncryptedMessage {
     public static AddressedEncryptedMessage fromJson(JSONObject input){
         try {
             String address = input.getString("address");
+            if(!DxApplication.isValidAddress(address)){
+                throw new IllegalStateException();
+            }
             byte[] msg = Base64.decodeWithoutPadding(input.getString("msg"));
             return new AddressedEncryptedMessage(msg, address);
         } catch (Exception e) {

@@ -762,6 +762,9 @@ public class DxApplication extends Application {
      */
 
     public String getHostname() {
+        if(hostname==null){
+            this.hostname = getMyAddressOffline();
+        }
         return hostname;
     }
 
@@ -859,7 +862,7 @@ public class DxApplication extends Application {
         }).start();
     }
 
-    public boolean isValidAddress(String address){
+    public static boolean isValidAddress(String address){
         return address.trim().length() == 62 && address.trim().endsWith(".onion");
     }
 }

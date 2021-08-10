@@ -866,8 +866,13 @@ public class DbHelper {
         SQLiteDatabase database = app.getDb();
         database.beginTransaction();
         try{
-            database.execSQL("DELETE FROM message WHERE send_to=? AND sender=? AND msg=? AND created_at=? AND send_from=?", new Object[]{msg.getTo(),msg.getSender(),msg.getMessage(),msg.getCreatedAt(),msg.getAddress()});
+            if(msg.getAddress()!=null){
+                database.execSQL("DELETE FROM message WHERE send_to=? AND sender=? AND msg=? AND created_at=? AND send_from=?", new Object[]{msg.getTo(),msg.getSender(),msg.getMessage(),msg.getCreatedAt(),msg.getAddress()});
+            }else{
+                database.execSQL("DELETE FROM message WHERE send_to=? AND sender=? AND msg=? AND created_at=?", new Object[]{msg.getTo(),msg.getSender(),msg.getMessage(),msg.getCreatedAt()});
+            }
             database.setTransactionSuccessful();
+
         }catch (Exception e) {e.printStackTrace();}
         finally {
             database.endTransaction();
@@ -924,9 +929,13 @@ public class DbHelper {
         Cursor cr = database.rawQuery("SELECT * FROM message WHERE conversation=?;",new Object[]{address});
         if (cr.moveToFirst()) {
             do {
-                QuotedUserMessage message = new QuotedUserMessage(cr.getString(9),
+                try{System.out.println(address);
+                    QuotedUserMessage message = new QuotedUserMessage(cr.getString(9),
                         cr.getString(8),
-                        cr.getString(0),
+
+                            cr.getString(0),
+
+
                         cr.getString(3),
                         cr.getString(4),
                         cr.getLong(5),
@@ -936,7 +945,11 @@ public class DbHelper {
                         cr.getString(11),
                         cr.getString(12),
                         cr.getString(13));
-                deleteMessage(message, app);
+                    deleteMessage(message, app);
+                }catch (Exception e){
+                System.out.println("sjdngsdflgnsjdfnglsdfn");
+                e.printStackTrace();
+            }
             } while (cr.moveToNext());
         }
         cr.close();

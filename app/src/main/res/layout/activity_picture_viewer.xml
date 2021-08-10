@@ -32,6 +32,7 @@
         android:id="@+id/txt_layout_caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#5E221E2A"
         android:elevation="5dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -21,7 +21,6 @@ import org.whispersystems.libsignal.StaleKeyExchangeException;
 import org.whispersystems.libsignal.UntrustedIdentityException;
 
 import java.util.Date;
-import java.util.Objects;
 
 import static com.dx.anonymousmessenger.messages.MessageSender.sendKeyExchangeMessage;
 
@@ -64,7 +63,11 @@ public class MessageReceiver {
             if(json.has("kem")){
                 AddressedKeyExchangeMessage akem = AddressedKeyExchangeMessage.fromJson(json);
 
-                if(!Objects.requireNonNull(akem).getKem().isInitiate()){
+                if(akem == null){
+                    return;
+                }
+
+                if(akem.getKem().isInitiate()){
                     try {
                         SessionBuilder sb = new SessionBuilder(app.getEntity().getStore(), new SignalProtocolAddress(akem.getAddress(),1));
                         sb.process(akem.getKem());

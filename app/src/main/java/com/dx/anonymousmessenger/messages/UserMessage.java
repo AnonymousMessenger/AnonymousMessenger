@@ -34,6 +34,9 @@ public class UserMessage extends Message{
 
     public UserMessage(String address, String message, String sender, long createdAt, boolean received, String to){
         super();
+        if(address == null || to == null || message == null || createdAt == 0){
+            throw new IllegalStateException();
+        }
         this.address = address;
         this.received = received;
         this.to = to;

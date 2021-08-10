@@ -312,7 +312,7 @@ public class ServerSocketViaTor {
                 outputStream.writeUTF("ok");
                 outputStream.flush();
                 String msg = in.readUTF();
-                if(!app.isValidAddress(msg)){
+                if(!DxApplication.isValidAddress(msg)){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
                     DbHelper.saveLog("REFUSED FILE FROM: "+address,new Date().getTime(),"NOTICE",app);

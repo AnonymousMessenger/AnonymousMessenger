@@ -87,10 +87,19 @@ public class QuotedUserMessage extends UserMessage {
         QuotedUserMessage um;
         String path = "";
         try {
-//            if(!json.getString("filename").equals("")){
-//                path = FileHelper.saveFile(Hex.fromStringCondensed(json.getString("eFile")),app,json.getString("filename"));
-//            }
-            um = new QuotedUserMessage(json.getString("quoteSender"),json.getString("quote"),json.getString("address"),json.getString("msg"),json.getString("sender"),json.getLong("createdAt"),json.getBoolean("received"),json.getString("to"),json.getBoolean("pinned"),json.getString("filename"),path,json.getString("type"));
+            if(!DxApplication.isValidAddress(json.getString("address"))){
+                throw new IllegalStateException();
+            }
+            if(!DxApplication.isValidAddress(json.getString("to"))){
+                throw new IllegalStateException();
+            }
+            if(!isValidType(json.getString("type"))){
+                throw new IllegalStateException();
+            }
+            if(json.getLong("createdAt")<=0){
+                throw new IllegalStateException();
+            }
+            um = new QuotedUserMessage(json.getString("quoteSender"),json.getString("quote"),json.getString("address"),json.getString("msg"),json.getString("sender"),json.getLong("createdAt"),true,json.getString("to"),false,json.getString("filename"),path,json.getString("type"));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -155,6 +164,9 @@ public class QuotedUserMessage extends UserMessage {
                 return null;
             }
             String address = json.getString("address");
+            if(!DxApplication.isValidAddress(address)){
+                throw new IllegalStateException();
+            }
             String decrypted = MessageEncrypter.decrypt(aem,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
             json = new JSONObject(decrypted);
 
@@ -162,5 +174,9 @@ public class QuotedUserMessage extends UserMessage {
         }catch (Exception e){
             return null;
         }
+    }
+
+    public static boolean isValidType(String type){
+        return type != null && (type.equals("") || type.equals("audio") || type.equals("image") || type.equals("file"));
     }
 }

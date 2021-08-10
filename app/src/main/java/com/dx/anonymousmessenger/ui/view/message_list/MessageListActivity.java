@@ -106,7 +106,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     private AtomicReference<Float> x = null;
     private boolean started = false;
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "ShowToast"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
