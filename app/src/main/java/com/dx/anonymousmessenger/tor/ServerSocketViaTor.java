@@ -292,7 +292,7 @@ public class ServerSocketViaTor {
         }
 
         private void handleHello(String msg, Socket sock, AtomicInteger sockets) throws IOException {
-            if(app.isValidAddress(msg.replace("hello-","")) && DbHelper.contactExists(msg.replace("hello-",""),app)){
+            if(DxApplication.isValidAddress(msg.replace("hello-","")) && DbHelper.contactExists(msg.replace("hello-",""),app)){
                 app.addToOnlineList(msg.replace("hello-",""));
                 app.queueUnsentMessages(msg.replace("hello-",""));
             }
@@ -448,7 +448,7 @@ public class ServerSocketViaTor {
                 outputStream.writeUTF("ok");
                 outputStream.flush();
                 String msg = in.readUTF();
-                if(!app.isValidAddress(msg)){
+                if(!DxApplication.isValidAddress(msg)){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
                     DbHelper.saveLog("REFUSED MEDIA FROM: "+msg+" REASON: BAD ADDRESS",new Date().getTime(),"NOTICE",app);

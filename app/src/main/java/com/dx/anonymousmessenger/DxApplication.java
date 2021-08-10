@@ -132,7 +132,7 @@ public class DxApplication extends Application {
         }
     }
 
-    public void addToMessagesQueue(List<QuotedUserMessage> messages){
+    public synchronized void addToMessagesQueue(List<QuotedUserMessage> messages){
         for (QuotedUserMessage message:messages) {
             if(messageQueue.contains(message)){
                 continue;
@@ -147,7 +147,7 @@ public class DxApplication extends Application {
 //        }
 //    }
 
-    public void sendQueuedMessages(){
+    public synchronized void sendQueuedMessages(){
         for (QuotedUserMessage msg:messageQueue){
             System.out.println("sending a message");
             if(msg.getPath()!=null && !msg.getPath().equals("")){
@@ -163,7 +163,7 @@ public class DxApplication extends Application {
         messageQueue.clear();
     }
 
-    public void queueAllUnsentMessages(){
+    public synchronized void queueAllUnsentMessages(){
         if(pinging || syncing){
             System.out.println("still pinging or syncing!");
             return;
@@ -210,14 +210,14 @@ public class DxApplication extends Application {
         }catch (Exception ignored) {syncing = false; pinging = false; syncingAddress = null;}
     }
 
-    public void queueUnsentMessages(String address){
+    public synchronized void queueUnsentMessages(String address){
         if(syncingAddress!=null && syncingAddress.equals(address)){
             return;
         }
         new Thread(()->{
             while (syncing){
                 try{
-                    Thread.sleep(1000);
+                    Thread.sleep(200);
                 }catch (Exception ignored) {}
             }
             try{

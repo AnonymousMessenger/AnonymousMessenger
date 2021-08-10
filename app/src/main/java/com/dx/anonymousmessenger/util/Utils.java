@@ -109,9 +109,17 @@ public class Utils {
         float bitsPerSec = (length*8)
                 / ((System.currentTimeMillis() - time) / (float)1000);
         float mbPerSec = bitsPerSec / (1024) / (1024);
-        String str = (mbPerSec+"").split("\\.")[0]+".";
-        String part2 = (mbPerSec+"").split("\\.")[1];
-        str += part2.length()>2?part2.substring(0,2):part2;
+        String str;
+        if((mbPerSec+"").split("\\.").length>0){
+            str = (mbPerSec+"").split("\\.")[0]+".";
+            if((mbPerSec+"").split("\\.").length>1){
+                String part2 = (mbPerSec+"").split("\\.")[1];
+                str += part2.length()>2?part2.substring(0,2):part2;
+            }
+        }else{
+            return mbPerSec+"";
+        }
+
         return str+" mbps";
     }
 
