@@ -898,7 +898,7 @@ public class DbHelper {
         try{
             database.query("SELECT "+DbHelper.getMessageColumns().trim().substring(1,getMessageColumns().length()-1)+" FROM message");
         }catch (Exception e){
-            Log.w("getNotepadList", "updating DbSchema");
+            Log.w("getMessageReceived", "updating DbSchema");
             e.printStackTrace();
             updateDbSchema(database);
         }
@@ -921,6 +921,27 @@ public class DbHelper {
     public static void unPinMessage(QuotedUserMessage msg, DxApplication app) {
         SQLiteDatabase database = app.getDb();
         database.execSQL("UPDATE message SET pinned = 0 WHERE send_to=? AND sender=? AND msg=? AND created_at=? AND send_from=? AND received=? AND quote=? AND quote_sender=?", new Object[]{msg.getTo(),msg.getSender(),msg.getMessage(),msg.getCreatedAt(),msg.getAddress(),msg.isReceived(),msg.getQuotedMessage(),msg.getQuoteSender()});
+    }
+
+    public static List<String> getAllReferencedFiles(DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getMessageTableSqlCreate());
+        try{
+            database.query("SELECT path FROM message");
+        }catch (Exception e){
+            Log.w("getAllReferencedFiles", "updating DbSchema");
+            e.printStackTrace();
+            updateDbSchema(database);
+        }
+        Cursor cr = database.rawQuery("SELECT path FROM message",null);
+        List<String> paths = new ArrayList<>();
+        if (cr.moveToFirst()) {
+            do {
+                paths.add(cr.getString(0));
+            } while (cr.moveToNext());
+        }
+        cr.close();
+        return paths;
     }
 
     public static void clearConversation(String address, DxApplication app){

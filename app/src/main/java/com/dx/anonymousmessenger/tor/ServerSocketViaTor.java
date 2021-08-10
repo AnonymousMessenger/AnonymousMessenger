@@ -81,6 +81,7 @@ public class ServerSocketViaTor {
             */
 
         try {
+            app.deleteAnyOldFiles();
             node = new OnionProxyManager(new OnionProxyContext(app.getApplicationContext(), "torfiles"));
 
             if (!node.startWithoutRepeat(TOTAL_SEC_PER_STARTUP, DbHelper.getBridgeList(app), app.isBridgesEnabled())) {

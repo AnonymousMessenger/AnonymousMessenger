@@ -862,7 +862,30 @@ public class DxApplication extends Application {
         }).start();
     }
 
+    public void deleteAnyOldFiles() {
+        List<String> paths = DbHelper.getAllReferencedFiles(this);
+        File curDir = getFilesDir();
+        File[] filesList = curDir.listFiles();
+        // it is safe to delete hw_cached_resid.list on Huawei devices
+        if (filesList != null) {
+            for(File f : filesList){
+                if(f.isFile()){
+                    if(!paths.contains(f.getName()) && !f.getName().contains("demo")){
+//                        System.out.print("DOES NOT CONTAIN: ");
+                        f.delete();
+                    }
+//                    else{
+//                        System.out.print("DOES CONTAIN: ");
+//                    }
+//                    System.out.println(f.getName());
+                }
+            }
+        }
+    }
+
     public static boolean isValidAddress(String address){
         return address.trim().length() == 62 && address.trim().endsWith(".onion");
     }
+
+
 }
