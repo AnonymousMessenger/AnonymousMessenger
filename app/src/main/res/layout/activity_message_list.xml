@@ -213,11 +213,12 @@
         <LinearLayout
             android:id="@+id/layout_audio"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:animateLayoutChanges="true"
             android:background="@drawable/glow_red"
             android:orientation="horizontal"
+            android:padding="4dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/fab_audio"
@@ -226,7 +227,7 @@
 
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="0.50"
@@ -238,7 +239,7 @@
 
             <TextView
                 android:id="@+id/txt_audio_timer"
-                android:layout_width="0dp"
+                android:layout_width="74dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:animateLayoutChanges="true"

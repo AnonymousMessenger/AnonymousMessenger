@@ -197,7 +197,8 @@ public class AudioRecordingService extends Service {
                 }
                 new Thread(this::startTiming).start();
                 while(status) {
-                    if(outputStream.size() >= Runtime.getRuntime().freeMemory()){
+                    Runtime.getRuntime().gc();
+                    if(buffer.length >= Runtime.getRuntime().freeMemory()){
                         status = false;
                         outputStream = null;
                         return;
@@ -207,7 +208,8 @@ public class AudioRecordingService extends Service {
                     //add buffer to recorded bytes
                     outputStream.write(buffer);
                 }
-            }catch (Exception ignored){
+            }catch (Exception e){
+                e.printStackTrace();
                 recorder.release();
                 onDestroy();
 //            stopRecording(true);
