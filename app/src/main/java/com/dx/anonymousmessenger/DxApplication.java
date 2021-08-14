@@ -470,11 +470,7 @@ public class DxApplication extends Application {
 
     public SQLiteDatabase getDb(){
         if(this.database==null){
-            SQLiteDatabase.loadLibs(this);
-            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase("demo.db",
-                    account.getPassword(),null);
-            this.database = database;
-            return database;
+            return getDb(getAccount().getPassword());
         }else{
             return this.database;
         }

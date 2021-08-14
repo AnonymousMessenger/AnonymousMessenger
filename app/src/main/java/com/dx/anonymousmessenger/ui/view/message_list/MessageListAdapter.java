@@ -10,8 +10,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaDataSource;
-import android.media.MediaMetadataRetriever;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
@@ -35,6 +39,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.DxApplication;
@@ -50,8 +57,9 @@ import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -81,6 +89,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int VIEW_TYPE_FILE_MESSAGE_SENT = 16;
     private static final int VIEW_TYPE_FILE_MESSAGE_SENT_OK = 17;
     private static final int VIEW_TYPE_FILE_MESSAGE_RECEIVED = 18;
+    private static final int PENDING_REMOVAL_TIMEOUT = 3000;
 
     private final Context mContext;
     private final RecyclerView mMessageRecycler;
@@ -89,6 +98,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private String nowPlaying;
     public AudioPlayer ap;
     private final CallBack permissionCallback;
+    private final List<QuotedUserMessage> itemsPendingRemoval = new ArrayList<>();
+    private boolean undoOn = true;
+    private final Handler handler = new Handler(); // handler for running delayed runnables
+    HashMap<QuotedUserMessage, Runnable> pendingRunnables = new HashMap<>(); // map of items to pending runnables, so we can cancel a removal if need be
 
     public MessageListAdapter(Context context, List<QuotedUserMessage> messageList, DxApplication app, RecyclerView mMessageRecycler, CallBack permissionCallback) {
         this.app = app;
@@ -96,10 +109,18 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         mMessageList = messageList;
         this.mMessageRecycler = mMessageRecycler;
         this.permissionCallback = permissionCallback;
+        mMessageRecycler.setLayoutManager(new LinearLayoutManager(mContext.getApplicationContext()));
+        mMessageRecycler.setAdapter(this);
+        setUpItemTouchHelper();
+        setUpAnimationDecoratorHelper();
     }
 
     public void setMessageList(List<QuotedUserMessage> mMessageList) {
         this.mMessageList = mMessageList;
+    }
+
+    public List<QuotedUserMessage> getMessageList(){
+        return mMessageList;
     }
 
     public void removeData(int position) {
@@ -109,7 +130,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyItemRangeChanged(position,getItemCount());
 //        notifyDataSetChanged();
     }
-
 
     @Override
     public int getItemCount() {
@@ -185,30 +205,30 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (viewType == VIEW_TYPE_MESSAGE_SENT_OK) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent_ok, parent, false);
-            return new SentOkMessageHolder(view);
+            return new MessageHolder(view);
         } else if (viewType == VIEW_TYPE_MESSAGE_RECEIVED) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_received, parent, false);
             return new ReceivedMessageHolder(view);
         }else if(viewType == VIEW_TYPE_MESSAGE_SENT){
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_message_sent, parent, false);
-            return new SentMessageHolder(view);
+                    .inflate(R.layout.item_message_sent_ok, parent, false);
+            return new MessageHolder(view);
         }else if(viewType == VIEW_TYPE_MESSAGE_SENT_OK_QUOTE){
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent_ok_quote, parent, false);
-            return new QuoteSentOkMessageHolder(view);
+            return new QuoteMessageHolder(view);
         }else if(viewType == VIEW_TYPE_MESSAGE_RECEIVED_QUOTE){
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_received_quote, parent, false);
-            return new QuoteReceivedMessageHolder(view);
+            return new QuoteMessageHolder(view);
         }else if(viewType == VIEW_TYPE_MESSAGE_SENT_QUOTE){
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_message_sent_quote, parent, false);
-            return new QuoteSentMessageHolder(view);
+                    .inflate(R.layout.item_message_sent_ok_quote, parent, false);
+            return new QuoteMessageHolder(view);
         }else if(viewType == VIEW_TYPE_AUDIO_MESSAGE_SENT){
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_audio_message_sent, parent, false);
+                    .inflate(R.layout.item_audio_message_sent_ok, parent, false);
             return new AudioMessageHolder(view);
         }else if(viewType == VIEW_TYPE_AUDIO_MESSAGE_SENT_OK){
             view = LayoutInflater.from(parent.getContext())
@@ -224,13 +244,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return new MediaMessageHolder(view);
         }else if(viewType == VIEW_TYPE_MEDIA_MESSAGE_SENT){
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_media_message_sent, parent, false);
+                    .inflate(R.layout.item_media_message_sent_ok, parent, false);
             return new MediaMessageHolder(view);
         }else if(viewType == VIEW_TYPE_MEDIA_MESSAGE_SENT_OK){
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_media_message_sent_ok, parent, false);
             return new MediaMessageHolder(view);
-        }else if(viewType == VIEW_TYPE_VIDEO_MESSAGE_RECEIVED){
+        }
+        /*else if(viewType == VIEW_TYPE_VIDEO_MESSAGE_RECEIVED){
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_media_message_sent_ok, parent, false);
             return new VideoMessageHolder(view);
@@ -242,13 +263,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_media_message_sent_ok, parent, false);
             return new VideoMessageHolder(view);
-        }else if(viewType == VIEW_TYPE_FILE_MESSAGE_RECEIVED){
+        }*/
+        else if(viewType == VIEW_TYPE_FILE_MESSAGE_RECEIVED){
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_file_message_received, parent, false);
             return new FileMessageHolder(view);
         }else if(viewType == VIEW_TYPE_FILE_MESSAGE_SENT){
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_file_message_sent, parent, false);
+                    .inflate(R.layout.item_file_message_sent_ok, parent, false);
             return new FileMessageHolder(view);
         }else if(viewType == VIEW_TYPE_FILE_MESSAGE_SENT_OK){
             view = LayoutInflater.from(parent.getContext())
@@ -257,8 +279,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         Log.e("finding message type","something went wrong");
         view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_message_sent, parent, false);
-        return new SentMessageHolder(view);
+                .inflate(R.layout.item_message_sent_ok, parent, false);
+        return new MessageHolder(view);
     }
 
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
@@ -267,22 +289,18 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         QuotedUserMessage message = mMessageList.get(position);
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
-                ((SentMessageHolder) holder).bind(message);
+                ((MessageHolder) holder).bind(message);
                 break;
             case VIEW_TYPE_MESSAGE_RECEIVED:
                 ((ReceivedMessageHolder) holder).bind(message);
                 break;
             case VIEW_TYPE_MESSAGE_SENT_OK:
-                ((SentOkMessageHolder) holder).bind(message);
+                ((MessageHolder) holder).bind(message);
                 break;
             case VIEW_TYPE_MESSAGE_SENT_OK_QUOTE:
-                ((QuoteSentOkMessageHolder) holder).bind(message);
-                break;
             case VIEW_TYPE_MESSAGE_SENT_QUOTE:
-                ((QuoteSentMessageHolder) holder).bind(message);
-                break;
             case VIEW_TYPE_MESSAGE_RECEIVED_QUOTE:
-                ((QuoteReceivedMessageHolder) holder).bind(message);
+                ((QuoteMessageHolder) holder).bind(message);
                 break;
             case VIEW_TYPE_AUDIO_MESSAGE_SENT:
             case VIEW_TYPE_AUDIO_MESSAGE_SENT_OK:
@@ -294,18 +312,42 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case VIEW_TYPE_MEDIA_MESSAGE_SENT_OK:
                 ((MediaMessageHolder) holder).bind(message);
                 break;
-            case VIEW_TYPE_VIDEO_MESSAGE_RECEIVED:
+            /*case VIEW_TYPE_VIDEO_MESSAGE_RECEIVED:
             case VIEW_TYPE_VIDEO_MESSAGE_SENT:
             case VIEW_TYPE_VIDEO_MESSAGE_SENT_OK:
                 ((VideoMessageHolder) holder).bind(message);
-                break;
+                break;*/
             case VIEW_TYPE_FILE_MESSAGE_RECEIVED:
             case VIEW_TYPE_FILE_MESSAGE_SENT:
             case VIEW_TYPE_FILE_MESSAGE_SENT_OK:
                 ((FileMessageHolder) holder).bind(message,app,permissionCallback);
         }
+        if (itemsPendingRemoval.contains(message)) {
+            // we need to show the "undo" state of the row
+            holder.itemView.setBackgroundColor(Color.RED);
+            ((MessageHolder)holder).undoButton.setVisibility(View.VISIBLE);
+            ((MessageHolder)holder).undoButton.setOnClickListener((View.OnClickListener) v -> {
+                // user wants to undo the removal, let's cancel the pending task
+                Runnable pendingRemovalRunnable = pendingRunnables.get(message);
+                pendingRunnables.remove(message);
+                if (pendingRemovalRunnable != null) {
+                    handler.removeCallbacks(pendingRemovalRunnable);
+                }
+                itemsPendingRemoval.remove(message);
+                // this will rebind the row in "normal" state
+                notifyItemChanged(mMessageList.indexOf(message));
+            });
+        } else {
+            // we need to show the "normal" state
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            if (holder instanceof MessageHolder) {
+                ((MessageHolder)holder).undoButton.setVisibility(View.GONE);
+                ((MessageHolder)holder).undoButton.setOnClickListener(null);
+            }
+        }
     }
 
+    //on click listeners
     public class ListItemOnClickListener implements View.OnClickListener {
         QuotedUserMessage message;
         View itemView;
@@ -331,12 +373,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 switch (item.getItemId()) {
                     case R.id.navigation_drawer_item1:
                         //handle reply click
-                        TextView quoteTextTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_text_typing);
-                        TextView quoteSenderTyping = ((MessageListActivity) mContext).findViewById(R.id.quote_sender_typing);
-                        quoteTextTyping.setText(message.getMessage());
-                        quoteSenderTyping.setText(message.getTo().equals(app.getHostname())?message.getSender():app.getString(R.string.you));
-                        quoteTextTyping.setVisibility(View.VISIBLE);
-                        quoteSenderTyping.setVisibility(View.VISIBLE);
+                        replyTo((MessageListActivity) mContext,message);
 //                        RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);
 //                        rv.smoothScrollToPosition(mMessageList.size() - 1);
                         return true;
@@ -373,36 +410,61 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             //displaying the popup
             popup.show();
         }
+
+
     }
 
     public class QuoteItemOnClickListener implements View.OnClickListener {
         QuotedUserMessage message;
         View itemView;
-        TextView messageText;
 
-        QuoteItemOnClickListener(QuotedUserMessage message,View itemView,TextView messageText){
+        QuoteItemOnClickListener(QuotedUserMessage message,View itemView){
             this.itemView = itemView;
             this.message = message;
-            this.messageText = messageText;
         }
 
         @Override
         public void onClick(View v) {
             new Thread(()->{
-                for (QuotedUserMessage msg : mMessageList) {
-                    if(msg.getMessage().equals(message.getQuotedMessage())
-                            && msg.getSender().equals(message.getQuoteSender())){
-                        Handler h = new Handler(Looper.getMainLooper());
-                        h.post(()-> {
-                            mMessageRecycler.smoothScrollToPosition(mMessageList.indexOf(msg));
-                            notifyItemChanged(mMessageList.indexOf(msg));
-                        });
-//                        try{
-//                            Thread.sleep(350);
-//                        }catch (Exception ignored) {}
-//                        h.post(()-> notifyItemChanged(mMessageList.indexOf(msg)));
-                        return;
+                String type = "";
+                String createdAt;
+                long time = 0;
+                if(message.getQuotedMessage().split(":").length>1){
+                    type = message.getQuotedMessage().split(":")[0];
+                    if(!QuotedUserMessage.isValidType(type)){
+                        type = "";
                     }
+                    createdAt = message.getQuotedMessage().split(":")[1];
+                    try{
+                        time = Long.parseLong(createdAt);
+                    }catch (Exception ignored){
+
+                    }
+                }
+
+                for (QuotedUserMessage msg : mMessageList) {
+                    if(!type.equals("")){
+                        if(msg.getType()!=null && msg.getType().equals(type) && msg.getCreatedAt()==time
+                                && msg.getSender().equals(message.getQuoteSender())){
+                            Handler h = new Handler(Looper.getMainLooper());
+                            h.post(()-> {
+                                mMessageRecycler.smoothScrollToPosition(mMessageList.indexOf(msg));
+                                notifyItemChanged(mMessageList.indexOf(msg));
+                            });
+                            return;
+                        }
+                    }else{
+                        if(msg.getMessage().equals(message.getQuotedMessage())
+                                && msg.getSender().equals(message.getQuoteSender())){
+                            Handler h = new Handler(Looper.getMainLooper());
+                            h.post(()-> {
+                                mMessageRecycler.smoothScrollToPosition(mMessageList.indexOf(msg));
+                                notifyItemChanged(mMessageList.indexOf(msg));
+                            });
+                            return;
+                        }
+                    }
+
                 }
                 Handler h = new Handler(Looper.getMainLooper());
                 h.post(()-> Toast.makeText(app, "can't find original message", Toast.LENGTH_SHORT).show());
@@ -481,15 +543,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    private static class FileMessageHolder extends RecyclerView.ViewHolder{
-        TextView timeText,nameText,filenameText;
+    //message holders
+    private class FileMessageHolder extends MessageHolder{
+        TextView filenameText;
         FloatingActionButton imageHolder;
         ProgressBar fileProgress;
 
         FileMessageHolder(View itemView){
             super(itemView);
-            timeText = itemView.findViewById(R.id.text_message_time);
-            nameText = itemView.findViewById(R.id.text_message_name);
             imageHolder = itemView.findViewById(R.id.img_holder);
             filenameText = itemView.findViewById(R.id.txt_filename);
             fileProgress = itemView.findViewById(R.id.progress_file);
@@ -524,7 +585,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     }
                     FileHelper.saveToStorageWithProgress(message.getPath(),message.getFilename(),app,progressListener);
 
-                    Snackbar sb = Snackbar.make(itemView,R.string.saved_to_storage,Snackbar.LENGTH_SHORT).setAnchorView(itemView.findViewById(R.id.layout_chatbox));
+                    @SuppressLint("ShowToast") Snackbar sb = Snackbar.make(itemView,R.string.saved_to_storage,Snackbar.LENGTH_SHORT).setAnchorView(itemView.findViewById(R.id.layout_chatbox));
                     sb.show();
 
                 }catch (Exception e){
@@ -633,112 +694,104 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
         void bind(QuotedUserMessage message, DxApplication app, CallBack permissionCallback) {
-            if(nameText!=null){
-                nameText.setText(message.getSender());
-            }
+            super.bind(message);
 
             filenameText.setText(message.getFilename());
             timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
-//            itemView.setOnClickListener(v -> onClick(v,message,app,permissionCallback));
             imageHolder.setOnClickListener(v -> onClick(v,message,app,permissionCallback));
             filenameText.setOnClickListener(v -> onClick(v,message,app,permissionCallback));
-//            itemView.setOnLongClickListener(v -> {
-//                saveFile(message,app, permissionCallback);
-//                return false;
+        }
+    }
+
+//    private class VideoMessageHolder extends MediaMessageHolder {
+//
+//        VideoMessageHolder(View itemView) {
+//            super(itemView);
+//        }
+//
+//        @Override
+//        void bind(QuotedUserMessage message) {
+//            if(nameText!=null){
+//                nameText.setText(message.getSender());
+//            }
+//            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
+//            if(message.getMessage()!=null && !message.getMessage().equals("")){
+//                messageText.setVisibility(View.VISIBLE);
+//                messageText.setText(message.getMessage());
+//                messageText.setOnClickListener(new ListItemOnClickListener(message,itemView,messageText));
+//            }else{
+//                messageText.setVisibility(View.GONE);
+//            }
+//            imageHolder.setOnClickListener(v -> {
+//                Intent intent = new Intent(app, PictureViewerActivity.class);
+//                intent.putExtra("address",message.getAddress().substring(0,10));
+//                intent.putExtra("nickname",message.getSender());
+//                intent.putExtra("time",message.getCreatedAt());
+//                intent.putExtra("appData",true);
+//                intent.putExtra("type",MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO);
+//                intent.putExtra("path",message.getPath());
+//                intent.putExtra("message",message.getMessage());
+//                app.startActivity(intent);
 //            });
-        }
-    }
+//            new Thread(()->{
+//                try{
+//                    final byte[] img_bin = FileHelper.getFile(message.getPath(), app);
+//                    if(img_bin == null){
+//                        System.out.println("no img_bin!!!");
+//                        return;
+//                    }
+//                    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+//                    mmr.setDataSource(new MediaDataSource() {
+//                        @Override
+//                        public int readAt(long position, byte[] buffer, int offset, int size) {
+//                            ByteArrayInputStream bais = new ByteArrayInputStream(img_bin);
+//                            bais.skip(position-1);
+//                            return bais.read(buffer,offset,size);
+//                        }
+//
+//                        @Override
+//                        public long getSize() {
+//                            return img_bin.length;
+//                        }
+//
+//                        @Override
+//                        public void close() {
+//
+//                        }
+//                    });
+//                    byte[] thumb = mmr.getEmbeddedPicture();
+//                    Bitmap bitmap = BitmapFactory.decodeByteArray(thumb,0,thumb.length);
+//                    if(bitmap==null){
+//                        System.out.println("no bitmap!!!");
+//                        return;
+//                    }
+//                    new Handler(Looper.getMainLooper()).post(()->{
+//                        if(imageHolder==null){
+//                            return;
+//                        }
+//                        imageHolder.setImageBitmap(bitmap);
+//                    });
+//                }catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }).start();
+//        }
+//    }
 
-    private class VideoMessageHolder extends MediaMessageHolder {
-
-        VideoMessageHolder(View itemView) {
-            super(itemView);
-        }
-
-        @Override
-        void bind(QuotedUserMessage message) {
-            if(nameText!=null){
-                nameText.setText(message.getSender());
-            }
-            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
-            if(message.getMessage()!=null && !message.getMessage().equals("")){
-                messageText.setVisibility(View.VISIBLE);
-                messageText.setText(message.getMessage());
-                messageText.setOnClickListener(new ListItemOnClickListener(message,itemView,messageText));
-            }else{
-                messageText.setVisibility(View.GONE);
-            }
-            imageHolder.setOnClickListener(v -> {
-                Intent intent = new Intent(app, PictureViewerActivity.class);
-                intent.putExtra("address",message.getAddress().substring(0,10));
-                intent.putExtra("nickname",message.getSender());
-                intent.putExtra("time",message.getCreatedAt());
-                intent.putExtra("appData",true);
-                intent.putExtra("type",MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO);
-                intent.putExtra("path",message.getPath());
-                intent.putExtra("message",message.getMessage());
-                app.startActivity(intent);
-            });
-            new Thread(()->{
-                try{
-                    final byte[] img_bin = FileHelper.getFile(message.getPath(), app);
-                    if(img_bin == null){
-                        System.out.println("no img_bin!!!");
-                        return;
-                    }
-                    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                    mmr.setDataSource(new MediaDataSource() {
-                        @Override
-                        public int readAt(long position, byte[] buffer, int offset, int size) {
-                            ByteArrayInputStream bais = new ByteArrayInputStream(img_bin);
-                            bais.skip(position-1);
-                            return bais.read(buffer,offset,size);
-                        }
-
-                        @Override
-                        public long getSize() {
-                            return img_bin.length;
-                        }
-
-                        @Override
-                        public void close() {
-
-                        }
-                    });
-                    byte[] thumb = mmr.getEmbeddedPicture();
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(thumb,0,thumb.length);
-                    if(bitmap==null){
-                        System.out.println("no bitmap!!!");
-                        return;
-                    }
-                    new Handler(Looper.getMainLooper()).post(()->{
-                        if(imageHolder==null){
-                            return;
-                        }
-                        imageHolder.setImageBitmap(bitmap);
-                    });
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        }
-    }
-
-    private class MediaMessageHolder extends RecyclerView.ViewHolder {
-        TextView timeText,nameText,messageText;
+    private class MediaMessageHolder extends MessageHolder {
         ImageView imageHolder;
+        ImageView sent;
 
         MediaMessageHolder(View itemView){
             super(itemView);
-            timeText = itemView.findViewById(R.id.text_message_time);
-            nameText = itemView.findViewById(R.id.text_message_name);
-            messageText = itemView.findViewById(R.id.text_message_body);
             imageHolder = itemView.findViewById(R.id.img_holder);
+            sent = itemView.findViewById(R.id.img_sent);
         }
 
         void bind(QuotedUserMessage message) {
-            if(nameText!=null){
-                nameText.setText(message.getSender());
+            super.bind(message);
+            if(sent != null && message.isReceived()){
+                sent.setVisibility(View.VISIBLE);
             }
             timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
             if(message.getMessage()!=null && !message.getMessage().equals("")){
@@ -779,23 +832,19 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    private class AudioMessageHolder extends RecyclerView.ViewHolder {
-        TextView timeText,nameText,sizeText;
+    private class AudioMessageHolder extends MessageHolder {
+        TextView sizeText;
         FloatingActionButton playPauseButton;
 
         AudioMessageHolder(View itemView){
             super(itemView);
-            timeText = itemView.findViewById(R.id.text_message_time);
             playPauseButton = itemView.findViewById(R.id.btn_play_pause);
-            nameText = itemView.findViewById(R.id.text_message_name);
             sizeText = itemView.findViewById(R.id.txt_audio_size);
         }
 
         @SuppressLint("DefaultLocale")
         void bind(QuotedUserMessage message) {
-            if(nameText!=null){
-                nameText.setText(message.getSender());
-            }
+            super.bind(message);
             if(sizeText!=null){
                 sizeText.setText(String.format("%ds", getAudioFileLengthInSeconds(message.getPath(), mContext)));
             }
@@ -810,16 +859,31 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private class MessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText;
+        TextView nameText, messageText, timeText;
+        Button undoButton;
+        ImageView sent;
 
         MessageHolder(View itemView) {
             super(itemView);
             messageText = itemView.findViewById(R.id.text_message_body);
             timeText = itemView.findViewById(R.id.text_message_time);
+            undoButton = itemView.findViewById(R.id.undo_button);
+            nameText = itemView.findViewById(R.id.text_message_name);
+            sent = itemView.findViewById(R.id.img_sent);
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         void bind(QuotedUserMessage message) {
-            //temp text
+            if(sent != null && message.isReceived()){
+                sent.setVisibility(View.VISIBLE);
+            }
+            if(nameText!=null){
+                nameText.setText(message.getSender());
+            }
+
+            if(messageText == null){
+                return;
+            }
             Spannable span = new SpannableString(message.getMessage());
             //detect start-finish of emoji and span it bigger
             int charStart = -1;
@@ -864,20 +928,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    private class SentMessageHolder extends MessageHolder {
-
-        SentMessageHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
-    private class SentOkMessageHolder extends SentMessageHolder {
-
-        SentOkMessageHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
     private class ReceivedMessageHolder extends MessageHolder {
         TextView nameText;
         ImageView profileImage;
@@ -898,10 +948,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    private class QuoteSentMessageHolder extends SentMessageHolder{
+    private class QuoteMessageHolder extends MessageHolder{
         TextView quote;
         TextView quoteSender;
-        QuoteSentMessageHolder(View itemView) {
+        QuoteMessageHolder(View itemView) {
             super(itemView);
             quote = itemView.findViewById(R.id.quote_text);
             quoteSender = itemView.findViewById(R.id.quote_sender);
@@ -910,49 +960,331 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         @Override
         void bind(QuotedUserMessage message) {
             super.bind(message);
+            //todo: change text to something like message type in language
             quote.setText(message.getQuotedMessage());
             quoteSender.setText(message.getQuoteSender().equals(app.getAccount().getNickname())?"You":message.getQuoteSender());
-            quote.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
-            quoteSender.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
+            quote.setOnClickListener(new QuoteItemOnClickListener(message,itemView));
+            quoteSender.setOnClickListener(new QuoteItemOnClickListener(message,itemView));
+        }
+    }
+    /**
+     * This is the standard support library way of implementing "swipe to delete" feature. You can do custom drawing in onChildDraw method
+     * but whatever you draw will disappear once the swipe is over, and while the items are animating to their new position the recycler view
+     * background will be visible. That is rarely an desired effect.
+     */
+    private void setUpItemTouchHelper() {
+
+        //swipe left to delete
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            // we want to cache these and not allocate anything repeatedly in the onChildDraw method
+            Drawable background;
+            Drawable xMark;
+            int xMarkMargin;
+            boolean initiated;
+
+            private void init() {
+                background = new ColorDrawable(Color.RED);
+                xMark = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_delete_24);
+                Objects.requireNonNull(xMark).setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                xMarkMargin = (int) mContext.getResources().getDimension(R.dimen.ic_clear_margin);
+                initiated = true;
+            }
+
+            // not important, we don't want drag & drop
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public int getSwipeDirs(@NonNull RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                int position = viewHolder.getAbsoluteAdapterPosition();
+                if (isUndoOn() && isPendingRemoval(position)) {
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                System.out.println(swipeDir);
+                System.out.println("Swipedir above nigga");
+                int swipedPosition = viewHolder.getAbsoluteAdapterPosition();
+                boolean undoOn = isUndoOn();
+                if (undoOn) {
+                    pendingRemoval(swipedPosition);
+                } else {
+                    remove(swipedPosition);
+                }
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                View itemView = viewHolder.itemView;
+
+                // not sure why, but this method get's called for viewholder that are already swiped away
+                if (viewHolder.getAbsoluteAdapterPosition() == -1) {
+                    // not interested in those
+                    return;
+                }
+
+                if (!initiated) {
+                    init();
+                }
+
+                // draw red background
+                background.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                background.draw(c);
+
+                // draw x mark
+                int itemHeight = itemView.getBottom() - itemView.getTop();
+                int intrinsicWidth = xMark.getIntrinsicWidth();
+                int intrinsicHeight = xMark.getIntrinsicWidth();
+
+                int xMarkLeft = itemView.getRight() - xMarkMargin - intrinsicWidth;
+                int xMarkRight = itemView.getRight() - xMarkMargin;
+                int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight)/2;
+                int xMarkBottom = xMarkTop + intrinsicHeight;
+                xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
+
+                xMark.draw(c);
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+
+        };
+
+        //swipe right to reply
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback2 = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+
+            // we want to cache these and not allocate anything repeatedly in the onChildDraw method
+            Drawable background;
+            Drawable xMark;
+            int xMarkMargin;
+            boolean initiated;
+
+            private void init() {
+                background = new ColorDrawable(Color.MAGENTA);
+                xMark = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_reply_24);
+                Objects.requireNonNull(xMark).setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                xMarkMargin = (int) mContext.getResources().getDimension(R.dimen.ic_clear_margin);
+                initiated = true;
+            }
+
+            // not important, we don't want drag & drop
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public int getSwipeDirs(@NonNull RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                int position = viewHolder.getAbsoluteAdapterPosition();
+                if (isUndoOn() && isPendingRemoval(position)) {
+                    return 0;
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int swipedPosition = viewHolder.getAbsoluteAdapterPosition();
+                replyTo((MessageListActivity) mContext,mMessageList.get(swipedPosition));
+                notifyItemChanged(mMessageList.indexOf(mMessageList.get(swipedPosition)));
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                View itemView = viewHolder.itemView;
+
+                // not sure why, but this method get's called for viewholder that are already swiped away
+                if (viewHolder.getAbsoluteAdapterPosition() == -1) {
+                    // not interested in those
+                    return;
+                }
+
+                if (!initiated) {
+                    init();
+                }
+
+                // draw red background
+                background.setBounds(itemView.getLeft() + (int) dX, itemView.getTop(), itemView.getLeft(), itemView.getBottom());
+                background.draw(c);
+
+                // draw x mark
+                int itemHeight = itemView.getBottom() - itemView.getTop();
+                int intrinsicWidth = xMark.getIntrinsicWidth();
+                int intrinsicHeight = xMark.getIntrinsicWidth();
+
+                int xMarkLeft = itemView.getLeft() + xMarkMargin;
+                int xMarkRight = itemView.getLeft() + xMarkMargin + intrinsicWidth;
+                int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight)/2;
+                int xMarkBottom = xMarkTop + intrinsicHeight;
+                xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom);
+
+                xMark.draw(c);
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+
+        };
+        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        mItemTouchHelper.attachToRecyclerView(mMessageRecycler);
+        ItemTouchHelper mItemTouchHelper2 = new ItemTouchHelper(simpleItemTouchCallback2);
+        mItemTouchHelper2.attachToRecyclerView(mMessageRecycler);
+    }
+
+    /**
+     * We're gonna setup another ItemDecorator that will draw the red background in the empty space while the items are animating to thier new positions
+     * after an item is removed.
+     */
+    private void setUpAnimationDecoratorHelper() {
+        mMessageRecycler.addItemDecoration(new RecyclerView.ItemDecoration() {
+
+            // we want to cache this and not allocate anything repeatedly in the onDraw method
+            Drawable background;
+            boolean initiated;
+
+            private void init() {
+                background = new ColorDrawable(Color.RED);
+                initiated = true;
+            }
+
+            @Override
+            public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+
+                if (!initiated) {
+                    init();
+                }
+
+                // only if animation is in progress
+                if (Objects.requireNonNull(parent.getItemAnimator()).isRunning()) {
+
+                    // some items might be animating down and some items might be animating up to close the gap left by the removed item
+                    // this is not exclusive, both movement can be happening at the same time
+                    // to reproduce this leave just enough items so the first one and the last one would be just a little off screen
+                    // then remove one from the middle
+
+                    // find first child with translationY > 0
+                    // and last one with translationY < 0
+                    // we're after a rect that is not covered in recycler-view views at this point in time
+                    View lastViewComingDown = null;
+                    View firstViewComingUp = null;
+
+                    // this is fixed
+                    int left = 0;
+                    int right = parent.getWidth();
+
+                    // this we need to find out
+                    int top = 0;
+                    int bottom = 0;
+
+                    // find relevant translating views
+                    int childCount = Objects.requireNonNull(parent.getLayoutManager()).getChildCount();
+                    for (int i = 0; i < childCount; i++) {
+                        View child = parent.getLayoutManager().getChildAt(i);
+                        if (Objects.requireNonNull(child).getTranslationY() < 0) {
+                            // view is coming down
+                            lastViewComingDown = child;
+                        } else if (child.getTranslationY() > 0) {
+                            // view is coming up
+                            if (firstViewComingUp == null) {
+                                firstViewComingUp = child;
+                            }
+                        }
+                    }
+
+                    if (lastViewComingDown != null && firstViewComingUp != null) {
+                        // views are coming down AND going up to fill the void
+                        top = lastViewComingDown.getBottom() + (int) lastViewComingDown.getTranslationY();
+                        bottom = firstViewComingUp.getTop() + (int) firstViewComingUp.getTranslationY();
+                    } else if (lastViewComingDown != null) {
+                        // views are going down to fill the void
+                        top = lastViewComingDown.getBottom() + (int) lastViewComingDown.getTranslationY();
+                        bottom = lastViewComingDown.getBottom();
+                    } else if (firstViewComingUp != null) {
+                        // views are coming up to fill the void
+                        top = firstViewComingUp.getTop();
+                        bottom = firstViewComingUp.getTop() + (int) firstViewComingUp.getTranslationY();
+                    }
+
+                    background.setBounds(left, top, right, bottom);
+                    background.draw(c);
+
+                }
+                super.onDraw(c, parent, state);
+            }
+
+        });
+    }
+
+    public void pendingRemoval(int position) {
+        final QuotedUserMessage item = mMessageList.get(position);
+        if (!itemsPendingRemoval.contains(item)) {
+            itemsPendingRemoval.add(item);
+            // this will redraw row in "undo" state
+            notifyItemChanged(position);
+            // let's create, store and post a runnable to remove the item
+            Runnable pendingRemovalRunnable = () -> remove(item);
+            handler.postDelayed(pendingRemovalRunnable, PENDING_REMOVAL_TIMEOUT);
+            pendingRunnables.put(item, pendingRemovalRunnable);
         }
     }
 
-    private class QuoteSentOkMessageHolder extends SentOkMessageHolder{
-        TextView quote;
-        TextView quoteSender;
-        QuoteSentOkMessageHolder(View itemView) {
-            super(itemView);
-            quote = itemView.findViewById(R.id.quote_text);
-            quoteSender = itemView.findViewById(R.id.quote_sender);
+    public void remove(QuotedUserMessage item) {
+        itemsPendingRemoval.remove(item);
+        if (mMessageList.contains(item)) {
+            int position = mMessageList.indexOf(item);
+            notifyItemRemoved(position);
+            mMessageList.remove(item);
+            notifyItemRangeChanged(position,getItemCount());
         }
+        DbHelper.deleteMessage(item,app);
+        Intent gcm_rec = new Intent("your_action");
+        gcm_rec.putExtra("delete",item.getCreatedAt());
+        LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+    }
 
-        @Override
-        void bind(QuotedUserMessage message) {
-            super.bind(message);
-            quote.setText(message.getQuotedMessage());
-            quoteSender.setText(message.getQuoteSender().equals(app.getAccount().getNickname())?"You":message.getQuoteSender());
-            quote.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
-            quoteSender.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
+    public void remove(int position) {
+        if(position>mMessageList.size()){
+            return;
+        }
+        QuotedUserMessage item = mMessageList.get(position);
+        itemsPendingRemoval.remove(item);
+        if (mMessageList.contains(item)) {
+            mMessageList.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position,getItemCount());
         }
     }
 
-    private class QuoteReceivedMessageHolder extends ReceivedMessageHolder{
-        TextView quote;
-        TextView quoteSender;
-        QuoteReceivedMessageHolder(View itemView) {
-            super(itemView);
-            quote = itemView.findViewById(R.id.quote_text);
-            quoteSender = itemView.findViewById(R.id.quote_sender);
-        }
-
-        @Override
-        void bind(QuotedUserMessage message) {
-            super.bind(message);
-            quote.setText(message.getQuotedMessage());
-            quoteSender.setText(message.getQuoteSender().equals(app.getAccount().getNickname())?"You":message.getQuoteSender());
-            quote.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
-            quoteSender.setOnClickListener(new QuoteItemOnClickListener(message,itemView,messageText));
-        }
+    public boolean isPendingRemoval(int position) {
+        QuotedUserMessage item = mMessageList.get(position);
+        return itemsPendingRemoval.contains(item);
     }
 
+    public void setUndoOn(boolean undoOn) {
+            this.undoOn = undoOn;
+        }
+
+    public boolean isUndoOn() {
+        return undoOn;
+    }
+
+    private static void replyTo(MessageListActivity activity, QuotedUserMessage message) {
+        DxApplication app = (DxApplication) activity.getApplication();
+        TextView quoteTextTyping = activity.findViewById(R.id.quote_text_typing);
+        TextView quoteSenderTyping = activity.findViewById(R.id.quote_sender_typing);
+        if(message.getMessage()!=null && message.getMessage().equals("") && message.getType()!=null && !message.getType().equals("")){
+            String ph = message.getType() + ":" + message.getCreatedAt();
+            quoteTextTyping.setText(ph);
+        }else{
+            quoteTextTyping.setText(message.getMessage());
+        }
+        quoteSenderTyping.setText(message.getTo().equals(app.getHostname())?message.getSender():app.getString(R.string.you));
+        quoteTextTyping.setVisibility(View.VISIBLE);
+        quoteSenderTyping.setVisibility(View.VISIBLE);
+    }
+    
 }

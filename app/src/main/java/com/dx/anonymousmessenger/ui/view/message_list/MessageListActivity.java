@@ -155,9 +155,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         mMessageRecycler = findViewById(R.id.reyclerview_message_list);
 //        mMessageRecycler.setHasFixedSize(true);
         mMessageAdapter = new MessageListAdapter(this, messageList, (DxApplication) getApplication(), mMessageRecycler, this);
-        mMessageRecycler.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
-//        ((LinearLayoutManager)mMessageRecycler.getLayoutManager()).setStackFromEnd(true);
-        mMessageRecycler.setAdapter(mMessageAdapter);
+
         mMessageRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -824,7 +822,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     for (QuotedUserMessage quotedUserMessage : messageList) {
                         if(quotedUserMessage.getCreatedAt()==intent.getLongExtra("delivery",-1)){
                             quotedUserMessage.setReceived(true);
-                            mMessageAdapter.notifyItemChanged(messageList.indexOf(quotedUserMessage));
+                            mMessageAdapter.notifyItemChanged(mMessageAdapter.getMessageList().indexOf(quotedUserMessage));
                             return;
                         }
                     }

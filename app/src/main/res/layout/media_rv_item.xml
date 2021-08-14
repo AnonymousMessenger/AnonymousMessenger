@@ -9,7 +9,7 @@
     android:padding="2dp">
 
     <ImageView
-        android:id="@+id/view_image"
+        android:id="@+id/img_sent"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:contentDescription="@string/image"

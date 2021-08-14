@@ -180,6 +180,10 @@ public class AddContactActivity extends DxActivity {
 
     private void tryAddContact(String str){
 
+        if(str == null){
+            return;
+        }
+
         String s;
         //get just the address if it was preceded by some string
         //as in the security logs that a user can copy

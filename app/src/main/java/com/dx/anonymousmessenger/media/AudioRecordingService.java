@@ -197,11 +197,13 @@ public class AudioRecordingService extends Service {
                 }
                 new Thread(this::startTiming).start();
                 while(status) {
-                    Runtime.getRuntime().gc();
                     if(buffer.length >= Runtime.getRuntime().freeMemory()){
-                        status = false;
-                        outputStream = null;
-                        return;
+                        Runtime.getRuntime().gc();
+                        if(buffer.length >= Runtime.getRuntime().freeMemory()){
+                            status = false;
+                            outputStream = null;
+                            return;
+                        }
                     }
                     //reading data from MIC into buffer
                     recorder.read(buffer, 0, buffer.length);

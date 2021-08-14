@@ -94,7 +94,7 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
         ViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
-            this.myView = itemView.findViewById(R.id.view_image);
+            this.myView = itemView.findViewById(R.id.img_sent);
             this.info = itemView.findViewById(R.id.txt_info);
             itemView.setOnClickListener(this);
         }
