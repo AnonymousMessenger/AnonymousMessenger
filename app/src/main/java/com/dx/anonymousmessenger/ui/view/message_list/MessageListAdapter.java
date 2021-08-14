@@ -379,21 +379,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         return true;
                     case R.id.navigation_drawer_item2:
                         //handle pin click
-                        try{
-                            if(message.isPinned()){
-                                DbHelper.unPinMessage(message,app);
-                                message.setPinned(false);
-                                Snackbar sb = Snackbar.make(rv, R.string.unpinned_message, Snackbar.LENGTH_SHORT).setAnchorView(((MessageListActivity) mContext).findViewById(R.id.layout_chatbox));
-                                sb.show();
-                            }else{
-                                DbHelper.pinMessage(message,app);
-                                message.setPinned(true);
-                                Snackbar sb = Snackbar.make(rv, R.string.pinned_message, Snackbar.LENGTH_SHORT).setAnchorView(((MessageListActivity) mContext).findViewById(R.id.layout_chatbox));
-                                sb.show();
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
+                        handlePin(app,(MessageListActivity)mContext,message);
                         return true;
                     case R.id.navigation_drawer_item3:
                         //handle copy click
@@ -410,6 +396,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             //displaying the popup
             popup.show();
         }
+
+
 
 
     }
@@ -862,6 +850,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         TextView nameText, messageText, timeText;
         Button undoButton;
         ImageView sent;
+        FloatingActionButton pin;
 
         MessageHolder(View itemView) {
             super(itemView);
@@ -870,6 +859,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             undoButton = itemView.findViewById(R.id.undo_button);
             nameText = itemView.findViewById(R.id.text_message_name);
             sent = itemView.findViewById(R.id.img_sent);
+            pin = itemView.findViewById(R.id.fab_pin);
         }
 
         @SuppressLint("ClickableViewAccessibility")
@@ -879,6 +869,17 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             if(nameText!=null){
                 nameText.setText(message.getSender());
+            }
+
+            if(pin != null){
+                if(message.isPinned()){
+                    pin.setAlpha(1.0f);
+                }else{
+                    pin.setAlpha(0.2f);
+                }
+                pin.setOnClickListener(v -> {
+                    handlePin(app,(MessageListActivity) mContext, message);
+                });
             }
 
             if(messageText == null){
@@ -1285,6 +1286,30 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         quoteSenderTyping.setText(message.getTo().equals(app.getHostname())?message.getSender():app.getString(R.string.you));
         quoteTextTyping.setVisibility(View.VISIBLE);
         quoteSenderTyping.setVisibility(View.VISIBLE);
+    }
+
+    private void handlePin(DxApplication app, MessageListActivity activity, QuotedUserMessage message) {
+        RecyclerView rv = activity.findViewById(R.id.reyclerview_message_list);
+        try{
+            if(message.isPinned()){
+                DbHelper.unPinMessage(message,app);
+                message.setPinned(false);
+                if(rv != null){
+                    Snackbar sb = Snackbar.make(rv, R.string.unpinned_message, Snackbar.LENGTH_SHORT).setAnchorView(activity.findViewById(R.id.layout_chatbox));
+                    sb.show();
+                }
+            }else{
+                DbHelper.pinMessage(message,app);
+                message.setPinned(true);
+                if(rv != null){
+                    Snackbar sb = Snackbar.make(rv, R.string.pinned_message, Snackbar.LENGTH_SHORT).setAnchorView(activity.findViewById(R.id.layout_chatbox));
+                    sb.show();
+                }
+            }
+            notifyItemChanged(mMessageList.indexOf(message));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
     
 }
