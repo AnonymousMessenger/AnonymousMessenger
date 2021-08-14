@@ -1,13 +1,22 @@
 package com.dx.anonymousmessenger.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.text.util.Linkify;
+import android.view.View;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.dx.anonymousmessenger.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -187,5 +196,23 @@ public class Utils {
             e.printStackTrace();
         }
         return bm;
+    }
+
+    public static void showHelpAlert(Context context, String helpText, String helpTitle) {
+        TextView help = new TextView(context);
+        help.setText(helpText);
+        help.setPadding(10,10,10,10);
+        help.setTextIsSelectable(true);
+        Linkify.addLinks(help, Linkify.ALL);
+        View view = new View(context);
+        ArrayList<View> viewArrayList = new ArrayList<>();
+        viewArrayList.add(help);
+        view.addChildrenForAccessibility(viewArrayList);
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(context).
+                        setMessage(helpTitle).
+                        setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss()).
+                        setView(help);
+        builder.create().show();
     }
 }

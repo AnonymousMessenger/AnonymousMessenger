@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,12 +26,12 @@ import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.ui.view.app.AppActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.AboutActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.LicenseActivity;
+import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -99,21 +98,7 @@ public class SetupSettingsFragment extends Fragment {
         final Button addBridge = rootView.findViewById(R.id.btn_add_bridge);
         final TextView reset = rootView.findViewById(R.id.btn_reset);
         rootView.findViewById(R.id.btn_request_bridge).setOnClickListener(v -> {
-            TextView bridgeHelp = new TextView(requireContext());
-            bridgeHelp.setText(R.string.request_bridge_help);
-            bridgeHelp.setPadding(10,10,10,10);
-            bridgeHelp.setTextIsSelectable(true);
-            Linkify.addLinks(bridgeHelp, Linkify.ALL);
-            View view = new View(requireContext());
-            ArrayList<View>  viewArrayList = new ArrayList<>();
-            viewArrayList.add(bridgeHelp);
-            view.addChildrenForAccessibility(viewArrayList);
-            AlertDialog.Builder builder =
-                new AlertDialog.Builder(requireContext()).
-                    setMessage(R.string.request_bridge).
-                    setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).
-                    setView(bridgeHelp);
-            builder.create().show();
+            Utils.showHelpAlert(requireContext(),getString(R.string.request_bridge_help), getString(R.string.request_bridge));
         });
 
         reset.setOnClickListener(v -> {
@@ -199,7 +184,7 @@ public class SetupSettingsFragment extends Fragment {
 
         addBridge.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-            builder.setTitle("Insert bridge line");
+            builder.setTitle(R.string.insert_bridge_line);
 
             // Set up the input
             final EditText input = new EditText(v.getContext());
@@ -208,7 +193,7 @@ public class SetupSettingsFragment extends Fragment {
             builder.setView(input);
 
             // Set up the buttons
-            builder.setPositiveButton("OK", (dialog, which) -> {
+            builder.setPositiveButton(R.string.ok, (dialog, which) -> {
                 ((InputMethodManager) requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(requireView().getWindowToken(), 0);
                 if(isInSetup){
                     List<String> list = ((CreateUserActivity) requireActivity()).getBridgeList();
@@ -219,7 +204,7 @@ public class SetupSettingsFragment extends Fragment {
                 }
                 updateBridgeList();
             });
-            builder.setNegativeButton("Cancel", (dialog, which) -> {
+            builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
                 ((InputMethodManager) requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(requireView().getWindowToken(), 0);
                 dialog.cancel();
             });

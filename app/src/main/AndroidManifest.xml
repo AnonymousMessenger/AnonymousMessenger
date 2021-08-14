@@ -31,19 +31,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".ui.view.log.LogActivity" />
+        <activity android:name=".ui.view.log.LogActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation"/>
         <activity android:name=".ui.view.single_activity.SimpleScannerActivity" />
-        <activity android:name=".ui.view.notepad.NotepadActivity" />
+        <activity android:name=".ui.view.notepad.NotepadActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation"/>
         <activity android:name=".ui.view.single_activity.FileViewerActivity" />
         <activity android:name=".ui.view.tips.TipsActivity" />
         <activity android:name=".ui.view.single_activity.AboutActivity" />
         <activity android:name=".ui.view.single_activity.ContactProfileActivity" />
         <activity android:name=".ui.view.single_activity.LicenseActivity" />
         <activity android:name=".ui.view.single_activity.MyProfileActivity" />
-        <activity android:name=".ui.view.single_activity.PictureViewerActivity" />
+        <activity android:name=".ui.view.single_activity.PictureViewerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation"/>
         <activity android:name=".ui.view.call.RingingActivity" />
         <activity android:name=".ui.view.call.CallActivity" />
-        <activity android:name=".ui.view.single_activity.AddContactActivity" />
+        <activity android:name=".ui.view.single_activity.AddContactActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation"/>
         <activity android:name=".ui.view.single_activity.VerifyIdentityActivity" />
         <activity android:name=".ui.view.single_activity.MyIdentityActivity" />
         <activity android:name=".ui.view.setup.SetupInProcess" />
@@ -51,7 +55,8 @@
             android:name=".ui.view.message_list.MessageListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity android:name=".ui.view.app.AppActivity" />
-        <activity android:name=".ui.view.setup.CreateUserActivity" />
+        <activity android:name=".ui.view.setup.CreateUserActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation"/>
         <activity android:name=".ui.view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -25,10 +25,10 @@
             android:layout_height="wrap_content"
             android:enabled="false"
             android:text="@string/next_button"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fab_nickname_help"
             tools:enabled="true" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -54,9 +54,20 @@
             android:layout_height="20dp"
             android:gravity="center"
             android:text="@string/nickname_help"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/fab_nickname_help"
+            app:layout_constraintStart_toEndOf="@+id/fab_nickname_help"
             app:layout_constraintTop_toBottomOf="@+id/txt_layout_caption" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_nickname_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="@drawable/ic_baseline_help_24"
+            app:fabSize="mini"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_layout_caption"
+            android:focusable="true" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

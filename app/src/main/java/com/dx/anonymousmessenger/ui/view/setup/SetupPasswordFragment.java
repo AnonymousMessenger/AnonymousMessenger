@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment;
 
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.ui.custom.StrengthMeter;
+import com.dx.anonymousmessenger.util.Utils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -42,12 +44,13 @@ public class SetupPasswordFragment extends Fragment {
     private StrengthMeter strengthMeter;
     private Button nextButton;
     private ProgressBar progressBar;
+    private FloatingActionButton help;
 
     public SetupPasswordFragment() {
         // Required empty public constructor
     }
 
-    public static SetupPasswordFragment newInstance(String param1, String param2) {
+    public static SetupPasswordFragment newInstance() {
         SetupPasswordFragment fragment = new SetupPasswordFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -73,6 +76,11 @@ public class SetupPasswordFragment extends Fragment {
         passwordConfirmation = v.findViewById(R.id.password_confirm);
         nextButton = v.findViewById(R.id.next);
         progressBar = v.findViewById(R.id.progress);
+        help = v.findViewById(R.id.fab_password_help);
+
+        help.setOnClickListener(view -> {
+            Utils.showHelpAlert(requireContext(),getString(R.string.setup_password_explanation), getString(R.string.password_explain_title));
+        });
 
         passwordEntry.addTextChangedListener(new TextWatcher() {
             @Override
@@ -82,8 +90,8 @@ public class SetupPasswordFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence authorName, int i, int i1, int i2) {
-                String password1 = passwordEntry.getText().toString();
-                String password2 = passwordConfirmation.getText().toString();
+                String password1 = Objects.requireNonNull(passwordEntry.getText()).toString();
+                String password2 = Objects.requireNonNull(passwordConfirmation.getText()).toString();
                 boolean passwordsMatch = password1.equals(password2);
 
                 strengthMeter
@@ -116,8 +124,8 @@ public class SetupPasswordFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String password1 = passwordEntry.getText().toString();
-                String password2 = passwordConfirmation.getText().toString();
+                String password1 = Objects.requireNonNull(passwordEntry.getText()).toString();
+                String password2 = Objects.requireNonNull(passwordConfirmation.getText()).toString();
                 boolean passwordsMatch = password1.equals(password2);
 
                 strengthMeter

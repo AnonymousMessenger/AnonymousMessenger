@@ -13,6 +13,8 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.util.Utils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
@@ -43,6 +45,8 @@ public class SetupUsernameFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_setup_username, container, false);
         final TextInputEditText txtNickname = rootView.findViewById(R.id.txt_caption);
+        final FloatingActionButton help = rootView.findViewById(R.id.fab_nickname_help);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             txtNickname.setImeOptions(IME_FLAG_NO_PERSONALIZED_LEARNING);
         }
@@ -55,16 +59,16 @@ public class SetupUsernameFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length()>1&&s.length()<35){
-                    Button next = Objects.requireNonNull(getView()).findViewById(R.id.next);
+                    Button next = requireView().findViewById(R.id.next);
                     next.setEnabled(true);
                     error = getString(R.string.nickname_okay);
-                    TextView errorView = getView().findViewById(R.id.txt_error);
+                    TextView errorView = requireView().findViewById(R.id.txt_error);
                     errorView.setText(error);
                 }else {
-                    Button next = Objects.requireNonNull(getView()).findViewById(R.id.next);
+                    Button next = requireView().findViewById(R.id.next);
                     next.setEnabled(false);
                     error = getString(R.string.nickname_error);
-                    TextView errorView = getView().findViewById(R.id.txt_error);
+                    TextView errorView = requireView().findViewById(R.id.txt_error);
                     errorView.setText(error);
                 }
             }
@@ -74,18 +78,25 @@ public class SetupUsernameFragment extends Fragment {
 
             }
         });
+
+        help.setOnClickListener(v -> {
+            Utils.showHelpAlert(requireContext(),getString(R.string.nickname_explain), getString(R.string.nickname_explain_title));
+        });
+
         final Button next = rootView.findViewById(R.id.next);
         next.setOnClickListener(v -> {
             if(Objects.requireNonNull(txtNickname.getText()).length()>1){
                 next.setEnabled(false);
                 txtNickname.setEnabled(false);
                 new Thread(()->{
-                    ((CreateUserActivity) Objects.requireNonNull(getActivity())).setNickname(txtNickname.getText().toString());
-                    ((CreateUserActivity)getActivity()).changeToSettingsFragment();
+                    ((CreateUserActivity) requireActivity()).setNickname(txtNickname.getText().toString());
+                    ((CreateUserActivity) requireActivity()).changeToSettingsFragment();
                 }).start();
             }
         });
         // Inflate the layout for this fragment
         return rootView;
     }
+
+
 }
