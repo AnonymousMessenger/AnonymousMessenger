@@ -85,20 +85,20 @@ public class ServerSocketViaTor {
             node = new OnionProxyManager(new OnionProxyContext(app.getApplicationContext(), "torfiles"));
 
             if (!node.startWithoutRepeat(TOTAL_SEC_PER_STARTUP, DbHelper.getBridgeList(app), app.isBridgesEnabled())) {
-                System.out.println("Could not Start Tor.");
+                Log.d("GENERAL","Could not Start Tor.");
                 tryKill();
                 throw new IOException("Could not Start Tor.");
             } else {
                 Runtime.getRuntime().addShutdownHook(new Thread() {
                     public void run() {
-                    System.out.println("shutdown hook");
+                    Log.d("GENERAL","shutdown hook");
                     tryKill();
                     }
                 });
             }
         }catch (Exception e){
             e.printStackTrace();
-            System.out.println("exception with tor start");
+            Log.d("GENERAL","exception with tor start");
             tryKill();
             //todo: tell user about the error, and let him press restart
 //            app.restartTor();
@@ -156,12 +156,12 @@ public class ServerSocketViaTor {
         }
         if(node!=null){
             try {
-                System.out.println("starting node stop");
+                Log.d("GENERAL","starting node stop");
                 node.stop();
-                System.out.println("done with node stop");
+                Log.d("GENERAL","done with node stop");
             }catch (Exception e){
                 e.printStackTrace();
-                System.out.println("exception with node stop");
+                Log.d("GENERAL","exception with node stop");
             }
             node = null;
         }
@@ -292,7 +292,7 @@ public class ServerSocketViaTor {
         }
 
         private void handleHello(String msg, Socket sock, AtomicInteger sockets) throws IOException {
-            if(DxApplication.isValidAddress(msg.replace("hello-","")) && DbHelper.contactExists(msg.replace("hello-",""),app)){
+            if(Utils.isValidAddress(msg.replace("hello-","")) && DbHelper.contactExists(msg.replace("hello-",""),app)){
                 app.addToOnlineList(msg.replace("hello-",""));
                 app.queueUnsentMessages(msg.replace("hello-",""));
             }
@@ -313,7 +313,7 @@ public class ServerSocketViaTor {
                 outputStream.writeUTF("ok");
                 outputStream.flush();
                 String msg = in.readUTF();
-                if(!DxApplication.isValidAddress(msg)){
+                if(!Utils.isValidAddress(msg)){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
                     DbHelper.saveLog("REFUSED FILE FROM: "+address,new Date().getTime(),"NOTICE",app);
@@ -376,7 +376,7 @@ public class ServerSocketViaTor {
                     in.read(buffer,0,buffer.length);
                     int chunkLength = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
-                    System.out.println("CHUNK LENGTH:::: "+chunkLength);
+//                    Log.d("GENERAL","CHUNK LENGTH:::: "+chunkLength);
                     if(chunkLength==0){
                         break;
                     }
@@ -448,7 +448,7 @@ public class ServerSocketViaTor {
                 outputStream.writeUTF("ok");
                 outputStream.flush();
                 String msg = in.readUTF();
-                if(!DxApplication.isValidAddress(msg)){
+                if(!Utils.isValidAddress(msg)){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
                     DbHelper.saveLog("REFUSED MEDIA FROM: "+msg+" REASON: BAD ADDRESS",new Date().getTime(),"NOTICE",app);

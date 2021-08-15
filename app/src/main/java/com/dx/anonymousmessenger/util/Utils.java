@@ -143,7 +143,7 @@ public class Utils {
         }else if(fileSize.endsWith("kb") || fileSize.endsWith("KB")){
             n = n * 1024;
         }
-        System.out.println("file size in bytes is : " + n);
+//        Log.d("GENERAL","file size in bytes is : " + n);
         return n;
     }
 
@@ -214,5 +214,9 @@ public class Utils {
                         setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss()).
                         setView(help);
         builder.create().show();
+    }
+
+    public static boolean isValidAddress(String address){
+        return address.trim().length() == 62 && address.trim().endsWith(".onion");
     }
 }

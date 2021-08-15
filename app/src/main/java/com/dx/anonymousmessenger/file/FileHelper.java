@@ -254,38 +254,38 @@ public class FileHelper {
                 while(true){
                     byte[] iv = new byte[IV_LENGTH];
                     fis.read(iv,0,IV_LENGTH);
-//                    System.out.println("IV: "+ Arrays.toString(iv));
+//                    Log.d("GENERAL","IV: "+ Arrays.toString(iv));
                     cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
                     byte[] chunkSize = new byte[4];
                     fis.read(chunkSize,0,chunkSize.length);
                     int casted = ByteBuffer.wrap(chunkSize).order(ByteOrder.LITTLE_ENDIAN).getInt();
-//                    System.out.println("length of next chapter: "+casted);
+//                    Log.d("GENERAL","length of next chapter: "+casted);
                     if(casted==0){
                         break;
                     }
                     byte[] buf = new byte[casted];
                     int read;
-//                    System.out.println("avail: "+fis.available());
+//                    Log.d("GENERAL","avail: "+fis.available());
                     if(f.length()-done >= buf.length){
-//                        System.out.println("a lot more is left");
+//                        Log.d("GENERAL","a lot more is left");
 //                        while(fis.available()<buf.length){
-//                            System.out.println("waiting for availability");
+//                            Log.d("GENERAL","waiting for availability");
 //                        }
                         read = fis.read(buf,0,buf.length);
                     }else{
-//                        System.out.println("not much is left");
+//                        Log.d("GENERAL","not much is left");
                         read = fis.read(buf);
                     }
                     if(read==-1){
-//                        System.out.println("nothing is left");
+//                        Log.d("GENERAL","nothing is left");
                         break;
                     }
-//                    System.out.println("read: "+read);
+//                    Log.d("GENERAL","read: "+read);
                     out.write(cipher.doFinal(buf,0,read));
                     out.flush();
                     done=done+read;
-//                    System.out.println("done: "+done);
-//                    System.out.println("left: "+(f.length()-done));
+//                    Log.d("GENERAL","done: "+done);
+//                    Log.d("GENERAL","left: "+(f.length()-done));
                     progressListener.onProgress(((int) (((double) done/(double) f.length())*100.0)));
                 }
                 progressListener.onProgress(100);
@@ -318,28 +318,28 @@ public class FileHelper {
             while(true){
                 Runtime.getRuntime().gc();
                 byte[] iv = Utils.getSecretBytes(IV_LENGTH);
-//                System.out.println("iv:" + Arrays.toString(iv));
+//                Log.d("GENERAL","iv:" + Arrays.toString(iv));
                 cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
                 byte[] buf = new byte[1024*1024*5];
                 int read;
-//                System.out.println("done: "+done);
-//                System.out.println("length: "+length);
-//                System.out.println("avail: "+in.available());
+//                Log.d("GENERAL","done: "+done);
+//                Log.d("GENERAL","length: "+length);
+//                Log.d("GENERAL","avail: "+in.available());
                 if(length-done >= buf.length){
-//                    System.out.println("a lot is left");
+//                    Log.d("GENERAL","a lot is left");
                     if(in.available()>=buf.length){
-//                        System.out.println("its more than enough");
+//                        Log.d("GENERAL","its more than enough");
                         read = in.read(buf,0,buf.length);
                     }else{
-//                        System.out.println("its not enough");
+//                        Log.d("GENERAL","its not enough");
                         continue;
                     }
                 }else{
-//                    System.out.println("not much is left");
+//                    Log.d("GENERAL","not much is left");
                     read = in.read(buf);
                 }
                 if(read==-1){
-//                    System.out.println("nothing is left");
+//                    Log.d("GENERAL","nothing is left");
                     break;
                 }
                 fos.write(iv);
@@ -349,12 +349,12 @@ public class FileHelper {
                 fos.write(enc);
                 fos.flush();
                 done += read;
-//                System.out.println("encrypted chunk size: "+enc.length);
-//                System.out.println("done: "+done);
-//                System.out.println("------- STARTING ALL OVER AGAIN ------");
+//                Log.d("GENERAL","encrypted chunk size: "+enc.length);
+//                Log.d("GENERAL","done: "+done);
+//                Log.d("GENERAL","------- STARTING ALL OVER AGAIN ------");
             }
 
-//            System.out.println(eFilename);
+//            Log.d("GENERAL",eFilename);
             fos.close();
             //return its "path"
             return eFilename;

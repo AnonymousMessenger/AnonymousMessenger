@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.os.StrictMode;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
@@ -149,7 +150,7 @@ public class DxApplication extends Application {
 
     public synchronized void sendQueuedMessages(){
         for (QuotedUserMessage msg:messageQueue){
-            System.out.println("sending a message");
+//            Log.d("GENERAL","sending a message");
             if(msg.getPath()!=null && !msg.getPath().equals("")){
                 if(msg.getType().equals("file")){
                     MessageSender.sendQueuedFile(msg,this,msg.getTo());
@@ -165,7 +166,7 @@ public class DxApplication extends Application {
 
     public synchronized void queueAllUnsentMessages(){
         if(pinging || syncing){
-            System.out.println("still pinging or syncing!");
+            Log.d("GENERAL","still pinging or syncing!");
             return;
         }
         try{
@@ -421,11 +422,11 @@ public class DxApplication extends Application {
     }
 
     public void reloadSettings(){
-        System.out.println(isAcceptingCallsAllowed);
+        Log.d("GENERAL", String.valueOf(isAcceptingCallsAllowed));
         try{
             Object[] settings = DbHelper.getSettingsList(this);
             if(settings == null){
-                System.out.println("settings were null when got from the db");
+                Log.d("GENERAL","settings were null when got from the db");
                 settings = DEFAULT_SETTINGS;
                 DbHelper.saveSettings((int)settings[0]>0,(int)settings[1]>0,(int)settings[2]>0,(int)settings[3]>0,(String)settings[4],(String)settings[5],this);
             }
@@ -784,7 +785,7 @@ public class DxApplication extends Application {
     }
 
     public boolean isServerReady() {
-        System.out.println("isServerReady: "+serverReady);
+        Log.d("GENERAL","isServerReady: "+serverReady);
         return serverReady;
     }
 
@@ -799,10 +800,10 @@ public class DxApplication extends Application {
     }
 
     public void startTor(){
-        System.out.println("start tor requested");
+        Log.d("GENERAL","start tor requested");
         reloadSettings();
         if(isServiceRunningInForeground(this, DxService.class)){
-            System.out.println("Service already running, not starting tor");
+            Log.d("GENERAL","Service already running, not starting tor");
             return;
         }
         Intent serviceIntent = new Intent(this, DxService.class);
@@ -816,17 +817,17 @@ public class DxApplication extends Application {
 
     public void restartTor(){
         if(restartingTor){
-            System.out.println("still restarting, abort");
+            Log.d("GENERAL","still restarting, abort");
             return;
         }
-        System.out.println("starting restart now");
+        Log.d("GENERAL","starting restart now");
         restartingTor = true;
         new Thread(()->{
         if(torSocket!=null){
             try {
-                System.out.println("starting trykill");
+                Log.d("GENERAL","starting trykill");
                 torSocket.tryKill();
-                System.out.println("trykill ok");
+                Log.d("GENERAL","trykill ok");
                 Thread.sleep(1500);
             } catch (Exception ignored) {}
             if(serverReady){
@@ -835,10 +836,10 @@ public class DxApplication extends Application {
         }
 
         try{
-            System.out.println("stopping service");
+            Log.d("GENERAL","stopping service");
             Intent serviceIntent = new Intent(this, DxService.class);
             stopService(serviceIntent);
-            System.out.println("service stopped");
+            Log.d("GENERAL","service stopped");
 
             try {
                 Thread.sleep(3500);
@@ -846,7 +847,7 @@ public class DxApplication extends Application {
                 e.printStackTrace();
             }
 
-            System.out.println("restarting service");
+            Log.d("GENERAL","restarting service");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(serviceIntent);
             }else{
@@ -873,15 +874,9 @@ public class DxApplication extends Application {
 //                    else{
 //                        System.out.print("DOES CONTAIN: ");
 //                    }
-//                    System.out.println(f.getName());
+//                    Log.d("GENERAL",f.getName());
                 }
             }
         }
     }
-
-    public static boolean isValidAddress(String address){
-        return address.trim().length() == 62 && address.trim().endsWith(".onion");
-    }
-
-
 }

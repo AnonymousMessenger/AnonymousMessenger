@@ -247,7 +247,7 @@ public class CallController {
                     //reading data from MIC into buffer
                     recorder.read(buffer, 0, buffer.length);
                     outgoing.getOutputStream().write(buffer,0,buffer.length);
-                    System.out.println("sent size: " +buffer.length);
+                    Log.d("GENERAL","sent size: " +buffer.length);
                 }
             }
         }catch (Exception ignored){
@@ -260,13 +260,13 @@ public class CallController {
         try {
             incoming.getInputStream().read(receiveData, 0, receiveData.length);
             toSpeaker(receiveData);
-            System.out.println("received size: " +receiveData.length);
+            Log.d("GENERAL","received size: " +receiveData.length);
             new Thread(this::startTiming).start();
             while(status){
                 //noinspection ResultOfMethodCallIgnored
                 incoming.getInputStream().read(receiveData, 0, receiveData.length);
                 toSpeaker(receiveData);
-                System.out.println("received size: " +receiveData.length);
+                Log.d("GENERAL","received size: " +receiveData.length);
             }
         } catch (Exception e) {
             Log.e("receiveData:","receiveData.length: ERROR");
@@ -298,7 +298,7 @@ public class CallController {
             at.write(soundBytes, 0, soundBytes.length);
             at.play();
         } catch (Exception ignored) {
-            //System.out.println("Not working in speakers...");
+            //Log.d("GENERAL","Not working in speakers...");
             //e.printStackTrace();
         }
     }

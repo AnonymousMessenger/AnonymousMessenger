@@ -9,6 +9,7 @@ import com.dx.anonymousmessenger.util.Utils;
 import net.sf.runjva.sourceforge.jsocks.protocol.Socks5Message;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
+import org.whispersystems.libsignal.logging.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -100,7 +101,8 @@ public class TorClient {
                             ByteArrayInputStream bais = new ByteArrayInputStream(media);
                             byte[] buffer;
                             while(bais.available()>0){
-                                //System.out.println("sending part");
+                                //Log.d("GENERAL","sending part");
+                                Log.d("GENERAL", "sending part");
                                 if(bais.available()<1024){
                                     buffer = new byte[bais.available()];
                                 }else{
@@ -299,7 +301,7 @@ public class TorClient {
         inputStream.readFully(header, 0, 4);
 
         if (header[1] != (byte) 0x00) {
-            System.out.println("ERROR REQUEST NOT OK: "+header[1]);
+            Log.d("GENERAL","ERROR REQUEST NOT OK: "+header[1]);
             throw new IOException("SOCKS5 connect failed");
         }
 
@@ -311,7 +313,7 @@ public class TorClient {
             inputStream.readFully(header, 0, 2);
             return socket;
         }else if(header[3] == (byte) 0x03){
-            System.out.println("GOT ADDRESS BACK");
+            Log.d("GENERAL","GOT ADDRESS BACK");
             int len = header[1];
             byte[] host = new byte[len];
             inputStream.readFully(host, 0, len);

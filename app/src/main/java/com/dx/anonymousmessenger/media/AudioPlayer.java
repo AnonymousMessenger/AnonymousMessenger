@@ -44,7 +44,7 @@ public class AudioPlayer {
             try {
                 int read = is.read(receiveData, 0, receiveData.length);
                 if(read<1){
-                    //System.out.println("done playing");
+                    //Log.d("GENERAL","done playing");
                     stop(1);
                     break;
                 }
@@ -59,9 +59,9 @@ public class AudioPlayer {
         play = false;
         path = null;
         try{
-            //System.out.println("checking for callback");
+            //Log.d("GENERAL","checking for callback");
             if(callBack!=null){
-                //System.out.println("found callback");
+                //Log.d("GENERAL","found callback");
                 callBack.doStuff();
             }
         }catch (Exception e) {
@@ -87,7 +87,7 @@ public class AudioPlayer {
             at.write(soundBytes, 0, soundBytes.length);
             at.play();
         } catch (Exception ignored) {
-            //System.out.println("Not working in speakers...");
+            //Log.d("GENERAL","Not working in speakers...");
             //e.printStackTrace();
         }
     }

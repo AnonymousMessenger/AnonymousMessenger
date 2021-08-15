@@ -187,8 +187,6 @@ public class MessageSender {
                         to,app,aem.toJson().toString(),
                         fis,FileHelper.getFileSize(msg.getPath(),app)
                 );
-                System.out.println("received: ?????????????????????");
-                System.out.println(received);
                 DbHelper.setMessageReceived(msg,app,to,received);
                 app.setSendingFile(false);
             }catch (Exception e){

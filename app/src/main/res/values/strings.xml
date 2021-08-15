@@ -277,7 +277,7 @@
     <string name="contact_added">Added contact</string>
     <string name="cam_perm_ask_title">Camera permission</string>
     <string name="why_need_cam">QR scanning won\'t work without camera permission</string>
-    <string name="ask_for_cam_btn">Ok</string>
+    <string name="ask_for_cam_btn">OK</string>
     <string name="invalid_address">Invalid address</string>
     <string name="action_log">Security log</string>
     <string name="delete_log_question">Delete?</string>
@@ -320,17 +320,17 @@
     <string name="security">Security</string>
     <string name="connectivity">Connectivity</string>
     <string name="add_bridge">Add Bridge</string>
-    <string name="request_bridge_help">You can request a bridge from the tor project by following this link: https://bridges.torproject.org/bridges?transport=obfs4 \n alternatively you can write an email to bridges@torproject.org or you can run your own bridge and use it.</string>
+    <string name="request_bridge_help">You can request a bridge from the tor project by following this link: https://bridges.torproject.org/bridges?transport=obfs4   alternatively you can write an email to bridges@torproject.org or you can run your own bridge and use it.</string>
     <string name="button_undo">Undo</string>
     <string name="insert_bridge_line">Insert bridge line</string>
-    <string name="ok">OK</string>
     <string name="nickname_explain_title">Nickname use</string>
     <string name="nickname_explain">Your nickname is stored on your device and only sent encrypted with your message to your contact directly, you don\'t ever connect to a server when using this app.</string>
     <string name="password_explain_title">Password use</string>
     <string name="online_check_address_explain">This address is used to make sure you are online and everything is setup correctly, this can be any web server address as we only check for reachability also it can be a hidden service or a regular address.</string>
     <string name="running_on">Running on: </string>
-    <string name="with">with </string>
     <string name="processors">processors</string>
     <string name="and">and </string>
     <string name="free_memory">free memory</string>
+    <string name="ok">OK</string>
+    <string name="with">with</string>
 </resources>

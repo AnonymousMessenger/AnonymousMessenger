@@ -331,5 +331,18 @@
     <string name="reset">"Lähtesta "</string>
     <string name="security">Turvalisus</string>
     <string name="connectivity">Ühenduvus</string>
+    <string name="request_bridge_help">"Silla taotlemist tor -projektilt saate järgida seda linki: https://bridges.torproject.org/bridges?transport=obfs4 Teise võimalusena võite kirjutada e -kirja aadressile bridges@torproject.org või käivitada oma sild ja kasutada seda. "</string>
+    <string name="button_undo">"Võta tagasi "</string>
+    <string name="insert_bridge_line">"Sisestage sillajoon "</string>
+    <string name="ok">"Okei "</string>
+    <string name="nickname_explain_title">"Hüüdnime kasutamine "</string>
+    <string name="nickname_explain">"Teie hüüdnimi on teie seadmesse salvestatud ja saadetakse ainult teie sõnumiga krüptituna otse teie kontaktile, te ei loo selle rakenduse kasutamisel kunagi serveriga ühendust. "</string>
+    <string name="password_explain_title">Parooli kasutamine</string>
+    <string name="online_check_address_explain">"Seda aadressi kasutatakse veendumaks, et olete võrgus ja kõik on õigesti seadistatud. See võib olla mis tahes veebiserveri aadress, kuna kontrollime ainult kättesaadavust, samuti võib see olla peidetud teenus või tavaline aadress. "</string>
+    <string name="running_on">"Jooksmine: "</string>
+    <string name="with">"koos "</string>
+    <string name="processors">protsessorid</string>
+    <string name="and">ja</string>
+    <string name="free_memory">vaba mälu</string>
 
 </resources>

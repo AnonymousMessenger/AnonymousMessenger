@@ -193,20 +193,20 @@ public class AddContactActivity extends DxActivity {
             s = str;
         }
         if(s.equals(((DxApplication)getApplication()).getHostname())){
-            System.out.println("same as hostname");
+            Log.d("GENERAL","same as hostname");
             return;
         }
         if(s.equals(((DxApplication)getApplication()).getMyAddressOffline())){
-            System.out.println("same as hostname");
+            Log.d("GENERAL","same as hostname");
             return;
         }
         if(s.trim().length()!=62 || !s.trim().endsWith(".onion")){
-            System.out.println("not valid");
+            Log.d("GENERAL","not valid");
             return;
         }
         try{
             if(DbHelper.contactExists(s,(DxApplication)getApplication())){
-                System.out.println("exists");
+                Log.d("GENERAL","exists");
                 return;
             }
 

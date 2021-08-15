@@ -266,4 +266,17 @@
     <string name="reset">إعادة الظبط</string>
     <string name="security">الآمان</string>
     <string name="connectivity">الإتصال</string>
+    <string name="request_bridge_help">يمكنك طلب جسر من مشروع تور عن طريق هذا الرابط: https://bridges.torproject.org/bridges?transport=obfs4 أو عن طريق إرسال بريد ألكتروني إلى: bridges@torproject.org أو عن طريق تشغيل جسر خاص بك و من ثم إستعماله</string>
+    <string name="button_undo">إلغاء</string>
+    <string name="insert_bridge_line">أدخل سطر الجسر</string>
+    <string name="ok">حسناً</string>
+    <string name="nickname_explain_title">إستعمال الإسم المستعار</string>
+    <string name="nickname_explain">إسمك المستعار يخزن في جهازك و يرسل فقط مع الرسائل التي ترسلها و يرسل مشفراً مباشرة إلى من تريد, هذا البرنامج لا يقوم بالإتصال بأي خوادم</string>
+    <string name="password_explain_title">إستعمال كلمة المرور</string>
+    <string name="online_check_address_explain">هذا العنوان يستعمل فقط للتأكد من عمل الإنترنت عبر تور بشكل صحيح و يمكن لهذا العنوان أن يكون أي خادم ويب تختاره من الإنترنت العادي أو عبر من عناوين تورلأننا فقط نتحقق من القدرة على الإتصال.</string>
+    <string name="running_on">"يشتغل على: "</string>
+    <string name="with">مع</string>
+    <string name="processors">معالجات</string>
+    <string name="and">و</string>
+    <string name="free_memory">ذاكرة متاحة</string>
 </resources>

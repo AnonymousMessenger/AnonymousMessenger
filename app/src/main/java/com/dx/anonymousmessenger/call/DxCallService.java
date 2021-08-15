@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -94,12 +95,12 @@ public class DxCallService extends Service {
                     if (((DxApplication) getApplication()).isInCall()) {
                         try {
                             ((DxApplication) getApplication()).getCc().answerCall(false);
-                            System.out.println("call answered");
+                            Log.d("GENERAL","call answered");
                             Intent gcm_rec = new Intent("call_action");
                             gcm_rec.putExtra("action","answer");
                             LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                         } catch (Exception e) {
-                            System.out.println("call not answered");
+                            Log.d("GENERAL","call not answered");
                             e.printStackTrace();
                             Intent gcm_rec = new Intent("call_action");
                             gcm_rec.putExtra("action","hangup");

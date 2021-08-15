@@ -725,7 +725,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 //                try{
 //                    final byte[] img_bin = FileHelper.getFile(message.getPath(), app);
 //                    if(img_bin == null){
-//                        System.out.println("no img_bin!!!");
+//                        Log.d("GENERAL","no img_bin!!!");
 //                        return;
 //                    }
 //                    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -750,7 +750,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 //                    byte[] thumb = mmr.getEmbeddedPicture();
 //                    Bitmap bitmap = BitmapFactory.decodeByteArray(thumb,0,thumb.length);
 //                    if(bitmap==null){
-//                        System.out.println("no bitmap!!!");
+//                        Log.d("GENERAL","no bitmap!!!");
 //                        return;
 //                    }
 //                    new Handler(Looper.getMainLooper()).post(()->{
@@ -1009,8 +1009,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                System.out.println(swipeDir);
-                System.out.println("Swipedir above nigga");
                 int swipedPosition = viewHolder.getAbsoluteAdapterPosition();
                 boolean undoOn = isUndoOn();
                 if (undoOn) {

@@ -181,11 +181,11 @@ public class PasswordEntryFragment extends Fragment {
         //todo warn user against using a non free keyboard with internet access.
 //        InputMethodManager im = (InputMethodManager)app.getSystemService(Context.INPUT_METHOD_SERVICE);
 //        String list = im.getEnabledInputMethodList().toString();
-//        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//        System.out.println(list);
+//        Log.d("GENERAL","!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//        Log.d("GENERAL",list);
 
 //        for (int i=0;i<list.length();i++){
-//            System.out.println(list[i]);
+//            Log.d("GENERAL",list[i]);
 //        }
 
         return rootView;

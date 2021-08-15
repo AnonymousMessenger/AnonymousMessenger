@@ -30,6 +30,7 @@ See the Apache 2 License for the specific language governing permissions and lim
 package net.sf.msopentech.thali.java.toronionproxy;
 
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -109,7 +110,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
     }
 
     public void bandwidthUsed(long read, long written) {
-        System.out.println("bandwidthUsed: read: " + read + ", written: " + written);
+        Log.d("GENERAL","bandwidthUsed: read: " + read + ", written: " + written);
         Intent gcm_rec = new Intent("tor_status");
         gcm_rec.putExtra("tor_status","bandwidthUsed: read: " + read + ", written: " + written);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -121,7 +122,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
         while (iterator.hasNext()) {
             stringBuilder.append(iterator.next());
         }
-        System.out.println("newDescriptors: " + stringBuilder.toString());
+        Log.d("GENERAL","newDescriptors: " + stringBuilder.toString());
         Intent gcm_rec = new Intent("tor_status");
         gcm_rec.putExtra("tor_status","newDescriptors: " + stringBuilder.toString());
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -129,14 +130,14 @@ public class OnionProxyManagerEventHandler implements EventHandler {
 
     //fetch Exit Node
     public void message(String severity, String msg) {
-        System.out.println(severity + "," + msg);
+        Log.d("GENERAL",severity + "," + msg);
         Intent gcm_rec = new Intent("tor_status");
         gcm_rec.putExtra("tor_status",severity + "," + msg);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void unrecognized(String type, String msg) {
-        System.out.println("unrecognized: msg: " + type + ", " + msg);
+        Log.d("GENERAL","unrecognized: msg: " + type + ", " + msg);
         Intent gcm_rec = new Intent("tor_status");
         gcm_rec.putExtra("tor_status","unrecognized: msg: " + type + ", " + msg);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);

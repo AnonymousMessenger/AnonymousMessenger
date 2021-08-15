@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.crypto.AddressedEncryptedMessage;
+import com.dx.anonymousmessenger.util.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,10 +88,10 @@ public class QuotedUserMessage extends UserMessage {
         QuotedUserMessage um;
         String path = "";
         try {
-            if(!DxApplication.isValidAddress(json.getString("address"))){
+            if(!Utils.isValidAddress(json.getString("address"))){
                 throw new IllegalStateException();
             }
-            if(!DxApplication.isValidAddress(json.getString("to"))){
+            if(!Utils.isValidAddress(json.getString("to"))){
                 throw new IllegalStateException();
             }
             if(!isValidType(json.getString("type"))){
@@ -164,7 +165,7 @@ public class QuotedUserMessage extends UserMessage {
                 return null;
             }
             String address = json.getString("address");
-            if(!DxApplication.isValidAddress(address)){
+            if(!Utils.isValidAddress(address)){
                 throw new IllegalStateException();
             }
             String decrypted = MessageEncryptor.decrypt(aem,app.getEntity().getStore(),new SignalProtocolAddress(address,1));

@@ -12,6 +12,7 @@ import com.dx.anonymousmessenger.crypto.AddressedKeyExchangeMessage;
 import com.dx.anonymousmessenger.crypto.SessionBuilder;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.file.FileHelper;
+import com.dx.anonymousmessenger.util.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,9 +31,9 @@ public class MessageReceiver {
         try {
             JSONObject json = new JSONObject(msg);
             if(json.has("address")){
-                if(!DxApplication.isValidAddress(json.getString("address")) || !DbHelper.contactExists(json.getString("address"),app)){
+                if(!Utils.isValidAddress(json.getString("address")) || !DbHelper.contactExists(json.getString("address"),app)){
 
-                    if(app.isAcceptingUnknownContactsEnabled() && DxApplication.isValidAddress(json.getString("address"))){
+                    if(app.isAcceptingUnknownContactsEnabled() && Utils.isValidAddress(json.getString("address"))){
                         //add the contact and re-receive the message because user wants to receive from anyone
 
                         String s = json.getString("address");
@@ -67,7 +68,7 @@ public class MessageReceiver {
                     return;
                 }
 
-                System.out.println(akem.isResponse());
+                Log.d("GENERAL", String.valueOf(akem.isResponse()));
                 if(akem.isResponse()){
                     try {
                         SessionBuilder sb = new SessionBuilder(app.getEntity().getStore(), new SignalProtocolAddress(akem.getAddress(),1));

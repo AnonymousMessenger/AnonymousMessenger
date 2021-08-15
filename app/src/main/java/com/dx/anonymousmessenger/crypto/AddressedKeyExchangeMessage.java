@@ -2,8 +2,8 @@ package com.dx.anonymousmessenger.crypto;
 
 import android.util.Log;
 
-import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.util.Base64;
+import com.dx.anonymousmessenger.util.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +34,7 @@ public class AddressedKeyExchangeMessage {
     }
 
     public AddressedKeyExchangeMessage(KeyExchangeMessage kem, String address) throws IllegalStateException {
-        if(!DxApplication.isValidAddress(address)){
+        if(!Utils.isValidAddress(address)){
             throw new IllegalStateException("Invalid Address");
         }
         this.kem = kem;
@@ -43,7 +43,7 @@ public class AddressedKeyExchangeMessage {
     }
 
     public AddressedKeyExchangeMessage(KeyExchangeMessage kem, String address, boolean response) throws IllegalStateException{
-        if(!DxApplication.isValidAddress(address)){
+        if(!Utils.isValidAddress(address)){
             throw new IllegalStateException("Invalid Address");
         }
         this.kem = kem;
@@ -67,7 +67,7 @@ public class AddressedKeyExchangeMessage {
     public static AddressedKeyExchangeMessage fromJson(JSONObject input){
         try {
             String address = input.getString("address");
-            if(!DxApplication.isValidAddress(address)){
+            if(!Utils.isValidAddress(address)){
                 throw new IllegalStateException();
             }
             KeyExchangeMessage kem = new KeyExchangeMessage(Base64.decodeWithoutPadding(input.getString("kem")));

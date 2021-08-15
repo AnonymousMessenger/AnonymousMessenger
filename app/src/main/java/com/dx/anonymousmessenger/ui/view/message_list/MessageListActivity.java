@@ -672,7 +672,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                             address);
                     //mMessageAdapter.setMessageList(messageList);
 //                    if(messageList.size() != tmp.size()){
-//                        System.out.println("they'ren't equal");
+//                        Log.d("GENERAL","they'ren't equal");
 //                        updateUi(tmp);
 //                    }
                 }catch (Exception ignored){break;}

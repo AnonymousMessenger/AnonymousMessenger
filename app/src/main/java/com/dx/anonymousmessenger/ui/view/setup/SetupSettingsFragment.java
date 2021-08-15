@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -161,7 +162,7 @@ public class SetupSettingsFragment extends Fragment {
             try{
                 Object[] settings = DbHelper.getSettingsList((DxApplication)requireActivity().getApplication());
                 if (settings == null || settings.length <= 5) {
-                    System.out.println("not right");
+                    Log.d("GENERAL","not right");
                     settings = ((DxApplication) requireActivity().getApplication()).DEFAULT_SETTINGS;
                 }
                 bridgesSwitch.setChecked(((int)settings[0]>0));

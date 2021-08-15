@@ -2,6 +2,7 @@ package net.sf.msopentech.thali.java.toronionproxy;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class OnionProxyContext {
   @SuppressLint("DefaultLocale")
   public String getTorExecutableFileName() {
     String arch = Objects.requireNonNull(System.getProperty("os.arch")).toLowerCase();
-    System.out.println(arch);
+    Log.d("GENERAL",arch);
     String exec = "libtor.";
     if (arch.contains("64")) {
       if (arch.contains("arm") || arch.contains("aar"))
