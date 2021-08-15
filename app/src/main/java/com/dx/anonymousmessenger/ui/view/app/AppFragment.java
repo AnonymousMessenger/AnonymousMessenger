@@ -54,7 +54,7 @@ import java.util.Objects;
 public class AppFragment extends Fragment {
     private LinearLayout noContacts;
     private RecyclerView recyclerView;
-    private MyRecyclerViewAdapter mAdapter;
+    private ContactListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     public Handler mainThread = null;
     private BroadcastReceiver mMyBroadcastReceiver;
@@ -314,7 +314,7 @@ public class AppFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         lst = new ArrayList<>();
-        mAdapter = new MyRecyclerViewAdapter((DxApplication) requireActivity().getApplication(),lst,this);
+        mAdapter = new ContactListAdapter((DxApplication) requireActivity().getApplication(),lst,this);
         recyclerView.setAdapter(mAdapter);
         ((SwipeRefreshLayout)rootView.findViewById(R.id.refresh)).setOnRefreshListener(
                 () -> {
@@ -454,7 +454,7 @@ public class AppFragment extends Fragment {
                     }else{
                         noContacts.setVisibility(View.GONE);
                     }
-                    mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
+                    mAdapter = new ContactListAdapter((DxApplication) getActivity().getApplication(),lst,this);
                     recyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
 //                    recyclerView.scheduleLayoutAnimation();

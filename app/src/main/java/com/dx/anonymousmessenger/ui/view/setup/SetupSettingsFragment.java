@@ -97,12 +97,17 @@ public class SetupSettingsFragment extends Fragment {
         final RecyclerView rvBridges = rootView.findViewById(R.id.rv_bridges);
         final Button addBridge = rootView.findViewById(R.id.btn_add_bridge);
         final TextView reset = rootView.findViewById(R.id.btn_reset);
-        rootView.findViewById(R.id.btn_request_bridge).setOnClickListener(v -> {
-            Utils.showHelpAlert(requireContext(),getString(R.string.request_bridge_help), getString(R.string.request_bridge));
-        });
+
+        rootView.findViewById(R.id.fab_check_address_help).setOnClickListener(v -> Utils.showHelpAlert(requireContext(),getString(R.string.online_check_address_explain), getString(R.string.online_check_address)));
+
+        rootView.findViewById(R.id.fab_reset_check_address).setOnClickListener(v -> txtCheckAddress.setText(((DxApplication)requireActivity().getApplication()).DEFAULT_SETTINGS[4].toString()));
+
+        rootView.findViewById(R.id.btn_request_bridge).setOnClickListener(v -> Utils.showHelpAlert(requireContext(),getString(R.string.request_bridge_help), getString(R.string.request_bridge)));
 
         reset.setOnClickListener(v -> {
-            DbHelper.deleteSettings((DxApplication)requireActivity().getApplication());
+            try{
+                DbHelper.deleteSettings((DxApplication)requireActivity().getApplication());
+            }catch (Exception ignored){}
             Object[] settings = ((DxApplication)requireActivity().getApplication()).DEFAULT_SETTINGS;
             bridgesSwitch.setChecked(((int)settings[0]>0));
             bridgesLayout.setVisibility((int)settings[0]>0?View.VISIBLE:View.GONE);

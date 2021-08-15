@@ -57,7 +57,7 @@ import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
-import com.dx.anonymousmessenger.ui.view.app.MyRecyclerViewAdapter;
+import com.dx.anonymousmessenger.ui.view.app.ContactListAdapter;
 import com.dx.anonymousmessenger.ui.view.call.CallActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.ContactProfileActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.FileViewerActivity;
@@ -78,7 +78,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Objects.requireNonNull;
 
-public class MessageListActivity extends DxActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, MyRecyclerViewAdapter.ItemClickListener, CallBack {
+public class MessageListActivity extends DxActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, ContactListAdapter.ItemClickListener, CallBack {
 
     private static final int REQUEST_CODE = 1;
     private static final int READ_STORAGE_REQUEST_CODE = 2;

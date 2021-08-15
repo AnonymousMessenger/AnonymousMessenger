@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/profile_contact"
-        android:icon="@drawable/ic_baseline_emoji_emotions_24"
+        android:icon="@drawable/ic_baseline_person_24"
         android:title="@string/profile_contact" />
     <item
         android:id="@+id/delete_contact"

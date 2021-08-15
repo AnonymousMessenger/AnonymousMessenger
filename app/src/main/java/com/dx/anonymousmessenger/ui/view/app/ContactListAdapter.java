@@ -1,20 +1,20 @@
 package com.dx.anonymousmessenger.ui.view.app;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuPopupHelper;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
@@ -24,11 +24,10 @@ import com.dx.anonymousmessenger.ui.view.single_activity.ContactProfileActivity;
 import com.dx.anonymousmessenger.util.Utils;
 
 import java.util.List;
-import java.util.Objects;
 
 import static androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
-public class MyRecyclerViewAdapter extends Adapter {
+public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_READ = 1;
     private static final int VIEW_TYPE_UNREAD = 2;
     public List<String[]> mData;
@@ -38,7 +37,7 @@ public class MyRecyclerViewAdapter extends Adapter {
     private final AppFragment appFragment;
 
     // data is passed into the constructor
-    MyRecyclerViewAdapter(DxApplication app, List<String[]> data, AppFragment appFragment) {
+    ContactListAdapter(DxApplication app, List<String[]> data, AppFragment appFragment) {
 //        this.mInflater = LayoutInflater.from(app);
         this.app = app;
         this.mData = data;
@@ -65,17 +64,17 @@ public class MyRecyclerViewAdapter extends Adapter {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.my_text_view, parent, false);
             view.setOnClickListener(mClickListener);
-            return new MyRecyclerViewAdapter.ReadContactHolder(view);
+            return new ContactListAdapter.ReadContactHolder(view);
         } else if (viewType == VIEW_TYPE_UNREAD) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.my_text_view, parent, false);
             view.setOnClickListener(mClickListener);
-            return new MyRecyclerViewAdapter.UnreadContactHolder(view);
+            return new ContactListAdapter.UnreadContactHolder(view);
         } else{
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.my_text_view, parent, false);
             view.setOnClickListener(mClickListener);
-            return new MyRecyclerViewAdapter.ReadContactHolder(view);
+            return new ContactListAdapter.ReadContactHolder(view);
         }
     }
 
@@ -90,10 +89,10 @@ public class MyRecyclerViewAdapter extends Adapter {
             }
         }catch (Exception ignored){}
 
-        holder.itemView.setOnLongClickListener(new ListItemOnClickListener(holder.itemView,mData.get(holder.getAdapterPosition())[1],holder.getAdapterPosition()));
+        holder.itemView.setOnLongClickListener(new ListItemOnClickListener(holder.itemView,mData.get(holder.getAbsoluteAdapterPosition())[1],holder.getAbsoluteAdapterPosition()));
         holder.itemView.setOnClickListener(v -> {
             appFragment.stopCheckingMessages();
-            int position1 = holder.getAdapterPosition();
+            int position1 = holder.getAbsoluteAdapterPosition();
             Intent intent = new Intent(v.getContext(), MessageListActivity.class);
             intent.putExtra("nickname",mData.get(position1)[0]);
             intent.putExtra("address",mData.get(position1)[1].substring(0,10));
@@ -101,7 +100,7 @@ public class MyRecyclerViewAdapter extends Adapter {
         });
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_READ://String msg, String send_to, long createdAt, boolean received
-                ((MyRecyclerViewAdapter.ReadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],
+                ((ContactListAdapter.ReadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],
                         contact[3],
                         contact[4],
                         createdAt,
@@ -109,7 +108,7 @@ public class MyRecyclerViewAdapter extends Adapter {
                         contact[1]);
                 break;
             case VIEW_TYPE_UNREAD:
-                ((MyRecyclerViewAdapter.UnreadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"),contact[1]);
+                ((ContactListAdapter.UnreadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"),contact[1]);
                 break;
         }
     }
@@ -166,9 +165,10 @@ public class MyRecyclerViewAdapter extends Adapter {
             this.pos = pos;
         }
 
+        @SuppressLint("RestrictedApi")
         @Override
         public boolean onLongClick(View v) {
-            Objects.requireNonNull(appFragment.getActivity()).findViewById(R.id.top_bar).setVisibility(View.GONE);
+            /*appFragment.requireActivity().findViewById(R.id.top_bar).setVisibility(View.GONE);
             v.setBackgroundColor(v.getResources().getColor(R.color.dx_night_700,null));
             v.startActionMode(new ActionMode.Callback() {
                 @Override
@@ -219,43 +219,46 @@ public class MyRecyclerViewAdapter extends Adapter {
                 @Override
                 public void onDestroyActionMode(ActionMode mode) {
                     v.setBackground(ResourcesCompat.getDrawable(v.getResources(),R.drawable.contact_background,null));
-                    Objects.requireNonNull(appFragment.getActivity()).findViewById(R.id.top_bar).setVisibility(View.VISIBLE);
+                    appFragment.requireActivity().findViewById(R.id.top_bar).setVisibility(View.VISIBLE);
                 }
+            });*/
+            PopupMenu popup = new PopupMenu(v.getContext(), itemView);
+            popup.inflate(R.menu.contact_menu);
+
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.profile_contact:
+                        try{
+                            Intent intent = new Intent(itemView.getContext(), ContactProfileActivity.class);
+                            intent.putExtra("address",address.substring(0,10));
+                            itemView.getContext().startActivity(intent);
+                        }catch (Exception ignored) {}
+                        break;
+                    case R.id.delete_contact:
+                        new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
+                            .setTitle(R.string.delete_contact_question)
+                            .setMessage(R.string.delete_contact_details)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                                try {
+                                    DbHelper.deleteContact(address, app);
+                                    DbHelper.clearConversation(address, app);
+                                    mData.remove(pos);
+                                    notifyItemRemoved(pos);
+                                } catch (Exception ignored) {
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
+
+                            }).show();
+                        break;
+                }
+                return false;
             });
-//            PopupMenu popup = new PopupMenu(v.getContext(), itemView);
-//            popup.inflate(R.menu.contact_menu);
-//
-//            popup.setOnMenuItemClickListener(item -> {
-//                switch (item.getItemId()) {
-//                    case R.id.profile_contact:
-//                        try{
-//                            Intent intent = new Intent(itemView.getContext(), ContactProfileActivity.class);
-//                            intent.putExtra("address",address.substring(0,10));
-//                            itemView.getContext().startActivity(intent);
-//                        }catch (Exception ignored) {}
-//                        break;
-//                    case R.id.delete_contact:
-//                        new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
-//                            .setTitle(R.string.delete_contact_question)
-//                            .setMessage(R.string.delete_contact_details)
-//                            .setIcon(android.R.drawable.ic_dialog_alert)
-//                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-//                                try {
-//                                    DbHelper.deleteContact(address, app);
-//                                    DbHelper.clearConversation(address, app);
-//                                    mData.remove(pos);
-//                                    notifyItemRemoved(pos);
-//                                } catch (Exception ignored) {
-//                                }
-//                            })
-//                            .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
-//
-//                            }).show();
-//                        break;
-//                }
-//                return false;
-//            });
 //            popup.show();
+            MenuPopupHelper menuHelper = new MenuPopupHelper(v.getContext(), (MenuBuilder) popup.getMenu(), v);
+            menuHelper.setForceShowIcon(true);
+            menuHelper.show();
             return true;
         }
     }

@@ -950,13 +950,10 @@ public class DbHelper {
         Cursor cr = database.rawQuery("SELECT * FROM message WHERE conversation=?;",new Object[]{address});
         if (cr.moveToFirst()) {
             do {
-                try{System.out.println(address);
+                try{
                     QuotedUserMessage message = new QuotedUserMessage(cr.getString(9),
                         cr.getString(8),
-
-                            cr.getString(0),
-
-
+                        cr.getString(0),
                         cr.getString(3),
                         cr.getString(4),
                         cr.getLong(5),
@@ -968,7 +965,6 @@ public class DbHelper {
                         cr.getString(13));
                     deleteMessage(message, app);
                 }catch (Exception e){
-                System.out.println("sjdngsdflgnsjdfnglsdfn");
                 e.printStackTrace();
             }
             } while (cr.moveToNext());
@@ -982,7 +978,7 @@ public class DbHelper {
 
     private static void updateDbSchema(SQLiteDatabase database) {
         int tries = 0;
-        Log.e("starting the db update","same");
+        Log.d("starting the db update","same");
         while(tries<2){
             tries++;
             try{
