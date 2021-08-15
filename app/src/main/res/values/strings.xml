@@ -328,4 +328,9 @@
     <string name="nickname_explain">Your nickname is stored on your device and only sent encrypted with your message to your contact directly, you don\'t ever connect to a server when using this app.</string>
     <string name="password_explain_title">Password use</string>
     <string name="online_check_address_explain">This address is used to make sure you are online and everything is setup correctly, this can be any web server address as we only check for reachability also it can be a hidden service or a regular address.</string>
+    <string name="running_on">Running on: </string>
+    <string name="with">with </string>
+    <string name="processors">processors</string>
+    <string name="and">and </string>
+    <string name="free_memory">free memory</string>
 </resources>

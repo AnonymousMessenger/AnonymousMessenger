@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
+import com.dx.anonymousmessenger.util.Utils;
 
 import java.text.MessageFormat;
 
@@ -29,6 +30,11 @@ public class AboutActivity extends DxActivity {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             TextView version = findViewById(R.id.txt_version);
             version.setText(MessageFormat.format("v{0} - {1}", pInfo.versionName, pInfo.versionCode));
+
+            TextView sysInfo = findViewById(R.id.txt_sysinfo);
+            String info = getString(R.string.running_on)+System.getProperty("os.arch")+" "+getString(R.string.with)+" "+Runtime.getRuntime().availableProcessors()+" "+getString(R.string.processors)+" "+getString(R.string.and)+" "+Utils.humanReadableByteCount(Runtime.getRuntime().freeMemory())+" "+getString(R.string.free_memory);
+            sysInfo.setText(info);
+
         }catch (Exception ignored){}
     }
 

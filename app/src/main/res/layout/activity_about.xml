@@ -34,6 +34,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
             <TextView
+                android:id="@+id/txt_sysinfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Running on arm64 with 49 cpus and 88tb of free memory"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_version" />
+
+            <TextView
                 android:id="@+id/textView13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,7 +76,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_version" />
+                app:layout_constraintTop_toBottomOf="@+id/txt_sysinfo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
