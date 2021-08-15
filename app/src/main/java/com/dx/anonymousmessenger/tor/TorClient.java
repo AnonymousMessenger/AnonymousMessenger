@@ -3,7 +3,7 @@ package com.dx.anonymousmessenger.tor;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.file.FileHelper;
-import com.dx.anonymousmessenger.messages.MessageEncrypter;
+import com.dx.anonymousmessenger.messages.MessageEncryptor;
 import com.dx.anonymousmessenger.util.Utils;
 
 import net.sf.runjva.sourceforge.jsocks.protocol.Socks5Message;
@@ -183,7 +183,7 @@ public class TorClient {
                             }
 
                             buf = cipher.doFinal(buf,0,buf.length);
-                            buf = MessageEncrypter.encrypt(buf,app.getEntity().getStore(),new SignalProtocolAddress(onion,1));
+                            buf = MessageEncryptor.encrypt(buf,app.getEntity().getStore(),new SignalProtocolAddress(onion,1));
 
                             out.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(buf.length).array());
                             out.flush();

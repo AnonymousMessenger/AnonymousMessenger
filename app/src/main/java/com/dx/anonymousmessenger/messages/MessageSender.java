@@ -30,7 +30,7 @@ public class MessageSender {
                     Log.e("MESSAGE SENDER", "sendMessage: session isn't contained!!!" );
                     return;
                 }
-                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
                 DbHelper.saveMessage(msg,app,to,false);
                 //second broadcast here to make sure everything aligns correctly for the user
                 Intent gcm_rec = new Intent("your_action");
@@ -84,7 +84,7 @@ public class MessageSender {
                     Log.e("MESSAGE SENDER", "sendMessage: session isn't contained!!!" );
                     return;
                 }
-                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
                 received = TorClient.sendMessage(to,app,aem.toJson().toString());
                 app.sendingTo.remove(to);
             }catch (Exception e){
@@ -134,7 +134,7 @@ public class MessageSender {
                 //split message to file and metadata (msg is metadata)
                 FileInputStream fis = FileHelper.getSharedFileStream(msg.getPath(),app);
 
-                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
                 received = TorClient.sendFile(
                         to,app,aem.toJson().toString(),
@@ -181,7 +181,7 @@ public class MessageSender {
                 //split message to file and metadata (msg is metadata)
                 FileInputStream fis = FileHelper.getSharedFileStream(msg.getPath(),app);
 
-                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
                 received = TorClient.sendFile(
                         to,app,aem.toJson().toString(),
@@ -233,9 +233,9 @@ public class MessageSender {
                 //split message to file and metadata (msg is metadata)
                 byte[] file = FileHelper.getFile(msg.getPath(),app);
 
-                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
-                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncrypter.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
+                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
                 app.sendingTo.remove(to);
             }catch (Exception e){
 //                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
@@ -276,9 +276,9 @@ public class MessageSender {
                 //split message to file and metadata (msg is metadata)
                 byte[] file = FileHelper.getFile(msg.getPath(),app);
 
-                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncrypter.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
-                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncrypter.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
+                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
                 app.sendingTo.remove(to);
             }catch (Exception e){
 //                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
@@ -305,7 +305,7 @@ public class MessageSender {
             DbHelper.saveMessage(msg,app,to,false);
             Intent gcm_rec = new Intent("your_action");
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
-            KeyExchangeMessage kem = MessageEncrypter.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1));
+            KeyExchangeMessage kem = MessageEncryptor.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1));
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),false);
             boolean received = TorClient.sendMessage(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
@@ -324,7 +324,7 @@ public class MessageSender {
             QuotedUserMessage msg = new QuotedUserMessage("","",app.getHostname(),app.getString(R.string.key_exchange_message), app.getHostname(),new Date().getTime(),false,to,false);
             DbHelper.saveMessage(msg,app,to,false);
             Intent gcm_rec = new Intent("your_action");
-            KeyExchangeMessage kem = MessageEncrypter.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1));
+            KeyExchangeMessage kem = MessageEncryptor.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1));
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),false);
             boolean received = TorClient.sendMessage(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);
@@ -344,7 +344,7 @@ public class MessageSender {
             DbHelper.saveMessage(msg,app,to,false);
             Intent gcm_rec = new Intent("your_action");
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
-            KeyExchangeMessage kem = MessageEncrypter.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1),ikem);
+            KeyExchangeMessage kem = MessageEncryptor.getKeyExchangeMessage(app.getEntity().getStore(),new SignalProtocolAddress(to,1),ikem);
             AddressedKeyExchangeMessage akem = new AddressedKeyExchangeMessage(kem,app.getHostname(),true);
             boolean received = TorClient.sendMessage(to,app,akem.toJson().toString());
             DbHelper.setMessageReceived(msg,app,to,received);

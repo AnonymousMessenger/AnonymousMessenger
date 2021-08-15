@@ -30,9 +30,9 @@ public class MessageReceiver {
         try {
             JSONObject json = new JSONObject(msg);
             if(json.has("address")){
-                if(!app.isValidAddress(json.getString("address")) || !DbHelper.contactExists(json.getString("address"),app)){
+                if(!DxApplication.isValidAddress(json.getString("address")) || !DbHelper.contactExists(json.getString("address"),app)){
 
-                    if(app.isAcceptingUnknownContactsEnabled() && app.isValidAddress(json.getString("address"))){
+                    if(app.isAcceptingUnknownContactsEnabled() && DxApplication.isValidAddress(json.getString("address"))){
                         //add the contact and re-receive the message because user wants to receive from anyone
 
                         String s = json.getString("address");
@@ -67,7 +67,8 @@ public class MessageReceiver {
                     return;
                 }
 
-                if(akem.getKem().isInitiate()){
+                System.out.println(akem.isResponse());
+                if(akem.isResponse()){
                     try {
                         SessionBuilder sb = new SessionBuilder(app.getEntity().getStore(), new SignalProtocolAddress(akem.getAddress(),1));
                         sb.process(akem.getKem());
@@ -111,7 +112,7 @@ public class MessageReceiver {
                         Log.e("MESSAGE RECEIVER", "FAILED TO GET AddressedEncryptedMessage FROM MESSAGE" );
                         return;
                     }
-                    String decrypted = MessageEncrypter.decrypt(aem,app.getEntity().getStore(),new SignalProtocolAddress(json.getString("address"),1));
+                    String decrypted = MessageEncryptor.decrypt(aem,app.getEntity().getStore(),new SignalProtocolAddress(json.getString("address"),1));
                     json = new JSONObject(decrypted);
 
                     QuotedUserMessage um = QuotedUserMessage.fromJson(json,app);
@@ -152,14 +153,14 @@ public class MessageReceiver {
                 return;
             }
             String address = json.getString("address");
-            String decrypted = MessageEncrypter.decrypt(aem,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
+            String decrypted = MessageEncryptor.decrypt(aem,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
             json = new JSONObject(decrypted);
 
             QuotedUserMessage um = QuotedUserMessage.fromJson(json,app);
             if(um == null){
                 return;
             }
-            file = MessageEncrypter.decrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
+            file = MessageEncryptor.decrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
             um.setPath(FileHelper.saveFile(file,app,um.getFilename()));
             if(um.getPath()==null){
                 return;

@@ -19,7 +19,7 @@ import org.whispersystems.libsignal.state.SignalProtocolStore;
 
 import java.nio.charset.StandardCharsets;
 
-public class MessageEncrypter {
+public class MessageEncryptor {
 
     public static KeyExchangeMessage getKeyExchangeMessage(SignalProtocolStore store, SignalProtocolAddress address){
         SessionBuilder a2b = new SessionBuilder(store, address);

@@ -167,7 +167,7 @@ public class QuotedUserMessage extends UserMessage {
             if(!DxApplication.isValidAddress(address)){
                 throw new IllegalStateException();
             }
-            String decrypted = MessageEncrypter.decrypt(aem,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
+            String decrypted = MessageEncryptor.decrypt(aem,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
             json = new JSONObject(decrypted);
 
             return QuotedUserMessage.fromJson(json,app);

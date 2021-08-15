@@ -13,7 +13,7 @@ import com.dx.anonymousmessenger.call.CallController;
 import com.dx.anonymousmessenger.crypto.Entity;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.file.FileHelper;
-import com.dx.anonymousmessenger.messages.MessageEncrypter;
+import com.dx.anonymousmessenger.messages.MessageEncryptor;
 import com.dx.anonymousmessenger.messages.MessageReceiver;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.util.Hex;
@@ -408,7 +408,7 @@ public class ServerSocketViaTor {
                         break;
                     }
 
-                    buffer = MessageEncrypter.decrypt(buffer,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
+                    buffer = MessageEncryptor.decrypt(buffer,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
 
                     byte[] iv = Utils.getSecretBytes(IV_LENGTH);
 

@@ -13,6 +13,10 @@ public class AddressedKeyExchangeMessage {
     String address;
     boolean response;
 
+    public boolean isResponse(){
+        return response;
+    }
+
     public KeyExchangeMessage getKem() {
         return kem;
     }

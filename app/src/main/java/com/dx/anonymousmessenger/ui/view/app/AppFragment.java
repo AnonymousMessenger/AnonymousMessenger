@@ -112,7 +112,7 @@ public class AppFragment extends Fragment {
             public void onReceive(Context context, Intent intent)
             {
             if(intent.getStringExtra("tor_status")!=null){
-                if(onlineTxt.getText().toString().equals(getString(R.string.offline))){
+                if(!onlineTxt.getText().toString().equals(getString(R.string.online)) && !onlineTxt.getText().toString().equals(getString(R.string.checking))){
                     checkConnectivity();
                 }
 //                if(Objects.requireNonNull(intent.getStringExtra("tor_status")).equals("ALL GOOD")){
@@ -134,7 +134,7 @@ public class AppFragment extends Fragment {
             checkConnectivity();
             started = true;
         }
-        if(onlineTxt.getText().toString().equals(getString(R.string.offline))){
+        if(!onlineTxt.getText().toString().equals(getString(R.string.online)) && !onlineTxt.getText().toString().equals(getString(R.string.checking))){
             checkConnectivity();
         }
         try {
@@ -424,7 +424,6 @@ public class AppFragment extends Fragment {
                         }else{
                             noContacts.setVisibility(View.GONE);
                         }
-//                        mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
                         mAdapter.mData = lst;
 //                        recyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();

@@ -105,6 +105,8 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     private String nickname;
     private AtomicReference<Float> x = null;
     private boolean started = false;
+    private boolean online = false;
+    private boolean pinging = false;
 
     @SuppressLint({"ClickableViewAccessibility", "ShowToast"})
     @Override
@@ -600,8 +602,9 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         }
     }
 
-    public void ping(){
+    public synchronized void ping(){
         new Thread(()->{
+            pinging = true;
             try {
                 Thread.sleep(500);
             } catch (Exception ignored) {}
@@ -618,6 +621,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 }catch (Exception ignored) {}
             });
             boolean b = TorClient.testAddress(((DxApplication) getApplication()), address);
+            online = b;
             if(b){
                 ((DxApplication)getApplication()).addToOnlineList(address);
                 ((DxApplication)getApplication()).queueUnsentMessages(address);
@@ -651,6 +655,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 //                    frameOnline.setVisibility(View.GONE);
 //                }catch (Exception ignored) {}
 //            });
+            pinging =false;
         }).start();
     }
 
@@ -846,6 +851,9 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
         if(started){
             updateUi(false,false);
+            if(!online && !pinging){
+                ping();
+            }
         }else{
             updateUi(true,false);
             started = true;
