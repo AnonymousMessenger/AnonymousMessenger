@@ -44,6 +44,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dx.anonymousmessenger.BuildConfig;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
@@ -619,7 +620,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     File tmp = FileHelper.getTempFileWithProgress(message.getPath(),message.getFilename(),app,progressListener);
                     Uri uri;
                     if (tmp != null) {
-                        uri = FileProvider.getUriForFile(app, "com.dx.anonymousmessenger.fileprovider", new File(tmp.getAbsolutePath()));
+                        uri = FileProvider.getUriForFile(app, BuildConfig.APPLICATION_ID+".fileprovider", new File(tmp.getAbsolutePath()));
                     }else{
                         return;
                     }

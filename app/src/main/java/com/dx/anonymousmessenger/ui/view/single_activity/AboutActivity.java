@@ -2,6 +2,8 @@ package com.dx.anonymousmessenger.ui.view.single_activity;
 
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -19,6 +21,8 @@ public class AboutActivity extends DxActivity {
         try{
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         }catch (Exception ignored){}
+        getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
+        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_about);
 
         try{

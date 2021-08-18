@@ -5,7 +5,9 @@ import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.transition.Explode;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,6 +33,8 @@ public class MyProfileActivity extends DxActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
+        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_my_profile);
 
         try{

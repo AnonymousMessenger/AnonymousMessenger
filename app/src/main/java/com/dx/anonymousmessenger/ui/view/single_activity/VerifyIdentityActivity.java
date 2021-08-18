@@ -1,6 +1,8 @@
 package com.dx.anonymousmessenger.ui.view.single_activity;
 
 import android.os.Bundle;
+import android.transition.Explode;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -18,6 +20,8 @@ public class VerifyIdentityActivity extends DxActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
+        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_verify_identity);
         setTitle(R.string.action_verify_identity);
         setSubtitle(R.string.verify_identity_explanation);

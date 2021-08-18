@@ -17,7 +17,7 @@ public class MyIdentityActivity extends DxActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
         getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_my_identity);
         try{

@@ -7,7 +7,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        applicationId "com.dx.anonymousmessenger"
+        applicationId "com.example.anonymousmessenger"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 27
@@ -15,6 +15,7 @@ android {
         ndk{
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
         }
+        resValue "string", "file_provider", applicationId+".fileprovider"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.debug
@@ -22,15 +23,13 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            debuggable false
-            resValue "string", "file_provider", "com.dx.anonymousmessenger.fileprovider"
+            minifyEnabled false
+            debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             minifyEnabled false
             debuggable true
-            resValue "string", "file_provider", "com.example.anonymousmessenger.debug.fileprovider"
         }
     }
     packagingOptions {
