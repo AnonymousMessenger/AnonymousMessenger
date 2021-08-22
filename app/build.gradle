@@ -66,9 +66,10 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
     implementation 'com.google.protobuf:protobuf-java:3.9.2' //later versions min api 26+
 
-
     implementation 'net.zetetic:android-database-sqlcipher:4.4.0@aar'
     implementation "androidx.sqlite:sqlite:2.1.0"
+
+    implementation 'com.alexvasilkov:gesture-views:2.8.2'
 
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
 

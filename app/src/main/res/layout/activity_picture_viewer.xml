@@ -1,77 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:id="@+id/cl"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    tools:context="com.dx.anonymousmessenger.ui.view.single_activity.PictureViewerActivity">-->
+
+    <!--    <include-->
+    <!--        android:id="@+id/top_bar"-->
+    <!--        layout="@layout/toolbar"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/imageviewer_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dx.anonymousmessenger.ui.view.single_activity.PictureViewerActivity">
+    android:background="@color/black_opacity_75"
+    android:orientation="vertical">
 
-    <include
-        android:id="@+id/top_bar"
-        layout="@layout/toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/txt_caption_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:background="#5E221E2A"
-        android:elevation="5dp"
-        android:fontFamily="monospace"
-        android:padding="4dp"
-        android:textSize="24sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/txt_layout_caption"
+    <com.dx.anonymousmessenger.ui.custom.FlickDismissLayout
+        android:id="@+id/flick"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#5E221E2A"
-        android:elevation="5dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txt_caption"
+        <ProgressBar
+            android:id="@+id/imageviewer_progress"
+            style="@android:style/Widget.DeviceDefault.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="#673AB7"
+            android:progressTint="#673AB7" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_send_media"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="74dp"
+            android:clickable="true"
+            android:contentDescription="@string/send"
+            android:focusable="true"
+            android:visibility="gone"
+            app:fabSize="auto"
+            app:maxImageSize="64dp"
+            app:srcCompat="@android:drawable/ic_menu_send" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txt_layout_caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/caption"
-            android:imeOptions="flagNoPersonalizedLearning|actionDone"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_gravity="top"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="2dp"
+            android:background="#5E221E2A"
+            android:elevation="5dp"
+            android:visibility="gone">
 
-    <ImageView
-        android:id="@+id/img_to_send"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@string/image_to_send"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_bar"
-        app:srcCompat="@android:drawable/ic_menu_report_image" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/caption"
+                android:imeOptions="flagNoPersonalizedLearning|actionDone"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_send_media"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="64dp"
-        android:layout_marginBottom="64dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone"
-        app:fabSize="auto"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:maxImageSize="64dp"
-        app:srcCompat="@android:drawable/ic_menu_send"
-        android:contentDescription="@string/send" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/txt_caption_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="4dp"
+            android:background="#5E221E2A"
+            android:elevation="5dp"
+            android:fontFamily="monospace"
+            android:gravity="center"
+            android:padding="4dp"
+            android:textSize="24sp"
+            android:visibility="gone"
+            tools:text="haahhaahhaha soooo funnyy" />
+
+        <com.alexvasilkov.gestures.views.GestureImageView
+            android:id="@+id/img_to_send"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:contentDescription="@string/image_to_send"
+            app:srcCompat="@android:drawable/ic_menu_report_image" />
+
+        <LinearLayout
+            android:id="@+id/layout_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="128dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_save"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:srcCompat="@drawable/ic_baseline_save_24"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+    </com.dx.anonymousmessenger.ui.custom.FlickDismissLayout>
+</FrameLayout>
+
+<!--</androidx.constraintlayout.widget.ConstraintLayout>-->

@@ -65,6 +65,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
+import static androidx.core.content.ContextCompat.getColor;
 import static androidx.core.content.ContextCompat.getDrawable;
 import static androidx.core.content.ContextCompat.getMainExecutor;
 import static androidx.core.content.ContextCompat.getSystemService;
@@ -327,6 +328,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             // we need to show the "undo" state of the row
             holder.itemView.setBackgroundColor(Color.RED);
             ((MessageHolder)holder).undoButton.setVisibility(View.VISIBLE);
+            ((MessageHolder)holder).undoButton.setElevation(R.dimen.margin_large);
             ((MessageHolder)holder).undoButton.setOnClickListener((View.OnClickListener) v -> {
                 // user wants to undo the removal, let's cancel the pending task
                 Runnable pendingRemovalRunnable = pendingRunnables.get(message);
@@ -806,6 +808,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         return;
                     }
                     imageHolder.setImageBitmap(bitmap);
+
                     imageHolder.setOnClickListener(v -> {
                         Intent intent = new Intent(app, PictureViewerActivity.class);
                         intent.putExtra("address",message.getAddress().substring(0,10));
@@ -1065,7 +1068,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             boolean initiated;
 
             private void init() {
-                background = new ColorDrawable(Color.MAGENTA);
+                background = new ColorDrawable(getColor(mContext,R.color.dx_night_700));
                 xMark = ContextCompat.getDrawable(mContext, R.drawable.ic_baseline_reply_24);
                 Objects.requireNonNull(xMark).setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
                 xMarkMargin = (int) mContext.getResources().getDimension(R.dimen.ic_clear_margin);
@@ -1294,14 +1297,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 DbHelper.unPinMessage(message,app);
                 message.setPinned(false);
                 if(rv != null){
-                    Snackbar sb = Snackbar.make(rv, R.string.unpinned_message, Snackbar.LENGTH_SHORT).setAnchorView(activity.findViewById(R.id.layout_chatbox));
+                    @SuppressLint("ShowToast") Snackbar sb = Snackbar.make(rv, R.string.unpinned_message, Snackbar.LENGTH_SHORT).setAnchorView(activity.findViewById(R.id.layout_chatbox));
                     sb.show();
                 }
             }else{
                 DbHelper.pinMessage(message,app);
                 message.setPinned(true);
                 if(rv != null){
-                    Snackbar sb = Snackbar.make(rv, R.string.pinned_message, Snackbar.LENGTH_SHORT).setAnchorView(activity.findViewById(R.id.layout_chatbox));
+                    @SuppressLint("ShowToast") Snackbar sb = Snackbar.make(rv, R.string.pinned_message, Snackbar.LENGTH_SHORT).setAnchorView(activity.findViewById(R.id.layout_chatbox));
                     sb.show();
                 }
             }

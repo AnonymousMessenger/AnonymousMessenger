@@ -3,9 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.dx.anonymousmessenger">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+<!--    <uses-feature-->
+<!--        android:name="android.software.leanback"-->
+<!--        android:required="true" />-->
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -31,23 +39,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".ui.view.log.LogActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|navigation"/>
+        <activity
+            android:name=".ui.view.log.LogActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity android:name=".ui.view.single_activity.SimpleScannerActivity" />
-        <activity android:name=".ui.view.notepad.NotepadActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|navigation"/>
+        <activity
+            android:name=".ui.view.notepad.NotepadActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity android:name=".ui.view.single_activity.FileViewerActivity" />
         <activity android:name=".ui.view.tips.TipsActivity" />
         <activity android:name=".ui.view.single_activity.AboutActivity" />
         <activity android:name=".ui.view.single_activity.ContactProfileActivity" />
         <activity android:name=".ui.view.single_activity.LicenseActivity" />
         <activity android:name=".ui.view.single_activity.MyProfileActivity" />
-        <activity android:name=".ui.view.single_activity.PictureViewerActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|navigation"/>
+        <activity
+            android:name=".ui.view.single_activity.PictureViewerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation"
+            android:theme="@style/AppTheme.TransparentFullscreen" />
         <activity android:name=".ui.view.call.RingingActivity" />
         <activity android:name=".ui.view.call.CallActivity" />
-        <activity android:name=".ui.view.single_activity.AddContactActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|navigation"/>
+        <activity
+            android:name=".ui.view.single_activity.AddContactActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity android:name=".ui.view.single_activity.VerifyIdentityActivity" />
         <activity android:name=".ui.view.single_activity.MyIdentityActivity" />
         <activity android:name=".ui.view.setup.SetupInProcess" />
@@ -55,8 +68,9 @@
             android:name=".ui.view.message_list.MessageListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity android:name=".ui.view.app.AppActivity" />
-        <activity android:name=".ui.view.setup.CreateUserActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|navigation"/>
+        <activity
+            android:name=".ui.view.setup.CreateUserActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity android:name=".ui.view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

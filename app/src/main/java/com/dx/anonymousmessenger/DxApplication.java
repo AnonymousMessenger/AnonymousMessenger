@@ -570,6 +570,10 @@ public class DxApplication extends Application {
     }
 
     public void sendNotification(String title, String msg, boolean isMessage){
+        sendNotification(title, msg, isMessage, R.mipmap.ic_launcher_foreground);
+    }
+
+    public void sendNotification(String title, String msg, boolean isMessage, int icon){
         if(isMessage){
             sendNotification(title,msg);
             return;
@@ -582,7 +586,7 @@ public class DxApplication extends Application {
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification = new NotificationCompat.Builder(this,CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setSmallIcon(icon)
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setContentIntent(resultPendingIntent)
@@ -590,7 +594,7 @@ public class DxApplication extends Application {
                     .setChannelId(CHANNEL_ID).build();
         }else{
             notification = new Notification.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setSmallIcon(icon)
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setContentIntent(resultPendingIntent)
