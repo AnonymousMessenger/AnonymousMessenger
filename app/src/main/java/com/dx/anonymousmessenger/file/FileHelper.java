@@ -168,8 +168,10 @@ public class FileHelper {
             byte[] sha1b = app.getSha256();
             File f = new File(app.getFilesDir(),path);
             String suffix = "."+filename.split("\\.")[filename.split("\\.").length-1];
-            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/AM",filename);
-            file.getParentFile().mkdir();
+            //to work on android 11 we have to save file to the downloads directory
+            //on android 10 we rely on requestLegacyExternalStorage in manifest
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/AM",filename);
+            Objects.requireNonNull(file.getParentFile()).mkdir();
             if(file.exists()){
                 file.delete();
             }

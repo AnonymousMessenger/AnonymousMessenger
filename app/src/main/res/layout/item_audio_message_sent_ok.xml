@@ -90,13 +90,14 @@
                 android:textColor="#ffffff"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageView4"
+                app:layout_constraintEnd_toStartOf="@+id/img_sent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_play_pause" />
 
             <ImageView
-                android:id="@+id/imageView4"
+                android:id="@+id/img_sent"
                 android:layout_width="22dp"
                 android:layout_height="20dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/img_seen"
                 app:srcCompat="@drawable/ic_launcher_foreground" />

@@ -37,7 +37,7 @@ public class MessageSender {
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 while (app.sendingTo.contains(to)){
                     try{
-                        Thread.sleep(500);
+                        Thread.sleep(200);
                     }catch (Exception ignored){}
                 }
                 if(DbHelper.getMessageReceived(msg,app,to)){
@@ -71,7 +71,7 @@ public class MessageSender {
         try {
             while (app.sendingTo.contains(to)){
                 try{
-                    Thread.sleep(500);
+                    Thread.sleep(200);
                 }catch (Exception ignored){}
             }
             if(DbHelper.getMessageReceived(msg,app,to)){
@@ -124,7 +124,7 @@ public class MessageSender {
 
                 while (app.isSendingFile()){
                     try{
-                        Thread.sleep(500);
+                        Thread.sleep(200);
                     }catch (Exception ignored){}
                 }
                 if(DbHelper.getMessageReceived(msg,app,to)){
@@ -171,7 +171,7 @@ public class MessageSender {
 
                 while (app.isSendingFile()){
                     try{
-                        Thread.sleep(500);
+                        Thread.sleep(200);
                     }catch (Exception ignored){}
                 }
                 if(DbHelper.getMessageReceived(msg,app,to)){
@@ -221,7 +221,7 @@ public class MessageSender {
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 while (app.sendingTo.contains(to)){
                     try{
-                        Thread.sleep(500);
+                        Thread.sleep(200);
                     }catch (Exception ignored){}
                 }
                 if(DbHelper.getMessageReceived(msg,app,to)){
@@ -258,7 +258,7 @@ public class MessageSender {
         try {
             while (app.sendingTo.contains(to)){
                 try{
-                    Thread.sleep(500);
+                    Thread.sleep(200);
                 }catch (Exception ignored){}
             }
             if(DbHelper.getMessageReceived(msg,app,to)){

@@ -898,7 +898,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
     @Override
     public void onBackPressed() {
-        if(mediaRecyclerView.getVisibility()==View.VISIBLE){
+        if(mediaRecyclerView!=null && mediaRecyclerView.getVisibility()==View.VISIBLE){
             mediaRecyclerView.setVisibility(View.GONE);
             send.setVisibility(View.VISIBLE);
             audio.setVisibility(View.VISIBLE);
@@ -911,7 +911,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             picsHelp.setVisibility(View.GONE);
             return;
         }
-        super.onBackPressed();
+        //super.onBackPressed();
         onSupportNavigateUp();
     }
 
