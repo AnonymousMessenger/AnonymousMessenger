@@ -631,6 +631,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     Intent objIntent = new Intent(Intent.ACTION_VIEW);
                     objIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     objIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    objIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     objIntent.setDataAndType(uri, mime);
                     startActivity(app,objIntent,null);
                 }catch (Exception e){
