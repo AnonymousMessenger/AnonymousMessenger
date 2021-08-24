@@ -31,6 +31,7 @@
         android:orientation="horizontal"
         android:paddingStart="3dp"
         android:paddingEnd="3dp"
+        android:paddingBottom="3dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -107,9 +108,10 @@
 
         <Button
             android:id="@+id/button_save"
-            style="@style/DXSendButton"
-            android:layout_width="64dp"
-            android:layout_height="45dp"
+            style="@style/NegativeButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginBottom="4dp"
             android:animateLayoutChanges="true"
             android:background="@drawable/send_button_ripple"
             android:text="@string/save"

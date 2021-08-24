@@ -26,7 +26,8 @@
     <com.dx.anonymousmessenger.ui.custom.FlickDismissLayout
         android:id="@+id/flick"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
 
         <ProgressBar
             android:id="@+id/imageviewer_progress"
@@ -37,42 +38,6 @@
             android:indeterminate="true"
             android:indeterminateTint="#673AB7"
             android:progressTint="#673AB7" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_send_media"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="74dp"
-            android:clickable="true"
-            android:contentDescription="@string/send"
-            android:focusable="true"
-            android:visibility="gone"
-            app:fabSize="auto"
-            app:maxImageSize="64dp"
-            app:srcCompat="@android:drawable/ic_menu_send" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/txt_layout_caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="2dp"
-            android:background="#5E221E2A"
-            android:elevation="5dp"
-            android:visibility="gone">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txt_caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/caption"
-                android:imeOptions="flagNoPersonalizedLearning|actionDone"
-                android:maxLines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/txt_caption_view"
@@ -86,6 +51,7 @@
             android:elevation="5dp"
             android:fontFamily="monospace"
             android:gravity="center"
+            android:maxLines="4"
             android:padding="4dp"
             android:textSize="24sp"
             android:visibility="gone"
@@ -99,14 +65,67 @@
             android:contentDescription="@string/image_to_send"
             app:srcCompat="@android:drawable/ic_menu_report_image" />
 
-        <LinearLayout
-            android:id="@+id/layout_controls"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txt_layout_caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#75221E2A"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:visibility="gone"
+            app:errorEnabled="false"
+            app:hintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_caption"
+                android:layout_width="fill_parent"
+                android:layout_height="64dp"
+                android:animateLayoutChanges="true"
+                android:autoLink="all"
+                android:autofillHints="@string/caption"
+                android:hint="@string/caption"
+                android:imeOptions="flagNoPersonalizedLearning"
+                android:inputType="textMultiLine"
+                android:lineSpacingExtra="4dp"
+                android:maxLines="4"
+                android:paddingStart="20dp"
+                android:paddingEnd="0dp"
+                android:paddingBottom="14dp"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_send_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="128dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="100dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_send_media"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:maxImageSize="41dp"
+                app:srcCompat="@drawable/ic_baseline_send_24"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="100dp"
             android:orientation="horizontal"
             android:visibility="gone">
 

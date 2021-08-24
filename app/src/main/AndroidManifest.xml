@@ -55,7 +55,7 @@
         <activity android:name=".ui.view.single_activity.MyProfileActivity" />
         <activity
             android:name=".ui.view.single_activity.PictureViewerActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|navigation"
+            android:configChanges="orientation|navigation"
             android:theme="@style/AppTheme.TransparentFullscreen" />
         <activity android:name=".ui.view.call.RingingActivity" />
         <activity android:name=".ui.view.call.CallActivity" />

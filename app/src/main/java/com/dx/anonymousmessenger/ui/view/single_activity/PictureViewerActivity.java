@@ -192,6 +192,7 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
 
             TextInputLayout textInputLayout = findViewById(R.id.txt_layout_caption);
             textInputLayout.setVisibility(View.VISIBLE);
+            findViewById(R.id.layout_send_controls).setVisibility(View.VISIBLE);
             TextInputEditText msg = findViewById(R.id.txt_caption);
             InputMethodManager imm = requireNonNull(
                     ContextCompat.getSystemService(this, InputMethodManager.class));
@@ -372,4 +373,5 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
     public void onMoveMedia(float moveRatio) {
         updateBackgroundDimmingAlpha(Math.abs(moveRatio));
     }
+
 }
