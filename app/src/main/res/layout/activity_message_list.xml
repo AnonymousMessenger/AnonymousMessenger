@@ -199,12 +199,13 @@
 
         <Button
             android:id="@+id/button_chatbox_send"
-            style="@style/DXSendButton"
-            android:layout_width="48dp"
+            style="@style/NegativeButtonStyle"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_margin="8dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="10dp"
             android:animateLayoutChanges="true"
-            android:background="@drawable/button_ripple"
+            android:background="@drawable/send_button_ripple"
             android:text="@string/send"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

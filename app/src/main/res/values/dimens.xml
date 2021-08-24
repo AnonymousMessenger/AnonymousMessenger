@@ -11,4 +11,5 @@
 	<dimen name="text_size_large">22sp</dimen>
     <dimen name="ic_clear_margin">16dp</dimen>
     <dimen name="mediaalbumviewer_image_height_when_empty">240dp</dimen>
+    <dimen name="textsize24">24dp</dimen>
 </resources>

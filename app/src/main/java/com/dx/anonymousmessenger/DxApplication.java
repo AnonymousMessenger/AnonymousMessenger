@@ -872,13 +872,8 @@ public class DxApplication extends Application {
             for(File f : filesList){
                 if(f.isFile()){
                     if(!paths.contains(f.getName()) && !f.getName().contains("demo")){
-//                        System.out.print("DOES NOT CONTAIN: ");
                         f.delete();
                     }
-//                    else{
-//                        System.out.print("DOES CONTAIN: ");
-//                    }
-//                    Log.d("GENERAL",f.getName());
                 }
             }
         }

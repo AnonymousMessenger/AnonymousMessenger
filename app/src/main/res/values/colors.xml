@@ -6,9 +6,11 @@
     <color name="dx_night_940">#260037</color>
     <color name="dx_received">#310029</color>
     <color name="dx_night_700">#333A41</color>
-    <color name="dx_dark_purple">#19001C</color>
+    <color name="dx_dark_purple">#A419001C</color>
+    <color name="dx_dark_purple_old">#19001C</color>
     <color name="green_tor">#68B030</color>
     <color name="black_opacity_75">#C4000000</color>
+    <color name="transparent">#00000000</color>
 
     <color name="dx_brand_blue">@color/dx_night_700</color>
     <color name="dx_brand_green">@color/dx_lime_400</color>

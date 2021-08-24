@@ -12,7 +12,7 @@
         <item name="android:textColorLink">@color/dx_white</item>
         <item name="android:windowBackground">@color/dx_dark_purple</item>
         <item name="android:navigationBarColor">@color/dx_dark_purple</item>
-        <item name="android:itemBackground">@color/dx_dark_purple</item>
+        <item name="android:itemBackground">@color/dx_dark_purple_old</item>
         <item name="placeholderTextColor">@color/dx_white</item>
         <item name="android:textColorHighlight">@color/green_tor</item>
         <item name="android:textColorTertiary">@color/dx_white</item>

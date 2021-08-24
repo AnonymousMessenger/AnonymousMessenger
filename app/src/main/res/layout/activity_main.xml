@@ -6,6 +6,24 @@
     android:layout_height="match_parent"
     tools:context="com.dx.anonymousmessenger.ui.view.MainActivity">
 
+    <com.dx.anonymousmessenger.ui.custom.WelcomeTextView
+        android:id="@+id/txt_welcome"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/dx_night_940"
+        android:elevation="99dp"
+        android:gravity="center"
+        android:shadowColor="@color/startGradientColor"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="8"
+        android:textColor="#FFFFFF"
+        android:padding="5dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView4"

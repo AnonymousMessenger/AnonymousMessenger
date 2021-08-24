@@ -111,7 +111,7 @@
             android:layout_width="64dp"
             android:layout_height="45dp"
             android:animateLayoutChanges="true"
-            android:background="@drawable/button_ripple"
+            android:background="@drawable/send_button_ripple"
             android:text="@string/save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

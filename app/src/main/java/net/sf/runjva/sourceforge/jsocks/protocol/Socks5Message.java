@@ -310,11 +310,6 @@ public class Socks5Message extends ProxyMessage {
 		return old;
 	}
 
-	/*
-	 * private static final void debug(String s){ if(DEBUG) System.out.print(s);
-	 * } private static final boolean DEBUG = false;
-	 */
-
 	// SOCKS5 constants
 	public static final int SOCKS_VERSION = 5;
 
