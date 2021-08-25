@@ -72,7 +72,8 @@
         <activity
             android:name=".ui.view.setup.CreateUserActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
-        <activity android:name=".ui.view.MainActivity">
+        <activity android:name=".ui.view.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -83,6 +84,7 @@
         <receiver android:name=".receiver.NotificationHiderReceiver" />
         <receiver
             android:name=".receiver.StartMyServiceAtBootReceiver"
+            android:exported="false"
             android:label="StartMyServiceAtBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
