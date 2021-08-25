@@ -1,9 +1,7 @@
 package com.dx.anonymousmessenger.ui.view;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -11,7 +9,6 @@ import android.widget.Button;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.service.DxService;
-import com.dx.anonymousmessenger.ui.custom.WelcomeTextView;
 import com.dx.anonymousmessenger.ui.view.app.AppActivity;
 import com.dx.anonymousmessenger.ui.view.setup.CreateUserActivity;
 import com.dx.anonymousmessenger.ui.view.setup.SetupInProcess;
@@ -33,25 +30,26 @@ public class MainActivity extends DxActivity {
         ((DxApplication) getApplication()).enableStrictMode();
         new Thread(() -> {
 
-            //todo: add welcome screen once and save in prefs
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if(!prefs.contains("welcome")){
-                prefs.edit().putBoolean("welcome",false).apply();
-            }
-
-            if(!prefs.getBoolean("welcome",false)){
-                prefs.edit().putBoolean("welcome",true).apply();
-                runOnUiThread(()->{
-                    WelcomeTextView wtv = findViewById(R.id.txt_welcome);
-                    wtv.setVisibility(View.VISIBLE);
-                    wtv.animateText();
-                });
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            //welcome screen once and save in prefs
+//            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//            if(!prefs.contains("welcome")){
+//                prefs.edit().putBoolean("welcome",false).apply();
+//            }
+//
+//            if(!prefs.getBoolean("welcome",false)){
+//                prefs.edit().putBoolean("welcome",true).apply();
+//                runOnUiThread(()->{
+//                    WelcomeTextView wtv = findViewById(R.id.txt_welcome);
+//                    wtv.setVisibility(View.VISIBLE);
+//                    wtv.animateText();
+//                });
+//                try {
+//                    Thread.sleep(5000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                //todo: hide for the start button
+//            }
 
             try {
                 Thread.sleep(500);
