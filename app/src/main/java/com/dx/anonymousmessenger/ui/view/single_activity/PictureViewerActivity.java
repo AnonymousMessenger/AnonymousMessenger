@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,6 +31,8 @@ import androidx.annotation.FloatRange;
 import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
+import com.alexvasilkov.gestures.Settings;
+import com.alexvasilkov.gestures.commons.CropAreaView;
 import com.alexvasilkov.gestures.views.GestureImageView;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
@@ -47,6 +50,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Objects;
@@ -169,6 +173,81 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+            }).start();
+        }
+        // if we have a uri then this is a profile image candidate from storage
+        else if(getIntent().getStringExtra("uri")!=null && !Objects.equals(getIntent().getStringExtra("uri"), "")){
+            new Thread(()->{
+                Bitmap image;
+                try{
+                    InputStream is = FileHelper.getInputStreamFromUri(Uri.parse(getIntent().getStringExtra("uri")),this);
+                    image = Utils.rotateBitmap(BitmapFactory.decodeStream(is), is);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    return;
+                }
+                if(image==null){
+                    return;
+                }
+                new Handler(Looper.getMainLooper()).post(()->{
+                    imageView.getController().getSettings().setZoomEnabled(false);
+                    imageView.getController().getSettings().setDoubleTapEnabled(false);
+                    imageView.getController().getSettings()
+                            .setFitMethod(Settings.Fit.OUTSIDE)
+                            .setFillViewport(true)
+                            .setMovementArea(1000, 1000)
+                            .setRotationEnabled(true);
+                    imageView.setImageBitmap(image);
+                    CropAreaView cropView = findViewById(R.id.image_crop_area);
+                    cropView.setVisibility(View.VISIBLE);
+                    cropView.setImageView(imageView);
+                    cropView.setAspect(1f);
+                    cropView.setRounded(true);
+                    cropView.update(true);
+                    findViewById(R.id.layout_crop_controls).setVisibility(View.VISIBLE);
+                    FloatingActionButton done = findViewById(R.id.btn_done);
+                    done.setOnClickListener(v -> {
+                        try{
+                            new Thread(() -> {
+                                // get cropped bitmap in a bytearray
+                                Bitmap cropped = imageView.crop();
+                                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                                if (cropped != null) {
+                                    cropped.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                    cropped.recycle();
+                                }
+                                String path = null;
+                                DxApplication app = ((DxApplication)getApplication());
+                                //save cropped bitmap in an encrypted file
+                                try {
+                                    path = FileHelper.saveFile(stream.toByteArray(),app,new Date().getTime()+"profile image");
+                                } catch (NoSuchAlgorithmException e) {
+                                    e.printStackTrace();
+                                }
+                                //add reference in the account table
+                                if(path==null){
+                                    return;
+                                }
+                                // delete pic from db/file
+                                String oldPath = app.getAccount().getProfileImagePath();
+                                if(oldPath!=null && !oldPath.equals("")){
+                                    FileHelper.deleteFile(oldPath,app);
+                                }
+
+                                app.getAccount().changeProfileImage("",app);
+                                app.getAccount().changeProfileImage(path,app);
+                                //finish activity
+                                finish();
+                                //send to all
+                                QuotedUserMessage qum = new QuotedUserMessage("","",app.getHostname(),"",
+                                        app.getAccount().getNickname(),new Date().getTime(),false,"",false,"profile_image",path,"image");
+                                MessageSender.sendMediaMessageToAll(qum,app,"",false, true);
+                            }).start();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    });
+                });
             }).start();
         }
         // else image is from local shared storage and the user might send it

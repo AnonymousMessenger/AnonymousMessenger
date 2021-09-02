@@ -80,12 +80,14 @@
             app:layout_constraintHorizontal_bias="0.839"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.933" />
+            app:layout_constraintVertical_bias="0.933"
+            tools:ignore="ContentDescription" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        <com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout
             android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:srl_direction="both"
             app:layout_constraintBottom_toTopOf="@+id/status_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -102,7 +104,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/online_toolbar" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout>
 
 
         <LinearLayout

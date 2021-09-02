@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.crypto.AddressedEncryptedMessage;
+import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.util.Utils;
 
 import org.json.JSONException;
@@ -168,6 +169,9 @@ public class QuotedUserMessage extends UserMessage {
             if(!Utils.isValidAddress(address)){
                 throw new IllegalStateException();
             }
+            if(!DbHelper.contactExists(address,app)){
+                throw new IllegalStateException();
+            }
             String decrypted = MessageEncryptor.decrypt(aem,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
             json = new JSONObject(decrypted);
 
@@ -180,4 +184,6 @@ public class QuotedUserMessage extends UserMessage {
     public static boolean isValidType(String type){
         return type != null && (type.equals("") || type.equals("audio") || type.equals("image") || type.equals("file"));
     }
+
+
 }

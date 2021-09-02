@@ -26,8 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-
-            <ImageView
+            <com.alexvasilkov.gestures.commons.circle.CircleImageView
                 android:id="@+id/img_profile"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
@@ -37,6 +36,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_edit_prof_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#BF000000"
+                android:clickable="true"
+                android:focusable="true"
+                app:fabCustomSize="32dp"
+                app:fabSize="mini"
+                app:layout_constraintBottom_toBottomOf="@+id/img_profile"
+                app:layout_constraintEnd_toEndOf="@+id/img_profile"
+                app:srcCompat="@drawable/ic_baseline_edit_24"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/txt_nickname"

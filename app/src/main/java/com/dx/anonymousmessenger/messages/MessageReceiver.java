@@ -145,7 +145,7 @@ public class MessageReceiver {
         }
     }
 
-    public static void mediaMessageReceiver(byte[] file, String msg, DxApplication app){
+    public static void mediaMessageReceiver(byte[] file, String msg, DxApplication app, boolean isProfileImage){
         try {
             JSONObject json = new JSONObject(msg);
             AddressedEncryptedMessage aem = AddressedEncryptedMessage.fromJson(json);
@@ -167,12 +167,16 @@ public class MessageReceiver {
                 return;
             }
 
-            DbHelper.saveMessage(um,app,um.getAddress(),true);
-
             DbHelper.setContactNickname(um.getSender(), um.getAddress(), app);
-            DbHelper.setContactUnread(um.getAddress(),app);
 
-            app.sendNotification(app.getString(R.string.new_message),app.getString(R.string.you_have_message));
+            if(isProfileImage){
+                //save path in contact sql
+                DbHelper.setContactProfileImagePath(um.getPath(),um.getAddress(),app);
+            }else{
+                DbHelper.saveMessage(um,app,um.getAddress(),true);
+                DbHelper.setContactUnread(um.getAddress(),app);
+                app.sendNotification(app.getString(R.string.new_message),app.getString(R.string.you_have_message));
+            }
             Intent gcm_rec = new Intent("your_action");
             gcm_rec.putExtra("address",um.getAddress().substring(0,10));
             LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);

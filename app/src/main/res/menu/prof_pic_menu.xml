@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/change_pic"
+        android:icon="@drawable/ic_baseline_emoji_emotions_24"
+        android:title="@string/change_profile_image" />
+    <item
+        android:id="@+id/remove_pic"
+        android:icon="@android:drawable/ic_delete"
+        android:title="@string/remove_profile_image" />
+</menu>

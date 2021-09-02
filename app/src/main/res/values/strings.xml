@@ -334,4 +334,9 @@
     <string name="ok">OK</string>
     <string name="with">with</string>
     <string name="welcome_to_anonymous_messenger">This is your next secure messenger</string>
+    <string name="change_profile_image">Change picture</string>
+    <string name="remove_profile_image">Remove picture</string>
+    <string name="remove_profile_image_details">Are you sure you want to remove your profile picture?</string>
+    <string name="profile_image_changed">Profile image changed</string>
+    <string name="profile_image_removed">Profile image removed</string>
 </resources>

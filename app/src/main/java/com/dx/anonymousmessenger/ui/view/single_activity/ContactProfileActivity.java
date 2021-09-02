@@ -3,17 +3,21 @@ package com.dx.anonymousmessenger.ui.view.single_activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.transition.Explode;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -43,6 +47,7 @@ public class ContactProfileActivity extends DxActivity {
         final TextView address = findViewById(R.id.txt_myaddress);
         final TextView nickname = findViewById(R.id.txt_nickname);
         final TextView verifyIdentity = findViewById(R.id.btn_verify_identity);
+        final ImageView profileImage = findViewById(R.id.img_profile);
         new Thread(()->{
             final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
                     "address"),
@@ -58,6 +63,17 @@ public class ContactProfileActivity extends DxActivity {
                     setTitle(nickname1);
                 }catch (Exception ignored){}
             });
+            try{
+                byte[] image = FileHelper.getFile(DbHelper.getContactProfileImagePath(fullAddress,(DxApplication)getApplication()), (DxApplication)getApplication());
+
+                if (image == null) {
+                    return;
+                }
+                Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                new Handler(Looper.getMainLooper()).post(()->{
+                    profileImage.setImageBitmap(bitmap);
+                });
+            }catch (Exception ignored){}
         }).start();
 
         address.setOnClickListener(v -> {

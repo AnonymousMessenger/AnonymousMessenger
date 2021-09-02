@@ -3,7 +3,11 @@ package com.dx.anonymousmessenger.ui.view.app;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
@@ -19,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.ui.view.message_list.MessageListActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.ContactProfileActivity;
 import com.dx.anonymousmessenger.util.Utils;
@@ -265,7 +271,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private class ReadContactHolder extends ViewHolder {
         TextView contactName,msgText,timeText;
-        ImageView imageView,seen,contactOnline;
+        ImageView imageView,seen,contactOnline,profileImage;
 
         ReadContactHolder(View itemView) {
             super(itemView);
@@ -275,6 +281,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             msgText = itemView.findViewById(R.id.message_text);
             seen = itemView.findViewById(R.id.seen);
             contactOnline = itemView.findViewById(R.id.contact_online);
+            profileImage = itemView.findViewById(R.id.img_contact_profile_image);
         }
 
         void bind(String title, String msg, String send_to, long createdAt, boolean received, String address) {
@@ -288,6 +295,32 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 contactOnline.setVisibility(View.VISIBLE);
             }else{
                 contactOnline.setVisibility(View.GONE);
+            }
+            // todo: prof pic on click
+            String profImagePath = DbHelper.getContactProfileImagePath(address,app);
+            if(profImagePath!=null && !profImagePath.equals("")){
+                new Thread(()->{
+                    try{
+                        byte[] image = FileHelper.getFile(profImagePath, app);
+
+                        if (image == null) {
+                            return;
+                        }
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                        if(bitmap == null){
+                            return;
+                        }
+                        new Handler(Looper.getMainLooper()).post(()->{
+                            profileImage.setImageBitmap(bitmap);
+                        });
+                    }catch (Exception ignored){
+//                    e.printStackTrace();
+                    }
+                }).start();
+            }
+            else{
+                profileImage.setBackground(AppCompatResources.getDrawable(app,R.drawable.circle));
+                profileImage.setImageBitmap(null);
             }
         }
     }

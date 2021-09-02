@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
@@ -37,11 +38,14 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -108,6 +112,27 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     private boolean online = false;
     private boolean pinging = false;
 
+    private final ActivityResultLauncher<String> mGetContent = registerForActivityResult(new
+                    ActivityResultContracts.GetContent(),
+            uri -> {
+        // FIXME: this method is not called on android 6 instead system goes to home screen
+                new Thread(() -> {
+                    try{
+                        if(uri == null){
+                            return;
+                        }
+                        Intent intent = new Intent(this, FileViewerActivity.class);
+                        intent.putExtra("uri",uri);
+                        intent.putExtra("filename", FileHelper.getFileName(uri,this));
+                        intent.putExtra("size",FileHelper.getFileSize(uri,this));
+                        intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                        startActivity(intent);
+                    }catch (Exception e){
+//                        e.printStackTrace();
+                    }
+                }).start();
+            });
+
     @SuppressLint({"ClickableViewAccessibility", "ShowToast"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,10 +151,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         if(!((DxApplication)getApplication()).isAcceptingCallsAllowed()){
             ((MaterialToolbar)findViewById(R.id.toolbar)).getMenu().removeItem(R.id.action_call);
         }
-        ((MaterialToolbar)findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
-            onOptionsItemSelected(item);
-            return false;
-        });
+
         final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
                 "address"),
                 (DxApplication) getApplication());
@@ -137,6 +159,27 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             return;
         }
         address = fullAddress;
+
+        new Thread(() -> {
+            try{
+                byte[] image = FileHelper.getFile(DbHelper.getContactProfileImagePath(address,(DxApplication)getApplication()), (DxApplication)getApplication());
+                if (image == null) {
+                    return;
+                }
+                RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
+                drawable.setCircular(true);
+                new Handler(Looper.getMainLooper()).post(()->{
+                    ((MaterialToolbar) findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
+                });
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }).start();
+        ((MaterialToolbar)findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
+            onOptionsItemSelected(item);
+            return false;
+        });
+
         nickname = getIntent().getStringExtra("nickname");
         quoteTextTyping = findViewById(R.id.quote_text_typing);
         quoteSenderTyping = findViewById(R.id.quote_sender_typing);
@@ -525,10 +568,12 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     if (cursor != null) {
                         cursor.moveToFirst();
                         do{
-                            String type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE));
-                            String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
-                            paths.add(path);
-                            types.add(type);
+                            try{
+                                String type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE));
+                                String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
+                                paths.add(path);
+                                types.add(type);
+                            }catch (Exception ignored){}
                         }while(cursor.moveToNext());
                         cursor.close();
                     }
@@ -569,25 +614,8 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     //fires when clicking on media/file sending items
     @Override
     public void onItemClick(View view, int position) {
-//        mediaRecyclerView.setVisibility(View.GONE);
-//        send.setVisibility(View.VISIBLE);
-//        audio.setVisibility(View.VISIBLE);
-//        file.setVisibility(View.VISIBLE);
-//        txt.setVisibility(View.VISIBLE);
-//        if(quoteTextTyping.getText().length()>0){
-//            quoteTextTyping.setVisibility(View.VISIBLE);
-//            quoteSenderTyping.setVisibility(View.VISIBLE);
-//        }
-//        picsHelp.setVisibility(View.GONE);
         if(position == 0){
-//            Toast.makeText(this, R.string.feature_unready,Toast.LENGTH_SHORT).show();
-            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-            chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-            chooseFile.setType("*/*");
-            this.startActivityForResult(
-                    Intent.createChooser(chooseFile, "Choose a file"),
-                    MessageListActivity.REQUEST_PICK_FILE
-            );
+            mGetContent.launch("*/*");
             return;
         }
         Intent intent = new Intent(this, PictureViewerActivity.class);
@@ -602,19 +630,22 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         }
     }
 
-    public synchronized void ping(){
+    public void ping(){
+        if(pinging){
+            return;
+        }
         new Thread(()->{
             pinging = true;
-            try {
-                Thread.sleep(500);
-            } catch (Exception ignored) {}
+//            try {
+//                Thread.sleep(500);
+//            } catch (Exception ignored) {}
             Handler h = new Handler(Looper.getMainLooper());
             h.post(()->{
                 try{
                     ColorDrawable[] color = {new ColorDrawable(this.getColor(R.color.startGradientColor)), new ColorDrawable(this.getColor(R.color.endGradientColor))};
                     TransitionDrawable trans = new TransitionDrawable(color);
                     frameOnline.setBackground(trans);
-                    trans.startTransition(1500);
+                    trans.startTransition(1000);
                     frameOnline.setVisibility(View.VISIBLE);
                     Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
                     frameOnline.startAnimation(slideUp);
@@ -634,12 +665,12 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                         ColorDrawable[] color = {new ColorDrawable(this.getColor(R.color.endGradientColor)), new ColorDrawable(this.getColor(R.color.green_tor))};
                         TransitionDrawable trans = new TransitionDrawable(color);
                         frameOnline.setBackground(trans);
-                        trans.startTransition(1500);
+                        trans.startTransition(1000);
                     }else{
                         ColorDrawable[] color = {new ColorDrawable(this.getColor(R.color.endGradientColor)), new ColorDrawable(this.getColor(R.color.red_500))};
                         TransitionDrawable trans = new TransitionDrawable(color);
                         frameOnline.setBackground(trans);
-                        trans.startTransition(1500);
+                        trans.startTransition(1000);
                     }
 //                    Animation shock = AnimationUtils.loadAnimation(this, R.anim.rotate_line);
 //                    frameOnline.startAnimation(shock);
@@ -1003,23 +1034,23 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == REQUEST_PICK_FILE){
-            try{
-                if(data == null || data.getData() == null){
-                    return;
-                }
-                Intent intent = new Intent(this, FileViewerActivity.class);
-                intent.putExtra("uri",data.getData());
-                intent.putExtra("filename", FileHelper.getFileName(data.getData(),this));
-                intent.putExtra("size",FileHelper.getFileSize(data.getData(),this));
-                intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
-                startActivity(intent);
-            }catch (Exception e){e.printStackTrace();}
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        if(requestCode == REQUEST_PICK_FILE){
+//            try{
+//                if(data == null || data.getData() == null){
+//                    return;
+//                }
+//                Intent intent = new Intent(this, FileViewerActivity.class);
+//                intent.putExtra("uri",data.getData());
+//                intent.putExtra("filename", FileHelper.getFileName(data.getData(),this));
+//                intent.putExtra("size",FileHelper.getFileSize(data.getData(),this));
+//                intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+//                startActivity(intent);
+//            }catch (Exception e){e.printStackTrace();}
+//        }
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -1074,58 +1105,58 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
      * Release memory when the UI becomes hidden or when system resources become low.
      * @param level the memory-related event that was raised.
      */
-    public void onTrimMemory(int level) {
-
-        // Determine which lifecycle or system event was raised.
-        switch (level) {
-
-            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
-            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
-                onSupportNavigateUp();
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
-            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
-
-                /*
-                   Release any memory that your app doesn't need to run.
-
-                   The device is running low on memory while the app is running.
-                   The event raised indicates the severity of the memory-related event.
-                   If the event is TRIM_MEMORY_RUNNING_CRITICAL, then the system will
-                   begin killing background processes.
-                */
-
-                /*
-                   Release as much memory as the process can.
-
-                   The app is on the LRU list and the system is running low on memory.
-                   The event raised indicates where the app sits within the LRU list.
-                   If the event is TRIM_MEMORY_COMPLETE, the process will be one of
-                   the first to be terminated.
-                */
-
-                /*
-                   Release any UI objects that currently hold memory.
-
-                   The user interface has moved to the background.
-                */
-
+//    public void onTrimMemory(int level) {
+//
+//        // Determine which lifecycle or system event was raised.
+//        switch (level) {
+//
+//            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
+//            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
 //                onSupportNavigateUp();
-
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
-            default:
-                /*
-                  Release any non-critical data structures.
-
-                  The app received an unrecognized memory level value
-                  from the system. Treat this as a generic low-memory message.
-                */
-                stopCheckingMessages();
-                break;
-        }
-    }
+//                break;
+//            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
+//            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
+//            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
+//
+//                /*
+//                   Release any memory that your app doesn't need to run.
+//
+//                   The device is running low on memory while the app is running.
+//                   The event raised indicates the severity of the memory-related event.
+//                   If the event is TRIM_MEMORY_RUNNING_CRITICAL, then the system will
+//                   begin killing background processes.
+//                */
+//
+//                /*
+//                   Release as much memory as the process can.
+//
+//                   The app is on the LRU list and the system is running low on memory.
+//                   The event raised indicates where the app sits within the LRU list.
+//                   If the event is TRIM_MEMORY_COMPLETE, the process will be one of
+//                   the first to be terminated.
+//                */
+//
+//                /*
+//                   Release any UI objects that currently hold memory.
+//
+//                   The user interface has moved to the background.
+//                */
+//
+////                onSupportNavigateUp();
+//
+//            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
+//            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
+//            default:
+//                /*
+//                  Release any non-critical data structures.
+//
+//                  The app received an unrecognized memory level value
+//                  from the system. Treat this as a generic low-memory message.
+//                */
+//                stopCheckingMessages();
+//                break;
+//        }
+//    }
 
     @Override
     public void doStuff() {

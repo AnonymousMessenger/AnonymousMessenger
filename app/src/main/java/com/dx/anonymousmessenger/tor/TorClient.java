@@ -73,7 +73,7 @@ public class TorClient {
         }
     }
 
-    public static boolean sendMedia(String onion, DxApplication app, String msg, byte[] media){
+    public static boolean sendMedia(String onion, DxApplication app, String msg, byte[] media, boolean isProfileImage){
         Socket socket;
         try {
             socket = socks5SocketConnection(onion, 5780, "127.0.0.1", app.getTorSocket().getOnionProxyManager().getIPv4LocalHostSocksPort());
@@ -82,7 +82,11 @@ public class TorClient {
             DataInputStream in =new DataInputStream(socket.getInputStream());
             String msg2;
 
-            outputStream.writeUTF("media");
+            if(isProfileImage){
+                outputStream.writeUTF("profile_image");
+            }else{
+                outputStream.writeUTF("media");
+            }
             outputStream.flush();
             msg2 = in.readUTF();
             if(msg2.contains("ok")){

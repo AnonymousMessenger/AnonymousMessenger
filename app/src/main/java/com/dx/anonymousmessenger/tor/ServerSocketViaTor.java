@@ -81,7 +81,9 @@ public class ServerSocketViaTor {
             */
 
         try {
-            app.deleteAnyOldFiles();
+            try{
+                app.deleteAnyOldFiles();
+            }catch (Exception ignored){}
             node = new OnionProxyManager(new OnionProxyContext(app.getApplicationContext(), "torfiles"));
 
             if (!node.startWithoutRepeat(TOTAL_SEC_PER_STARTUP, DbHelper.getBridgeList(app), app.isBridgesEnabled())) {
@@ -243,10 +245,14 @@ public class ServerSocketViaTor {
                                     }
                                     return;
                                 }else if(msg.equals("media")){
-                                    handleMedia(outputStream,in,sock,sockets);
+                                    handleMedia(outputStream,in,sock,sockets,false);
                                     return;
                                 }else if(msg.equals("file")){
                                     handleFile(outputStream,in,sock,sockets);
+                                    return;
+                                }
+                                else if(msg.equals("profile_image")){
+                                    handleMedia(outputStream,in,sock,sockets,true);
                                     return;
                                 }
 
@@ -441,8 +447,7 @@ public class ServerSocketViaTor {
             }
         }
 
-        //todo: decide if we want to disable media when file receiving is disabled
-        private void handleMedia(DataOutputStream outputStream, DataInputStream in, Socket sock, AtomicInteger sockets){
+        private void handleMedia(DataOutputStream outputStream, DataInputStream in, Socket sock, AtomicInteger sockets, boolean isProfileImage){
             String address = "";
             try {
                 outputStream.writeUTF("ok");
@@ -496,8 +501,14 @@ public class ServerSocketViaTor {
                 }
                 in.close();
                 sockets.getAndDecrement();
-                MessageReceiver.mediaMessageReceiver(cache.toByteArray(),recMsg,app);
-                DbHelper.saveLog("RECEIVED MEDIA FROM "+address+" SIZE "+fileSize,new Date().getTime(),"NOTICE",app);
+                if(isProfileImage){
+                    MessageReceiver.mediaMessageReceiver(cache.toByteArray(),recMsg,app,true);
+                    DbHelper.saveLog("RECEIVED PROFILE IMAGE FROM "+address+" SIZE "+fileSize,new Date().getTime(),"NOTICE",app);
+                }else{
+                    MessageReceiver.mediaMessageReceiver(cache.toByteArray(),recMsg,app,false);
+                    DbHelper.saveLog("RECEIVED MEDIA FROM "+address+" SIZE "+fileSize,new Date().getTime(),"NOTICE",app);
+                }
+
             } catch (Exception e) {
                 Log.e("RECEIVING MEDIA MESSAGE","ERROR BELOW");
                 e.printStackTrace();

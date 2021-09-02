@@ -98,6 +98,14 @@ public class PasswordEntryFragment extends Fragment {
                     Cursor cr = database.rawQuery("SELECT * FROM account LIMIT 1;", null);
                     if (cr != null && cr.moveToFirst()) {
                         DxAccount account = new DxAccount(cr.getString(0));
+                        try {
+                            database.execSQL("ALTER TABLE account ADD COLUMN profile_image_path TEXT default ''");
+                        }catch (Exception ignored){
+                            try{
+                                account.setProfileImagePath(cr.getString(2));
+                            }catch (Exception ignored2){}
+                        }
+
                         cr.close();
                         account.setPassword(pass.getBytes(StandardCharsets.UTF_8));
                         app.setAccount(account,false);

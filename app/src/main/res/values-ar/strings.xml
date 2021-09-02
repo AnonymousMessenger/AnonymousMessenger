@@ -279,4 +279,10 @@
     <string name="processors">معالجات</string>
     <string name="and">و</string>
     <string name="free_memory">ذاكرة متاحة</string>
+    <string name="welcome_to_anonymous_messenger">هذا هو برنامجك التالي للمراسلة الآمنة</string>
+    <string name="change_profile_image">غيِر الصورة</string>
+    <string name="remove_profile_image">إزالة الصورة</string>
+    <string name="remove_profile_image_details">متأكد أنك تريد إزالة هذه الصورة؟</string>
+    <string name="profile_image_changed">تم تغيير صورة البروفايل</string>
+    <string name="profile_image_removed">تمت إزالة صورة اليروفايل</string>
 </resources>

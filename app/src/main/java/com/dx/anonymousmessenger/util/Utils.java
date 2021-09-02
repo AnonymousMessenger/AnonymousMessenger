@@ -3,17 +3,18 @@ package com.dx.anonymousmessenger.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.dx.anonymousmessenger.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -152,6 +153,57 @@ public class Utils {
         int orientation = 1;
         try {
             exif = new ExifInterface(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (exif != null) {
+            orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+        }
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case 2:
+                matrix.setScale(-1, 1);
+                break;
+            case 3:
+                matrix.setRotate(180);
+                break;
+            case 4:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case 5:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case 6:
+                matrix.setRotate(90);
+                break;
+            case 7:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case 8:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bm;
+        }
+        try {
+            Bitmap oriented = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+            bm.recycle();
+            return oriented;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bm;
+    }
+
+    public static Bitmap rotateBitmap(Bitmap bm, InputStream is){
+        ExifInterface exif = null;
+        int orientation = 1;
+        try {
+            exif = new ExifInterface(is);
         } catch (Exception e) {
             e.printStackTrace();
         }

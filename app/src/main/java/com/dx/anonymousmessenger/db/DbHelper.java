@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger.db;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.util.Log;
 
@@ -7,6 +8,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.account.DxAccount;
 import com.dx.anonymousmessenger.crypto.DxSignalKeyStore;
 import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
@@ -30,10 +32,14 @@ public class DbHelper {
      */
 
     private static final String CONTACT_SQL_INSERT = "INSERT INTO contact(nickname,address) VALUES(?,?)";
-    private static final String CONTACT_COLUMNS = "(nickname,address,unread)";
+    //add our profile pic path here to differentiate between sent prof pic or not
+    private static final String CONTACT_COLUMNS = "(nickname,address,unread,profile_image_hash,profile_image_path,sent_profile_image_path)";
     private static final String CONTACT_SQL_UPDATE = "UPDATE contact SET nickname=? WHERE address=?";
+    private static final String CONTACT_SQL_UPDATE_PROFILE_IMAGE_HASH = "UPDATE contact SET profile_image_hash=? WHERE address=?";
+    private static final String CONTACT_SQL_UPDATE_PROFILE_IMAGE_PATH = "UPDATE contact SET profile_image_path=? WHERE address=?";
+    private static final String CONTACT_SQL_UPDATE_SENT_PROFILE_IMAGE_PATH = "UPDATE contact SET sent_profile_image_path=? WHERE address=?";
     private static final String CONTACT_SQL_UPDATE_UNREAD = "UPDATE contact SET unread=? WHERE address=?";
-    private static final String CONTACT_TABLE_SQL_CREATE = "CREATE TABLE IF NOT EXISTS contact (nickname,address,unread)";
+    private static final String CONTACT_TABLE_SQL_CREATE = "CREATE TABLE IF NOT EXISTS contact (nickname,address,unread,profile_image_hash,profile_image_path,sent_profile_image_path)";
 
     private static Object[] getContactSqlValuesUnread(String address){ return new Object[]{true,address}; }
 
@@ -260,7 +266,145 @@ public class DbHelper {
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
         {
-            String nn = c.getString(c.getColumnIndex("nickname"));
+            @SuppressLint("Range") String nn = c.getString(c.getColumnIndex("nickname"));
+            c.close();
+            return nn;
+        }
+        else
+        {
+            c.close();
+            return null;
+        }
+    }
+
+    public static void setContactProfileImageHash(String profile_image_hash, String address, DxApplication app){
+        while (app.getAccount()==null){
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
+        android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
+        if(c.moveToFirst())
+        {
+            c.close();
+            database.execSQL(DbHelper.CONTACT_SQL_UPDATE_PROFILE_IMAGE_HASH,DbHelper.getContactSqlValues(address,profile_image_hash));
+        }
+        else
+        {
+            c.close();
+        }
+    }
+
+    public static String getContactProfileImageHash(String address, DxApplication app) {
+        while (app.getAccount()==null){
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
+        android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
+        if(c.moveToFirst())
+        {
+            @SuppressLint("Range") String nn = c.getString(c.getColumnIndex("profile_image_hash"));
+            c.close();
+            return nn;
+        }
+        else
+        {
+            c.close();
+            return null;
+        }
+    }
+
+    public static void setContactProfileImagePath(String profile_image_path, String address, DxApplication app){
+        while (app.getAccount()==null){
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
+        android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
+        if(c.moveToFirst())
+        {
+            c.close();
+            database.execSQL(DbHelper.CONTACT_SQL_UPDATE_PROFILE_IMAGE_PATH,DbHelper.getContactSqlValues(address,profile_image_path));
+        }
+        else
+        {
+            c.close();
+        }
+    }
+
+    public static String getContactProfileImagePath(String address, DxApplication app) {
+        while (app.getAccount()==null){
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
+        android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
+        if(c.moveToFirst())
+        {
+            @SuppressLint("Range") String nn = c.getString(c.getColumnIndex("profile_image_path"));
+            c.close();
+            return nn;
+        }
+        else
+        {
+            c.close();
+            return null;
+        }
+    }
+
+    public static void setContactSentProfileImagePath(String sent_profile_image_path, String address, DxApplication app){
+        while (app.getAccount()==null){
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
+        android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
+        if(c.moveToFirst())
+        {
+            c.close();
+            database.execSQL(DbHelper.CONTACT_SQL_UPDATE_SENT_PROFILE_IMAGE_PATH,DbHelper.getContactSqlValues(address,sent_profile_image_path));
+        }
+        else
+        {
+            c.close();
+        }
+    }
+
+    public static String getContactSentProfileImagePath(String address, DxApplication app) {
+        while (app.getAccount()==null){
+            try {
+                Thread.sleep(150);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
+        android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
+        if(c.moveToFirst())
+        {
+            @SuppressLint("Range") String nn = c.getString(c.getColumnIndex("sent_profile_image_path"));
             c.close();
             return nn;
         }
@@ -831,6 +975,10 @@ public class DbHelper {
                 if ((new Date().getTime() - message.getCreatedAt()) < app.getTime2delete()) {
                     messages.add(message);
                 } else {
+//                    if(message.getAddress().equals(app.getHostname()) && message.isProfileImage() && !message.isReceived()){
+//
+//                        continue;
+//                    }
                     if(!message.isPinned()) deleteMessage(message, app);
                     else messages.add(message);
                 }
@@ -927,7 +1075,8 @@ public class DbHelper {
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getMessageTableSqlCreate());
         try{
-            database.query("SELECT path FROM message");
+            //use a latest query that is only in the latest schema here
+            database.query("SELECT profile_image_path FROM contact");
         }catch (Exception e){
             Log.w("getAllReferencedFiles", "updating DbSchema");
             e.printStackTrace();
@@ -941,6 +1090,25 @@ public class DbHelper {
             } while (cr.moveToNext());
         }
         cr.close();
+        //also add the profile picture file
+        database.execSQL(DxAccount.CREATE_ACCOUNT_TABLE_SQL);
+        Cursor cr2 = database.rawQuery("SELECT profile_image_path FROM account",null);
+        if (cr2.moveToFirst()) {
+            do {
+                paths.add(cr2.getString(0));
+            } while (cr2.moveToNext());
+        }
+        cr2.close();
+        //also add the contacts profile image files
+        database.execSQL(DxAccount.CREATE_ACCOUNT_TABLE_SQL);
+        Cursor cr3 = database.rawQuery("SELECT profile_image_path FROM contact",null);
+        if (cr3.moveToFirst()) {
+            do {
+                paths.add(cr3.getString(0));
+            } while (cr3.moveToNext());
+        }
+        cr3.close();
+
         return paths;
     }
 
@@ -986,10 +1154,13 @@ public class DbHelper {
                 String tmpName = "temp_message ";
                 String createTemp = getMessageTableSqlCreate().replace("message",tmpName);
                 database.execSQL(createTemp);
+                String createIfNotExist = getMessageTableSqlCreate();
+                database.execSQL(createIfNotExist);
                 int tmpColNum = getNumberOfColumns(tmpName,database);
                 int oldColNum = getNumberOfColumns("message",database);
                 String emptyCols = tmpColNum>oldColNum?giveMeNulls(tmpColNum-oldColNum):"";
-                database.execSQL("INSERT INTO "+tmpName+getMessageColumns()+" SELECT *"+emptyCols+" FROM message;");
+                String colNames = getColumnNames("message",database);
+                database.execSQL("INSERT INTO "+tmpName+getMessageColumns()+" SELECT "+colNames+emptyCols+" FROM message;");
                 database.execSQL("DROP TABLE message;");
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO message");
                 database.setTransactionSuccessful();
@@ -999,10 +1170,13 @@ public class DbHelper {
                 tmpName = "temp_contact ";
                 createTemp = CONTACT_TABLE_SQL_CREATE.replace("contact",tmpName);
                 database.execSQL(createTemp);
+                createIfNotExist = CONTACT_TABLE_SQL_CREATE;
+                database.execSQL(createIfNotExist);
                 tmpColNum = getNumberOfColumns(tmpName,database);
                 oldColNum = getNumberOfColumns("contact",database);
                 emptyCols = tmpColNum>oldColNum?giveMeNulls(tmpColNum-oldColNum):"";
-                database.execSQL("INSERT INTO "+tmpName+CONTACT_COLUMNS+" SELECT *"+emptyCols+" FROM contact;");
+                colNames = getColumnNames("contact",database);
+                database.execSQL("INSERT INTO "+tmpName+CONTACT_COLUMNS+" SELECT "+colNames+emptyCols+" FROM contact;");
                 database.execSQL("DROP TABLE contact;");
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO contact");
                 database.setTransactionSuccessful();
@@ -1012,10 +1186,13 @@ public class DbHelper {
                 tmpName = "temp_notepad ";
                 createTemp = getNotepadTableSqlCreate().replace("notepad",tmpName);
                 database.execSQL(createTemp);
+                createIfNotExist = getNotepadTableSqlCreate();
+                database.execSQL(createIfNotExist);
                 tmpColNum = getNumberOfColumns(tmpName,database);
                 oldColNum = getNumberOfColumns("notepad",database);
                 emptyCols = tmpColNum>oldColNum?giveMeNulls(tmpColNum-oldColNum):"";
-                database.execSQL("INSERT INTO "+tmpName+getNotepadColumns()+" SELECT *"+emptyCols+" FROM notepad;");
+                colNames = getColumnNames("notepad",database);
+                database.execSQL("INSERT INTO "+tmpName+getNotepadColumns()+" SELECT "+colNames+emptyCols+" FROM notepad;");
                 database.execSQL("DROP TABLE notepad;");
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO notepad");
                 database.setTransactionSuccessful();
@@ -1025,10 +1202,13 @@ public class DbHelper {
                 tmpName = "temp_log ";
                 createTemp = getLogTableSqlCreate().replace("log",tmpName);
                 database.execSQL(createTemp);
+                createIfNotExist = getLogTableSqlCreate();
+                database.execSQL(createIfNotExist);
                 tmpColNum = getNumberOfColumns(tmpName,database);
                 oldColNum = getNumberOfColumns("log",database);
                 emptyCols = tmpColNum>oldColNum?giveMeNulls(tmpColNum-oldColNum):"";
-                database.execSQL("INSERT INTO "+tmpName+getLogColumns()+" SELECT *"+emptyCols+" FROM log;");
+                colNames = getColumnNames("log",database);
+                database.execSQL("INSERT INTO "+tmpName+getLogColumns()+" SELECT "+colNames+emptyCols+" FROM log;");
                 database.execSQL("DROP TABLE log;");
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO log");
                 database.setTransactionSuccessful();
@@ -1038,10 +1218,13 @@ public class DbHelper {
                 tmpName = "temp_bridge ";
                 createTemp = getBridgeTableSqlCreate().replace("bridge",tmpName);
                 database.execSQL(createTemp);
+                createIfNotExist = getBridgeTableSqlCreate();
+                database.execSQL(createIfNotExist);
                 tmpColNum = getNumberOfColumns(tmpName,database);
                 oldColNum = getNumberOfColumns("bridge",database);
                 emptyCols = tmpColNum>oldColNum?giveMeNulls(tmpColNum-oldColNum):"";
-                database.execSQL("INSERT INTO "+tmpName+getBridgeColumns()+" SELECT *"+emptyCols+" FROM bridge;");
+                colNames = getColumnNames("bridge",database);
+                database.execSQL("INSERT INTO "+tmpName+getBridgeColumns()+" SELECT "+colNames+emptyCols+" FROM bridge;");
                 database.execSQL("DROP TABLE bridge;");
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO bridge");
                 database.setTransactionSuccessful();
@@ -1051,21 +1234,37 @@ public class DbHelper {
                 tmpName = "temp_settings ";
                 createTemp = getSettingsTableSqlCreate().replace("settings",tmpName);
                 database.execSQL(createTemp);
+                createIfNotExist = getSettingsTableSqlCreate();
+                database.execSQL(createIfNotExist);
                 tmpColNum = getNumberOfColumns(tmpName,database);
                 oldColNum = getNumberOfColumns("settings",database);
                 emptyCols = tmpColNum>oldColNum?giveMeNulls(tmpColNum-oldColNum):"";
-                database.execSQL("INSERT INTO "+tmpName+getSettingsColumns()+" SELECT *"+emptyCols+" FROM settings;");
+                colNames = getColumnNames("settings",database);
+                database.execSQL("INSERT INTO "+tmpName+getSettingsColumns()+" SELECT "+colNames+emptyCols+" FROM settings;");
                 database.execSQL("DROP TABLE settings;");
                 database.execSQL("ALTER TABLE "+tmpName+" RENAME TO settings");
                 database.setTransactionSuccessful();
                 database.endTransaction();
 
-                Log.e("finishing the db update","good bye");
+                Log.d("finishing the db update","good bye");
             }catch (SQLiteException e){
                 Log.e("ERROR UPDATING DB","THERE WAS AN ERROR UPDATING THE D B YO!");
                 e.printStackTrace();
             }
         }
+    }
+
+    private static String getColumnNames(String table, SQLiteDatabase database) {
+        Cursor dbCursor = database.query(table, null, null, null, null, null, null);
+        String[] columnNames = dbCursor.getColumnNames();
+        StringBuilder result = new StringBuilder();
+        for (String col:columnNames) {
+            result.append(col).append(",");
+        }
+        if(result.length()>0){
+            result.deleteCharAt(result.length()-1);
+        }
+        return result.toString();
     }
 
     private static int getNumberOfRows(String tableName, SQLiteDatabase database) {

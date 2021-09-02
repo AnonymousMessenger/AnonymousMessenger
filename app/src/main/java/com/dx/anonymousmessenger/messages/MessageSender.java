@@ -19,6 +19,7 @@ import org.whispersystems.libsignal.StaleKeyExchangeException;
 
 import java.io.FileInputStream;
 import java.util.Date;
+import java.util.List;
 
 public class MessageSender {
 
@@ -233,7 +234,7 @@ public class MessageSender {
 
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
-                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
+                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)),false);
                 app.sendingTo.remove(to);
             }catch (Exception e){
 //                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
@@ -250,6 +251,86 @@ public class MessageSender {
             }
         } catch (Exception e) {
             Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendMediaMessageWithoutSaving(QuotedUserMessage msg, DxApplication app, String to, boolean saveMsg, boolean isProfileImage) {
+        try {
+            boolean received = false;
+            try {
+                if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(to,1))){
+                    Log.e("MESSAGE SENDER", "sendMessage: session isn't contained!!!" );
+                    return;
+                }
+                if(saveMsg){
+                    DbHelper.saveMessage(msg,app,to, false);
+                    Intent gcm_rec = new Intent("your_action");
+                    LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+                }
+
+                while (app.sendingTo.contains(to)){
+                    try{
+                        Thread.sleep(200);
+                    }catch (Exception ignored){}
+                }
+
+                if(saveMsg && DbHelper.getMessageReceived(msg,app,to)){
+                    return;
+                }
+                app.sendingTo.add(to);
+                //split message to file and metadata (msg is metadata)
+                byte[] file = FileHelper.getFile(msg.getPath(),app);
+
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
+
+                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)),isProfileImage);
+                app.sendingTo.remove(to);
+            }catch (Exception e){
+//                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
+                app.sendingTo.remove(to);
+                e.printStackTrace();
+                Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
+            }finally {
+                if(saveMsg){
+                    DbHelper.setMessageReceived(msg,app,to,received);
+                }
+                if(received && isProfileImage){
+                    DbHelper.setContactSentProfileImagePath(msg.getPath(),msg.getTo(),app);
+                }
+            }
+            if(saveMsg && received){
+                Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("delivery",msg.getCreatedAt());
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            }
+        } catch (Exception e) {
+            Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE" );
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendMediaMessageToAll(QuotedUserMessage msg, DxApplication app, String to, boolean saveMsg, boolean isProfileImage){
+        try{
+            //get contacts list
+            List<String[]> contacts = DbHelper.getContactsList(app);
+            //send to each in loop
+            if (contacts != null) {
+                for (String[] contact:contacts) {
+                    if(contact == null){
+                        continue;
+                    }
+                    try{
+                        msg.setTo(contact[1]);
+                        sendMediaMessageWithoutSaving(msg,app,contact[1],saveMsg,isProfileImage);
+                    }catch (Exception ignored){
+//                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }catch (Exception e){
+            Log.e("MESSAGE SENDER", "FAILED TO SEND MESSAGE TO ALL" );
             e.printStackTrace();
         }
     }
@@ -276,7 +357,7 @@ public class MessageSender {
 
                 AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
 
-                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)));
+                received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)),false);
                 app.sendingTo.remove(to);
             }catch (Exception e){
 //                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();

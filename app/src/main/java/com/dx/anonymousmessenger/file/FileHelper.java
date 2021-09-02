@@ -114,7 +114,7 @@ public class FileHelper {
             byte[] read = FileUtilities.read(f);
             return decrypt(sha1b, read);
         }catch (Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return null;
     }

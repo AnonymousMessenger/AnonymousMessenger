@@ -854,7 +854,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private class MessageHolder extends RecyclerView.ViewHolder {
         TextView nameText, messageText, timeText;
         Button undoButton;
-        ImageView sent;
+        ImageView sent,profileImage;
         FloatingActionButton pin;
 
         MessageHolder(View itemView) {
@@ -865,6 +865,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             nameText = itemView.findViewById(R.id.text_message_name);
             sent = itemView.findViewById(R.id.img_sent);
             pin = itemView.findViewById(R.id.fab_pin);
+            profileImage = itemView.findViewById(R.id.image_message_profile);
         }
 
         @SuppressLint("ClickableViewAccessibility")
@@ -874,6 +875,23 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             if(nameText!=null){
                 nameText.setText(message.getSender());
+                if(profileImage!=null){
+                    new Thread(()->{
+                        try{
+                            byte[] image = FileHelper.getFile(DbHelper.getContactProfileImagePath(message.getAddress(),app), app);
+
+                            if (image == null) {
+                                return;
+                            }
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                            new Handler(Looper.getMainLooper()).post(()->{
+                                profileImage.setImageBitmap(bitmap);
+                            });
+                        }catch (Exception ignored){
+//                    e.printStackTrace();
+                        }
+                    }).start();
+                }
             }
 
             if(pin != null){
@@ -941,7 +959,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ReceivedMessageHolder(View itemView) {
             super(itemView);
             nameText = itemView.findViewById(R.id.text_message_name);
-            //todo add profile image
             profileImage = itemView.findViewById(R.id.image_message_profile);
         }
 
@@ -949,6 +966,21 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         void bind(QuotedUserMessage message) {
             super.bind(message);
             nameText.setText(message.getSender());
+            new Thread(()->{
+                try{
+                    byte[] image = FileHelper.getFile(DbHelper.getContactProfileImagePath(message.getAddress(),app), app);
+
+                    if (image == null) {
+                        return;
+                    }
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                    new Handler(Looper.getMainLooper()).post(()->{
+                        profileImage.setImageBitmap(bitmap);
+                    });
+                }catch (Exception ignored){
+//                    e.printStackTrace();
+                }
+            }).start();
             // Insert the profile image from the URL into the ImageView.util
             // .displayRoundImageFromUrl(mContext, util.Utils.getInitials(message.getSender()), profileImage);
         }

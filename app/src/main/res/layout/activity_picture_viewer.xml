@@ -65,6 +65,41 @@
             android:contentDescription="@string/image_to_send"
             app:srcCompat="@android:drawable/ic_menu_report_image" />
 
+        <com.alexvasilkov.gestures.commons.CropAreaView
+            android:id="@+id/image_crop_area"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="32dp"
+            android:visibility="gone"
+            app:gest_aspect="1.3333"
+            app:gest_rounded="true"
+            tools:gest_rulesHorizontal="2"
+            tools:gest_rulesVertical="2" />
+
+        <LinearLayout
+            android:id="@+id/layout_crop_controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="100dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_done"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                app:maxImageSize="41dp"
+                app:srcCompat="@drawable/ic_baseline_done_24"
+                tools:ignore="ContentDescription" />
+
+        </LinearLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txt_layout_caption"
             android:layout_width="match_parent"

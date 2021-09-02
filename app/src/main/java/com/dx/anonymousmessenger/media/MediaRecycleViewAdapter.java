@@ -57,7 +57,7 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
             return;
         }
         holder.info.setText("");
-        String path = paths.get(holder.getAdapterPosition());
+        String path = paths.get(holder.getAbsoluteAdapterPosition());
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
         new Thread(()->{
@@ -101,7 +101,7 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+            if (mClickListener != null) mClickListener.onItemClick(view, getAbsoluteAdapterPosition());
         }
     }
 

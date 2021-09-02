@@ -44,9 +44,12 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static com.dx.anonymousmessenger.messages.MessageSender.sendMediaMessageWithoutSaving;
 
 public class DxApplication extends Application {
 
@@ -224,6 +227,15 @@ public class DxApplication extends Application {
             try{
                 syncing = true;
                 syncingAddress = address;
+                //send profile image if not delivered from before
+                String path = getAccount().getProfileImagePath();
+                if(path!=null && !path.equals("")){
+                    if(!Objects.equals(DbHelper.getContactSentProfileImagePath(address, this), path)){
+                        QuotedUserMessage qum = new QuotedUserMessage("","",getHostname(),"",
+                                getAccount().getNickname(),new Date().getTime(),false,address,false,"profile_image",path,"image");
+                        sendMediaMessageWithoutSaving(qum,this,address,false,true);
+                    }
+                }
                 List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
                 if(undeliveredMessageList.size()==0){
                     syncing = false;
@@ -477,6 +489,10 @@ public class DxApplication extends Application {
         }
     }
 
+    public SQLiteDatabase getDbOrNull(){
+        return this.database;
+    }
+
     public SQLiteDatabase getDb(byte[] password){
         if(database!=null){
             database.close();
@@ -676,9 +692,9 @@ public class DxApplication extends Application {
         }else{
             notification = new Notification.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher_foreground)
-                    .setContentTitle(title + ", " + msg)
-                    .setContentText(msg)
-                    .setContentIntent(hideNotification)
+                    .setContentTitle(title)
+//                    .setContentText(msg)
+                    .setContentIntent(gotoApp)
                     .build();
         }
         NotificationManager mNotificationManager =

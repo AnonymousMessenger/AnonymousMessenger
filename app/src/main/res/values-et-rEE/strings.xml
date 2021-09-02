@@ -344,5 +344,11 @@
     <string name="processors">protsessorid</string>
     <string name="and">ja</string>
     <string name="free_memory">vaba mälu</string>
+    <string name="welcome_to_anonymous_messenger">"See on teie järgmine turvaline sõnumitooja "</string>
+    <string name="change_profile_image">"Muuda pilti "</string>
+    <string name="remove_profile_image">"Eemalda pilt "</string>
+    <string name="remove_profile_image_details">"Kas olete kindel, et soovite oma profiilipildi eemaldada? "</string>
+    <string name="profile_image_changed">"Profiilipilt on muudetud "</string>
+    <string name="profile_image_removed">"Profiilipilt on eemaldatud "</string>
 
 </resources>

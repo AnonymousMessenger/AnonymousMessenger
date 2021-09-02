@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
@@ -25,15 +26,17 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.log.LogActivity;
 import com.dx.anonymousmessenger.ui.view.notepad.NotepadActivity;
@@ -45,6 +48,7 @@ import com.dx.anonymousmessenger.ui.view.tips.TipsActivity;
 import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,7 +178,21 @@ public class AppFragment extends Fragment {
         ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).getMenu().clear();
         ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).inflateMenu(R.menu.app_menu2);
 
-//        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(new byte[5],0,0)));//todo icon here is the profile picture
+//        new Thread(() -> {
+//            try{
+//                byte[] image = FileHelper.getFile(((DxApplication) requireActivity().getApplication()).getAccount().getProfileImagePath(), ((DxApplication) requireActivity().getApplication()));
+//                if (image == null) {
+//                    return;
+//                }
+//                RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
+//                drawable.setCircular(true);
+//                new Handler(Looper.getMainLooper()).post(()->{
+//                    ((MaterialToolbar) requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
+//                });
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//        }).start();
 
         ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
             if(item.getItemId()==R.id.action_my_profile){
@@ -311,16 +329,23 @@ public class AppFragment extends Fragment {
         torOutput = rootView.findViewById(R.id.status_text);
         noContacts = rootView.findViewById(R.id.no_contacts);
         recyclerView = rootView.findViewById(R.id.recycler);
-        layoutManager = new LinearLayoutManager(getContext());
+        // edit this line to reverse/unreverse layout
+        layoutManager = new LinearLayoutManager(getContext(),RecyclerView.VERTICAL,false);
         recyclerView.setLayoutManager(layoutManager);
         lst = new ArrayList<>();
         mAdapter = new ContactListAdapter((DxApplication) requireActivity().getApplication(),lst,this);
         recyclerView.setAdapter(mAdapter);
-        ((SwipeRefreshLayout)rootView.findViewById(R.id.refresh)).setOnRefreshListener(
-                () -> {
+        ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setProgressBackgroundColor(R.color.dx_night_940);
+        ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setColorSchemeResources(R.color.dx_white);
+        ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setDistanceToTriggerSync(20);
+        ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setOnRefreshListener(
+                (direction) -> {
                     checkConnectivity();
                     updateUi();
-                    ((SwipeRefreshLayout)rootView.findViewById(R.id.refresh)).setRefreshing(false);
+                    ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setRefreshing(true);
+                    new Handler().postDelayed(() -> {
+                        ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setRefreshing(false);
+                    },500);
                 }
         );
 
@@ -413,6 +438,19 @@ public class AppFragment extends Fragment {
                 return;
             }
             try{
+                try{
+                    byte[] image = FileHelper.getFile(((DxApplication) requireActivity().getApplication()).getAccount().getProfileImagePath(), ((DxApplication) requireActivity().getApplication()));
+                    if (image == null) {
+                        return;
+                    }
+                    RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
+                    drawable.setCircular(true);
+                    new Handler(Looper.getMainLooper()).post(()->{
+                        ((MaterialToolbar) requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
+                    });
+                }catch (Exception e){
+//                    e.printStackTrace();
+                }
                 lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
                 if(lst==null){
                     return;
@@ -446,6 +484,19 @@ public class AppFragment extends Fragment {
                 return;
             }
             try{
+                try{
+                    byte[] image = FileHelper.getFile(((DxApplication) requireActivity().getApplication()).getAccount().getProfileImagePath(), ((DxApplication) requireActivity().getApplication()));
+                    if (image == null) {
+                        return;
+                    }
+                    RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
+                    drawable.setCircular(true);
+                    new Handler(Looper.getMainLooper()).post(()->{
+                        ((MaterialToolbar) requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 lst = tmp;
                 mainThread.post(()->{
                     if(lst.isEmpty()){

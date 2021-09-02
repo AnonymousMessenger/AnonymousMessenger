@@ -30,7 +30,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <com.alexvasilkov.gestures.commons.circle.CircleImageView
             android:id="@+id/img_profile"
             android:layout_width="100dp"
             android:layout_height="100dp"

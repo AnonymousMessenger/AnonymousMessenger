@@ -75,7 +75,7 @@
                 app:layout_constraintStart_toEndOf="@+id/image_message_profile"
                 app:layout_constraintTop_toBottomOf="@+id/quote_text" />
 
-            <ImageView
+            <com.alexvasilkov.gestures.commons.circle.CircleImageView
                 android:id="@+id/image_message_profile"
                 android:layout_width="28dp"
                 android:layout_height="28dp"

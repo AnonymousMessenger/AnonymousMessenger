@@ -10,10 +10,24 @@ public class DxAccount {
     private String address;
     private String nickname;
     private byte[] password;
+    private String profileImagePath = "";
 
-    public static final String CREATE_ACCOUNT_TABLE_SQL = "CREATE TABLE IF NOT EXISTS account(nickname,password)";
-    public static final String INSERT_ACCOUNT_SQL = "INSERT INTO account(nickname,password) values(?,?)";
+    public static final String CREATE_ACCOUNT_TABLE_SQL = "CREATE TABLE IF NOT EXISTS account(nickname,password,profile_image_path)";
+    public static final String INSERT_ACCOUNT_SQL = "INSERT INTO account(nickname,password,profile_image_path) values(?,?,?)";
     public static final String DELETE_ACCOUNT_SQL = "DELETE FROM account";
+
+    public String getProfileImagePath() {
+        return profileImagePath;
+    }
+
+    public void setProfileImagePath(String profileImagePath) {
+        this.profileImagePath = profileImagePath;
+    }
+
+    public void changeProfileImage(String profileImagePath, DxApplication app){
+        setProfileImagePath(profileImagePath);
+        saveAccount(this,app);
+    }
 
     public byte[] getPassword() {
         return password;
@@ -53,17 +67,23 @@ public class DxAccount {
     public DxAccount(){}
 
     public Object[] getSqlInsertValues(){
-        return new Object[]{nickname,""};
+        return new Object[]{nickname,"",profileImagePath};
     }
 
     public static void saveAccount(DxAccount account, DxApplication app) {
         Log.d("Account Saver","Saving Account");
-        SQLiteDatabase database = app.getDb(account.getPassword());
-//        SQLiteDatabase database = app.getDb();
+        SQLiteDatabase database;
+        if(app.getDbOrNull() == null){
+            database = app.getDb(account.getPassword());
+        }else{
+            database = app.getDb();
+        }
         try{
+            database.beginTransaction();
             database.execSQL(DxAccount.CREATE_ACCOUNT_TABLE_SQL);
             database.execSQL(DxAccount.DELETE_ACCOUNT_SQL);
             database.execSQL(DxAccount.INSERT_ACCOUNT_SQL,account.getSqlInsertValues());
+            database.endTransaction();
         }catch (Exception e){
             e.printStackTrace();
         }
