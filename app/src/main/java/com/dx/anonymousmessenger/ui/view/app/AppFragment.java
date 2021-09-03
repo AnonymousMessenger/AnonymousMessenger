@@ -404,32 +404,33 @@ public class AppFragment extends Fragment {
     }
 
     public void updateUi(){
-        new Thread(()->{
-            if(getActivity()==null || mainThread==null){
-                return;
-            }
-            try{
-                lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
-                if(lst==null){
-                    return;
-                }
-                mainThread.post(()->{
-                    try{
-                        if(lst.isEmpty()){
-                            noContacts.setVisibility(View.VISIBLE);
-                        }else{
-                            noContacts.setVisibility(View.GONE);
-                        }
-//                        mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
-                        mAdapter.mData = lst;
-//                        recyclerView.setAdapter(mAdapter);
-                        mAdapter.notifyDataSetChanged();
-                        recyclerView.scheduleLayoutAnimation();
-                        ((DxApplication)getActivity().getApplication()).clearMessageNotification();
-                    } catch (Exception ignored) {}
-                });
-            }catch (Exception ignored){}
-        }).start();
+//        new Thread(()->{
+//            if(getActivity()==null || mainThread==null){
+//                return;
+//            }
+//            try{
+//                lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
+//                if(lst==null){
+//                    return;
+//                }
+//                mainThread.post(()->{
+//                    try{
+//                        if(lst.isEmpty()){
+//                            noContacts.setVisibility(View.VISIBLE);
+//                        }else{
+//                            noContacts.setVisibility(View.GONE);
+//                        }
+////                        mAdapter = new MyRecyclerViewAdapter((DxApplication) getActivity().getApplication(),lst,this);
+//                        mAdapter.mData = lst;
+////                        recyclerView.setAdapter(mAdapter);
+//                        mAdapter.notifyDataSetChanged();
+//                        recyclerView.scheduleLayoutAnimation();
+//                        ((DxApplication)getActivity().getApplication()).clearMessageNotification();
+//                    } catch (Exception ignored) {}
+//                });
+//            }catch (Exception ignored){}
+//        }).start();
+        updateUi(true);
     }
 
     public void updateUi(boolean animate){

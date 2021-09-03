@@ -49,8 +49,15 @@ public class Utils {
                 }
                 //compare all fields in string[]
                 for(int j=0;j<one.get(i).length;j++){
-                    if(!one.get(i)[j].equals(two.get(i)[j])){
+                    if(one.get(i)[j]==null || two.get(i)[j]==null){
+                        if(one.get(i)[j]==null && two.get(i)[j]==null){
+                            continue;
+                        }
                         return false;
+                    }else{
+                        if(!one.get(i)[j].equals(two.get(i)[j])){
+                            return false;
+                        }
                     }
                 }
             }catch (Exception e){

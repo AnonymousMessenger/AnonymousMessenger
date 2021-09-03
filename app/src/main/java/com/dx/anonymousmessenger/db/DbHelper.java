@@ -32,7 +32,6 @@ public class DbHelper {
      */
 
     private static final String CONTACT_SQL_INSERT = "INSERT INTO contact(nickname,address) VALUES(?,?)";
-    //add our profile pic path here to differentiate between sent prof pic or not
     private static final String CONTACT_COLUMNS = "(nickname,address,unread,profile_image_hash,profile_image_path,sent_profile_image_path)";
     private static final String CONTACT_SQL_UPDATE = "UPDATE contact SET nickname=? WHERE address=?";
     private static final String CONTACT_SQL_UPDATE_PROFILE_IMAGE_HASH = "UPDATE contact SET profile_image_hash=? WHERE address=?";
@@ -128,10 +127,10 @@ public class DbHelper {
                         msg = message.getMessage();
                     }
 
-                    contacts.add(new String[]{cr.getString(0), address, cr.getInt(2) > 0 ? "unread" : "read",msg,message.getTo(), String.valueOf(message.getCreatedAt()),message.isReceived()?"true":"false"});
+                    contacts.add(new String[]{cr.getString(0), address, cr.getInt(2) > 0 ? "unread" : "read",msg,message.getTo(), String.valueOf(message.getCreatedAt()),message.isReceived()?"true":"false", cr.getString(4)});
                 }else{
                     cr2.close();
-                    contacts.add(new String[]{cr.getString(0), address, cr.getInt(2) > 0 ? "unread" : "read","","","",""});
+                    contacts.add(new String[]{cr.getString(0), address, cr.getInt(2) > 0 ? "unread" : "read","","","","", cr.getString(4)});
                 }
             } while (cr.moveToNext());
         }

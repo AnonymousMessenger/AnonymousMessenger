@@ -5,7 +5,9 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alexvasilkov.gestures.commons.circle.CircleImageView;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
@@ -105,16 +108,18 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             v.getContext().startActivity(intent);
         });
         switch (holder.getItemViewType()) {
-            case VIEW_TYPE_READ://String msg, String send_to, long createdAt, boolean received
+            case VIEW_TYPE_READ:
+                //String msg, String send_to, long createdAt, boolean received, String path
                 ((ContactListAdapter.ReadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],
                         contact[3],
                         contact[4],
                         createdAt,
                         contact[6].equals("true"),
-                        contact[1]);
+                        contact[1],
+                        contact[7]);
                 break;
             case VIEW_TYPE_UNREAD:
-                ((ContactListAdapter.UnreadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"),contact[1]);
+                ((ContactListAdapter.UnreadContactHolder) holder).bind(contact[0].equals("")?contact[1]:contact[0],contact[3],contact[4],createdAt,contact[6].equals("true"),contact[1],contact[7]);
                 break;
         }
     }
@@ -271,7 +276,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private class ReadContactHolder extends ViewHolder {
         TextView contactName,msgText,timeText;
-        ImageView imageView,seen,contactOnline,profileImage;
+        ImageView imageView,seen,contactOnline;
+        CircleImageView profileImage;
 
         ReadContactHolder(View itemView) {
             super(itemView);
@@ -284,7 +290,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             profileImage = itemView.findViewById(R.id.img_contact_profile_image);
         }
 
-        void bind(String title, String msg, String send_to, long createdAt, boolean received, String address) {
+        void bind(String title, String msg, String send_to, long createdAt, boolean received, String address, String imagePath) {
             contactName.setText(title);
             contactName.setTypeface(null, Typeface.NORMAL);
             imageView.setVisibility(View.INVISIBLE);
@@ -297,11 +303,10 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 contactOnline.setVisibility(View.GONE);
             }
             // todo: prof pic on click
-            String profImagePath = DbHelper.getContactProfileImagePath(address,app);
-            if(profImagePath!=null && !profImagePath.equals("")){
+            if(imagePath!=null && !imagePath.equals("")){
                 new Thread(()->{
                     try{
-                        byte[] image = FileHelper.getFile(profImagePath, app);
+                        byte[] image = FileHelper.getFile(imagePath, app);
 
                         if (image == null) {
                             return;
@@ -311,7 +316,9 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             return;
                         }
                         new Handler(Looper.getMainLooper()).post(()->{
-                            profileImage.setImageBitmap(bitmap);
+                            if(profileImage!=null){
+                                profileImage.setImageBitmap(bitmap);
+                            }
                         });
                     }catch (Exception ignored){
 //                    e.printStackTrace();
@@ -319,8 +326,22 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }).start();
             }
             else{
-                profileImage.setBackground(AppCompatResources.getDrawable(app,R.drawable.circle));
-                profileImage.setImageBitmap(null);
+                Drawable drawable = AppCompatResources.getDrawable(app,R.drawable.circle);
+                int width = 0;
+                int height = 0;
+                if (drawable != null) {
+                    width = drawable.getIntrinsicWidth();
+                    width = width > 0 ? width : 1;
+                    height = drawable.getIntrinsicHeight();
+                    height = height > 0 ? height : 1;
+                    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bitmap);
+                    drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                    drawable.draw(canvas);
+                    //profileImage.setBackground(AppCompatResources.getDrawable(app,R.drawable.circle));
+                    profileImage.setImageBitmap(bitmap);
+                    //profileImage.setImageBitmap(BitmapFactory.decodeResource(app.getResources(),R.drawable.circle));
+                }
             }
         }
     }
@@ -331,9 +352,9 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             super(itemView);
         }
 
-        void bind(String title, String msg, String send_to, long createdAt, boolean received, String address) {
+        void bind(String title, String msg, String send_to, long createdAt, boolean received, String address, String imagePath) {
 //            imageView.setVisibility(View.VISIBLE);
-            super.bind(title,msg,send_to,createdAt,received,address);
+            super.bind(title,msg,send_to,createdAt,received,address,imagePath);
 //            itemView.setBackground(ContextCompat.getDrawable(app,R.drawable.rounded_rectangle_steel));
 //            itemView.setPadding(15,0,12,2);
             contactName.setTypeface(Typeface.DEFAULT_BOLD);
