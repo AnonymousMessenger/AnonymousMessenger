@@ -304,6 +304,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             // todo: prof pic on click
             if(imagePath!=null && !imagePath.equals("")){
+                super.setIsRecyclable(false);
                 new Thread(()->{
                     try{
                         byte[] image = FileHelper.getFile(imagePath, app);
@@ -319,8 +320,10 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             if(profileImage!=null){
                                 profileImage.setImageBitmap(bitmap);
                             }
+                            super.setIsRecyclable(true);
                         });
                     }catch (Exception ignored){
+                        super.setIsRecyclable(true);
 //                    e.printStackTrace();
                     }
                 }).start();
