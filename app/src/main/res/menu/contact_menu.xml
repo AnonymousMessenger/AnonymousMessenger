@@ -6,6 +6,6 @@
         android:title="@string/profile_contact" />
     <item
         android:id="@+id/delete_contact"
-        android:icon="@android:drawable/ic_delete"
+        android:icon="@android:drawable/ic_menu_delete"
         android:title="@string/delete_contact" />
 </menu>

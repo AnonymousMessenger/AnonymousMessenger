@@ -3,6 +3,7 @@ package com.dx.anonymousmessenger.ui.view.single_activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -64,14 +65,32 @@ public class ContactProfileActivity extends DxActivity {
                 }catch (Exception ignored){}
             });
             try{
-                byte[] image = FileHelper.getFile(DbHelper.getContactProfileImagePath(fullAddress,(DxApplication)getApplication()), (DxApplication)getApplication());
-
+                String path = DbHelper.getContactProfileImagePath(fullAddress,(DxApplication)getApplication());
+                if (path == null) {
+                    throw new Resources.NotFoundException("");
+                }
+                if(path.equals("")){
+                    throw new Resources.NotFoundException("");
+                }
+                byte[] image = FileHelper.getFile(path, (DxApplication)getApplication());
                 if (image == null) {
-                    return;
+                    throw new Resources.NotFoundException("");
                 }
                 Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
                 new Handler(Looper.getMainLooper()).post(()->{
-                    profileImage.setImageBitmap(bitmap);
+                    if(profileImage!=null){
+                        profileImage.setImageBitmap(bitmap);
+                        profileImage.setOnClickListener((v) -> {
+                            Intent intent = new Intent(this, PictureViewerActivity.class);
+                            intent.putExtra("address",getIntent().getStringExtra("address"));
+                            intent.putExtra("nickname",nickname1);
+                            intent.putExtra("time",0L);
+                            intent.putExtra("appData",true);
+                            intent.putExtra("path",path);
+                            intent.putExtra("message","");
+                            v.getContext().startActivity(intent);
+                        });
+                    }
                 });
             }catch (Exception ignored){}
         }).start();

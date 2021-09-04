@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -35,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.account.DxAccount;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.tor.TorClient;
@@ -382,12 +384,13 @@ public class AppFragment extends Fragment {
                     Thread.sleep(5000);
                     if(getActivity()==null) break;
                     List<String[]> tmp = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
-                    if(tmp==null || lst==null)break;
+                    if(tmp==null )break;
                     if(!Utils.arrayListEquals(lst,tmp)){
-                        updateUi(tmp);
+                        updateUi(false,tmp);
 //                        updateUi();
                     }
-                }catch (Exception ignored){break;}
+                }catch (Exception ignored){
+                    break;}
             }
         });
         messageChecker.start();
@@ -434,25 +437,41 @@ public class AppFragment extends Fragment {
     }
 
     public void updateUi(boolean animate){
+        updateUi(animate,null);
+    }
+
+    public void updateUi(boolean animate, List<String[]> tmp){
         new Thread(()->{
             if(getActivity()==null || mainThread==null){
                 return;
             }
             try{
                 try{
+                    DxAccount account = ((DxApplication) requireActivity().getApplication()).getAccount();
+                    if(account==null){
+                        throw new Resources.NotFoundException("");
+                    }
+                    if(account.getProfileImagePath()==null){
+                        throw new Resources.NotFoundException("");
+                    }
+                    if(account.getProfileImagePath().equals("")){
+                        throw new Resources.NotFoundException("");
+                    }
                     byte[] image = FileHelper.getFile(((DxApplication) requireActivity().getApplication()).getAccount().getProfileImagePath(), ((DxApplication) requireActivity().getApplication()));
                     if (image == null) {
-                        return;
+                        throw new Resources.NotFoundException("");
                     }
                     RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
                     drawable.setCircular(true);
                     new Handler(Looper.getMainLooper()).post(()->{
                         ((MaterialToolbar) requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
                     });
-                }catch (Exception e){
-//                    e.printStackTrace();
+                }catch (Exception ignored){}
+                if(tmp!=null){
+                    lst = tmp;
+                }else{
+                    lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
                 }
-                lst = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
                 if(lst==null){
                     return;
                 }
@@ -476,43 +495,43 @@ public class AppFragment extends Fragment {
         }).start();
     }
 
-    public void updateUi(List<String[]> tmp){
-        if(tmp==null){
-            return;
-        }
-        new Thread(()->{
-            if(getActivity()==null || mainThread==null){
-                return;
-            }
-            try{
-                try{
-                    byte[] image = FileHelper.getFile(((DxApplication) requireActivity().getApplication()).getAccount().getProfileImagePath(), ((DxApplication) requireActivity().getApplication()));
-                    if (image == null) {
-                        return;
-                    }
-                    RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
-                    drawable.setCircular(true);
-                    new Handler(Looper.getMainLooper()).post(()->{
-                        ((MaterialToolbar) requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
-                    });
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                lst = tmp;
-                mainThread.post(()->{
-                    if(lst.isEmpty()){
-                        noContacts.setVisibility(View.VISIBLE);
-                    }else{
-                        noContacts.setVisibility(View.GONE);
-                    }
-                    mAdapter = new ContactListAdapter((DxApplication) getActivity().getApplication(),lst,this);
-                    recyclerView.setAdapter(mAdapter);
-                    mAdapter.notifyDataSetChanged();
-//                    recyclerView.scheduleLayoutAnimation();
-                });
-            }catch (Exception ignored){}
-        }).start();
-    }
+//    public void updateUi(List<String[]> tmp){
+//        if(tmp==null){
+//            return;
+//        }
+//        new Thread(()->{
+//            if(getActivity()==null || mainThread==null){
+//                return;
+//            }
+//            try{
+//                try{
+//                    byte[] image = FileHelper.getFile(((DxApplication) requireActivity().getApplication()).getAccount().getProfileImagePath(), ((DxApplication) requireActivity().getApplication()));
+//                    if (image == null) {
+//                        return;
+//                    }
+//                    RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
+//                    drawable.setCircular(true);
+//                    new Handler(Looper.getMainLooper()).post(()->{
+//                        ((MaterialToolbar) requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
+//                    });
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//                lst = tmp;
+//                mainThread.post(()->{
+//                    if(lst.isEmpty()){
+//                        noContacts.setVisibility(View.VISIBLE);
+//                    }else{
+//                        noContacts.setVisibility(View.GONE);
+//                    }
+//                    mAdapter = new ContactListAdapter((DxApplication) getActivity().getApplication(),lst,this);
+//                    recyclerView.setAdapter(mAdapter);
+//                    mAdapter.notifyDataSetChanged();
+////                    recyclerView.scheduleLayoutAnimation();
+//                });
+//            }catch (Exception ignored){}
+//        }).start();
+//    }
 
     public boolean isOnline() {
         if(getActivity() !=null) {

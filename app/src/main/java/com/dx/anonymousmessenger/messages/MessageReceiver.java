@@ -170,6 +170,11 @@ public class MessageReceiver {
             DbHelper.setContactNickname(um.getSender(), um.getAddress(), app);
 
             if(isProfileImage){
+                //delete old prof pic if it exists
+                String oldPath = DbHelper.getContactProfileImagePath(um.getAddress(),app);
+                if(oldPath!=null && !oldPath.equals("")){
+                    FileHelper.deleteFile(oldPath,app);
+                }
                 //save path in contact sql
                 DbHelper.setContactProfileImagePath(um.getPath(),um.getAddress(),app);
             }else{

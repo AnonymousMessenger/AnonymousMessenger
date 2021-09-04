@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
@@ -68,12 +69,29 @@ public class MyProfileActivity extends DxActivity {
         ImageView profileImage = findViewById(R.id.img_profile);
         new Thread(() -> {
             try{
-                byte[] image = FileHelper.getFile(((DxApplication)getApplication()).getAccount().getProfileImagePath(),((DxApplication)getApplication()));
+                String path = ((DxApplication)getApplication()).getAccount().getProfileImagePath();
+                if(path==null){
+                    throw new Resources.NotFoundException("");
+                }
+                if(path.equals("")){
+                    throw new Resources.NotFoundException("");
+                }
+                byte[] image = FileHelper.getFile(path,((DxApplication)getApplication()));
                 if(image==null){
                     return;
                 }
                 new Handler(getMainLooper()).post(() -> {
                     profileImage.setImageBitmap(BitmapFactory.decodeByteArray(image,0,image.length));
+                    profileImage.setOnClickListener((v) -> {
+                        Intent intent = new Intent(this, PictureViewerActivity.class);
+                        intent.putExtra("address",getIntent().getStringExtra("address"));
+                        intent.putExtra("nickname","me");
+                        intent.putExtra("time",0L);
+                        intent.putExtra("appData",true);
+                        intent.putExtra("path",path);
+                        intent.putExtra("message","");
+                        v.getContext().startActivity(intent);
+                    });
                 });
             }catch (Exception ignored){}
         }).start();

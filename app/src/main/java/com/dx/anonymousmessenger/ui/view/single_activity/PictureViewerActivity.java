@@ -25,7 +25,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.FloatRange;
 import androidx.core.content.ContextCompat;
@@ -42,6 +41,7 @@ import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.ui.custom.FlickDismissLayout;
 import com.dx.anonymousmessenger.ui.custom.FlickGestureListener;
+import com.dx.anonymousmessenger.ui.custom.GestureTextView;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -145,20 +145,17 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                     imageView.getController().getStateController();
                     imageView.getController().getSettings().setRotationEnabled(true);
                     imageView.getController().getSettings().setRestrictRotation(true);
+                    imageView.getController().getSettings().setMaxZoom(3f)
+                    .setDoubleTapZoom(2f);
                     try{
                         imageView.setImageBitmap(finalImage);
                     }catch (Exception ignored) {}
-                    TextView textCaption = findViewById(R.id.txt_caption_view);
+                    GestureTextView textCaption = findViewById(R.id.txt_caption_view);
+                    textCaption.setOnClickListener(v -> {
+                        toggleUiVisibility(textCaption);
+                    });
                     imageView.setOnClickListener(v -> {
-                        if(findViewById(R.id.layout_controls).getVisibility()==View.VISIBLE){
-                            findViewById(R.id.layout_controls).setVisibility(View.GONE);
-                            textCaption.setVisibility(View.GONE);
-                        }else{
-                            findViewById(R.id.layout_controls).setVisibility(View.VISIBLE);
-                            if(!textCaption.getText().toString().equals("")){
-                                textCaption.setVisibility(View.VISIBLE);
-                            }
-                        }
+                        toggleUiVisibility(textCaption);
                     });
                     findViewById(R.id.btn_save).setOnClickListener(v ->{
                         saveWithAlert();
@@ -181,7 +178,16 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                 Bitmap image;
                 try{
                     InputStream is = FileHelper.getInputStreamFromUri(Uri.parse(getIntent().getStringExtra("uri")),this);
-                    image = Utils.rotateBitmap(BitmapFactory.decodeStream(is), is);
+
+                    image = BitmapFactory.decodeStream(is);
+                    if(image.getHeight()>500 && image.getWidth()>500){
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inSampleSize = 4;
+                        image = null;
+                        is = FileHelper.getInputStreamFromUri(Uri.parse(getIntent().getStringExtra("uri")),this);
+                        image = BitmapFactory.decodeStream(is,null,options);
+                    }
+                    image = Utils.rotateBitmap(image, is);
                 }catch (Exception e){
                     e.printStackTrace();
                     return;
@@ -189,15 +195,17 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                 if(image==null){
                     return;
                 }
+                Bitmap finalImage = image;
+                image = null;
                 new Handler(Looper.getMainLooper()).post(()->{
-                    imageView.getController().getSettings().setZoomEnabled(false);
-                    imageView.getController().getSettings().setDoubleTapEnabled(false);
+//                    imageView.getController().getSettings().setZoomEnabled(false);
+//                    imageView.getController().getSettings().setDoubleTapEnabled(false);
                     imageView.getController().getSettings()
                             .setFitMethod(Settings.Fit.OUTSIDE)
                             .setFillViewport(true)
-                            .setMovementArea(1000, 1000)
+                            .setMovementArea(500, 500)
                             .setRotationEnabled(true);
-                    imageView.setImageBitmap(image);
+                    imageView.setImageBitmap(finalImage);
                     CropAreaView cropView = findViewById(R.id.image_crop_area);
                     cropView.setVisibility(View.VISIBLE);
                     cropView.setImageView(imageView);
@@ -213,7 +221,7 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                                 Bitmap cropped = imageView.crop();
                                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                                 if (cropped != null) {
-                                    cropped.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                                    cropped.compress(Bitmap.CompressFormat.PNG, 75, stream);
                                     cropped.recycle();
                                 }
                                 String path = null;
@@ -320,6 +328,18 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                 }).start();
                 finish();
             });
+        }
+    }
+
+    private void toggleUiVisibility(GestureTextView textCaption) {
+        if(findViewById(R.id.layout_controls).getVisibility()==View.VISIBLE){
+            findViewById(R.id.layout_controls).setVisibility(View.GONE);
+            textCaption.setVisibility(View.GONE);
+        }else{
+            findViewById(R.id.layout_controls).setVisibility(View.VISIBLE);
+            if(!textCaption.getText().toString().equals("")){
+                textCaption.setVisibility(View.VISIBLE);
+            }
         }
     }
 

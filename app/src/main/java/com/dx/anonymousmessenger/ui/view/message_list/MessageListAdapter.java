@@ -8,6 +8,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -876,19 +877,31 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if(nameText!=null){
                 nameText.setText(message.getSender());
                 if(profileImage!=null){
+                    setIsRecyclable(false);
                     new Thread(()->{
                         try{
-                            byte[] image = FileHelper.getFile(DbHelper.getContactProfileImagePath(message.getAddress(),app), app);
-
-                            if (image == null) {
-                                return;
+                            String path = DbHelper.getContactProfileImagePath(message.getAddress(),app);
+                            if(path == null){
+                                throw new Resources.NotFoundException("");
                             }
-                            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                            if(path.equals("")){
+                                throw new Resources.NotFoundException("");
+                            }
+                            byte[] image = FileHelper.getFile(path, app);
+                            if (image == null) {
+                                throw new Resources.NotFoundException("");
+                            }
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inSampleSize = 8;
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length, options);
                             new Handler(Looper.getMainLooper()).post(()->{
-                                profileImage.setImageBitmap(bitmap);
+                                if(profileImage!=null){
+                                    profileImage.setImageBitmap(bitmap);
+                                }
+                                setIsRecyclable(true);
                             });
                         }catch (Exception ignored){
-//                    e.printStackTrace();
+                            setIsRecyclable(true);
                         }
                     }).start();
                 }

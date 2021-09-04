@@ -160,7 +160,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.mClickListener = itemClickListener;
     }
 
-    // parent activity will implement this method to respond to click events
+    // the activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
@@ -312,7 +312,9 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         if (image == null) {
                             return;
                         }
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inSampleSize = 4;
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length,options);
                         if(bitmap == null){
                             return;
                         }

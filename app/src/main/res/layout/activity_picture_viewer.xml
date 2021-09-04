@@ -39,7 +39,7 @@
             android:indeterminateTint="#673AB7"
             android:progressTint="#673AB7" />
 
-        <TextView
+        <com.dx.anonymousmessenger.ui.custom.GestureTextView
             android:id="@+id/txt_caption_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +51,6 @@
             android:elevation="5dp"
             android:fontFamily="monospace"
             android:gravity="center"
-            android:maxLines="4"
             android:padding="4dp"
             android:textSize="24sp"
             android:visibility="gone"

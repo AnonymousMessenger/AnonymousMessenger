@@ -309,6 +309,7 @@ public class ServerSocketViaTor {
 
         private void handleFile(DataOutputStream outputStream, DataInputStream in, Socket sock, AtomicInteger sockets){
             String address = null;
+            String eFilename = "";
             try {
                 if(!app.isReceivingFilesAllowed()){
                     //no bueno
@@ -366,7 +367,7 @@ public class ServerSocketViaTor {
 
                 byte[] sha1b = app.getSha256();
                 Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-                String eFilename = Hex.toStringCondensed(FileHelper.encrypt(sha1b,qum.getFilename().getBytes()));
+                eFilename = Hex.toStringCondensed(FileHelper.encrypt(sha1b,qum.getFilename().getBytes()));
                 FileOutputStream fos = app.openFileOutput(eFilename,Context.MODE_PRIVATE);
 
                 //need to set the new path
@@ -443,6 +444,7 @@ public class ServerSocketViaTor {
             } catch (Exception e) {
                 Log.e("RECEIVING FILE","ERROR BELOW");
                 e.printStackTrace();
+                FileHelper.deleteFile(eFilename,app);
                 DbHelper.saveLog("ERROR WHILE RECEIVING FILE FROM: "+address+" "+ e.getMessage(),new Date().getTime(),"NOTICE",app);
             }
         }
@@ -473,7 +475,16 @@ public class ServerSocketViaTor {
                 outputStream.writeUTF("ok");
                 outputStream.flush();
                 int fileSize = in.readInt();
+                //maximum profile image size 2MB
                 //maximum file size 30MB
+                if(isProfileImage){
+                    if(fileSize>(2*1024*1024)){
+                    //no bueno
+                    refuseSocket(outputStream,sock,sockets);
+                    DbHelper.saveLog("REFUSED OVERSIZED PROFILE IMAGE FROM: "+address+" SIZE: "+fileSize+" MAX: "+(30*1024*1024),new Date().getTime(),"NOTICE",app);
+                    return;
+                    }
+                }
                 if(fileSize>(30*1024*1024)){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
