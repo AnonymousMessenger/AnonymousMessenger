@@ -264,6 +264,17 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                 Bitmap image;
                 try{
                     image = Utils.rotateBitmap(BitmapFactory.decodeFile(getIntent().getStringExtra("path")),getIntent().getStringExtra("path"));
+                    Display display = getWindowManager().getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+                    int width = size.x;
+                    int height = size.y;
+
+                    if(image.getHeight()>height && image.getWidth()>width){
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inSampleSize = 2;
+                        image = Utils.rotateBitmap(BitmapFactory.decodeFile(getIntent().getStringExtra("path"),options),getIntent().getStringExtra("path"));
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                     return;
@@ -271,9 +282,10 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                 if(image==null){
                     return;
                 }
+                Bitmap finalImage = image;
                 new Handler(Looper.getMainLooper()).post(()->{
 //                img.getController().getSettings().setRotationEnabled(true);
-                    imageView.setImageBitmap(image);
+                    imageView.setImageBitmap(finalImage);
                 });
             }).start();
 
