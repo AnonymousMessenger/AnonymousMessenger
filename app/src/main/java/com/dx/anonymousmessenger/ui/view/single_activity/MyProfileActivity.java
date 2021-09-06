@@ -162,22 +162,21 @@ public class MyProfileActivity extends DxActivity {
                                 .setMessage(R.string.remove_profile_image_details)
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                                    try {
                                         //delete
                                         new Thread(()->{
-                                            // delete pic from db/file
-                                            String path = ((DxApplication)getApplication()).getAccount().getProfileImagePath();
-                                            if(path!=null && !path.equals("")){
-                                                FileHelper.deleteFile(path,((DxApplication)getApplication()));
-                                            }
-                                            ((DxApplication)getApplication()).getAccount().changeProfileImage("",((DxApplication)getApplication()));
-                                            new Handler(Looper.getMainLooper()).post(()->{
-                                                //remove pic from imageview
-                                                Snackbar.make(v, R.string.profile_image_removed, Snackbar.LENGTH_SHORT).show();
-                                            });
+                                            try{
+                                                // delete pic from db/file
+                                                String path = ((DxApplication)getApplication()).getAccount().getProfileImagePath();
+                                                if(path!=null && !path.equals("")){
+                                                    FileHelper.deleteFile(path,((DxApplication)getApplication()));
+                                                }
+                                                ((DxApplication)getApplication()).getAccount().changeProfileImage("",((DxApplication)getApplication()));
+                                                new Handler(Looper.getMainLooper()).post(()->{
+                                                    //remove pic from imageview
+                                                    Snackbar.make(v, R.string.profile_image_removed, Snackbar.LENGTH_SHORT).show();
+                                                });
+                                            }catch (Exception ignored){}
                                         }).start();
-                                    } catch (Exception ignored) {
-                                    }
                                 })
                                 .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
 
@@ -238,7 +237,7 @@ public class MyProfileActivity extends DxActivity {
         if (requestCode == STORAGE_CODE) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 //permission was just granted by the user
-
+                mGetContent.launch("image/*");
             }
         }
     }

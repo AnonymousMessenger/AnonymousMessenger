@@ -1,6 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.single_activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -22,6 +23,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -51,6 +54,14 @@ public class AddContactActivity extends DxActivity {
     TextInputEditText contact;
     final int QR_RESULT_CODE = 0;
     final int CAMERA_REQUEST_CODE = 1;
+
+    ActivityResultLauncher<Intent> mScanQrCode = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    finish();
+                }
+            });
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -110,11 +121,12 @@ public class AddContactActivity extends DxActivity {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 Intent intent = new Intent(this,SimpleScannerActivity.class);
                 intent.putExtra("SCAN_MODE", "ADD_CONTACT");
-                startActivityForResult(intent, QR_RESULT_CODE);
+                mScanQrCode.launch(intent);
             }else{
-                requestPermissions(
-                    new String[] { Manifest.permission.CAMERA },
-                    CAMERA_REQUEST_CODE);
+//                requestPermissions(
+//                    new String[] { Manifest.permission.CAMERA },
+//                    CAMERA_REQUEST_CODE);
+                getCameraPerms();
             }
         });
 
@@ -240,21 +252,21 @@ public class AddContactActivity extends DxActivity {
     }
 
     public void getCameraPerms(){
-        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
-                .setTitle(R.string.cam_perm_ask_title)
-                .setMessage(R.string.why_need_cam)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(R.string.ask_for_cam_btn, (dialog, which) -> requestPermissions(
-                        new String[] { Manifest.permission.CAMERA },
-                        CAMERA_REQUEST_CODE))
-                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-                });
-        } else {
+//        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+//            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
+//                .setTitle(R.string.cam_perm_ask_title)
+//                .setMessage(R.string.why_need_cam)
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .setPositiveButton(R.string.ask_for_cam_btn, (dialog, which) -> requestPermissions(
+//                        new String[] { Manifest.permission.CAMERA },
+//                        CAMERA_REQUEST_CODE))
+//                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+//                });
+//        } else {
             requestPermissions(
                 new String[] { Manifest.permission.CAMERA },
                 CAMERA_REQUEST_CODE);
-        }
+//        }
     }
 
     @Override
@@ -271,13 +283,19 @@ public class AddContactActivity extends DxActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_REQUEST_CODE) {
-            new AlertDialog.Builder(this, R.style.AppAlertDialog)
-                    .setTitle(R.string.denied_microphone)
-                    .setMessage(R.string.denied_microphone_help)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getCameraPerms())
-                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-                    });
+//            new AlertDialog.Builder(this, R.style.AppAlertDialog)
+//                    .setTitle(R.string.denied_microphone)
+//                    .setMessage(R.string.denied_microphone_help)
+//                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                    .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getCameraPerms())
+//                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+//                    });
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                //permission was just granted by the user
+                Intent intent = new Intent(this,SimpleScannerActivity.class);
+                intent.putExtra("SCAN_MODE", "ADD_CONTACT");
+                mScanQrCode.launch(intent);
+            }
         }
     }
 }

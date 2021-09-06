@@ -84,9 +84,9 @@ import static java.util.Objects.requireNonNull;
 
 public class MessageListActivity extends DxActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, ContactListAdapter.ItemClickListener, CallBack {
 
-    private static final int REQUEST_CODE = 1;
-    private static final int READ_STORAGE_REQUEST_CODE = 2;
-    public static final int REQUEST_PICK_FILE = 3;
+    private static final int READ_STORAGE_REQUEST_CODE = 1;
+    public static final int REQUEST_PICK_FILE = 2;
+    private static final int RECORD_AUDIO_REQUEST_CODE = 3;
     public TextView quoteTextTyping;
     public TextView quoteSenderTyping;
     private RecyclerView mMessageRecycler;
@@ -115,7 +115,6 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     private final ActivityResultLauncher<String> mGetContent = registerForActivityResult(new
                     ActivityResultContracts.GetContent(),
             uri -> {
-        // FIXME: this method is not called on android 6 instead system goes to home screen
                 new Thread(() -> {
                     try{
                         if(uri == null){
@@ -397,7 +396,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                         e.printStackTrace();
                     }
                 }else{
-                    requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
+                    requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },RECORD_AUDIO_REQUEST_CODE);
                 }
             }
             // user has lifted his/her thumb off the button
@@ -512,85 +511,12 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         });
         file.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_CODE);
+//                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_CODE);
+                getReadStoragePerms();
                 return;
             }
 
-            InputMethodManager imm = requireNonNull(
-                    ContextCompat.getSystemService(v.getContext(), InputMethodManager.class));
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
-            chatbox = findViewById(R.id.layout_chatbox);
-//            cl.setVisibility(View.GONE);
-
-            send.setVisibility(View.GONE);
-            audio.setVisibility(View.GONE);
-            file.setVisibility(View.GONE);
-            txt.setVisibility(View.GONE);
-            quoteTextTyping.setVisibility(View.GONE);
-            quoteSenderTyping.setVisibility(View.GONE);
-
-            Animation bottomUp = AnimationUtils.loadAnimation(this,
-                    R.anim.bottom_up);
-            chatbox.startAnimation(bottomUp);
-            chatbox.setVisibility(View.VISIBLE);
-
-//            mediaRecyclerView.startAnimation(bottomUp);
-            mediaRecyclerView.setVisibility(View.VISIBLE);
-
-//            mediaRecyclerView.setVisibility(View.VISIBLE);
-            picsHelp.setVisibility(View.VISIBLE);
-
-            new Thread(()->{
-                ArrayList<String> paths = new ArrayList<>();
-                ArrayList<String> types = new ArrayList<>();
-                //add file option in the beginning of the list
-                paths.add("0");
-                types.add("0");
-                // Get relevant columns for use later.
-                String[] projection = {
-                    MediaStore.Files.FileColumns.DATA,
-                    MediaStore.Files.FileColumns.MEDIA_TYPE,
-                    MediaStore.Files.FileColumns.MIME_TYPE,
-                    MediaStore.Files.FileColumns.SIZE
-                };
-
-                // Return only video and image metadata.
-                String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                                 + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-//                                 + " OR "
-//                                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-//                                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
-                Uri queryUri = MediaStore.Files.getContentUri("external");
-                Cursor cursor = this.getContentResolver().query(queryUri, projection, selection, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC");
-
-                try {
-                    if (cursor != null) {
-                        cursor.moveToFirst();
-                        do{
-                            try{
-                                String type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE));
-                                String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
-                                paths.add(path);
-                                types.add(type);
-                            }catch (Exception ignored){}
-                        }while(cursor.moveToNext());
-                        cursor.close();
-                    }
-                    // set up the RecyclerView
-                    new Handler(Looper.getMainLooper()).post(()->{
-                        LinearLayoutManager horizontalLayoutManager
-                                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-                        mediaRecyclerView.setLayoutManager(horizontalLayoutManager);
-                        MediaRecycleViewAdapter adapter = new MediaRecycleViewAdapter(this, paths, types);
-                        adapter.setClickListener(this::onItemClick);
-                        mediaRecyclerView.setAdapter(adapter);
-                    });
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }).start();
+            openGallery();
         });
 
 /*
@@ -609,6 +535,85 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
         //run db message checker to delete any old messages then tell us to update ui
 //        checkMessages();
+    }
+
+    private void openGallery() {
+//        View v = this.;
+        InputMethodManager imm = requireNonNull(
+                ContextCompat.getSystemService(this, InputMethodManager.class));
+        imm.hideSoftInputFromWindow(chatbox.getWindowToken(), 0);
+
+        chatbox = findViewById(R.id.layout_chatbox);
+//            cl.setVisibility(View.GONE);
+
+        send.setVisibility(View.GONE);
+        audio.setVisibility(View.GONE);
+        file.setVisibility(View.GONE);
+        txt.setVisibility(View.GONE);
+        quoteTextTyping.setVisibility(View.GONE);
+        quoteSenderTyping.setVisibility(View.GONE);
+
+        Animation bottomUp = AnimationUtils.loadAnimation(this,
+                R.anim.bottom_up);
+        chatbox.startAnimation(bottomUp);
+        chatbox.setVisibility(View.VISIBLE);
+
+//            mediaRecyclerView.startAnimation(bottomUp);
+        mediaRecyclerView.setVisibility(View.VISIBLE);
+
+//            mediaRecyclerView.setVisibility(View.VISIBLE);
+        picsHelp.setVisibility(View.VISIBLE);
+
+        new Thread(()->{
+            ArrayList<String> paths = new ArrayList<>();
+            ArrayList<String> types = new ArrayList<>();
+            //add file option in the beginning of the list
+            paths.add("0");
+            types.add("0");
+            // Get relevant columns for use later.
+            String[] projection = {
+                MediaStore.Files.FileColumns.DATA,
+                MediaStore.Files.FileColumns.MEDIA_TYPE,
+                MediaStore.Files.FileColumns.MIME_TYPE,
+                MediaStore.Files.FileColumns.SIZE
+            };
+
+            // Return only video and image metadata.
+            String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                             + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+//                                 + " OR "
+//                                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+//                                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+            Uri queryUri = MediaStore.Files.getContentUri("external");
+            Cursor cursor = this.getContentResolver().query(queryUri, projection, selection, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC");
+
+            try {
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    do{
+                        try{
+                            String type = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE));
+                            String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
+                            paths.add(path);
+                            types.add(type);
+                        }catch (Exception ignored){}
+                    }while(cursor.moveToNext());
+                    cursor.close();
+                }
+                // set up the RecyclerView
+                new Handler(Looper.getMainLooper()).post(()->{
+                    LinearLayoutManager horizontalLayoutManager
+                            = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+                    mediaRecyclerView.setLayoutManager(horizontalLayoutManager);
+                    MediaRecycleViewAdapter adapter = new MediaRecycleViewAdapter(this, paths, types);
+                    adapter.setClickListener(this::onItemClick);
+                    mediaRecyclerView.setAdapter(adapter);
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     //fires when clicking on media/file sending items
@@ -981,7 +986,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                         callIntent.putExtra("nickname",getIntent().getStringExtra("nickname"));
                         startActivity(callIntent);
                     }else{
-                        requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
+                        requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },RECORD_AUDIO_REQUEST_CODE);
                     }
                 }).start();
                 break;
@@ -1055,32 +1060,36 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CODE) {
-            new AlertDialog.Builder(this, R.style.AppAlertDialog)
-                    .setTitle(R.string.denied_microphone)
-                    .setMessage(R.string.denied_microphone_help)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getMicrophonePerms())
-                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-                    });
+        if (requestCode == READ_STORAGE_REQUEST_CODE) {
+//            new AlertDialog.Builder(this, R.style.AppAlertDialog)
+//                    .setTitle(R.string.denied_microphone)
+//                    .setMessage(R.string.denied_microphone_help)
+//                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                    .setPositiveButton(R.string.ask_me_again, (dialog, which) -> getMicrophonePerms())
+//                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+//                    });
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                //permission was just granted by the user
+                openGallery();
+            }
         }
     }
 
     public void getReadStoragePerms(){
-        if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
-                    .setTitle(R.string.read_storage_perm_ask_title)
-                    .setMessage(R.string.why_need_read_storage)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> requestPermissions(
-                            new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
-                            READ_STORAGE_REQUEST_CODE))
-                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-
-                    });
-        } else {
-            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_CODE);
-        }
+//        if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+//            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
+//                    .setTitle(R.string.read_storage_perm_ask_title)
+//                    .setMessage(R.string.why_need_read_storage)
+//                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                    .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> requestPermissions(
+//                            new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
+//                            READ_STORAGE_REQUEST_CODE))
+//                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+//
+//                    });
+//        } else {
+            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, READ_STORAGE_REQUEST_CODE);
+//        }
     }
 
     public void getMicrophonePerms(){
@@ -1091,13 +1100,13 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> requestPermissions(
                         new String[] { Manifest.permission.RECORD_AUDIO },
-                        REQUEST_CODE))
+                        RECORD_AUDIO_REQUEST_CODE))
                 .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
                 });
         } else {
             requestPermissions(
                 new String[] { Manifest.permission.RECORD_AUDIO },
-                REQUEST_CODE);
+                RECORD_AUDIO_REQUEST_CODE);
         }
     }
 

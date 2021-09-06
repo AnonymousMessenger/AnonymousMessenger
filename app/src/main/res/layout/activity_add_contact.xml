@@ -61,7 +61,7 @@
                     android:layout_height="64dp"
                     android:layout_margin="8dp"
                     android:animateLayoutChanges="true"
-                    android:background="@drawable/rounded_shape"
+                    android:background="@drawable/button_ripple"
                     android:gravity="center"
                     android:text="@string/scan" />
             </LinearLayout>
