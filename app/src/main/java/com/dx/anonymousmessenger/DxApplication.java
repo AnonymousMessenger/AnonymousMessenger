@@ -69,9 +69,9 @@ public class DxApplication extends Application {
     private CallController cc;
 
     private final List<QuotedUserMessage> messageQueue = new ArrayList<>();
-    private volatile boolean syncing;
+//    private volatile boolean syncing;
     private volatile String syncingAddress;
-    private volatile boolean pinging;
+//    private volatile boolean pinging;
     public List<String> onlineList = new ArrayList<>();
 
     private boolean sendingFile;
@@ -168,15 +168,15 @@ public class DxApplication extends Application {
     }
 
     public synchronized void queueAllUnsentMessages(){
-        if(pinging || syncing){
-            Log.d("GENERAL","still pinging or syncing!");
-            return;
-        }
+//        if(pinging /*|| syncing*/){
+//            Log.d("GENERAL","still pinging or syncing!");
+//            return;
+//        }
         try{
-            pinging = true;
+//            pinging = true;
             List<String[]> contactsList = DbHelper.getContactsList(this);
             if(contactsList==null || contactsList.size()==0){
-                pinging = false;
+//                pinging = false;
                 return;
             }
             for (String[] contact: contactsList){
@@ -196,22 +196,23 @@ public class DxApplication extends Application {
                     gcm_rec.putExtra("type","online_status");
                     LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
                 }
-                if(syncingAddress!=null && syncingAddress.equals(contact[1])){
-                    continue;
-                }
-                syncing = true;
-                syncingAddress = contact[1];
-                List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, contact[1]);
-                if(undeliveredMessageList.size()==0){
-                    continue;
-                }
-                addToMessagesQueue(undeliveredMessageList);
-                sendQueuedMessages();
+                queueUnsentMessages(contact[1]);
+//                if(syncingAddress!=null && syncingAddress.equals(contact[1])){
+//                    continue;
+//                }
+////                syncing = true;
+//                syncingAddress = contact[1];
+//                List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, contact[1]);
+//                if(undeliveredMessageList.size()==0){
+//                    continue;
+//                }
+//                addToMessagesQueue(undeliveredMessageList);
+//                sendQueuedMessages();
             }
-            syncing = false;
-            pinging = false;
+//            syncing = false;
+//            pinging = false;
             syncingAddress = null;
-        }catch (Exception ignored) {syncing = false; pinging = false; syncingAddress = null;}
+        }catch (Exception ignored) {/*syncing = false;*/ /*pinging = false; syncingAddress = null;*/}
     }
 
     public synchronized void queueUnsentMessages(String address){
@@ -219,13 +220,13 @@ public class DxApplication extends Application {
             return;
         }
         new Thread(()->{
-            while (syncing){
-                try{
-                    Thread.sleep(200);
-                }catch (Exception ignored) {}
-            }
+//            while (syncing){
+//                try{
+//                    Thread.sleep(200);
+//                }catch (Exception ignored) {}
+//            }
             try{
-                syncing = true;
+//                syncing = true;
                 syncingAddress = address;
                 //send profile image if not delivered from before
                 String path = getAccount().getProfileImagePath();
@@ -238,7 +239,8 @@ public class DxApplication extends Application {
                 }
                 List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
                 if(undeliveredMessageList.size()==0){
-                    syncing = false;
+//                    syncing = false;
+                    syncingAddress = null;
                     return;
                 }
 //                boolean b = TorClientSocks4.testAddress(this, address);
@@ -252,9 +254,9 @@ public class DxApplication extends Application {
 //                }
                 addToMessagesQueue(undeliveredMessageList);
                 sendQueuedMessages();
-                syncing = false;
+//                syncing = false;
                 syncingAddress = null;
-            }catch (Exception ignored) {syncing = false; syncingAddress = null;}
+            }catch (Exception ignored) {/*syncing = false;*/ syncingAddress = null;}
         }).start();
     }
 
