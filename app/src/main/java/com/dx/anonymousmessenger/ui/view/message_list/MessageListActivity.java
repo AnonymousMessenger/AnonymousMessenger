@@ -63,6 +63,7 @@ import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.app.ContactListAdapter;
 import com.dx.anonymousmessenger.ui.view.call.CallActivity;
+import com.dx.anonymousmessenger.ui.view.notepad.NotepadActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.ContactProfileActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.FileViewerActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.PictureViewerActivity;
@@ -174,10 +175,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 e.printStackTrace();
             }
         }).start();
-        ((MaterialToolbar)findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
-            onOptionsItemSelected(item);
-            return false;
-        });
+        ((MaterialToolbar)findViewById(R.id.toolbar)).setOnMenuItemClickListener(this::onOptionsItemSelected);
 
         nickname = getIntent().getStringExtra("nickname");
         quoteTextTyping = findViewById(R.id.quote_text_typing);
@@ -967,11 +965,17 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.action_contact_profile:
+            case R.id.action_notepad:
                 stopCheckingMessages();
-                Intent intent = new Intent(this, ContactProfileActivity.class);
+                Intent intent = new Intent(this, NotepadActivity.class);
                 intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                 startActivity(intent);
+                break;
+            case R.id.action_contact_profile:
+                stopCheckingMessages();
+                Intent intent2 = new Intent(this, ContactProfileActivity.class);
+                intent2.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                startActivity(intent2);
                 break;
             case R.id.action_call:
                 new Thread(()->{

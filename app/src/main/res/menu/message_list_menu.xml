@@ -14,6 +14,12 @@
         app:showAsAction="ifRoom"/>
 
     <item
+        android:id="@+id/action_notepad"
+        android:icon="@drawable/ic_baseline_menu_book_24"
+        android:title="@string/action_notepad"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_baseline_settings_24"
         android:title="@string/action_search"
