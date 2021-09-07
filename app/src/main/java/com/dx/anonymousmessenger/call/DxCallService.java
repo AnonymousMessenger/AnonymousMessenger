@@ -79,6 +79,9 @@ public class DxCallService extends Service {
         String partialAddress = intent.getStringExtra("address");
         final String address = DbHelper.getFullAddress(partialAddress,
                 (DxApplication) getApplication());
+        if(address==null){
+            return START_NOT_STICKY;
+        }
         String action = intent.getAction();
 
         //todo maybe put this line somewhere else or directly change text
