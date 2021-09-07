@@ -774,11 +774,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private class MediaMessageHolder extends MessageHolder {
         ImageView imageHolder;
         ImageView sent;
+        ProgressBar progress;
 
         MediaMessageHolder(View itemView){
             super(itemView);
             imageHolder = itemView.findViewById(R.id.img_holder);
             sent = itemView.findViewById(R.id.img_sent);
+            progress = itemView.findViewById(R.id.progress_image);
         }
 
         void bind(QuotedUserMessage message) {
@@ -800,7 +802,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     return;
                 }
                 BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 2;
+                options.inSampleSize = 4;
                 Bitmap bitmap = BitmapFactory.decodeByteArray(img_bin, 0, img_bin.length, options);
                 if(bitmap==null){
                     return;
@@ -809,8 +811,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     if(imageHolder==null){
                         return;
                     }
+                    progress.setVisibility(View.GONE);
                     imageHolder.setImageBitmap(bitmap);
-
                     imageHolder.setOnClickListener(v -> {
                         Intent intent = new Intent(app, PictureViewerActivity.class);
                         intent.putExtra("address",message.getAddress().substring(0,10));

@@ -1,12 +1,12 @@
 package com.dx.anonymousmessenger.ui.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
@@ -20,6 +20,7 @@ import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.ui.custom.ScreenFilterDialogFragment;
 import com.dx.anonymousmessenger.ui.custom.TapSafeFrameLayout;
 import com.dx.anonymousmessenger.ui.custom.TapSafeToolbar;
+import com.dx.anonymousmessenger.ui.view.single_activity.CrashActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -32,21 +33,33 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
+
         Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
             new Thread() {
                 @Override
                 public void run() {
                     Looper.prepare();
-                    Toast.makeText(getApplicationContext(),R.string.crash_message, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(),R.string.crash_message, Toast.LENGTH_LONG).show();
+                    final Intent intent = new Intent(getApplication(), CrashActivity.class);
+                    intent.putExtra("stack",paramThrowable.getStackTrace());
+                    intent.putExtra("message",paramThrowable.getMessage());
+//                    intent.putExtra("cause",paramThrowable.getCause());
+                    getApplication().startActivity(intent);
+//                    StringWriter sw = new StringWriter();
+//                    PrintWriter pw = new PrintWriter(sw);
+//                    throwable.printStackTrace(pw);
+//                    String stackTraceString = sw.toString();
                     Looper.loop();
                 }
             }.start();
             try
             {
-                Thread.sleep(4000); // Let the Toast display before app will get shutdown
+                Thread.sleep(750); // Let the Toast display before app will get shutdown
             }
             catch (InterruptedException ignored) {    }
-            System.exit(2);
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(10);
+//            System.exit(2);
         });
     }
 

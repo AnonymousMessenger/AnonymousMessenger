@@ -1,32 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="dx_lime_400">#59316B</color>
-
+    <color name="dx_accent">#130025</color>
+    <color name="dx_dark">#0D0014</color>
+    <color name="dx_background">#07000B</color>
     <color name="dx_night_950">#0e171f</color>
-    <color name="dx_night_940">#260037</color>
+    <color name="dx_night_940">#210030</color>
     <color name="dx_night_940_glass">#60260037</color>
-    <color name="dx_received">#310029</color>
+    <color name="dx_received">#2D0025</color>
     <color name="dx_night_700">#333A41</color>
-    <color name="dx_dark_purple">#19001C</color>
-    <color name="dx_darker_purple">#100012</color>
-    <color name="dx_dark_purple_old">#19001C</color>
     <color name="green_tor">#68B030</color>
     <color name="black_opacity_75">#C4000000</color>
     <color name="transparent">#00000000</color>
-
-    <color name="dx_brand_blue">@color/dx_night_700</color>
-    <color name="dx_brand_green">@color/dx_lime_400</color>
-
-    <color name="dx_accent">@color/dx_brand_blue</color>
+    <color name="dialog_background">@color/dx_night_940</color>
 
     <!-- text colors -->
 
-    <color name="dx_button_background_color">@color/dx_accent</color>
+    <color name="dx_button_background_color">@color/dx_night_700</color>
     <color name="dx_button_text">#ffffff</color>
     <color name="dx_white">#ffffff</color>
     <color name="red_500">#F44336</color>
-    <color name="startGradientColor">#310029</color>
-    <color name="endGradientColor">#260037</color>
+    <color name="startGradientColor">#130025</color>
+    <color name="endGradientColor">#0A0025</color>
     <color name="background_gradient_start">#000000</color>
     <color name="background_gradient_end">#DDDDDD</color>
     <color name="fastlane_background">#0096a6</color>

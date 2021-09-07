@@ -7,7 +7,7 @@
         android:endColor="#2E0027"
         android:angle="180"/>
     <!--    <solid-->
-    <!--        android:color="@color/dx_brand_green" >-->
+    <!--        android:color="@color/dx_night_940" >-->
     <!--    </solid>-->
     <corners
         android:radius="9dp"   >

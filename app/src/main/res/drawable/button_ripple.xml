@@ -7,7 +7,7 @@
 <!--                android:startColor="#1C0018"-->
 <!--                android:endColor="#17061E"-->
 <!--                android:angle="-90"/>-->
-<!--&lt;!&ndash;            <solid android:color="@color/dx_brand_green" />&ndash;&gt;-->
+<!--&lt;!&ndash;            <solid android:color="@color/dx_night_940" />&ndash;&gt;-->
 <!--            <corners android:radius="300dp" />-->
 <!--        </shape>-->
 <!--    </item>-->

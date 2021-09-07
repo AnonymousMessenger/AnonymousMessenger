@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -477,6 +478,10 @@ public class AppFragment extends Fragment {
                 }
                 mainThread.post(()->{
                     try{
+                        ProgressBar pb = requireActivity().findViewById(R.id.progress_contacts);
+                        if(pb!=null){
+                            pb.setVisibility(View.GONE);
+                        }
                         if(lst.isEmpty()){
                             noContacts.setVisibility(View.VISIBLE);
                         }else{

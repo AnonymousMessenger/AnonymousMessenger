@@ -30,7 +30,7 @@
             android:id="@+id/expanded_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/dx_brand_green"
+            android:background="@color/dx_night_940"
             android:paddingStart="24dp"
             android:paddingTop="16dp"
             android:paddingEnd="24dp"

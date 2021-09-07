@@ -8,5 +8,5 @@
         android:bottomLeftRadius="0dp" />
     <stroke
         android:width="2dp"
-        android:color="@color/dx_brand_green" />
+        android:color="@color/dx_night_940" />
 </shape>

@@ -17,7 +17,7 @@ public class WelcomeTextView extends androidx.appcompat.widget.AppCompatTextView
         setElevation(99);
         setLineSpacing(0, 1.1f);
         setTextSize(getResources().getDimensionPixelSize(R.dimen.textsize24));
-//        setTextColor(ContextCompat.getColor(context, R.color.dx_brand_green));
+//        setTextColor(ContextCompat.getColor(context, R.color.dx_night_940));
 //        setBackgroundColor(ContextCompat.getColor(context, R.color.dx_dark_purple));
         setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
     }

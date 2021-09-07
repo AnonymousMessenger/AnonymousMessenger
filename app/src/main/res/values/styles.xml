@@ -2,17 +2,18 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/dx_dark_purple</item>
-        <item name="colorPrimaryDark">@color/dx_dark_purple</item>
+        <item name="colorPrimary">@color/dx_dark</item>
+        <item name="colorPrimaryDark">@color/dx_dark</item>
         <item name="android:textColorSecondary">@color/dx_white</item>
         <item name="android:textColorPrimary">@color/dx_white</item>
         <item name="android:textColor">@color/dx_white</item>
         <item name="android:textColorHint">@color/dx_white</item>
-        <item name="colorAccent">@color/dx_night_940</item>
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="colorAccent">@color/dx_accent</item>
         <item name="android:textColorLink">@color/dx_white</item>
-        <item name="android:windowBackground">@color/dx_dark_purple</item>
-        <item name="android:navigationBarColor">@color/dx_dark_purple</item>
-        <item name="android:itemBackground">@color/dx_dark_purple_old</item>
+        <item name="android:windowBackground">@color/dx_background</item>
+        <item name="android:navigationBarColor">@color/dx_dark</item>
+        <item name="android:itemBackground">@color/dx_dark</item>
         <item name="placeholderTextColor">@color/dx_white</item>
         <item name="android:textColorHighlight">@color/green_tor</item>
         <item name="android:textColorTertiary">@color/dx_white</item>
@@ -39,6 +40,10 @@
 <!--        <item name="android:subtitleTextStyle">@android:style/TextAppearance.Widget.ActionMode.Subtitle</item>-->
     </style>
 
+    <style name= "RobotoTextViewStyle" parent= "android:Widget.TextView" >
+        <item name= "android:fontFamily" > sans-serif-light </item>
+    </style>
+
     <style name="ThemeOverlay.App.NavigationView" parent="">
         <item name="textAppearanceSubtitle2">@style/TextAppearance.App.Subtitle2</item>
     </style>
@@ -53,7 +58,7 @@
 
     <style name="ButtonTheme" parent="Theme.AppCompat.DayNight">
         <!-- A strange hack needed only to override button color on all API levels -->
-        <item name="colorAccent">@color/dx_brand_green</item>
+        <item name="colorAccent">@color/green_tor</item>
     </style>
     <style name="DXButton" parent="Widget.AppCompat.Button.Colored">
 <!--        <item name="android:theme">@style/ButtonTheme</item>-->
@@ -65,9 +70,8 @@
         <item name="android:textColor">@color/dx_button_text</item>
     </style>
 
-
     <style name="DXSendButton" parent="Widget.AppCompat.Button.Colored">
-<!--        <item name="colorAccent">@color/dx_brand_green</item>-->
+<!--        <item name="colorAccent">@color/dx_night_940</item>-->
 <!--        <item name="android:layout_width">match_parent</item>-->
 <!--        <item name="android:layout_height">wrap_content</item>-->
 <!--        <item name="android:textSize">@dimen/text_size_medium</item>-->
@@ -81,7 +85,9 @@
         <!-- Used for the title and text -->
         <item name="android:textColorPrimary">@color/dx_white</item>
         <!-- Used for the background -->
-        <item name="android:background">@color/dx_brand_green</item>
+<!--        <item name="android:background">@color/dx_night_940</item>-->
+        <item name="android:windowTitleStyle">@android:style/TextAppearance.Material.WindowTitle</item>
+        <item name="android:windowBackground">@drawable/background_dialog</item>
 
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
@@ -93,7 +99,7 @@
         <!-- Used for the title and text -->
         <item name="android:textColorPrimary">@color/dx_white</item>
         <!-- Used for the background -->
-        <item name="android:background">@color/dx_brand_green</item>
+        <item name="android:background">@color/green_tor</item>
 
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">fill_parent</item>

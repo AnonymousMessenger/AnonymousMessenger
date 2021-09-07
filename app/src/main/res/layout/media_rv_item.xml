@@ -15,7 +15,7 @@
         android:contentDescription="@string/image"
         android:padding="14dp"
         android:scaleType="centerCrop"
-        app:srcCompat="@android:drawable/ic_menu_report_image" />
+        app:srcCompat="@android:drawable/progress_horizontal" />
 
     <TextView
         android:id="@+id/txt_info"
