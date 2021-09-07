@@ -802,7 +802,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     return;
                 }
                 BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 4;
+                if(img_bin.length>(512*1024)){
+                    options.inSampleSize = 4;
+                }
                 Bitmap bitmap = BitmapFactory.decodeByteArray(img_bin, 0, img_bin.length, options);
                 if(bitmap==null){
                     return;

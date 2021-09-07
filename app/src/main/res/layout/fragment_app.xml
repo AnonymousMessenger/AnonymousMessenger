@@ -88,19 +88,20 @@
             android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:srl_direction="both"
+            android:elevation="4dp"
             app:layout_constraintBottom_toTopOf="@+id/status_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/online_toolbar"
-            >
+            app:srl_direction="both">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="2dp"
-                android:scrollbars="vertical"
                 android:layoutAnimation="@anim/layout_animation"
+                android:scrollbars="vertical"
                 app:layout_constraintBottom_toTopOf="@+id/status_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -125,10 +126,11 @@
 
         <LinearLayout
             android:id="@+id/no_contacts"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="40dp"
             android:background="@drawable/rounded_rectangle_dark"
+            android:gravity="center"
             android:orientation="vertical"
             android:padding="20dp"
             android:visibility="gone"
@@ -139,10 +141,11 @@
 
             <ImageView
                 android:id="@+id/imageView2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:contentDescription="@string/picture_of_contact"
-                android:src="@drawable/ic_baseline_contacts_24" />
+                android:src="@drawable/ic_baseline_contacts_24"
+                tools:srcCompat="@drawable/ic_baseline_contacts_24" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -151,7 +154,7 @@
                 android:fontFamily="monospace"
                 android:gravity="center"
                 android:text="@string/no_contacts"
-                android:textColor="@color/dx_night_940"
+                android:textColor="@color/dx_white"
                 android:textSize="32sp"
                 android:textStyle="bold" />
         </LinearLayout>

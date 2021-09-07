@@ -58,6 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:fontFamily="monospace"
+        android:gravity="center"
         android:padding="8dp"
         android:text="@string/anonymous_messenger"
         android:textSize="30sp"

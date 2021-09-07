@@ -41,7 +41,7 @@
                 android:id="@+id/fab_edit_prof_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#BF000000"
+                android:backgroundTint="#E6000000"
                 android:clickable="true"
                 android:focusable="true"
                 app:fabCustomSize="32dp"
