@@ -2,9 +2,14 @@ package com.dx.anonymousmessenger.service;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
@@ -14,6 +19,7 @@ public class DxService extends Service {
     public final static String SERVICE_NOTIFICATION_CHANNEL = "service_running";
     private DxApplication app;
     private Thread torThread;
+    private BroadcastReceiver mMyBroadcastReceiver;
 
     public DxService() {
     }
@@ -30,6 +36,21 @@ public class DxService extends Service {
         startForeground(3, ntf);
 //        csm.enable(this.getApplication());
         startTor();
+        mMyBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                if(intent.getIntExtra("start_syncing",0)>0){
+                    app.queueAllUnsentMessages();
+                }
+            }
+        };
+        try {
+            LocalBroadcastManager.getInstance(this).registerReceiver(mMyBroadcastReceiver,new IntentFilter("dx_service"));
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -56,6 +77,8 @@ public class DxService extends Service {
 
     private void shutdownFromBackground() {
         try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mMyBroadcastReceiver);
+            mMyBroadcastReceiver = null;
 //          csm.disable();
             if(app.torSocket!=null&&app.torSocket.getOnionProxyManager()!=null){
                 try {

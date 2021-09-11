@@ -11,6 +11,9 @@ import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.service.DxService;
+
 import net.sf.freehaven.tor.control.ConfigEntry;
 import net.sf.freehaven.tor.control.TorControlConnection;
 
@@ -437,6 +440,13 @@ public class OnionProxyManager {
             Log.d("GENERAL","Online: " + online);
             try {
                 enableNetwork(online);
+                //todo: broadcast to the service to start syncing
+                if(!DxApplication.isServiceRunningInForeground(ctx, DxService.class)){
+                    return;
+                }
+                Intent gcm_rec = new Intent("dx_service");
+                gcm_rec.putExtra("start_syncing",1);
+                LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
             } catch(Exception e) {
                 Log.d("GENERAL",e.toString()+e);
             }

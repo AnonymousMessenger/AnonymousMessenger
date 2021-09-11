@@ -31,7 +31,6 @@ public class MessageSender {
                     Log.e("MESSAGE SENDER", "sendMessage: session isn't contained!!!" );
                     return;
                 }
-                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
                 DbHelper.saveMessage(msg,app,to,false);
                 //second broadcast here to make sure everything aligns correctly for the user
                 Intent gcm_rec = new Intent("your_action");
@@ -45,6 +44,7 @@ public class MessageSender {
                     return;
                 }
                 app.sendingTo.add(to);
+                AddressedEncryptedMessage aem = new AddressedEncryptedMessage(MessageEncryptor.encrypt(msg.toJson(app).toString(),app.getEntity().getStore(),new SignalProtocolAddress(to,1)),app.getHostname());
                 received = TorClient.sendMessage(to,app,aem.toJson().toString());
                 app.sendingTo.remove(to);
             }catch (Exception e){
