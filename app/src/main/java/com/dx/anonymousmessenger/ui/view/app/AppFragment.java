@@ -135,11 +135,13 @@ public class AppFragment extends Fragment {
             }
             }
         };
-        updateUi();
         checkMessages();
         if(!started){
+            updateUi();
             checkConnectivity();
             started = true;
+        }else{
+            updateUi(false);
         }
         if(!onlineTxt.getText().toString().equals(getString(R.string.online)) && !onlineTxt.getText().toString().equals(getString(R.string.checking))){
             checkConnectivity();
@@ -157,7 +159,10 @@ public class AppFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ((AppActivity)requireActivity()).setTitle(getString(R.string.app_name));
-        updateUi(false);
+        if(!onlineTxt.getText().toString().equals(getString(R.string.online)) && !onlineTxt.getText().toString().equals(getString(R.string.checking))){
+            checkConnectivity();
+        }
+        checkMessages();
     }
 
     @Override
@@ -382,7 +387,6 @@ public class AppFragment extends Fragment {
         messageChecker = new Thread(()->{
             while (true){
                 try{
-                    Thread.sleep(5000);
                     if(getActivity()==null) break;
                     List<String[]> tmp = DbHelper.getContactsList((DxApplication) (getActivity()).getApplication());
                     if(tmp==null )break;
@@ -390,6 +394,7 @@ public class AppFragment extends Fragment {
                         updateUi(false,tmp);
 //                        updateUi();
                     }
+                    Thread.sleep(5000);
                 }catch (Exception ignored){
                     break;}
             }

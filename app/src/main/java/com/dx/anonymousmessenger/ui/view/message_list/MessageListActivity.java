@@ -656,12 +656,6 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             });
             boolean b = TorClient.testAddress(((DxApplication) getApplication()), address);
             online = b;
-            if(b){
-                ((DxApplication)getApplication()).addToOnlineList(address);
-                ((DxApplication)getApplication()).queueUnsentMessages(address);
-            }else{
-                ((DxApplication)getApplication()).onlineList.remove(address);
-            }
             h.post(()->{
                 try{
                     if(b){
@@ -679,6 +673,12 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 //                    frameOnline.startAnimation(shock);
                 }catch (Exception ignored) {}
             });
+            if(b){
+                ((DxApplication)getApplication()).addToOnlineList(address);
+                ((DxApplication)getApplication()).queueUnsentMessages(address);
+            }else{
+                ((DxApplication)getApplication()).onlineList.remove(address);
+            }
 //            try {
 //                Thread.sleep(6000);
 //            } catch (Exception ignored) {}

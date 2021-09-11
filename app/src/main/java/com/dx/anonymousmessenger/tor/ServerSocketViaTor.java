@@ -110,6 +110,12 @@ public class ServerSocketViaTor {
 
         while(torServerSocket==null){
             try{
+                if(node == null){
+                    Log.d("GENERAL","error after tor start");
+                    tryKill();
+                    //todo: tell user about the error, and let him press restart
+                    return;
+                }
                 final String hiddenServiceName = node.publishHiddenService(hiddenservicedirport, localport);
                 this.torServerSocket = new ServiceDescriptor(hiddenServiceName, localport, hiddenservicedirport);
             }catch (IOException ignored){
@@ -170,7 +176,7 @@ public class ServerSocketViaTor {
         if(torServerSocket!=null){
             try {
                 torServerSocket.getServerSocket().close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             torServerSocket = null;
@@ -298,12 +304,12 @@ public class ServerSocketViaTor {
         }
 
         private void handleHello(String msg, Socket sock, AtomicInteger sockets) throws IOException {
+            sock.close();
+            sockets.getAndDecrement();
             if(Utils.isValidAddress(msg.replace("hello-","")) && DbHelper.contactExists(msg.replace("hello-",""),app)){
                 app.addToOnlineList(msg.replace("hello-",""));
                 app.queueUnsentMessages(msg.replace("hello-",""));
             }
-            sock.close();
-            sockets.getAndDecrement();
             DbHelper.saveLog("PING FROM: "+msg.replace("hello-",""),new Date().getTime(),"NOTICE",app);
         }
 

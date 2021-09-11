@@ -215,49 +215,39 @@ public class DxApplication extends Application {
         }catch (Exception ignored) {/*syncing = false;*/ /*pinging = false; syncingAddress = null;*/}
     }
 
-    public synchronized void queueUnsentMessages(String address){
+    public void queueUnsentMessages(String address){
         if(syncingAddress!=null && syncingAddress.equals(address)){
             return;
         }
         new Thread(()->{
-//            while (syncing){
-//                try{
-//                    Thread.sleep(200);
-//                }catch (Exception ignored) {}
-//            }
-            try{
-//                syncing = true;
-                syncingAddress = address;
-                //send profile image if not delivered from before
-                String path = getAccount().getProfileImagePath();
-                if(path!=null && !path.equals("")){
-                    if(!Objects.equals(DbHelper.getContactSentProfileImagePath(address, this), path)){
-                        QuotedUserMessage qum = new QuotedUserMessage("","",getHostname(),"",
-                                getAccount().getNickname(),new Date().getTime(),false,address,false,"profile_image",path,"image");
-                        sendMediaMessageWithoutSaving(qum,this,address,false,true);
-                    }
-                }
-                List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
-                if(undeliveredMessageList.size()==0){
-//                    syncing = false;
-                    syncingAddress = null;
-                    return;
-                }
-//                boolean b = TorClientSocks4.testAddress(this, address);
-//                if(!b){
-//                    onlineList.remove(address);
-//                    syncing = false;
-//                    return;
-//                }
-//                if(!onlineList.contains(address)){
-//                    onlineList.add(address);
-//                }
-                addToMessagesQueue(undeliveredMessageList);
-                sendQueuedMessages();
-//                syncing = false;
-                syncingAddress = null;
-            }catch (Exception ignored) {/*syncing = false;*/ syncingAddress = null;}
+            doQueueUnsentMessages(address);
         }).start();
+    }
+
+    public synchronized void doQueueUnsentMessages(String address){
+        try{
+//                syncing = true;
+            syncingAddress = address;
+            //send profile image if not delivered from before
+            String path = getAccount().getProfileImagePath();
+            if(path!=null && !path.equals("")){
+                if(!Objects.equals(DbHelper.getContactSentProfileImagePath(address, this), path)){
+                    QuotedUserMessage qum = new QuotedUserMessage("","",getHostname(),"",
+                            getAccount().getNickname(),new Date().getTime(),false,address,false,"profile_image",path,"image");
+                    sendMediaMessageWithoutSaving(qum,this,address,false,true);
+                }
+            }
+            List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
+            if(undeliveredMessageList.size()==0){
+//                    syncing = false;
+                syncingAddress = null;
+                return;
+            }
+            addToMessagesQueue(undeliveredMessageList);
+            sendQueuedMessages();
+//                syncing = false;
+            syncingAddress = null;
+        }catch (Exception ignored) {/*syncing = false;*/ syncingAddress = null;}
     }
 
     public boolean isExitingHoldup() {
@@ -484,7 +474,7 @@ public class DxApplication extends Application {
     }
 
     public SQLiteDatabase getDb(){
-        if(this.database==null){
+        if(this.database==null && getAccount()!=null){
             return getDb(getAccount().getPassword());
         }else{
             return this.database;
