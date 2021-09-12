@@ -343,4 +343,5 @@
     <string name="unknown_exception">Unknown Error</string>
     <string name="error_occurred">Something went wrong</string>
     <string name="error_details">Error Details</string>
+    <string name="retry">Retry</string>
 </resources>

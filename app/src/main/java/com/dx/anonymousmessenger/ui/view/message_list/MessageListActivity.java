@@ -759,6 +759,12 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                             TextView keyStatus = findViewById(R.id.txt_key_status);
                             keyStatus.setVisibility(View.VISIBLE);
                             keyStatus.setText(R.string.no_session);
+                            Button retry = findViewById(R.id.btn_retry);
+                            retry.setOnClickListener((v) -> {
+                                //reset session
+                                resetSession();
+                            });
+                            retry.setVisibility(View.VISIBLE);
                             ConstraintLayout chatBox = findViewById(R.id.layout_chatbox);
                             chatBox.setVisibility(View.GONE);
                         });
@@ -768,6 +774,12 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                             TextView keyStatus = findViewById(R.id.txt_key_status);
                             keyStatus.setVisibility(View.VISIBLE);
                             keyStatus.setText(R.string.waiting_for_response);
+                            Button retry = findViewById(R.id.btn_retry);
+                            retry.setOnClickListener((v) -> {
+                                //reset session
+                                resetSession();
+                            });
+                            retry.setVisibility(View.VISIBLE);
                             ConstraintLayout chatBox = findViewById(R.id.layout_chatbox);
                             chatBox.setVisibility(View.GONE);
                         });
@@ -776,6 +788,8 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     new Handler(Looper.getMainLooper()).post(()->{
                         TextView keyStatus = findViewById(R.id.txt_key_status);
                         keyStatus.setVisibility(View.GONE);
+                        Button retry = findViewById(R.id.btn_retry);
+                        retry.setVisibility(View.GONE);
                         ConstraintLayout chatBox = findViewById(R.id.layout_chatbox);
                         chatBox.setVisibility(View.VISIBLE);
                     });
@@ -996,21 +1010,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 break;
             case R.id.action_reset_session:
                 //reset session
-                new AlertDialog.Builder(this,R.style.AppAlertDialog)
-                        .setTitle(R.string.action_reset_session)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(R.string.yes, (dialog, which) -> {
-                            try{
-                                DxApplication app =  ((DxApplication) getApplication());
-                                if(app.getEntity()==null){
-                                    return;
-                                }
-                                app.getEntity().getStore().deleteSession(new SignalProtocolAddress(address,1));
-                                updateUi(true,true);
-                            }catch (Exception ignored) {}
-                        })
-                        .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-                        }).show();
+                resetSession();
 
                 //((DxSignalKeyStore)app.getEntity().getStore()).removeIdentity(new
                 // SignalProtocolAddress(address,1));
@@ -1041,6 +1041,24 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void resetSession() {
+        new AlertDialog.Builder(this,R.style.AppAlertDialog)
+                .setTitle(R.string.action_reset_session)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                    try{
+                        DxApplication app =  ((DxApplication) getApplication());
+                        if(app.getEntity()==null){
+                            return;
+                        }
+                        app.getEntity().getStore().deleteSession(new SignalProtocolAddress(address,1));
+                        updateUi(true,true);
+                    }catch (Exception ignored) {}
+                })
+                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+                }).show();
     }
 
 //    @Override

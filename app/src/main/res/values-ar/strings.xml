@@ -285,4 +285,9 @@
     <string name="remove_profile_image_details">متأكد أنك تريد إزالة هذه الصورة؟</string>
     <string name="profile_image_changed">تم تغيير صورة البروفايل</string>
     <string name="profile_image_removed">تمت إزالة صورة اليروفايل</string>
+    <string name="restart_app">إعادة تشغيل البرنامج</string>
+    <string name="unknown_exception">خطأ غير معروف</string>
+    <string name="error_occurred">حدث خطأ ما</string>
+    <string name="error_details">تفاصيل الخطأ</string>
+    <string name="retry">إعادة المحاولة</string>
 </resources>

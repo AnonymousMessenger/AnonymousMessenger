@@ -350,5 +350,10 @@
     <string name="remove_profile_image_details">"Kas olete kindel, et soovite oma profiilipildi eemaldada? "</string>
     <string name="profile_image_changed">"Profiilipilt on muudetud "</string>
     <string name="profile_image_removed">"Profiilipilt on eemaldatud "</string>
+    <string name="error_occurred">"Midagi läks valesti "</string>
+    <string name="error_details">"Veadetailid "</string>
+    <string name="retry">"Uuesti proovima "</string>
+    <string name="unknown_exception">Tundmatu viga</string>
+    <string name="restart_app">"Taaskäivitage rakendus "</string>
 
 </resources>
