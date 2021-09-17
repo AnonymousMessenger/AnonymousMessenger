@@ -1,0 +1,3 @@
+Added support to devices that don't feature cameras in manifest.
+Added retry button when key exchanging with a contact.
+Syncing and pinging improvements.

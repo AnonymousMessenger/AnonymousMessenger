@@ -1,32 +1,18 @@
 As of December 2020 It's a still an ongoing effort and although fully functional it's only available for Android so far.
 
-The project was started in July 2020, by Sofian Mahmoud Benissa (software developer also known as Drxtreme or DX) after a series of meetings with Alton James Steele (project funder) where the idea of the project was presented.
+    The project was started in July 2020, by Sofian Mahmoud Benissa (software developer also known as Drxtreme or DX) after a series of meetings with Alton James Steele (project funder) where the idea of the project was presented.
 
-Features
-
-Double triple diffie-hellman end to end encryption
-
-Completely peer to peer using hidden services
-
-Cryptographic Identity Verification
-
-Excellent Network Security
-
-Voice Messages
-
-Live Voice Calls over tor (alpha feature)
-
-Text Messages
-
-Metadata stripped media messages
-
-Raw file sending of any size (100 GB+)
-
-Both peers have to add each others onion addresses to be able to communicate
-
-Disappearing messages by default
-
-Encrypted file storage on Android
-
-Screen security
-
+    Features
+    * Double triple Diffie-Hellman end to end encryption
+    * Completely peer to peer using hidden services
+    * Cryptographic Identity Verification
+    * Excellent Network Security
+    * Voice Messages
+    * Live Voice Calls over tor (alpha feature)
+    * Text Messages
+    * Metadata stripped media messages
+    * Raw file sending of any size (100 GB+)
+    * Both peers have to add each others onion addresses to be able to communicate
+    * Disappearing messages by default
+    * Encrypted file storage on Android
+    * Screen security
