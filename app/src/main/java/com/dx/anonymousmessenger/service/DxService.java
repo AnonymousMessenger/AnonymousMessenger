@@ -41,7 +41,7 @@ public class DxService extends Service {
             public void onReceive(Context context, Intent intent)
             {
                 if(intent.getIntExtra("start_syncing",0)>0){
-                    app.queueAllUnsentMessages();
+                    new Thread(()-> app.queueAllUnsentMessages()).start();
                 }
             }
         };
