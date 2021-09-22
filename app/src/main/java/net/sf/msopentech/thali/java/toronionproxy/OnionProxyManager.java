@@ -63,8 +63,26 @@ public class OnionProxyManager {
         eventHandler = new OnionProxyManagerEventHandler(onionProxyContext);
     }
 
-    public boolean startWithoutRepeat(int secondsBeforeTimeOut, List<String> bridges, boolean enableBridges) throws IOException, InterruptedException {
-        if (!installAndStartTorOp(bridges, enableBridges)) {
+    //another constructor to create hidden service keys even offline by tor
+    public OnionProxyManager(OnionProxyContext onionProxyContext, int localHiddenServicePort) {
+        this.onionProxyContext = onionProxyContext;
+        eventHandler = new OnionProxyManagerEventHandler(onionProxyContext);
+    }
+
+    public boolean startWithoutRepeat(int hiddenServicePort, int localPort, int secondsBeforeTimeOut, List<String> bridges, boolean enableBridges, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password) throws IOException, InterruptedException, RuntimeException {
+
+        File hostnameFile = onionProxyContext.getHostNameFile();
+
+        if (!Objects.requireNonNull(hostnameFile.getParentFile()).exists()
+                && !hostnameFile.getParentFile().mkdirs()) {
+            throw new RuntimeException("Could not create hostnameFile parent directory");
+        }
+
+        if (!hostnameFile.exists() && !hostnameFile.createNewFile()) {
+            throw new RuntimeException("Could not create hostnameFile");
+        }
+
+        if (!installAndStartTorOp(hiddenServicePort,localPort,bridges, enableBridges, enableSocks5Proxy, socks5AddressAndPort, socks5Username, socks5Password)) {
 //            stop();
 //            onionProxyContext.deleteAllFilesButHiddenServices();
             return false;
@@ -140,7 +158,7 @@ public class OnionProxyManager {
         return new String(FileUtilities.read(hostnameFile), StandardCharsets.UTF_8).trim();
     }
 
-    public synchronized boolean installAndStartTorOp(List<String> bridges, boolean enableBridges) throws IOException, InterruptedException {
+    public synchronized boolean installAndStartTorOp(int hiddenServicePort, int localPort, List<String> bridges, boolean enableBridges, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password) throws IOException, InterruptedException {
         // The Tor OP will die if it looses the connection to its socket so if there is no controlSocket defined
         // then Tor is dead. This assumes, of course, that takeOwnership works and we can't end up with Zombies.
         if (controlConnection != null) {
@@ -160,6 +178,20 @@ public class OnionProxyManager {
             printWriter.println("DataDirectory " + onionProxyContext.getWorkingDirectory().getAbsolutePath());
             printWriter.println("GeoIPFile " + onionProxyContext.getGeoIpFile().getAbsolutePath());
             printWriter.println("GeoIPv6File " + onionProxyContext.getGeoIpv6File().getAbsolutePath());
+
+            printWriter.println("HiddenServiceDir " + Objects.requireNonNull(onionProxyContext.getHostNameFile().getParentFile()).getAbsolutePath());
+            printWriter.println("HiddenServicePort " + hiddenServicePort + " 127.0.0.1:" + localPort);
+            printWriter.println("HiddenServiceMaxStreams " + 50);
+
+            if(enableSocks5Proxy && socks5AddressAndPort!=null && !socks5AddressAndPort.isEmpty()){
+                printWriter.println("Socks5Proxy " + socks5AddressAndPort);
+                if(socks5Username!=null && !socks5Username.isEmpty()){
+                    printWriter.println("Socks5ProxyUsername " + socks5Username);
+                }
+                if(socks5Password!=null && !socks5Password.isEmpty()){
+                    printWriter.println("Socks5ProxyPassword " + socks5Password);
+                }
+            }
             String obfs4proxyfilename = getOnionProxyContext().getTorExecutableFileName().replace("libtor", "obfs4proxy");
             File obfs4proxyfile = new File(getOnionProxyContext().ctx.getApplicationInfo().nativeLibraryDir + "/" + obfs4proxyfilename);
             if (obfs4proxyfile.exists()) {
@@ -235,7 +267,7 @@ public class OnionProxyManager {
 //                return false;
 //            }
 
-            Thread.sleep(3000);
+            Thread.sleep(500);
 
             controlSocket = new Socket("127.0.0.1", control_port);
 
@@ -420,6 +452,13 @@ public class OnionProxyManager {
         return phase != null && phase.contains("PROGRESS=100");
     }
 
+    public boolean isTorRunning(){
+        try{
+            isNetworkEnabled();
+        }catch (Exception ignored){}
+        return controlConnection != null;
+    }
+
     private class NetworkStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context ctx, Intent i) {
@@ -440,7 +479,8 @@ public class OnionProxyManager {
             Log.d("GENERAL","Online: " + online);
             try {
                 enableNetwork(online);
-                //todo: broadcast to the service to start syncing
+                //todo: if tor is not running then start tor
+                // broadcast to the service to start syncing
                 if(!DxApplication.isServiceRunningInForeground(ctx, DxService.class)){
                     return;
                 }

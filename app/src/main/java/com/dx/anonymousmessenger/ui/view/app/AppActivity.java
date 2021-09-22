@@ -40,7 +40,7 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
                 //has logged in?
                 if(((DxApplication) this.getApplication()).getAccount().getPassword()!=null){
                     if(getIntent().getBooleanExtra("force_app",false)){
-                        //on users orders it goes to contacts
+                        //on user's orders it goes to contacts
                         loadAppFragment();
                         return;
                     }

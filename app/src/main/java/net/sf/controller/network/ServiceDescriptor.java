@@ -8,7 +8,7 @@ public class ServiceDescriptor {
     private static final String PROXY_LOCALHOST = "127.0.0.1";
     private final int localPort;
 
-    protected final String hostname;
+    protected String hostname;
     protected final int servicePort;
     protected final ServerSocket serverSocket;
 
@@ -18,6 +18,17 @@ public class ServiceDescriptor {
         this.localPort = localPort;
         this.serverSocket = new ServerSocket();
         this.serverSocket.bind(new InetSocketAddress(PROXY_LOCALHOST, localPort));
+    }
+
+    public ServiceDescriptor(int localPort, int servicePort) throws IOException {
+        this.servicePort = servicePort;
+        this.localPort = localPort;
+        this.serverSocket = new ServerSocket();
+        this.serverSocket.bind(new InetSocketAddress(PROXY_LOCALHOST, localPort));
+    }
+
+    public void addHostname(String hostname){
+        this.hostname = hostname;
     }
 
     public int getLocalPort() {

@@ -61,6 +61,84 @@
             app:layout_constraintTop_toBottomOf="@+id/switch_allow_unknown" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_use_proxy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:text="@string/use_proxy"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txt_layout_proxy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/transition"
+            android:padding="8dp"
+            android:visibility="gone"
+            app:helperText="Accepted format is : ip:port"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switch_use_proxy">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_proxy_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/proxy_address"
+                android:imeOptions="flagNoPersonalizedLearning|actionDone"
+                android:singleLine="true"
+                android:textSize="12sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txt_layout_proxy_username"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/transition"
+                android:padding="8dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switch_use_proxy">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txt_proxy_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/proxy_username"
+                    android:imeOptions="flagNoPersonalizedLearning|actionDone"
+                    android:singleLine="true"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txt_layout_proxy_password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/transition"
+                android:padding="8dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switch_use_proxy">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txt_proxy_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/proxy_password"
+                    android:imeOptions="flagNoPersonalizedLearning|actionDone"
+                    android:singleLine="true"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_bridges"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -175,7 +253,8 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:src="@drawable/ic_baseline_help_24"
-                    app:fabSize="mini" />
+                    app:fabSize="mini"
+                    tools:ignore="ContentDescription" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/fab_reset_check_address"
@@ -184,7 +263,9 @@
                     android:layout_weight="1"
                     android:clickable="true"
                     android:src="@drawable/ic_baseline_undo_24"
-                    app:fabSize="mini" />
+                    app:fabSize="mini"
+                    tools:ignore="ContentDescription"
+                    android:focusable="true" />
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputEditText
@@ -248,8 +329,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:layout_marginStart="164dp"
+            android:layout_marginTop="4dp"
             android:padding="5dp"
             android:text="@string/bridges"
+            android:textColor="#523967"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_layout_proxy" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:text="@string/proxy"
             android:textColor="#523967"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -273,7 +368,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:layout_marginStart="32dp"
             android:padding="5dp"
             android:text="@string/reset"
             android:textColor="#523967"

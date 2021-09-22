@@ -80,9 +80,9 @@ public class DxService extends Service {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mMyBroadcastReceiver);
             mMyBroadcastReceiver = null;
 //          csm.disable();
-            if(app.torSocket!=null&&app.torSocket.getOnionProxyManager()!=null){
+            if(app.getTorSocket()!=null&&app.getTorSocket().getOnionProxyManager()!=null){
                 try {
-                    app.torSocket.tryKill();
+                    app.getTorSocket().tryKill();
                     if(torThread != null){
                         torThread.interrupt();
                         torThread = null;
@@ -101,14 +101,14 @@ public class DxService extends Service {
 
     private void startTor(){
         if(torThread!=null){
-            if(app.torSocket!=null&&app.torSocket.getOnionProxyManager()!=null){
+            if(app.getTorSocket()!=null&&app.getTorSocket().getOnionProxyManager()!=null){
                 try {
-                    app.torSocket.tryKill();
+                    app.getTorSocket().tryKill();
                     if(torThread != null){
                         torThread.interrupt();
                         torThread = null;
                     }
-                    Thread.sleep(1000);
+//                    Thread.sleep(1000);
                     startTor();
                 } catch (Exception e) {
                     e.printStackTrace();

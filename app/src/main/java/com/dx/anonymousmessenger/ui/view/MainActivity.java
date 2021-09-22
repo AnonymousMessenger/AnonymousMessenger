@@ -65,7 +65,7 @@ public class MainActivity extends DxActivity {
                     switchToAppView();
                 }else{
                     //still setting up account
-                    if(((DxApplication)getApplication()).isServiceRunningInForeground(this, DxService.class)){
+                    if(DxApplication.isServiceRunningInForeground(this, DxService.class)){
                         switchToSetupInProcess();
                     }else{
                         //first time user

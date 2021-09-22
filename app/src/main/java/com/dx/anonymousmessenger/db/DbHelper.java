@@ -499,7 +499,7 @@ public class DbHelper {
      */
 
     private static String getSettingsColumns(){
-        return "(bridgesEnabled,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit)";
+        return "(bridgesEnabled,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username,socks5Password)";
     }
 
     private static String getSettingsTableSqlCreate(){
@@ -510,14 +510,38 @@ public class DbHelper {
         return "INSERT INTO settings "+getSettingsColumns()+" VALUES(?"+giveMeQMarks(getSettingsColumns().split(",").length-1)+")";
     }
 
-    private static Object[] getSettingsSqlValues(boolean bridgesEnabled, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed, boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit){
-        return new Object[]{bridgesEnabled?1:0,isAcceptingUnknownContactsEnabled?1:0,isAcceptingCallsAllowed?1:0,isReceivingFilesAllowed?1:0,checkAddress,fileSizeLimit};
+    private static Object[] getSettingsSqlValues(boolean bridgesEnabled, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed, boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password){
+        return new Object[]{bridgesEnabled?1:0,isAcceptingUnknownContactsEnabled?1:0,isAcceptingCallsAllowed?1:0,isReceivingFilesAllowed?1:0,checkAddress,fileSizeLimit,enableSocks5Proxy?1:0,socks5AddressAndPort,socks5Username,socks5Password};
     }
 
-    public static void saveSettings(boolean bridgesEnabled, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed, boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, DxApplication app){
+    public static void saveSettings(boolean bridgesEnabled, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed, boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password, DxApplication app){
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getSettingsTableSqlCreate());
-        database.execSQL(DbHelper.getSettingsSqlInsert(),DbHelper.getSettingsSqlValues(bridgesEnabled,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit));
+        database.execSQL(DbHelper.getSettingsSqlInsert(),DbHelper.getSettingsSqlValues(bridgesEnabled,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username,socks5Password));
+    }
+
+    public static void saveSocks5Password(String socks5Password, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET socks5Password=?", new Object[]{socks5Password});
+    }
+
+    public static void saveSocks5Username(String socks5Username, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET socks5Username=?", new Object[]{socks5Username});
+    }
+
+    public static void saveSocks5AddressAndPort(String socks5AddressAndPort, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET socks5AddressAndPort=?", new Object[]{socks5AddressAndPort});
+    }
+
+    public static void saveEnableSocks5Proxy(boolean enableSocks5Proxy, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET enableSocks5Proxy=?", new Object[]{enableSocks5Proxy?1:0});
     }
 
     public static void saveEnableBridges(boolean bridgesEnabled, DxApplication app){
@@ -581,13 +605,17 @@ public class DbHelper {
         Cursor cr = database.rawQuery("SELECT * FROM settings ;",null);
         Object[] settings = null;
         if (cr.moveToFirst()) {
-            settings = new Object[6];
+            settings = new Object[10];
             settings[0] = cr.getInt(0);//enable bridges
             settings[1] = cr.getInt(1);//isAcceptingUnknownContacts
             settings[2] = cr.getInt(2);//isAcceptingCallsAllowed
             settings[3] = cr.getInt(3);//isReceivingFilesAllowed
             settings[4] = cr.getString(4);//checkAddress
             settings[5] = cr.getString(5);//fileSizeLimit
+            settings[6] = cr.getInt(6);//enableSocks5Proxy
+            settings[7] = cr.getString(7);//socks5AddressAndPort
+            settings[8] = cr.getString(8);//socks5Username
+            settings[9] = cr.getString(9);//socks5Password
         }
         cr.close();
         return settings;
@@ -1073,14 +1101,14 @@ public class DbHelper {
     public static List<String> getAllReferencedFiles(DxApplication app){
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getMessageTableSqlCreate());
-        try{
-            //use a latest query that is only in the latest schema here
-            database.query("SELECT profile_image_path FROM contact");
-        }catch (Exception e){
-            Log.w("getAllReferencedFiles", "updating DbSchema");
-            e.printStackTrace();
+//        try{
+//            //use a latest query that is only in the latest schema here
+//            database.query("SELECT profile_image_path FROM contact");
+//        }catch (Exception e){
+//            Log.w("getAllReferencedFiles", "updating DbSchema");
+//            e.printStackTrace();
             updateDbSchema(database);
-        }
+//        }
         Cursor cr = database.rawQuery("SELECT path FROM message",null);
         List<String> paths = new ArrayList<>();
         if (cr.moveToFirst()) {

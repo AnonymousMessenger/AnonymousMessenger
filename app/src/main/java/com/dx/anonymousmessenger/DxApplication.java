@@ -54,7 +54,7 @@ import static com.dx.anonymousmessenger.messages.MessageSender.sendMediaMessageW
 public class DxApplication extends Application {
 
     private String hostname;
-    public ServerSocketViaTor torSocket;
+    private ServerSocketViaTor torSocket;
     private boolean serverReady = false;
     private boolean exitingHoldup;
     private volatile boolean restartingTor;
@@ -79,17 +79,37 @@ public class DxApplication extends Application {
 
     //settings
     //settings array: bridgesEnabled,acceptUnknown,acceptCalls,receiveFiles,testAddress,fileSizeLimit
-    public final Object[] DEFAULT_SETTINGS = {0,0,1,1,"duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion","3gb"};
+    public final Object[] DEFAULT_SETTINGS = {0,0,1,1,"duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion","3gb",0,"","",""};
     private boolean bridgesEnabled;
     private boolean isAcceptingUnknownContactsEnabled;
     private boolean isAcceptingCallsAllowed;
     private boolean isReceivingFilesAllowed;
     private long fileSizeLimit;
+    private boolean enableSocks5Proxy;
+    private String socks5AddressAndPort;
+    private String socks5Username;
+    private String socks5Password;
     //the ddg site to check if we are online (can be overridden in the settings)
     private String testAddress = DEFAULT_SETTINGS[4].toString();
 
     public String getTestAddress() {
         return testAddress;
+    }
+
+    public boolean isEnableSocks5Proxy() {
+        return enableSocks5Proxy;
+    }
+
+    public String getSocks5AddressAndPort() {
+        return socks5AddressAndPort;
+    }
+
+    public String getSocks5Username() {
+        return socks5Username;
+    }
+
+    public String getSocks5Password() {
+        return socks5Password;
     }
 
     public boolean isBridgesEnabled() {
@@ -387,7 +407,7 @@ public class DxApplication extends Application {
         }
     }
 
-    public void createAccount(byte[] password, String nickname, boolean bridgesEnabled, List<String> bridgeList, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed,boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit){
+    public void createAccount(byte[] password, String nickname, boolean bridgesEnabled, List<String> bridgeList, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed,boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password){
         new Thread(() -> {
             try{
                 if(nickname==null || password==null){
@@ -415,7 +435,7 @@ public class DxApplication extends Application {
                 }
 
                 //save the settings to DB
-                DbHelper.saveSettings(bridgesEnabled, isAcceptingUnknownContactsEnabled, isAcceptingCallsAllowed, isReceivingFilesAllowed,checkAddress,fileSizeLimit,this);
+                DbHelper.saveSettings(bridgesEnabled, isAcceptingUnknownContactsEnabled, isAcceptingCallsAllowed, isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username, socks5Password,this);
 
                 startTor();
 
@@ -432,7 +452,7 @@ public class DxApplication extends Application {
             if(settings == null){
                 Log.d("GENERAL","settings were null when got from the db");
                 settings = DEFAULT_SETTINGS;
-                DbHelper.saveSettings((int)settings[0]>0,(int)settings[1]>0,(int)settings[2]>0,(int)settings[3]>0,(String)settings[4],(String)settings[5],this);
+                DbHelper.saveSettings((int)settings[0]>0,(int)settings[1]>0,(int)settings[2]>0,(int)settings[3]>0,(String)settings[4],(String)settings[5],(int)settings[6]>0, (String) settings[7], (String) settings[8], (String) settings[9],this);
             }
             this.bridgesEnabled = (int)settings[0]>0;
             this.isAcceptingUnknownContactsEnabled = (int)settings[1]>0;
@@ -440,6 +460,10 @@ public class DxApplication extends Application {
             this.isReceivingFilesAllowed = (int)settings[3]>0;
             this.testAddress = (String) settings[4];
             this.fileSizeLimit = Utils.parseFileSize((String) settings[5]);
+            this.enableSocks5Proxy = (int)settings[6]>0;
+            this.socks5AddressAndPort = (String) settings[7];
+            this.socks5Username = (String) settings[8];
+            this.socks5Password = (String) settings[9];
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -10,11 +10,19 @@
         android:required="false" /> <!-- <uses-feature -->
     <!-- android:name="android.software.leanback" -->
     <!-- android:required="true" /> -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"  />
-    <uses-permission android:name="android.permission.CAMERA" android:required="false"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" android:required="false"/>
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" android:required="false"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO" android:required="false"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission
+        android:name="android.permission.CAMERA"
+        android:required="false" />
+    <uses-permission
+        android:name="android.permission.RECEIVE_BOOT_COMPLETED"
+        android:required="false" />
+    <uses-permission
+        android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+        android:required="false" />
+    <uses-permission
+        android:name="android.permission.RECORD_AUDIO"
+        android:required="false" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -22,7 +30,9 @@
         android:name="android.permission.READ_PHONE_STATE"
         tools:node="remove" />
 
-    <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" android:required="false"/>
+    <uses-permission-sdk-23
+        android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+        android:required="false" />
     <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
@@ -38,6 +48,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
+        <activity android:name=".ui.view.single_activity.SettingsActivity"></activity>
         <activity android:name=".ui.view.single_activity.CrashActivity" />
         <activity
             android:name=".ui.view.log.LogActivity"
@@ -67,7 +78,9 @@
         <activity
             android:name=".ui.view.message_list.MessageListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
-        <activity android:name=".ui.view.app.AppActivity" android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
+        <activity
+            android:name=".ui.view.app.AppActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity
             android:name=".ui.view.setup.CreateUserActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />

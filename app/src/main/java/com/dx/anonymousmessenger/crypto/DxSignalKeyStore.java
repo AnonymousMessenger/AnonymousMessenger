@@ -25,7 +25,7 @@ import java.util.List;
 public class DxSignalKeyStore implements SignalProtocolStore {
     private IdentityKeyPair ikp;
     private int registrationId;
-    private DxApplication app;
+    private final DxApplication app;
 
     public DxSignalKeyStore(IdentityKeyPair ikp, int registrationId, DxApplication app){
         this.app = app;

@@ -26,6 +26,42 @@ public class CreateUserActivity extends DxActivity {
     private boolean isReceivingFilesAllowed = true;
     private String checkAddress = "duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion";
     private String fileSizeLimit = "3gb";
+    private boolean enableSocks5Proxy = false;
+    private String socks5AddressAndPort = "";
+    private String socks5Username = "";
+    private String socks5Password = "";
+
+    public boolean isEnableSocks5Proxy() {
+        return enableSocks5Proxy;
+    }
+
+    public void setEnableSocks5Proxy(boolean enableSocks5Proxy) {
+        this.enableSocks5Proxy = enableSocks5Proxy;
+    }
+
+    public String getSocks5AddressAndPort() {
+        return socks5AddressAndPort;
+    }
+
+    public void setSocks5AddressAndPort(String socks5AddressAndPort) {
+        this.socks5AddressAndPort = socks5AddressAndPort;
+    }
+
+    public String getSocks5Username() {
+        return socks5Username;
+    }
+
+    public void setSocks5Username(String socks5Username) {
+        this.socks5Username = socks5Username;
+    }
+
+    public String getSocks5Password() {
+        return socks5Password;
+    }
+
+    public void setSocks5Password(String socks5Password) {
+        this.socks5Password = socks5Password;
+    }
 
     public String getCheckAddress() {
         return checkAddress;
@@ -147,7 +183,7 @@ public class CreateUserActivity extends DxActivity {
         }
         try{
             //create account and start tor
-            ((DxApplication)getApplication()).createAccount(password,nickname,bridgesEnabled,bridgeList,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit);
+            ((DxApplication)getApplication()).createAccount(password,nickname,bridgesEnabled,bridgeList,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username, socks5Password);
             Intent intent = new Intent(this, SetupInProcess.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);

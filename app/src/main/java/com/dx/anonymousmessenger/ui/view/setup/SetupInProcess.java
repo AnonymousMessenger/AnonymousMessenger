@@ -19,6 +19,8 @@ import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.crypto.Entity;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.app.AppActivity;
+import com.dx.anonymousmessenger.ui.view.single_activity.SettingsActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
 
@@ -37,16 +39,9 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
         Button restartTorButton = findViewById(R.id.btn_restart_tor);
         restartTorButton.setVisibility(View.VISIBLE);
         restartTorButton.setOnClickListener(v -> {
-            new AlertDialog.Builder(this,R.style.AppAlertDialog)
-                .setTitle(R.string.restart_tor)
-                .setMessage(R.string.restart_tor_explain)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                    ((DxApplication) getApplication()).restartTor();
-                })
-                .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
+            restartTorWithAlert();
         });
-        if(!getIntent().getBooleanExtra("first_time",true)){
+//        if(!getIntent().getBooleanExtra("first_time",true)){
             gotoContact.setVisibility(View.VISIBLE);
             gotoContact.setOnClickListener(v -> {
                 ((DxApplication)getApplication()).setExitingHoldup(true);
@@ -58,7 +53,24 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
                 startActivity(intent);
                 finish();
             });
-        }
+//        }
+        FloatingActionButton settings = findViewById(R.id.fab_settings);
+        settings.setOnClickListener((v) -> {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        });
+    }
+
+    private void restartTorWithAlert() {
+        new AlertDialog.Builder(this,R.style.AppAlertDialog)
+            .setTitle(R.string.restart_tor)
+            .setMessage(R.string.restart_tor_explain)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                ((DxApplication) getApplication()).restartTor();
+            })
+            .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
     }
 
     @Override
@@ -102,6 +114,7 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
             }
         };
         checkServerReady();
+
         try {
             LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mMyBroadcastReceiver,new IntentFilter("tor_status"));
         } catch (Exception e){
@@ -114,9 +127,29 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
             return;
         }
         serverChecker = new Thread(()->{
+            try {
+                Thread.sleep(1500);
+                if(getIntent().getBooleanExtra("first_time",true)){
+                    Thread.sleep(2000);
+                }
+                ((DxApplication) getApplication()).clearNotification(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(!((DxApplication) getApplication()).isServerReady() && ((DxApplication) getApplication()).getAndroidTorRelay()==null || (((DxApplication) getApplication()).getAndroidTorRelay()!=null && !((DxApplication) getApplication()).getAndroidTorRelay().isTorRunning())){
+                runOnUiThread(()->{
+                    new AlertDialog.Builder(this, R.style.AppAlertDialog)
+                            .setTitle(R.string.tor_error_title)
+                            .setMessage(R.string.tor_error)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(R.string.restart_tor, (dialog, whichButton) -> {
+                                restartTorWithAlert();
+                            })
+                            .setNegativeButton(R.string.stay_offline, (dialog, whichButton) -> {}).show();
+                });
+            }
             while (true){
                 try{
-                    Thread.sleep(1000);
                     if(((DxApplication) getApplication()).isServerReady()){
                         runOnUiThread(()->{
                             Intent intent = new Intent(this, AppActivity.class);
@@ -124,8 +157,12 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
                             startActivity(intent);
                             finish();
                         });
+                        return;
                     }
-                }catch (Exception ignored){break;}
+                    Thread.sleep(1000);
+                }catch (Exception ignored){
+                    ignored.printStackTrace();
+                    break;}
             }
         });
         serverChecker.start();
@@ -151,6 +188,22 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
 //        if(!torStatus.toUpperCase().contains("NOTICE")){
 //            return;
 //        }
+        if(torStatus.contains("tor_error")){
+//            torStatus = getString(R.string.tor_error);
+            runOnUiThread(()->{
+                new AlertDialog.Builder(this, R.style.AppAlertDialog)
+                        .setTitle(R.string.tor_error_title)
+                        .setMessage(R.string.tor_error)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(R.string.restart_tor, (dialog, whichButton) -> {
+                            restartTorWithAlert();
+                        })
+                        .setNegativeButton(R.string.stay_offline, (dialog, whichButton) -> {
+
+                        }).show();
+            });
+            return;
+        }
         if(torStatus.contains("DisableNetwork is set")){
             torStatus = getString(R.string.waiting_for_tor);
         }

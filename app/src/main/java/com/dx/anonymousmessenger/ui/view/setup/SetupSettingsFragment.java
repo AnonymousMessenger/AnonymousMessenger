@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
-import com.dx.anonymousmessenger.ui.view.app.AppActivity;
+import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.AboutActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.LicenseActivity;
 import com.dx.anonymousmessenger.util.Utils;
@@ -97,6 +97,11 @@ public class SetupSettingsFragment extends Fragment {
         final TextInputEditText txtCheckAddress = rootView.findViewById(R.id.txt_check_address);
         final RecyclerView rvBridges = rootView.findViewById(R.id.rv_bridges);
         final Button addBridge = rootView.findViewById(R.id.btn_add_bridge);
+        final SwitchMaterial enableSocks5Proxy = rootView.findViewById(R.id.switch_use_proxy);
+        final TextInputLayout layoutProxy = rootView.findViewById(R.id.txt_layout_proxy);
+        final TextInputEditText txtProxyAddress = rootView.findViewById(R.id.txt_proxy_address);
+        final TextInputEditText txtProxyUsername = rootView.findViewById(R.id.txt_proxy_username);
+        final TextInputEditText txtProxyPassword = rootView.findViewById(R.id.txt_proxy_password);
         final TextView reset = rootView.findViewById(R.id.btn_reset);
 
         rootView.findViewById(R.id.fab_check_address_help).setOnClickListener(v -> Utils.showHelpAlert(requireContext(),getString(R.string.online_check_address_explain), getString(R.string.online_check_address)));
@@ -118,6 +123,11 @@ public class SetupSettingsFragment extends Fragment {
             layoutFileLimit.setVisibility((int)settings[3]>0?View.VISIBLE:View.GONE);
             txtCheckAddress.setText((String) settings[4]);
             txtFileLimit.setText((String) settings[5]);
+            enableSocks5Proxy.setChecked((int)settings[6]>0);
+            layoutProxy.setVisibility((int)settings[6]>0?View.VISIBLE:View.GONE);
+            txtProxyAddress.setText((String) settings[7]);
+            txtProxyUsername.setText((String) settings[8]);
+            txtProxyPassword.setText((String) settings[9]);
         });
 
         //get default values
@@ -130,11 +140,16 @@ public class SetupSettingsFragment extends Fragment {
             layoutFileLimit.setVisibility(((CreateUserActivity) requireActivity()).isReceivingFilesAllowed()?View.VISIBLE:View.GONE);
             txtCheckAddress.setText(((CreateUserActivity) requireActivity()).getCheckAddress());
             txtFileLimit.setText(((CreateUserActivity) requireActivity()).getFileSizeLimit());
+            enableSocks5Proxy.setChecked(((CreateUserActivity) requireActivity()).isEnableSocks5Proxy());
+            layoutProxy.setVisibility(((CreateUserActivity) requireActivity()).isEnableSocks5Proxy()?View.VISIBLE:View.GONE);
+            txtProxyAddress.setText(((CreateUserActivity) requireActivity()).getSocks5AddressAndPort());
+            txtProxyUsername.setText(((CreateUserActivity) requireActivity()).getSocks5Username());
+            txtProxyPassword.setText(((CreateUserActivity) requireActivity()).getSocks5Password());
         }else{
             try{
                 ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).getMenu().clear();
-                ((AppActivity)requireActivity()).setTitle(R.string.action_settings);
-                ((AppActivity)requireActivity()).setBackEnabled(true);
+                ((DxActivity)requireActivity()).setTitle(R.string.action_settings);
+                ((DxActivity)requireActivity()).setBackEnabled(true);
             }catch (Exception ignored){}
             //set about & license text view buttons to be visible
             rootView.findViewById(R.id.txt_other).setVisibility(View.VISIBLE);
@@ -173,10 +188,135 @@ public class SetupSettingsFragment extends Fragment {
                 layoutFileLimit.setVisibility((int)settings[3]>0?View.VISIBLE:View.GONE);
                 txtCheckAddress.setText((String) settings[4]);
                 txtFileLimit.setText((String) settings[5]);
+                enableSocks5Proxy.setChecked((int)settings[6]>0);
+                layoutProxy.setVisibility((int)settings[6]>0?View.VISIBLE:View.GONE);
+                txtProxyAddress.setText((String) settings[7]);
+                txtProxyUsername.setText((String) settings[8]);
+                txtProxyPassword.setText((String) settings[9]);
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
+
+        //proxy related
+        enableSocks5Proxy.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+            if(isInSetup){
+                ((CreateUserActivity) requireActivity()).setEnableSocks5Proxy(isChecked);
+            }else{
+                DbHelper.saveEnableSocks5Proxy(isChecked,(DxApplication)requireActivity().getApplication());
+            }
+            layoutProxy.setVisibility(isChecked?View.VISIBLE:View.GONE);
+            if (!isChecked) {
+                ((InputMethodManager) requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(requireView().getWindowToken(), 0);
+            }
+        }));
+
+        txtProxyAddress.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //validate and output errors
+                //accepted format is : ip:port
+                String ipPattern = "^((0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)\\.){3}(0|1\\d?\\d?|2[0-4]?\\d?|25[0-5]?|[3-9]\\d?)$";
+                if(s.toString().contains(":") && s.toString().split(":").length==2){
+                    try{
+                        String substring = s.toString().split(":")[1];
+                        if(substring.length()<1 || Integer.parseInt(substring)<1 || Integer.parseInt(substring)>65535){
+                            txtProxyAddress.setError("Bad format, setting unchanged");
+                            return;
+                        }
+
+                        if(!s.toString().split(":")[0].matches(ipPattern)){
+                            txtProxyAddress.setError("Bad format, setting unchanged");
+                            return;
+                        }
+                    }catch (NumberFormatException ignored){
+                        txtProxyAddress.setError("Bad format, setting unchanged");
+                        return;
+                    }
+                }else{
+                    if(!s.toString().matches(ipPattern)){
+                        txtProxyAddress.setError("Bad format, setting unchanged");
+                        return;
+                    }
+                }
+                //if good: save it
+                if(isInSetup){
+                    ((CreateUserActivity) requireActivity()).setSocks5AddressAndPort(s.toString());
+                }else{
+                    DbHelper.saveSocks5AddressAndPort(s.toString(),(DxApplication)requireActivity().getApplication());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        txtProxyUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //validate and output errors
+                //accepted format is : ip:port
+
+                if(s.toString().length()>255){
+                    txtProxyUsername.setError("Bad format, setting unchanged");
+                    return;
+                }
+
+                //if good: save it
+                if(isInSetup){
+                    ((CreateUserActivity) requireActivity()).setSocks5Username(s.toString());
+                }else{
+                    DbHelper.saveSocks5Username(s.toString(),(DxApplication)requireActivity().getApplication());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        txtProxyPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //validate and output errors
+                //accepted format is : ip:port
+
+                if(s.toString().length()>255){
+                    txtProxyPassword.setError("Bad format, setting unchanged");
+                    return;
+                }
+
+                //if good: save it
+                if(isInSetup){
+                    ((CreateUserActivity) requireActivity()).setSocks5Password(s.toString());
+                }else{
+                    DbHelper.saveSocks5Password(s.toString(),(DxApplication)requireActivity().getApplication());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         // bridge related
         bridgesSwitch.setOnCheckedChangeListener(((buttonView, isChecked) -> {
@@ -218,6 +358,7 @@ public class SetupSettingsFragment extends Fragment {
         });
 
         //other switches
+
         allowCalls.setOnCheckedChangeListener(((buttonView, isChecked) -> {
             if(isInSetup){
                 ((CreateUserActivity) requireActivity()).setAcceptingCallsAllowed(isChecked);

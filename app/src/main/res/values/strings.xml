@@ -31,7 +31,7 @@
     <string name="action_search">Search</string>
     <string name="action_shutdown">Shutdown</string>
     <string name="action_my_identity">My Identity</string>
-    <string name="action_restart_tor">Restart tor</string>
+    <string name="action_restart_tor">Restart Tor</string>
     <string name="my_identity_explanation">Public key used to verify identity</string>
     <string name="verify_identity_explanation">Both public keys together to verify both identities</string>
     <string name="action_call">Call</string>
@@ -58,7 +58,7 @@
     <string name="identity_key_fail">Can\'t find your identity key</string>
     <string name="delete_contact">Delete Contact</string>
     <string name="no_contacts">No Contacts Found!</string>
-    <string name="tor_output">tor output</string>
+    <string name="tor_output">Tor output</string>
     <string name="anonymous_messenger">Anonymous Messenger</string>
     <string name="by_drxtreme">by DrXtreme</string>
     <string name="welcome_to">welcome to</string>
@@ -80,14 +80,14 @@
     <string name="offline">offline</string>
     <string name="picture_of_contact">picture of contact</string>
     <string name="hold_on">Hold on!</string>
-    <string name="starting_up_tor">starting up tor</string>
+    <string name="starting_up_tor">starting up Tor</string>
     <string name="doing_stuff">making you anonymous…</string>
     <string name="go_to_contacts">Skip</string>
     <string name="checking">Checking</string>
     <string name="online">online</string>
     <string name="synced">synced</string>
     <string name="add_contact">Add Contact</string>
-    <string name="waiting_for_tor">waiting for tor</string>
+    <string name="waiting_for_tor">waiting for Tor</string>
     <string name="oh_no">Oh No!</string>
     <string name="did_you_forget_your_password">Did you forget your password?</string>
     <string name="hello_hello" translatable="false">hello, hello!</string>
@@ -120,7 +120,7 @@
     <string name="confirm_add_contact">\"Do you really want to add \"</string>
     <string name="contact_exists">Contact already exists!</string>
     <string name="cant_add_contact">can\'t add contact!</string>
-    <string name="save_to_storage">Save to shared storage?</string>
+    <string name="save_to_storage">Save to shared storage ?</string>
     <string name="save_to_storage_explain">Other apps will have access to this image if saved on shared storage.</string>
     <string name="action_my_profile">My Profile</string>
     <string name="action_help">Help</string>
@@ -130,7 +130,7 @@
     <string name="confirm">Confirm</string>
     <string name="action_license">License</string>
     <string name="license">
-        Anonymous Messenger, a full private communications solution that works over tor.\n
+        Anonymous Messenger, a full private communications solution that works over Tor.\n
     Copyright © 2021  Sofian M. Benissa\n\n
 
     This program is free software: you can redistribute it and/or modify
@@ -152,8 +152,8 @@
     <string name="allow_in_background">allow Anonymous Messenger to keep working in the background?</string>
     <string name="shut_app">Shutdown app?</string>
     <string name="shut_app_explain">You won\'t be able to receive messages until you decrypt with your password again</string>
-    <string name="restart_tor">Restart tor?</string>
-    <string name="restart_tor_explain">This should not be needed in normal operation unless you think tor isn\'t working properly right now</string>
+    <string name="restart_tor">Restart Tor?</string>
+    <string name="restart_tor_explain">This should not be needed in normal operation unless you think Tor isn\'t working properly right now</string>
     <string name="restarting_service">Restarting service</string>
     <string name="connection_restored">Connection Restored</string>
     <string name="lost_connection">Lost Connection</string>
@@ -161,7 +161,7 @@
     <string name="will_receive_messages_soon">should be able to receive messages within 2 minutes</string>
     <string name="waiting_for_connectivity">waiting for connectivity</string>
     <string name="almost_ready">Almost Ready!</string>
-    <string name="starting_tor_first_time">Starting tor and warming up to get all we need to connect!</string>
+    <string name="starting_tor_first_time">Starting Tor and warming up to get all we need to connect!</string>
     <string name="ready_to_chat">Ready to chat securely!</string>
     <string name="you_got_all_you_need">You got all you need to chat securely with your friends!</string>
     <string name="new_message">New Message!</string>
@@ -272,7 +272,7 @@
     <string name="delete_note">Delete</string>
     <string name="open_link_question">Open this link?</string>
     <string name="open_link_describe">Opening links outside private apps could deanonymize you,
-        only do this if you trust the link or use tor browser if possible</string>
+        only do this if you trust the link or use Tor browser if possible</string>
     <string name="scan">Scan QR-code</string>
     <string name="contact_added">Added contact</string>
     <string name="cam_perm_ask_title">Camera permission</string>
@@ -305,8 +305,8 @@
     <string name="use_bridges">Use Bridges</string>
     <string name="request_bridge">Request Bridge</string>
     <string name="done_button">Done</string>
-    <string name="allow_unknown">Accept unknown contacts</string>
-    <string name="allow_files">Allow receiving files</string>
+    <string name="allow_unknown">Accept Unknown Contacts</string>
+    <string name="allow_files">Allow Receiving Files</string>
     <string name="file_limit">File Size Limit</string>
     <string name="allow_calls">Allow Calls</string>
     <string name="action_settings">Settings</string>
@@ -314,13 +314,13 @@
     <string name="delete_bridge_details">this can\'t be undone</string>
     <string name="online_check_address">Online Check Address</string>
     <string name="reset_settings">Reset settings</string>
-    <string name="bridges">Bridges</string>
+    <string name="bridges">Bridges (restart Tor to take effect)</string>
     <string name="other">Other</string>
     <string name="reset">Reset</string>
     <string name="security">Security</string>
     <string name="connectivity">Connectivity</string>
     <string name="add_bridge">Add Bridge</string>
-    <string name="request_bridge_help">You can request a bridge from the tor project by following this link: https://bridges.torproject.org/bridges?transport=obfs4   alternatively you can write an email to bridges@torproject.org or you can run your own bridge and use it.</string>
+    <string name="request_bridge_help">You can request a bridge from the Tor project by following this link: https://bridges.torproject.org/bridges?transport=obfs4   alternatively you can write an email to bridges@torproject.org or you can run your own bridge and use it.</string>
     <string name="button_undo">Undo</string>
     <string name="insert_bridge_line">Insert bridge line</string>
     <string name="nickname_explain_title">Nickname use</string>
@@ -344,4 +344,12 @@
     <string name="error_occurred">Something went wrong</string>
     <string name="error_details">Error Details</string>
     <string name="retry">Retry</string>
+    <string name="use_proxy">Use a Socks5 Proxy</string>
+    <string name="proxy_address">Socks5 proxy address</string>
+    <string name="proxy_username">Username</string>
+    <string name="proxy_password">Password</string>
+    <string name="tor_error">Tor could not connect within 300s, you can try using bridges or connect through any socks5 proxy in the settings</string>
+    <string name="tor_error_title">Error while starting Tor</string>
+    <string name="stay_offline">Stay offline</string>
+    <string name="proxy">Socks5 proxy (restart Tor to take effect)</string>
 </resources>

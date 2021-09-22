@@ -20,6 +20,7 @@ import com.dx.anonymousmessenger.util.Hex;
 import com.dx.anonymousmessenger.util.Utils;
 
 import net.sf.controller.network.ServiceDescriptor;
+import net.sf.msopentech.thali.java.toronionproxy.FileUtilities;
 import net.sf.msopentech.thali.java.toronionproxy.OnionProxyContext;
 import net.sf.msopentech.thali.java.toronionproxy.OnionProxyManager;
 
@@ -35,6 +36,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -47,7 +49,7 @@ import javax.crypto.spec.SecretKeySpec;
 import static com.dx.anonymousmessenger.file.FileHelper.IV_LENGTH;
 
 public class ServerSocketViaTor {
-    private static final int TOTAL_SEC_PER_STARTUP = 4 * 60;
+    private static final int TOTAL_SEC_PER_STARTUP = 300;//these are secs not millis
     private static final int hiddenservicedirport = 5780;
     private int localport = 5780;
     private OnionProxyManager node;
@@ -68,25 +70,44 @@ public class ServerSocketViaTor {
             tryKill();
             node = null;
         }
-            /*
+        /*
 
-            meek_lite 0.0.2.0:3 97700DFE9F483596DDA6264C4D7DF7641E1E39CE url=https://meek.azureedge.net/ front=ajax.aspnetcdn.com
+        meek_lite 0.0.2.0:3 97700DFE9F483596DDA6264C4D7DF7641E1E39CE url=https://meek.azureedge.net/ front=ajax.aspnetcdn.com
 
-            obfs4 2.202.156.114:41902 9BA4CF70177E315D0F1CBF2DC8DED4FF761A5AB6 cert=8ru1uyWl5C1w9r/+BQ1TArNVzAEahiNTZUIUdNIcPxg3lrgl+y7NnoiH5Bt+j7aivw2uAQ iat-mode=0
+        obfs4 2.202.156.114:41902 9BA4CF70177E315D0F1CBF2DC8DED4FF761A5AB6 cert=8ru1uyWl5C1w9r/+BQ1TArNVzAEahiNTZUIUdNIcPxg3lrgl+y7NnoiH5Bt+j7aivw2uAQ iat-mode=0
 
-            obfs4 185.185.251.73:443 EEE6E19E6C5E572D7830A9CCB5A9588623A37D63 cert=TIKryCwDjEiNnuq7pFymYqq8V1iACyBTMq8kPjV6WP1YxDq7nXvkms8x1sXMDp7U58ZTUw iat-mode=0
+        obfs4 185.185.251.73:443 EEE6E19E6C5E572D7830A9CCB5A9588623A37D63 cert=TIKryCwDjEiNnuq7pFymYqq8V1iACyBTMq8kPjV6WP1YxDq7nXvkms8x1sXMDp7U58ZTUw iat-mode=0
 
-            obfs4 185.82.202.15:443 07E3239A6C8C589318FF2E8DFD3D1CEE496B1C13 cert=yT8pfL2Nr8m3Z7NFWq2cENOS4ZHZsZBugepxUbemM6+2su2+4QSjB6AR+cblRIGGjWORVw iat-mode=0
+        obfs4 185.82.202.15:443 07E3239A6C8C589318FF2E8DFD3D1CEE496B1C13 cert=yT8pfL2Nr8m3Z7NFWq2cENOS4ZHZsZBugepxUbemM6+2su2+4QSjB6AR+cblRIGGjWORVw iat-mode=0
 
-            */
+        */
 
         try {
             try{
                 app.deleteAnyOldFiles();
             }catch (Exception ignored){}
+
+            Entity myEntity = new Entity(app);
+            app.setEntity(myEntity);
+
             node = new OnionProxyManager(new OnionProxyContext(app.getApplicationContext(), "torfiles"));
 
-            if (!node.startWithoutRepeat(TOTAL_SEC_PER_STARTUP, DbHelper.getBridgeList(app), app.isBridgesEnabled())) {
+            while(torServerSocket==null){
+                try{
+                    //generate tor address/keys before tor start for the first time to make it possible to use the app offline and add other users too
+                    this.torServerSocket = new ServiceDescriptor(localport, hiddenservicedirport);
+                }catch (IOException ignored){
+                    try {
+                        if(this.torServerSocket!=null && this.torServerSocket.getServerSocket()!=null && this.torServerSocket.getServerSocket().isBound()){
+                            this.torServerSocket.getServerSocket().close();
+                        }
+                    } catch (Exception ignored2) {}
+                    this.torServerSocket=null;
+                    localport++;
+                }
+            }
+
+            if (!node.startWithoutRepeat(hiddenservicedirport, localport, TOTAL_SEC_PER_STARTUP, DbHelper.getBridgeList(app), app.isBridgesEnabled(), app.isEnableSocks5Proxy(), app.getSocks5AddressAndPort(), app.getSocks5Username(), app.getSocks5Password())) {
                 Log.d("GENERAL","Could not Start Tor.");
                 tryKill();
                 throw new IOException("Could not Start Tor.");
@@ -102,30 +123,36 @@ public class ServerSocketViaTor {
             e.printStackTrace();
             Log.d("GENERAL","exception with tor start");
             tryKill();
-            //todo: tell user about the error, and let him press restart
+            // tell user about the error
+            Intent gcm_rec = new Intent("tor_status");
+            gcm_rec.putExtra("tor_status","tor_error");
+            LocalBroadcastManager.getInstance(app).sendBroadcast(gcm_rec);
 //            app.restartTor();
 //            init(app);
             return;
         }
 
-        while(torServerSocket==null){
-            try{
-                if(node == null){
-                    Log.d("GENERAL","error after tor start");
-                    tryKill();
-                    //todo: tell user about the error, and let him press restart
-                    return;
-                }
-                final String hiddenServiceName = node.publishHiddenService(hiddenservicedirport, localport);
-                this.torServerSocket = new ServiceDescriptor(hiddenServiceName, localport, hiddenservicedirport);
-            }catch (IOException ignored){
-                localport++;
+        try{
+            if(node == null){
+                Log.d("GENERAL","error after tor start");
+                tryKill();
+                // tell user about the error
+                Intent gcm_rec = new Intent("tor_status");
+                gcm_rec.putExtra("tor_status","tor_error");
+                LocalBroadcastManager.getInstance(app).sendBroadcast(gcm_rec);
+                return;
             }
+            app.setHostname(new String(FileUtilities.read(node.getOnionProxyContext().getHostNameFile()), StandardCharsets.UTF_8).trim());
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("GENERAL","cannot start a hiddenservice");
+            tryKill();
+            // tell user about the error
+            Intent gcm_rec = new Intent("tor_status");
+            gcm_rec.putExtra("tor_status","tor_error");
+            LocalBroadcastManager.getInstance(app).sendBroadcast(gcm_rec);
+            return;
         }
-
-        app.setHostname(torServerSocket.getHostname());
-        Entity myEntity = new Entity(app);
-        app.setEntity(myEntity);
 
         ServerSocket ssocks = torServerSocket.getServerSocket();
         Server server = new Server(ssocks, app);
