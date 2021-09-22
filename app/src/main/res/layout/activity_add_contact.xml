@@ -35,9 +35,9 @@
                 android:focusableInTouchMode="true"
                 android:fontFamily="monospace"
                 android:gravity="center"
-                android:padding="20dp"
+                android:padding="10dp"
                 android:text="@string/myaddress"
-                android:textSize="22sp" />
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,20 +73,9 @@
                 android:layout_margin="8dp"
                 android:background="@drawable/button_ripple"
                 android:gravity="center"
-                android:padding="24dp"
+                android:padding="14dp"
                 android:text="@string/myaddress"
-                android:textSize="@dimen/text_size_large" />
-
-            <TextView
-                android:id="@+id/txt_lbl_contact_address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:fontFamily="monospace"
-                android:gravity="center"
-                android:padding="20dp"
-                android:text="@string/lbl_contact_address"
-                android:textSize="22sp" />
+                android:textSize="14sp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/txt_container_contact_address"
@@ -105,6 +94,7 @@
                     android:hint="@string/hint_contact_address"
                     android:imeOptions="flagNoPersonalizedLearning|actionDone"
                     android:textSize="@dimen/text_size_medium" />
+
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </ScrollView>
