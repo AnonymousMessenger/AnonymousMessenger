@@ -62,6 +62,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:contentDescription="@string/image_to_send"
+            android:focusableInTouchMode="true"
             app:srcCompat="@android:drawable/ic_menu_report_image" />
 
         <com.alexvasilkov.gestures.commons.CropAreaView
@@ -99,59 +100,6 @@
 
         </LinearLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/txt_layout_caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#75221E2A"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:visibility="gone"
-            app:errorEnabled="false"
-            app:hintEnabled="false">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txt_caption"
-                android:layout_width="fill_parent"
-                android:layout_height="64dp"
-                android:animateLayoutChanges="true"
-                android:autoLink="all"
-                android:autofillHints="@string/caption"
-                android:hint="@string/caption"
-                android:imeOptions="flagNoPersonalizedLearning"
-                android:inputType="textMultiLine"
-                android:lineSpacingExtra="4dp"
-                android:maxLines="4"
-                android:paddingStart="20dp"
-                android:paddingEnd="0dp"
-                android:paddingBottom="14dp"
-                android:textColor="#ffffff"
-                android:textColorHint="#ffffff" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_send_controls"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="100dp"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/btn_send_media"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:clickable="true"
-                android:focusable="true"
-                app:maxImageSize="41dp"
-                app:srcCompat="@drawable/ic_baseline_send_24"
-                tools:ignore="ContentDescription" />
-        </LinearLayout>
-
         <LinearLayout
             android:id="@+id/layout_controls"
             android:layout_width="wrap_content"
@@ -173,7 +121,61 @@
                 app:srcCompat="@drawable/ic_baseline_save_24"
                 tools:ignore="ContentDescription" />
         </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txt_layout_caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="20dp"
+            android:visibility="gone"
+            app:errorEnabled="false"
+            app:hintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:autoLink="all"
+                android:autofillHints="@string/caption"
+                android:background="#94131117"
+                android:hint="@string/caption"
+                android:imeOptions="flagNoPersonalizedLearning"
+                android:inputType="textMultiLine"
+                android:lineSpacingExtra="4dp"
+                android:maxLines="4"
+                android:padding="20dp"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff" />
+
+            <LinearLayout
+                android:id="@+id/layout_send_controls"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:layout_margin="24dp"
+                android:elevation="26dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btn_send_media"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:maxImageSize="42dp"
+                    app:srcCompat="@drawable/ic_baseline_send_24"
+                    tools:ignore="ContentDescription" />
+            </LinearLayout>
+
+        </com.google.android.material.textfield.TextInputLayout>
     </com.dx.anonymousmessenger.ui.custom.FlickDismissLayout>
+
 </FrameLayout>
 
 <!--</androidx.constraintlayout.widget.ConstraintLayout>-->

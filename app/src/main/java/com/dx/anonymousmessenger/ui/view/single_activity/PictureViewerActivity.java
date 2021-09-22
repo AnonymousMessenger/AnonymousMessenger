@@ -17,18 +17,24 @@ import android.os.Looper;
 import android.provider.MediaStore;
 import android.transition.Explode;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import androidx.annotation.FloatRange;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.transition.AutoTransition;
+import androidx.transition.TransitionManager;
 
 import com.alexvasilkov.gestures.Settings;
 import com.alexvasilkov.gestures.commons.CropAreaView;
@@ -54,8 +60,6 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Objects;
-
-import static java.util.Objects.requireNonNull;
 
 public class PictureViewerActivity extends DxActivity implements FlickGestureListener.GestureCallbacks {
 
@@ -293,9 +297,20 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
             textInputLayout.setVisibility(View.VISIBLE);
             findViewById(R.id.layout_send_controls).setVisibility(View.VISIBLE);
             TextInputEditText msg = findViewById(R.id.txt_caption);
-            InputMethodManager imm = requireNonNull(
-                    ContextCompat.getSystemService(this, InputMethodManager.class));
-            imm.hideSoftInputFromWindow(msg.getWindowToken(), 0);
+            msg.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+                    if(hasFocus){
+                        params.gravity = Gravity.TOP;
+                    }else{
+                        params.gravity = Gravity.CENTER;
+                    }
+                    animateParamsChange(textInputLayout,params,500);
+                }
+            });
+//            InputMethodManager imm = requireNonNull(ContextCompat.getSystemService(this, InputMethodManager.class));
+//            imm.hideSoftInputFromWindow(msg.getWindowToken(), 0);
             FloatingActionButton fabSendMedia = findViewById(R.id.btn_send_media);
             fabSendMedia.setVisibility(View.VISIBLE);
             fabSendMedia.setOnClickListener(v -> {
@@ -421,7 +436,7 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
     }
 
     private void animateDimmingOnEntry() {
-        FrameLayout root_layout = findViewById(R.id.imageviewer_root);
+        View root_layout = findViewById(R.id.imageviewer_root);
         if(root_layout==null || root_layout.getBackground()==null){
             return;
         }
@@ -449,7 +464,12 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
     private void updateBackgroundDimmingAlpha(@FloatRange(from = 0, to = 1) float targetTransparencyFactor) {
         // Increase dimming exponentially so that the background is fully transparent while the image has been moved by half.
         float dimming = 1f - Math.min(1f, targetTransparencyFactor * 2);
-        activityBackgroundDrawable.setAlpha((int) (dimming * 255));
+        if(activityBackgroundDrawable!=null){
+            activityBackgroundDrawable.setAlpha((int) (dimming * 255));
+        }else{
+            System.out.println("null!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
     }
 
     public FlickGestureListener createFlickGestureListener(FlickGestureListener.GestureCallbacks wrappedGestureCallbacks) {
@@ -483,6 +503,25 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
     @Override
     public void onMoveMedia(float moveRatio) {
         updateBackgroundDimmingAlpha(Math.abs(moveRatio));
+    }
+
+    public static void animateConstraintLayout(ConstraintLayout constraintLayout, ConstraintSet set, long duration) {
+        AutoTransition trans = new AutoTransition();
+        trans.setDuration(duration);
+        trans.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        TransitionManager.beginDelayedTransition(constraintLayout, trans);
+        set.applyTo(constraintLayout);
+    }
+
+    public static void animateParamsChange(TextInputLayout textInputLayout, ViewGroup.LayoutParams params, long duration) {
+
+        AutoTransition trans = new AutoTransition();
+        trans.setDuration(duration);
+        trans.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        TransitionManager.beginDelayedTransition(textInputLayout, trans);
+        textInputLayout.setLayoutParams(params);
     }
 
 }
