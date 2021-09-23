@@ -127,6 +127,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void removeData(int position) {
+        if(position>=mMessageList.size()){
+            return;
+        }
         mMessageList.remove(position);
         notifyItemRemoved(position);
 //        notifyItemChanged(position);
@@ -1064,8 +1067,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 int swipedPosition = viewHolder.getAbsoluteAdapterPosition();
-                boolean undoOn = isUndoOn();
-                if (undoOn) {
+                if (isUndoOn()) {
                     pendingRemoval(swipedPosition);
                 } else {
                     remove(swipedPosition);
@@ -1129,15 +1131,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
-            }
-
-            @Override
-            public int getSwipeDirs(@NonNull RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                int position = viewHolder.getAbsoluteAdapterPosition();
-                if (isUndoOn() && isPendingRemoval(position)) {
-                    return 0;
-                }
-                return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
             @Override
@@ -1273,48 +1266,67 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void pendingRemoval(int position) {
-        final QuotedUserMessage item = mMessageList.get(position);
-        if (!itemsPendingRemoval.contains(item)) {
-            itemsPendingRemoval.add(item);
-            // this will redraw row in "undo" state
-            notifyItemChanged(position);
-            // let's create, store and post a runnable to remove the item
-            Runnable pendingRemovalRunnable = () -> remove(item);
-            handler.postDelayed(pendingRemovalRunnable, PENDING_REMOVAL_TIMEOUT);
-            pendingRunnables.put(item, pendingRemovalRunnable);
+        try{
+            final QuotedUserMessage item = mMessageList.get(position);
+            if (!itemsPendingRemoval.contains(item)) {
+                itemsPendingRemoval.add(item);
+                // this will redraw row in "undo" state
+                notifyItemChanged(position);
+                // let's create, store and post a runnable to remove the item
+                Runnable pendingRemovalRunnable = () -> remove(item);
+                handler.postDelayed(pendingRemovalRunnable, PENDING_REMOVAL_TIMEOUT);
+                pendingRunnables.put(item, pendingRemovalRunnable);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     public void remove(QuotedUserMessage item) {
         itemsPendingRemoval.remove(item);
         if (mMessageList.contains(item)) {
-            int position = mMessageList.indexOf(item);
-            notifyItemRemoved(position);
-            mMessageList.remove(item);
-            notifyItemRangeChanged(position,getItemCount());
+            try{
+                int position = mMessageList.indexOf(item);
+                notifyItemRemoved(position);
+                mMessageList.remove(item);
+                notifyItemRangeChanged(position,getItemCount());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
-        DbHelper.deleteMessage(item,app);
-        Intent gcm_rec = new Intent("your_action");
-        gcm_rec.putExtra("delete",item.getCreatedAt());
-        LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+        new Thread(()->{
+            DbHelper.deleteMessage(item,app);
+            Intent gcm_rec = new Intent("your_action");
+            gcm_rec.putExtra("delete",item.getCreatedAt());
+            LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+        }).start();
     }
 
     public void remove(int position) {
-        if(position>mMessageList.size()){
-            return;
-        }
-        QuotedUserMessage item = mMessageList.get(position);
-        itemsPendingRemoval.remove(item);
-        if (mMessageList.contains(item)) {
-            mMessageList.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position,getItemCount());
+        try{
+            if(position>=mMessageList.size()){
+                return;
+            }
+            QuotedUserMessage item = mMessageList.get(position);
+            itemsPendingRemoval.remove(item);
+            if (mMessageList.contains(item)) {
+                mMessageList.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position,getItemCount());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     public boolean isPendingRemoval(int position) {
-        QuotedUserMessage item = mMessageList.get(position);
-        return itemsPendingRemoval.contains(item);
+        try {
+            QuotedUserMessage item = mMessageList.get(position);
+            return itemsPendingRemoval.contains(item);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void setUndoOn(boolean undoOn) {
