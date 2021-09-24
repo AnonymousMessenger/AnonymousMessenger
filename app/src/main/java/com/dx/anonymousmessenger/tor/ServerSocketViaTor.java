@@ -356,7 +356,7 @@ public class ServerSocketViaTor {
                 if(!Utils.isValidAddress(msg)){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
-                    DbHelper.saveLog("REFUSED FILE FROM: "+address,new Date().getTime(),"NOTICE",app);
+                    DbHelper.saveLog("REFUSED FILE FROM: "+msg,new Date().getTime(),"NOTICE",app);
                     return;
                 }
                 address= msg.trim();
@@ -464,6 +464,14 @@ public class ServerSocketViaTor {
                 in.close();
                 fos.close();
                 sockets.getAndDecrement();
+
+                if(done<length){
+                    //no bueno
+                    refuseSocket(outputStream,sock,sockets);
+                    FileHelper.deleteFile(eFilename,app);
+                    DbHelper.saveLog("OVERSIZED FILE FROM: "+address+" SIZE: "+length+" DONE: "+done,new Date().getTime(),"NOTICE",app);
+                    return;
+                }
 
                 DbHelper.saveMessage(qum,app,qum.getAddress(),true);
                 DbHelper.setContactNickname(qum.getSender(), qum.getAddress(), app);
