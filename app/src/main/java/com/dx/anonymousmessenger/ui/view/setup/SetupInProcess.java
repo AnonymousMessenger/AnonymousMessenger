@@ -22,6 +22,8 @@ import com.dx.anonymousmessenger.ui.view.app.AppActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.SettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Date;
+
 public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
 
     private BroadcastReceiver mMyBroadcastReceiver;
@@ -129,14 +131,11 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
         serverChecker = new Thread(()->{
             try {
                 Thread.sleep(1500);
-                if(getIntent().getBooleanExtra("first_time",true)){
-                    Thread.sleep(2000);
-                }
                 ((DxApplication) getApplication()).clearNotification(2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if(!((DxApplication) getApplication()).isServerReady() && ((DxApplication) getApplication()).getAndroidTorRelay()==null || (((DxApplication) getApplication()).getAndroidTorRelay()!=null && !((DxApplication) getApplication()).getAndroidTorRelay().isTorRunning())){
+            if(!((DxApplication) getApplication()).isExitingHoldup() && ((DxApplication) getApplication()).getTorStartTime()!=0 && new Date().getTime()>(((DxApplication) getApplication()).getTorStartTime()+5000) && !((DxApplication) getApplication()).isServerReady() && ((DxApplication) getApplication()).getAndroidTorRelay()==null || (((DxApplication) getApplication()).getAndroidTorRelay()!=null && !((DxApplication) getApplication()).getAndroidTorRelay().isTorRunning())){
                 runOnUiThread(()->{
                     new AlertDialog.Builder(this, R.style.AppAlertDialog)
                             .setTitle(R.string.tor_error_title)

@@ -58,6 +58,7 @@ public class DxApplication extends Application {
     private boolean serverReady = false;
     private boolean exitingHoldup;
     private volatile boolean restartingTor;
+    private long torStartTime = 0;
 
     private DxAccount account;
     private Entity entity;
@@ -130,6 +131,10 @@ public class DxApplication extends Application {
 
     public long getFileSizeLimit() {
         return fileSizeLimit;
+    }
+
+    public long getTorStartTime(){
+        return torStartTime;
     }
 
     /*
@@ -837,6 +842,7 @@ public class DxApplication extends Application {
 
     public void startTor(){
         Log.d("GENERAL","start tor requested");
+        torStartTime = new Date().getTime();
         reloadSettings();
         if(isServiceRunningInForeground(this, DxService.class)){
             Log.d("GENERAL","Service already running, not starting tor");
