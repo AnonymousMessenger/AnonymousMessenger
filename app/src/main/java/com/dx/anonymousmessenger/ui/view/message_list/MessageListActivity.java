@@ -2,6 +2,7 @@ package com.dx.anonymousmessenger.ui.view.message_list;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
@@ -21,7 +22,6 @@ import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.transition.Explode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -92,7 +92,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     public TextView quoteSenderTyping;
     private RecyclerView mMessageRecycler;
     private MessageListAdapter mMessageAdapter;
-    List<QuotedUserMessage> messageList = new ArrayList<>();
+    private List<QuotedUserMessage> messageList = new ArrayList<>();
     private BroadcastReceiver mMyBroadcastReceiver;
     private Thread messageChecker = null;
     private Button send = null;
@@ -139,43 +139,16 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        getWindow().setExitTransition(new Explode());
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().setExitTransition(getWindow().getSharedElementExitTransition());
         setContentView(R.layout.activity_message_list);
         try{
             setTitle(getIntent().getStringExtra("nickname"));
             setSubtitle(getIntent().getStringExtra("address"));
             setBackEnabled(true);
+            ((MaterialToolbar)findViewById(R.id.toolbar)).setTransitionName("title");
         }catch (Exception ignored){}
-        ((MaterialToolbar)findViewById(R.id.toolbar)).inflateMenu(R.menu.message_list_menu);
-        if(!((DxApplication)getApplication()).isAcceptingCallsAllowed()){
-            ((MaterialToolbar)findViewById(R.id.toolbar)).getMenu().removeItem(R.id.action_call);
-        }
 
-        final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
-                "address"),
-                (DxApplication) getApplication());
-        if(fullAddress == null){
-            return;
-        }
-        address = fullAddress;
-
-        new Thread(() -> {
-            try{
-                byte[] image = FileHelper.getFile(DbHelper.getContactProfileImagePath(address,(DxApplication)getApplication()), (DxApplication)getApplication());
-                if (image == null) {
-                    return;
-                }
-                RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
-                drawable.setCircular(true);
-                new Handler(Looper.getMainLooper()).post(()->{
-                    ((MaterialToolbar) findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
-                });
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }).start();
-        ((MaterialToolbar)findViewById(R.id.toolbar)).setOnMenuItemClickListener(this::onOptionsItemSelected);
 
         nickname = getIntent().getStringExtra("nickname");
         quoteTextTyping = findViewById(R.id.quote_text_typing);
@@ -268,254 +241,11 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             }
         });
         chatbox = findViewById(R.id.layout_chatbox);
-        chatbox.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            mMessageRecycler.scrollBy(0,-10);
-            mMessageRecycler.scrollBy(0,20);
-        });
-        send.setOnClickListener(v -> {
-            if(((DxApplication) getApplication()).getEntity()==null){
-                Snackbar.make(send, R.string.no_encryption_yet,Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
-                return;
-            }
-            if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(fullAddress,1))){
-                Snackbar.make(send, R.string.no_session,Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
-                new Thread(()-> MessageSender.sendKeyExchangeMessage(((DxApplication)getApplication()),fullAddress)).start();
-                return;
-            }
-            if(((DxApplication)getApplication()).getEntity().getStore().loadSession(new SignalProtocolAddress(fullAddress,1)).getSessionState().hasPendingKeyExchange() || ((DxApplication)getApplication()).getEntity().getStore().getIdentity(new SignalProtocolAddress(fullAddress,1)) == null){
-                Snackbar.make(send, R.string.cant_encrypt_message,Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
-                return;
-            }
-            TextView quoteSenderTyping = findViewById(R.id.quote_sender_typing);
-            TextView quoteTextTyping = findViewById(R.id.quote_text_typing);
-            QuotedUserMessage msg =
-                    new QuotedUserMessage(quoteSenderTyping.getText().toString().equals(getString(R.string.you))?
-                            ((DxApplication)getApplication()).getAccount().getNickname():
-                            getIntent().getStringExtra("nickname"),
-                            quoteTextTyping.getText().toString(),
-                            ((DxApplication)getApplication()).getHostname(),
-                            txt.getText().toString(),
-                            ((DxApplication)getApplication()).getAccount().getNickname(),
-                            new Date().getTime(),false,fullAddress,false);
-//            messageList.add(msg);
-            new Thread(()-> MessageSender.sendMessage(msg,((DxApplication)getApplication()),fullAddress)).start();
-            txt.setText("");
-            quoteSenderTyping.setText("");
-            quoteTextTyping.setText("");
-            quoteSenderTyping.setVisibility(View.GONE);
-            quoteTextTyping.setVisibility(View.GONE);
-            audio.setVisibility(View.VISIBLE);
-            file.setVisibility(View.VISIBLE);
-//            try{
-//                mMessageAdapter.notifyItemInserted(messageList.size()-1);
-//                mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
-//            }catch (Exception ignored) {}
-        });
-        quoteTextTyping.setOnClickListener(v -> {
-            quoteTextTyping.setVisibility(View.GONE);
-            quoteTextTyping.setText("");
-            quoteSenderTyping.setVisibility(View.GONE);
-            quoteSenderTyping.setText("");
-        });
-        quoteSenderTyping.setOnClickListener(v -> {
-            quoteTextTyping.setVisibility(View.GONE);
-            quoteTextTyping.setText("");
-            quoteSenderTyping.setVisibility(View.GONE);
-            quoteSenderTyping.setText("");
-        });
-        txt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//        chatbox.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+//            mMessageRecycler.scrollBy(0,-10);
+//            mMessageRecycler.scrollBy(0,20);
+//        });
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length()==0){
-                    audio.setVisibility(View.VISIBLE);
-                    file.setVisibility(View.VISIBLE);
-                }else{
-                    audio.setVisibility(View.GONE);
-                    file.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        AtomicReference<Float> downRawX = new AtomicReference<>((float) 0);
-        AtomicReference<Float> dX = new AtomicReference<>((float) 0);
-        audio.setOnTouchListener((arg0, arg1) -> {
-            //todo : add wakelock here
-            // while user has his/her thumb on the button
-            if (arg1.getAction()== MotionEvent.ACTION_DOWN){
-                downRawX.set(arg1.getRawX());
-                if(x==null){
-                    x = new AtomicReference<>();
-                    x.set(arg0.getX());
-                }
-
-                dX.set(arg0.getX() - downRawX.get());
-                txt.setVisibility(View.GONE);
-                quoteTextTyping.setVisibility(View.GONE);
-                quoteSenderTyping.setVisibility(View.GONE);
-                file.setVisibility(View.GONE);
-                audioLayout.setVisibility(View.VISIBLE);
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-                    new Thread(()->{
-                        try{
-                            if(mMessageAdapter!=null && mMessageAdapter.ap!=null){
-                                mMessageAdapter.ap.stop(1);
-                                mMessageAdapter.ap = null;
-                            }
-                        }catch (Exception ignored) {}
-                    }).start();
-
-                    Intent intent = new Intent(this, AudioRecordingService.class);
-                    intent.setAction("start_recording");
-                    intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
-                    intent.putExtra("nickname",getIntent().getStringExtra("nickname"));
-                    startService(intent);
-                    timeBroadcastReceiver = new BroadcastReceiver() {
-                        @Override
-                        public void onReceive(Context context, Intent intent) {
-                        try{
-                            txtAudioTimer.setText(intent.getStringExtra("time"));
-                        }catch (Exception ignored) {}
-                        }
-                    };
-                    try {
-                        LocalBroadcastManager.getInstance(this).registerReceiver(timeBroadcastReceiver,new IntentFilter("recording_action"));
-                    } catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }else{
-                    requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },RECORD_AUDIO_REQUEST_CODE);
-                }
-            }
-            // user has lifted his/her thumb off the button
-            else if(arg1.getAction()== MotionEvent.ACTION_UP){
-                audioLayout.setVisibility(View.GONE);
-                txt.setVisibility(View.VISIBLE);
-                file.setVisibility(View.VISIBLE);
-                if(quoteTextTyping.getText().length()>0){
-                    quoteTextTyping.setVisibility(View.VISIBLE);
-                    quoteSenderTyping.setVisibility(View.VISIBLE);
-                }
-                Intent intent = new Intent(this, AudioRecordingService.class);
-                stopService(intent);
-                LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
-                timeBroadcastReceiver = null;
-                txtAudioTimer.setText(getString(R.string._00_00));
-                arg0.animate()
-                        .x(x.get())
-                        .y(arg0.getY())
-                        .setDuration(0)
-                        .start();
-                return true;
-            }else if(arg1.getAction()== MotionEvent.ACTION_MOVE){
-                int viewWidth = arg0.getWidth();
-
-                View viewParent = (View)arg0.getParent();
-                int parentWidth = viewParent.getWidth();
-
-                float newX = arg1.getRawX() + dX.get();
-                newX = Math.min(parentWidth - viewWidth , newX);
-
-                Configuration config = getResources().getConfiguration();
-
-                if(newX>=x.get()){
-                    if(config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
-                        //in Right To Left layout
-                        if(newX>=(x.get()+100)){
-                            audioLayout.setVisibility(View.GONE);
-                            txt.setVisibility(View.VISIBLE);
-                            file.setVisibility(View.VISIBLE);
-                            if(quoteTextTyping.getText().length()>0){
-                                quoteTextTyping.setVisibility(View.VISIBLE);
-                                quoteSenderTyping.setVisibility(View.VISIBLE);
-                            }
-                            Intent intent = new Intent(this, AudioRecordingService.class);
-                            intent.setAction("stop_recording");
-                            startService(intent);
-                            LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
-                            timeBroadcastReceiver = null;
-                            txtAudioTimer.setText(getString(R.string._00_00));
-                            arg0.animate()
-                                    .x(x.get())
-                                    .y(arg0.getY())
-                                    .setDuration(0)
-                                    .start();
-                        }else{
-                            arg0.animate()
-                                    .x(newX)
-                                    .y(arg0.getY())
-                                    .setDuration(0)
-                                    .start();
-                        }
-                    }
-                    return true;
-                }
-                if(newX<=(x.get())){
-                    if(config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
-                        return true;
-                    }
-                }
-                if(newX<=(x.get()-100)){
-                    audioLayout.setVisibility(View.GONE);
-                    txt.setVisibility(View.VISIBLE);
-                    file.setVisibility(View.VISIBLE);
-                    if(quoteTextTyping.getText().length()>0){
-                        quoteTextTyping.setVisibility(View.VISIBLE);
-                        quoteSenderTyping.setVisibility(View.VISIBLE);
-                    }
-                    Intent intent = new Intent(this, AudioRecordingService.class);
-                    intent.setAction("stop_recording");
-                    startService(intent);
-                    LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
-                    timeBroadcastReceiver = null;
-                    txtAudioTimer.setText(getString(R.string._00_00));
-                    arg0.animate()
-                            .x(x.get())
-                            .y(arg0.getY())
-                            .setDuration(0)
-                            .start();
-                }else{
-                    arg0.animate()
-                            .x(newX)
-                            .y(arg0.getY())
-                            .setDuration(0)
-                            .start();
-                }
-                return true;
-            }
-            return true;
-        });
-        picsHelp.setOnClickListener(v -> {
-            mediaRecyclerView.setVisibility(View.GONE);
-            send.setVisibility(View.VISIBLE);
-            audio.setVisibility(View.VISIBLE);
-            file.setVisibility(View.VISIBLE);
-            txt.setVisibility(View.VISIBLE);
-            if(quoteTextTyping.getText().length()>0){
-                quoteTextTyping.setVisibility(View.VISIBLE);
-                quoteSenderTyping.setVisibility(View.VISIBLE);
-            }
-            picsHelp.setVisibility(View.GONE);
-        });
-        file.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_CODE);
-                getReadStoragePerms();
-                return;
-            }
-
-            openGallery();
-        });
 
 /*
         CoordinatorLayout coordinatorLayout = findViewById(R.id.coordinatorLayout);
@@ -843,12 +573,288 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 //        updateUi();
 //    }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onStart() {
         super.onStart();
         if(mMyBroadcastReceiver!=null){
             return;
         }
+        /* init stuff */
+        ((MaterialToolbar)findViewById(R.id.toolbar)).inflateMenu(R.menu.message_list_menu);
+        if(!((DxApplication)getApplication()).isAcceptingCallsAllowed()){
+            ((MaterialToolbar)findViewById(R.id.toolbar)).getMenu().removeItem(R.id.action_call);
+        }
+
+        final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
+                "address"),
+                (DxApplication) getApplication());
+        if(fullAddress == null){
+            return;
+        }
+        address = fullAddress;
+
+        new Thread(() -> {
+            try{
+                byte[] image = FileHelper.getFile(DbHelper.getContactProfileImagePath(address,(DxApplication)getApplication()), (DxApplication)getApplication());
+                if (image == null) {
+                    return;
+                }
+                RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
+                drawable.setCircular(true);
+                new Handler(Looper.getMainLooper()).post(()->{
+                    ((MaterialToolbar) findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
+                });
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }).start();
+        ((MaterialToolbar)findViewById(R.id.toolbar)).setOnMenuItemClickListener(this::onOptionsItemSelected);
+
+        send.setOnClickListener(v -> {
+            if(((DxApplication) getApplication()).getEntity()==null){
+                Snackbar.make(send, R.string.no_encryption_yet,Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
+                return;
+            }
+            if(!((DxApplication)getApplication()).getEntity().getStore().containsSession(new SignalProtocolAddress(fullAddress,1))){
+                Snackbar.make(send, R.string.no_session,Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
+                new Thread(()-> MessageSender.sendKeyExchangeMessage(((DxApplication)getApplication()),fullAddress)).start();
+                return;
+            }
+            if(((DxApplication)getApplication()).getEntity().getStore().loadSession(new SignalProtocolAddress(fullAddress,1)).getSessionState().hasPendingKeyExchange() || ((DxApplication)getApplication()).getEntity().getStore().getIdentity(new SignalProtocolAddress(fullAddress,1)) == null){
+                Snackbar.make(send, R.string.cant_encrypt_message,Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
+                return;
+            }
+            TextView quoteSenderTyping = findViewById(R.id.quote_sender_typing);
+            TextView quoteTextTyping = findViewById(R.id.quote_text_typing);
+            QuotedUserMessage msg =
+                    new QuotedUserMessage(quoteSenderTyping.getText().toString().equals(getString(R.string.you))?
+                            ((DxApplication)getApplication()).getAccount().getNickname():
+                            getIntent().getStringExtra("nickname"),
+                            quoteTextTyping.getText().toString(),
+                            ((DxApplication)getApplication()).getHostname(),
+                            txt.getText().toString(),
+                            ((DxApplication)getApplication()).getAccount().getNickname(),
+                            new Date().getTime(),false,fullAddress,false);
+//            messageList.add(msg);
+            new Thread(()-> MessageSender.sendMessage(msg,((DxApplication)getApplication()),fullAddress)).start();
+            txt.setText("");
+            quoteSenderTyping.setText("");
+            quoteTextTyping.setText("");
+            quoteSenderTyping.setVisibility(View.GONE);
+            quoteTextTyping.setVisibility(View.GONE);
+            audio.setVisibility(View.VISIBLE);
+            file.setVisibility(View.VISIBLE);
+//            try{
+//                mMessageAdapter.notifyItemInserted(messageList.size()-1);
+//                mMessageRecycler.smoothScrollToPosition(messageList.size() - 1);
+//            }catch (Exception ignored) {}
+        });
+        quoteTextTyping.setOnClickListener(v -> {
+            quoteTextTyping.setVisibility(View.GONE);
+            quoteTextTyping.setText("");
+            quoteSenderTyping.setVisibility(View.GONE);
+            quoteSenderTyping.setText("");
+        });
+        quoteSenderTyping.setOnClickListener(v -> {
+            quoteTextTyping.setVisibility(View.GONE);
+            quoteTextTyping.setText("");
+            quoteSenderTyping.setVisibility(View.GONE);
+            quoteSenderTyping.setText("");
+        });
+        txt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()==0){
+                    audio.setVisibility(View.VISIBLE);
+                    file.setVisibility(View.VISIBLE);
+                }else{
+                    audio.setVisibility(View.GONE);
+                    file.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        AtomicReference<Float> downRawX = new AtomicReference<>((float) 0);
+        AtomicReference<Float> dX = new AtomicReference<>((float) 0);
+        audio.setOnTouchListener((arg0, arg1) -> {
+            //todo : add wakelock here
+            // while user has his/her thumb on the button
+            if (arg1.getAction()== MotionEvent.ACTION_DOWN){
+                downRawX.set(arg1.getRawX());
+                if(x==null){
+                    x = new AtomicReference<>();
+                    x.set(arg0.getX());
+                }
+
+                dX.set(arg0.getX() - downRawX.get());
+                txt.setVisibility(View.GONE);
+                quoteTextTyping.setVisibility(View.GONE);
+                quoteSenderTyping.setVisibility(View.GONE);
+                file.setVisibility(View.GONE);
+                audioLayout.setVisibility(View.VISIBLE);
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                    new Thread(()->{
+                        try{
+                            if(mMessageAdapter!=null && mMessageAdapter.ap!=null){
+                                mMessageAdapter.ap.stop(1);
+                                mMessageAdapter.ap = null;
+                            }
+                        }catch (Exception ignored) {}
+                    }).start();
+
+                    Intent intent = new Intent(this, AudioRecordingService.class);
+                    intent.setAction("start_recording");
+                    intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                    intent.putExtra("nickname",getIntent().getStringExtra("nickname"));
+                    startService(intent);
+                    timeBroadcastReceiver = new BroadcastReceiver() {
+                        @Override
+                        public void onReceive(Context context, Intent intent) {
+                            try{
+                                txtAudioTimer.setText(intent.getStringExtra("time"));
+                            }catch (Exception ignored) {}
+                        }
+                    };
+                    try {
+                        LocalBroadcastManager.getInstance(this).registerReceiver(timeBroadcastReceiver,new IntentFilter("recording_action"));
+                    } catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }else{
+                    requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },RECORD_AUDIO_REQUEST_CODE);
+                }
+            }
+            // user has lifted his/her thumb off the button
+            else if(arg1.getAction()== MotionEvent.ACTION_UP){
+                audioLayout.setVisibility(View.GONE);
+                txt.setVisibility(View.VISIBLE);
+                file.setVisibility(View.VISIBLE);
+                if(quoteTextTyping.getText().length()>0){
+                    quoteTextTyping.setVisibility(View.VISIBLE);
+                    quoteSenderTyping.setVisibility(View.VISIBLE);
+                }
+                Intent intent = new Intent(this, AudioRecordingService.class);
+                stopService(intent);
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
+                timeBroadcastReceiver = null;
+                txtAudioTimer.setText(getString(R.string._00_00));
+                arg0.animate()
+                        .x(x.get())
+                        .y(arg0.getY())
+                        .setDuration(0)
+                        .start();
+                return true;
+            }else if(arg1.getAction()== MotionEvent.ACTION_MOVE){
+                int viewWidth = arg0.getWidth();
+
+                View viewParent = (View)arg0.getParent();
+                int parentWidth = viewParent.getWidth();
+
+                float newX = arg1.getRawX() + dX.get();
+                newX = Math.min(parentWidth - viewWidth , newX);
+
+                Configuration config = getResources().getConfiguration();
+
+                if(newX>=x.get()){
+                    if(config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+                        //in Right To Left layout
+                        if(newX>=(x.get()+100)){
+                            audioLayout.setVisibility(View.GONE);
+                            txt.setVisibility(View.VISIBLE);
+                            file.setVisibility(View.VISIBLE);
+                            if(quoteTextTyping.getText().length()>0){
+                                quoteTextTyping.setVisibility(View.VISIBLE);
+                                quoteSenderTyping.setVisibility(View.VISIBLE);
+                            }
+                            Intent intent = new Intent(this, AudioRecordingService.class);
+                            intent.setAction("stop_recording");
+                            startService(intent);
+                            LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
+                            timeBroadcastReceiver = null;
+                            txtAudioTimer.setText(getString(R.string._00_00));
+                            arg0.animate()
+                                    .x(x.get())
+                                    .y(arg0.getY())
+                                    .setDuration(0)
+                                    .start();
+                        }else{
+                            arg0.animate()
+                                    .x(newX)
+                                    .y(arg0.getY())
+                                    .setDuration(0)
+                                    .start();
+                        }
+                    }
+                    return true;
+                }
+                if(newX<=(x.get())){
+                    if(config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+                        return true;
+                    }
+                }
+                if(newX<=(x.get()-100)){
+                    audioLayout.setVisibility(View.GONE);
+                    txt.setVisibility(View.VISIBLE);
+                    file.setVisibility(View.VISIBLE);
+                    if(quoteTextTyping.getText().length()>0){
+                        quoteTextTyping.setVisibility(View.VISIBLE);
+                        quoteSenderTyping.setVisibility(View.VISIBLE);
+                    }
+                    Intent intent = new Intent(this, AudioRecordingService.class);
+                    intent.setAction("stop_recording");
+                    startService(intent);
+                    LocalBroadcastManager.getInstance(this).unregisterReceiver(timeBroadcastReceiver);
+                    timeBroadcastReceiver = null;
+                    txtAudioTimer.setText(getString(R.string._00_00));
+                    arg0.animate()
+                            .x(x.get())
+                            .y(arg0.getY())
+                            .setDuration(0)
+                            .start();
+                }else{
+                    arg0.animate()
+                            .x(newX)
+                            .y(arg0.getY())
+                            .setDuration(0)
+                            .start();
+                }
+                return true;
+            }
+            return true;
+        });
+        picsHelp.setOnClickListener(v -> {
+            mediaRecyclerView.setVisibility(View.GONE);
+            send.setVisibility(View.VISIBLE);
+            audio.setVisibility(View.VISIBLE);
+            file.setVisibility(View.VISIBLE);
+            txt.setVisibility(View.VISIBLE);
+            if(quoteTextTyping.getText().length()>0){
+                quoteTextTyping.setVisibility(View.VISIBLE);
+                quoteSenderTyping.setVisibility(View.VISIBLE);
+            }
+            picsHelp.setVisibility(View.GONE);
+        });
+        file.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_CODE);
+                getReadStoragePerms();
+                return;
+            }
+
+            openGallery();
+        });
+        /* end init stuff */
         mMyBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent)
@@ -940,7 +946,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         messageChecker = null;
         send = null;
         txt = null;
-        finish();
+        finishAfterTransition();
         return true;
     }
 
@@ -987,9 +993,14 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 break;
             case R.id.action_contact_profile:
                 stopCheckingMessages();
-                Intent intent2 = new Intent(this, ContactProfileActivity.class);
-                intent2.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
-                startActivity(intent2);
+                new Handler().postDelayed(()->{
+                    Intent intent2 = new Intent(this, ContactProfileActivity.class);
+                    intent2.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                    View v = findViewById(R.id.action_contact_profile);
+                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(this, v, "profile_picture");
+                    this.startActivity(intent2,activityOptions.toBundle());
+                },150);
+//                startActivity(intent2);
                 break;
             case R.id.action_call:
                 new Thread(()->{
@@ -1134,7 +1145,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
     /**
      * Release memory when the UI becomes hidden or when system resources become low.
-     * @param level the memory-related event that was raised.
+     * '@param' 'level' the memory-related event that was raised.
      */
 //    public void onTrimMemory(int level) {
 //

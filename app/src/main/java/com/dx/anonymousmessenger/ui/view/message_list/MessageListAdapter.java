@@ -2,6 +2,7 @@ package com.dx.anonymousmessenger.ui.view.message_list;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -826,7 +827,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         intent.putExtra("appData",true);
                         intent.putExtra("path",message.getPath());
                         intent.putExtra("message",message.getMessage());
-                        v.getContext().startActivity(intent);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation((MessageListActivity) mContext, v, "picture");
+                        v.getContext().startActivity(intent,activityOptions.toBundle());
+
                     });
                 });
             }).start();

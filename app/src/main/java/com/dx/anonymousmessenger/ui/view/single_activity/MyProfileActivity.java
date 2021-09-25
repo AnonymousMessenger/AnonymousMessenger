@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.transition.Explode;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -59,14 +58,20 @@ public class MyProfileActivity extends DxActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        finishAfterTransition();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishAfterTransition();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         ImageView profileImage = findViewById(R.id.img_profile);
+        profileImage.setTransitionName("profile_picture");
         new Thread(() -> {
             try{
                 String path = ((DxApplication)getApplication()).getAccount().getProfileImagePath();
@@ -102,7 +107,8 @@ public class MyProfileActivity extends DxActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
-        getWindow().setExitTransition(new Explode());
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+//        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_my_profile);
 
         try{
@@ -139,6 +145,7 @@ public class MyProfileActivity extends DxActivity {
             }
         });
         ImageView profileImage = findViewById(R.id.img_profile);
+        profileImage.setTransitionName("profile_picture");
         new Thread(() -> {
             try{
                 byte[] image = FileHelper.getFile(((DxApplication)getApplication()).getAccount().getProfileImagePath(),((DxApplication)getApplication()));

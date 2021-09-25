@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.transition.Explode;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
@@ -75,9 +74,11 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
-        getWindow().setExitTransition(new Explode());
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+        getWindow().setExitTransition(getWindow().getSharedElementExitTransition());
         setContentView(R.layout.activity_picture_viewer);
 
+//        getWindow().getSharedElementExitTransition()
 
         try{
             setBackEnabled(true);
@@ -99,6 +100,7 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
 
         animateDimmingOnEntry();
         GestureImageView imageView = findViewById(R.id.img_to_send);
+        imageView.setTransitionName("picture");
         FlickDismissLayout fdl = findViewById(R.id.flick);
         FlickGestureListener flickListener = createFlickGestureListener(this);
         flickListener.setContentHeightProvider(new FlickGestureListener.ContentHeightProvider() {
@@ -405,7 +407,8 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
 
     @Override
     public void onBackPressed() {
-        finish();
+//        finish();
+        finishAfterTransition();
     }
 
     private void saveToStorage(){
@@ -466,10 +469,7 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
         float dimming = 1f - Math.min(1f, targetTransparencyFactor * 2);
         if(activityBackgroundDrawable!=null){
             activityBackgroundDrawable.setAlpha((int) (dimming * 255));
-        }else{
-            System.out.println("null!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
-
     }
 
     public FlickGestureListener createFlickGestureListener(FlickGestureListener.GestureCallbacks wrappedGestureCallbacks) {

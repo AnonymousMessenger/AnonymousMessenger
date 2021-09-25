@@ -48,7 +48,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".ui.view.single_activity.SettingsActivity"></activity>
+        <activity android:name=".ui.view.single_activity.SettingsActivity" />
         <activity android:name=".ui.view.single_activity.CrashActivity" />
         <activity
             android:name=".ui.view.log.LogActivity"
@@ -66,6 +66,7 @@
         <activity
             android:name=".ui.view.single_activity.PictureViewerActivity"
             android:configChanges="orientation|navigation"
+            android:duration="@android:integer/config_longAnimTime"
             android:theme="@style/AppTheme.TransparentFullscreen" />
         <activity android:name=".ui.view.call.RingingActivity" />
         <activity android:name=".ui.view.call.CallActivity" />
@@ -77,7 +78,8 @@
         <activity android:name=".ui.view.setup.SetupInProcess" />
         <activity
             android:name=".ui.view.message_list.MessageListActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation"
+            android:duration="@android:integer/config_longAnimTime"/>
         <activity
             android:name=".ui.view.app.AppActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />

@@ -1,6 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.app;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -135,6 +136,7 @@ public class AppFragment extends Fragment {
             }
             }
         };
+        ((AppActivity)requireActivity()).setTitle(getString(R.string.app_name));
         checkMessages();
         if(!started){
             updateUi();
@@ -155,15 +157,15 @@ public class AppFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((AppActivity)requireActivity()).setTitle(getString(R.string.app_name));
-        if(!onlineTxt.getText().toString().equals(getString(R.string.online)) && !onlineTxt.getText().toString().equals(getString(R.string.checking))){
-            checkConnectivity();
-        }
-        checkMessages();
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        ((AppActivity)requireActivity()).setTitle(getString(R.string.app_name));
+//        if(!onlineTxt.getText().toString().equals(getString(R.string.online)) && !onlineTxt.getText().toString().equals(getString(R.string.checking))){
+//            checkConnectivity();
+//        }
+//        checkMessages();
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -205,12 +207,17 @@ public class AppFragment extends Fragment {
         ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
             if(item.getItemId()==R.id.action_my_profile){
                 stopCheckingMessages();
-                try{
-                    Intent intent = new Intent(getContext(), MyProfileActivity.class);
-                    if(getContext()!=null){
-                        getContext().startActivity(intent);
-                    }
-                }catch (Exception ignored) {}
+                new Handler().postDelayed(()->{
+                    try{
+                        Intent intent = new Intent(getContext(), MyProfileActivity.class);
+                        if(getContext()!=null){
+                            View v = requireActivity().findViewById(R.id.action_my_profile);
+                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation((AppActivity) requireActivity(), v, "profile_picture");
+                            v.getContext().startActivity(intent,activityOptions.toBundle());
+//                        getContext().startActivity(intent);
+                        }
+                    }catch (Exception ignored) {}
+                },150);
                 return true;
             }
             return false;

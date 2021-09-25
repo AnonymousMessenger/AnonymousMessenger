@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.transition.Explode;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -28,8 +27,13 @@ public class ContactProfileActivity extends DxActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        finishAfterTransition();
         return super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishAfterTransition();
     }
 
     @Override
@@ -37,7 +41,8 @@ public class ContactProfileActivity extends DxActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
-        getWindow().setExitTransition(new Explode());
+        getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
+//        getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_contact_profile);
 
         try{
@@ -49,6 +54,7 @@ public class ContactProfileActivity extends DxActivity {
         final TextView nickname = findViewById(R.id.txt_nickname);
         final TextView verifyIdentity = findViewById(R.id.btn_verify_identity);
         final ImageView profileImage = findViewById(R.id.img_profile);
+        profileImage.setTransitionName("profile_picture");
         new Thread(()->{
             final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
                     "address"),

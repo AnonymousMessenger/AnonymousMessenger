@@ -1,6 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.app;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -99,14 +100,17 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }catch (Exception ignored){}
 
         holder.itemView.setOnLongClickListener(new ListItemOnClickListener(holder.itemView,mData.get(holder.getAbsoluteAdapterPosition())[1],holder.getAbsoluteAdapterPosition()));
-        holder.itemView.setOnClickListener(v -> {
-            appFragment.stopCheckingMessages();
-            int position1 = holder.getAbsoluteAdapterPosition();
-            Intent intent = new Intent(v.getContext(), MessageListActivity.class);
-            intent.putExtra("nickname",mData.get(position1)[0]);
-            intent.putExtra("address",mData.get(position1)[1].substring(0,10));
-            v.getContext().startActivity(intent);
-        });
+//        holder.itemView.setOnClickListener(v -> {
+//            appFragment.stopCheckingMessages();
+//            int position1 = holder.getAbsoluteAdapterPosition();
+//            Intent intent = new Intent(v.getContext(), MessageListActivity.class);
+//            intent.putExtra("nickname",mData.get(position1)[0]);
+//            intent.putExtra("address",mData.get(position1)[1].substring(0,10));
+//            View v = holder.itemView.;
+//            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(this, v, "profile_picture");
+//            this.startActivity(intent2,activityOptions.toBundle());
+//            v.getContext().startActivity(intent);
+//        });
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_READ:
                 //String msg, String send_to, long createdAt, boolean received, String path
@@ -297,12 +301,30 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             msgText.setText(msg);
             timeText.setText(createdAt>0?Utils.formatDateTime(createdAt):"");
             seen.setVisibility(send_to.equals(app.getHostname())?View.GONE:received?View.VISIBLE:View.GONE);
+            itemView.setOnClickListener((v)->{
+                appFragment.stopCheckingMessages();
+                Intent intent = new Intent(v.getContext(), MessageListActivity.class);
+                intent.putExtra("nickname",title);
+                intent.putExtra("address",address.substring(0,10));
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(appFragment.requireActivity(), itemView, "title");
+//                new Handler().postDelayed(()->{
+                    v.getContext().startActivity(intent,activityOptions.toBundle());
+//                },250);
+            });
             if(app.onlineList.contains(address)){
                 contactOnline.setVisibility(View.VISIBLE);
             }else{
                 contactOnline.setVisibility(View.GONE);
             }
-            // todo: prof pic on click
+            if(profileImage!=null){
+                profileImage.setOnClickListener((v)->{
+                    Intent intent2 = new Intent(app, ContactProfileActivity.class);
+                    intent2.putExtra("address", address.substring(0,10));
+                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(appFragment.requireActivity(), v, "profile_picture");
+                    appFragment.requireActivity().startActivity(intent2,activityOptions.toBundle());
+                });
+            }
             if(imagePath!=null && !imagePath.equals("")){
                 super.setIsRecyclable(false);
                 new Thread(()->{
