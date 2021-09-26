@@ -29,6 +29,7 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
     private BroadcastReceiver mMyBroadcastReceiver;
     private TextView statusText;
     private Thread serverChecker = null;
+    private AlertDialog alert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,10 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
 
     @Override
     protected void onPause() {
+        if(alert!=null){
+            alert.dismiss();
+            alert = null;
+        }
         super.onPause();
         if(mMyBroadcastReceiver==null){
             return;
@@ -136,16 +141,7 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
                 e.printStackTrace();
             }
             if(!((DxApplication) getApplication()).isExitingHoldup() && ((DxApplication) getApplication()).getTorStartTime()!=0 && new Date().getTime()>(((DxApplication) getApplication()).getTorStartTime()+5000) && !((DxApplication) getApplication()).isServerReady() && ((DxApplication) getApplication()).getAndroidTorRelay()==null || (((DxApplication) getApplication()).getAndroidTorRelay()!=null && !((DxApplication) getApplication()).getAndroidTorRelay().isTorRunning())){
-                runOnUiThread(()->{
-                    new AlertDialog.Builder(this, R.style.AppAlertDialog)
-                            .setTitle(R.string.tor_error_title)
-                            .setMessage(R.string.tor_error)
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(R.string.restart_tor, (dialog, whichButton) -> {
-                                restartTorWithAlert();
-                            })
-                            .setNegativeButton(R.string.stay_offline, (dialog, whichButton) -> {}).show();
-                });
+                runOnUiThread(this::displayTorError);
             }
             while (true){
                 try{
@@ -165,6 +161,18 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
             }
         });
         serverChecker.start();
+    }
+
+    private void displayTorError() {
+        alert = new AlertDialog.Builder(this, R.style.AppAlertDialog)
+                .setTitle(R.string.tor_error_title)
+                .setMessage(R.string.tor_error)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(R.string.restart_tor, (dialog, whichButton) -> {
+                    restartTorWithAlert();
+                })
+                .setNegativeButton(R.string.stay_offline, (dialog, whichButton) -> {
+                }).show();
     }
 
     public void stopCheckingServerReady(){
@@ -189,18 +197,7 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
 //        }
         if(torStatus.contains("tor_error")){
 //            torStatus = getString(R.string.tor_error);
-            runOnUiThread(()->{
-                new AlertDialog.Builder(this, R.style.AppAlertDialog)
-                        .setTitle(R.string.tor_error_title)
-                        .setMessage(R.string.tor_error)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(R.string.restart_tor, (dialog, whichButton) -> {
-                            restartTorWithAlert();
-                        })
-                        .setNegativeButton(R.string.stay_offline, (dialog, whichButton) -> {
-
-                        }).show();
-            });
+            runOnUiThread(this::displayTorError);
             return;
         }
         if(torStatus.contains("DisableNetwork is set")){

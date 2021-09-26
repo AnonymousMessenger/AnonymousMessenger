@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 import androidx.annotation.FloatRange;
@@ -397,6 +398,15 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
             .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(this::saveToStorage
             ).start())
             .setNegativeButton(android.R.string.no, null).show();
+    }
+
+    @Override
+    protected void onPause() {
+        InputMethodManager imm = ContextCompat.getSystemService(this, InputMethodManager.class);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(findViewById(R.id.txt_caption).getWindowToken(), 0);
+        }
+        super.onPause();
     }
 
     @Override

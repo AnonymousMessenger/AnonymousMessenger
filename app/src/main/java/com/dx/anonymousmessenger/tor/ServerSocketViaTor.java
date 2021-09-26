@@ -115,6 +115,7 @@ public class ServerSocketViaTor {
                 Runtime.getRuntime().addShutdownHook(new Thread() {
                     public void run() {
                     Log.d("GENERAL","shutdown hook");
+                    app.resetTorStartTime();
                     tryKill();
                     }
                 });

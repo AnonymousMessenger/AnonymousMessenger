@@ -241,6 +241,11 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             }
         });
         chatbox = findViewById(R.id.layout_chatbox);
+
+        ((MaterialToolbar)findViewById(R.id.toolbar)).inflateMenu(R.menu.message_list_menu);
+        if(!((DxApplication)getApplication()).isAcceptingCallsAllowed()){
+            ((MaterialToolbar)findViewById(R.id.toolbar)).getMenu().removeItem(R.id.action_call);
+        }
 //        chatbox.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
 //            mMessageRecycler.scrollBy(0,-10);
 //            mMessageRecycler.scrollBy(0,20);
@@ -581,10 +586,6 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             return;
         }
         /* init stuff */
-        ((MaterialToolbar)findViewById(R.id.toolbar)).inflateMenu(R.menu.message_list_menu);
-        if(!((DxApplication)getApplication()).isAcceptingCallsAllowed()){
-            ((MaterialToolbar)findViewById(R.id.toolbar)).getMenu().removeItem(R.id.action_call);
-        }
 
         final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
                 "address"),

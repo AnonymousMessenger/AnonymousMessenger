@@ -137,6 +137,10 @@ public class DxApplication extends Application {
         return torStartTime;
     }
 
+    public void resetTorStartTime(){
+        torStartTime = 0;
+    }
+
     /*
      * Tracking sending messages
      */
@@ -864,6 +868,7 @@ public class DxApplication extends Application {
         }
         Log.d("GENERAL","starting restart now");
         restartingTor = true;
+        torStartTime = 0;
         new Thread(()->{
         if(torSocket!=null){
             try {

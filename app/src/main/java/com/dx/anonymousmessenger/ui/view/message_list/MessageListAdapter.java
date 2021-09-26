@@ -442,6 +442,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     if(!type.equals("")){
                         if(msg.getType()!=null && msg.getType().equals(type) && msg.getCreatedAt()==time
                                 && msg.getSender().equals(message.getQuoteSender())){
+                            if(!mMessageList.contains(msg)){
+                                return;
+                            }
                             Handler h = new Handler(Looper.getMainLooper());
                             h.post(()-> {
                                 mMessageRecycler.smoothScrollToPosition(mMessageList.indexOf(msg));
@@ -452,6 +455,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     }else{
                         if(msg.getMessage().equals(message.getQuotedMessage())
                                 && msg.getSender().equals(message.getQuoteSender())){
+                            if(!mMessageList.contains(msg)){
+                                return;
+                            }
                             Handler h = new Handler(Looper.getMainLooper());
                             h.post(()-> {
                                 mMessageRecycler.smoothScrollToPosition(mMessageList.indexOf(msg));
@@ -460,7 +466,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             return;
                         }
                     }
-
                 }
                 Handler h = new Handler(Looper.getMainLooper());
                 h.post(()-> Toast.makeText(app, "can't find original message", Toast.LENGTH_SHORT).show());
