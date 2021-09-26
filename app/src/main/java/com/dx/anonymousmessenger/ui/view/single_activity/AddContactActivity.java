@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -88,7 +89,7 @@ public class AddContactActivity extends DxActivity {
 
         tv.setText(((DxApplication)getApplication()).getHostname()==null?((DxApplication)getApplication()).getMyAddressOffline():((DxApplication)getApplication()).getHostname());
         tv.setOnClickListener(v -> {
-            ClipboardManager clipboard = getSystemService(ClipboardManager.class);
+            ClipboardManager clipboard = ContextCompat.getSystemService(this, ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", tv.getText().toString());
             Objects.requireNonNull(clipboard).setPrimaryClip(clip);
             Snackbar.make(tv,R.string.copied_address,Snackbar.LENGTH_LONG).show();
@@ -264,9 +265,11 @@ public class AddContactActivity extends DxActivity {
 //                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
 //                });
 //        } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(
                 new String[] { Manifest.permission.CAMERA },
                 CAMERA_REQUEST_CODE);
+        }
 //        }
     }
 

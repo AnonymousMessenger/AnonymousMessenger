@@ -93,7 +93,9 @@ public class CallActivity extends DxActivity {
                     startService(serviceIntent);
                 }
             }else{
-                requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },REQUEST_CODE);
+                }
             }
         }).start());
         speaker = findViewById(R.id.speaker_fab);
@@ -225,13 +227,14 @@ public class CallActivity extends DxActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE) {// If request is cancelled, the result arrays are empty.
             if (grantResults.length > 0 &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted. Continue the action or workflow
                 // in your app.
             } else {
-                new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
+                new AlertDialog.Builder(getApplicationContext(), R.style.AppAlertDialog)
                         .setTitle("Denied Microphone Permission")
                         .setMessage("this way you can't make or receive calls")
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -256,27 +259,29 @@ public class CallActivity extends DxActivity {
                 PackageManager.PERMISSION_GRANTED) {
             // You can use the API that requires the permission.
 
-        } else if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
-            // In an educational UI, explain to the user why your app requires this
-            // permission for a specific feature to behave as expected. In this UI,
-            // include a "cancel" or "no thanks" button that allows the user to
-            // continue using your app without granting the permission.
-            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
-                    .setTitle(R.string.mic_perm_ask_title)
-                    .setMessage(R.string.why_need_mic)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> requestPermissions(
-                            new String[] { Manifest.permission.RECORD_AUDIO },
-                            REQUEST_CODE))
-                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+                // In an educational UI, explain to the user why your app requires this
+                // permission for a specific feature to behave as expected. In this UI,
+                // include a "cancel" or "no thanks" button that allows the user to
+                // continue using your app without granting the permission.
+                new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
+                        .setTitle(R.string.mic_perm_ask_title)
+                        .setMessage(R.string.why_need_mic)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> requestPermissions(
+                                new String[] { Manifest.permission.RECORD_AUDIO },
+                                REQUEST_CODE))
+                        .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
 
-                    });
-        } else {
-            // You can directly ask for the permission.
-            // The registered ActivityResultCallback gets the result of this request.
-            requestPermissions(
-                    new String[] { Manifest.permission.RECORD_AUDIO },
-                    REQUEST_CODE);
+                        });
+            } else {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
+                requestPermissions(
+                        new String[] { Manifest.permission.RECORD_AUDIO },
+                        REQUEST_CODE);
+            }
         }
     }
 }

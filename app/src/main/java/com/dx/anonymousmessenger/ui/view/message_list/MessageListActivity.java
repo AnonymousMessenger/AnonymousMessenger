@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -380,7 +381,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             Handler h = new Handler(Looper.getMainLooper());
             h.post(()->{
                 try{
-                    ColorDrawable[] color = {new ColorDrawable(this.getColor(R.color.startGradientColor)), new ColorDrawable(this.getColor(R.color.endGradientColor))};
+                    ColorDrawable[] color = {new ColorDrawable(ContextCompat.getColor(this, R.color.startGradientColor)), new ColorDrawable(ContextCompat.getColor(this, R.color.endGradientColor))};
                     TransitionDrawable trans = new TransitionDrawable(color);
                     frameOnline.setBackground(trans);
                     trans.startTransition(1000);
@@ -394,12 +395,12 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             h.post(()->{
                 try{
                     if(b){
-                        ColorDrawable[] color = {new ColorDrawable(this.getColor(R.color.endGradientColor)), new ColorDrawable(this.getColor(R.color.green_tor))};
+                        ColorDrawable[] color = {new ColorDrawable(ContextCompat.getColor(this, R.color.endGradientColor)), new ColorDrawable(ContextCompat.getColor(this, R.color.green_tor))};
                         TransitionDrawable trans = new TransitionDrawable(color);
                         frameOnline.setBackground(trans);
                         trans.startTransition(1000);
                     }else{
-                        ColorDrawable[] color = {new ColorDrawable(this.getColor(R.color.endGradientColor)), new ColorDrawable(this.getColor(R.color.red_500))};
+                        ColorDrawable[] color = {new ColorDrawable(ContextCompat.getColor(this, R.color.endGradientColor)), new ColorDrawable(ContextCompat.getColor(this, R.color.red_500))};
                         TransitionDrawable trans = new TransitionDrawable(color);
                         frameOnline.setBackground(trans);
                         trans.startTransition(1000);
@@ -715,7 +716,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
                     Intent intent = new Intent(this, AudioRecordingService.class);
                     intent.setAction("start_recording");
-                    intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                    intent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                     intent.putExtra("nickname",getIntent().getStringExtra("nickname"));
                     startService(intent);
                     timeBroadcastReceiver = new BroadcastReceiver() {
@@ -733,7 +734,9 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                         e.printStackTrace();
                     }
                 }else{
-                    requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },RECORD_AUDIO_REQUEST_CODE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },RECORD_AUDIO_REQUEST_CODE);
+                    }
                 }
             }
             // user has lifted his/her thumb off the button
@@ -873,7 +876,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     return;
                 }else if(intent.getStringExtra("error")!=null){
                     try{
-                        Snackbar.make(send, Objects.requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
+                        Snackbar.make(send, requireNonNull(intent.getStringExtra("error")),Snackbar.LENGTH_SHORT).setAnchorView(chatbox).show();
                     }catch (Exception ignored) {}
                     return;
                 }else if(intent.getStringExtra("type")!=null && Objects.equals(intent.getStringExtra("type"), "online_status")){
@@ -989,14 +992,14 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             case R.id.action_notepad:
                 stopCheckingMessages();
                 Intent intent = new Intent(this, NotepadActivity.class);
-                intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                intent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                 startActivity(intent);
                 break;
             case R.id.action_contact_profile:
                 stopCheckingMessages();
                 new Handler().postDelayed(()->{
                     Intent intent2 = new Intent(this, ContactProfileActivity.class);
-                    intent2.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                    intent2.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                     View v = findViewById(R.id.action_contact_profile);
                     ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(this, v, "profile_picture");
                     this.startActivity(intent2,activityOptions.toBundle());
@@ -1012,11 +1015,13 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                         }
                         Intent callIntent = new Intent(this, CallActivity.class);
                         callIntent.setAction("start_out_call");
-                        callIntent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                        callIntent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                         callIntent.putExtra("nickname",getIntent().getStringExtra("nickname"));
                         startActivity(callIntent);
                     }else{
-                        requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },RECORD_AUDIO_REQUEST_CODE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },RECORD_AUDIO_REQUEST_CODE);
+                        }
                     }
                 }).start();
                 break;
@@ -1030,7 +1035,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             case R.id.action_verify_identity:
                 stopCheckingMessages();
                 intent = new Intent(this, VerifyIdentityActivity.class);
-                intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                intent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                 startActivity(intent);
                 break;
             case R.id.action_clear_conversation:
@@ -1122,25 +1127,29 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 //
 //                    });
 //        } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, READ_STORAGE_REQUEST_CODE);
+        }
 //        }
     }
 
     public void getMicrophonePerms(){
-        if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
-            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
-                .setTitle(R.string.mic_perm_ask_title)
-                .setMessage(R.string.why_need_mic)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> requestPermissions(
-                        new String[] { Manifest.permission.RECORD_AUDIO },
-                        RECORD_AUDIO_REQUEST_CODE))
-                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-                });
-        } else {
-            requestPermissions(
-                new String[] { Manifest.permission.RECORD_AUDIO },
-                RECORD_AUDIO_REQUEST_CODE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)) {
+                new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
+                    .setTitle(R.string.mic_perm_ask_title)
+                    .setMessage(R.string.why_need_mic)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(R.string.ask_for_mic_btn, (dialog, which) -> requestPermissions(
+                            new String[] { Manifest.permission.RECORD_AUDIO },
+                            RECORD_AUDIO_REQUEST_CODE))
+                    .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+                    });
+            } else {
+                requestPermissions(
+                    new String[] { Manifest.permission.RECORD_AUDIO },
+                    RECORD_AUDIO_REQUEST_CODE);
+            }
         }
     }
 
@@ -1204,7 +1213,9 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     @Override
     public void doStuff() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 1);
+            }
         }
     }
 }

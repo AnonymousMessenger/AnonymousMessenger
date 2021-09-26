@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -121,7 +122,7 @@ public class MyProfileActivity extends DxActivity {
         TextView address = findViewById(R.id.txt_myaddress);
         address.setText(((DxApplication)getApplication()).getHostname()==null?((DxApplication)getApplication()).getMyAddressOffline():((DxApplication)getApplication()).getHostname());
         address.setOnClickListener(v -> {
-            ClipboardManager clipboard = getSystemService(ClipboardManager.class);
+            ClipboardManager clipboard = ContextCompat.getSystemService(this, ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", address.getText().toString());
             requireNonNull(clipboard).setPrimaryClip(clip);
             Snackbar.make(address, R.string.copied_address, Snackbar.LENGTH_LONG).show();
@@ -192,7 +193,9 @@ public class MyProfileActivity extends DxActivity {
                     case R.id.change_pic:
                         try{
                             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, STORAGE_CODE);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, STORAGE_CODE);
+                                }
                                 break;
                             }
                             mGetContent.launch("image/*");

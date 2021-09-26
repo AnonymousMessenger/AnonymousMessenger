@@ -186,7 +186,7 @@
     <string name="no_key">enkrüptsiooni võtit ei leitud</string>
     <string name="error">error</string>
     <string name="failed_to_decrypt">EI ÕNNESTUNUD SÕNUMIT ENKRÜPTEERIDA</string>
-    <string name="failed_to_read_after_decrypt">EI SAANUD SÕNUMIT LUGEDA PÄRAST SELLE DEKRÜPTEERIMIST</string>                             (work check)
+    <string name="failed_to_read_after_decrypt">EI SAANUD SÕNUMIT LUGEDA PÄRAST SELLE DEKRÜPTEERIMIST</string>
     <string name="failed_to_get_AEM">EI ÕNNESTUNUD AdresseeritudEnkrüpteeritudSõnum SÕNUMist kätte saada</string>
     <string name="cant_add_self">Te ei saa ennast lisada!</string>
     <string name="waiting_for_response">Võti saadetud, ootan vastust.</string>

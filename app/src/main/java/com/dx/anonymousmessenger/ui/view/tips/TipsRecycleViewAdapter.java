@@ -30,7 +30,7 @@ public class TipsRecycleViewAdapter extends RecyclerView.Adapter<TipsRecycleView
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String string = strings[holder.getAdapterPosition()];
+        String string = strings[holder.getAbsoluteAdapterPosition()];
         holder.tip.setText(string);
     }
 

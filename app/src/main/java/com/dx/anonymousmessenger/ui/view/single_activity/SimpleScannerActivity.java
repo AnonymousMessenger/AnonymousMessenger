@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
+
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
@@ -32,7 +34,7 @@ public class SimpleScannerActivity extends DxActivity implements ZXingScannerVie
         super.onResume();
 //        mScannerView.setFlash(true);
 //        mScannerView.setAutoFocus(true);
-        mScannerView.setBorderColor(getColor(R.color.dx_night_940));
+        mScannerView.setBorderColor(ContextCompat.getColor(this, R.color.dx_night_940));
         mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
         mScannerView.startCamera();          // Start camera on resume
     }

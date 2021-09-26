@@ -43,6 +43,8 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
                     final Intent intent = new Intent(getApplication(), CrashActivity.class);
                     intent.putExtra("stack",paramThrowable.getStackTrace());
                     intent.putExtra("message",paramThrowable.getMessage());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //                    intent.putExtra("cause",paramThrowable.getCause());
                     getApplication().startActivity(intent);
 //                    StringWriter sw = new StringWriter();

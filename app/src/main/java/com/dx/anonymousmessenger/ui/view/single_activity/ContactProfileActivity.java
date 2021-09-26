@@ -14,6 +14,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
@@ -102,7 +104,7 @@ public class ContactProfileActivity extends DxActivity {
         }).start();
 
         address.setOnClickListener(v -> {
-            ClipboardManager clipboard = getSystemService(ClipboardManager.class);
+            ClipboardManager clipboard = ContextCompat.getSystemService(this, ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", address.getText().toString());
             Objects.requireNonNull(clipboard).setPrimaryClip(clip);
             Snackbar.make(address, R.string.copied_address, Snackbar.LENGTH_LONG).show();

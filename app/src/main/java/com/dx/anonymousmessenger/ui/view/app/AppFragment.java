@@ -29,6 +29,7 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
@@ -571,7 +572,7 @@ public class AppFragment extends Fragment {
             onlineTxt.setText(R.string.checking);
             onlineTxt.setVisibility(View.GONE);
             onlineToolbar.setVisibility(View.VISIBLE);
-            ColorDrawable[] color = {new ColorDrawable(requireContext().getColor(R.color.startGradientColor)), new ColorDrawable(requireContext().getColor(R.color.endGradientColor))};
+            ColorDrawable[] color = {new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.startGradientColor)), new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.endGradientColor))};
             TransitionDrawable trans = new TransitionDrawable(color);
             onlineToolbar.setBackground(trans);
             trans.startTransition(1500);
@@ -595,7 +596,7 @@ public class AppFragment extends Fragment {
 //                            onlineImg.setVisibility(View.VISIBLE);
 //                            offlineImg.setVisibility(View.GONE);
                             onlineToolbar.setVisibility(View.VISIBLE);
-                            ColorDrawable[] color = {new ColorDrawable(requireContext().getColor(R.color.endGradientColor)), new ColorDrawable(requireContext().getColor(R.color.green_tor))};
+                            ColorDrawable[] color = {new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.endGradientColor)), new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.green_tor))};
                             TransitionDrawable trans = new TransitionDrawable(color);
                             onlineToolbar.setBackground(trans);
                             trans.startTransition(1500);
@@ -609,7 +610,7 @@ public class AppFragment extends Fragment {
 //                            onlineImg.setVisibility(View.GONE);
 //                            offlineImg.setVisibility(View.VISIBLE);
                             onlineToolbar.setVisibility(View.VISIBLE);
-                            ColorDrawable[] color = {new ColorDrawable(requireContext().getColor(R.color.endGradientColor)), new ColorDrawable(requireContext().getColor(R.color.red_500))};
+                            ColorDrawable[] color = {new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.endGradientColor)), new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.red_500))};
                             TransitionDrawable trans = new TransitionDrawable(color);
                             onlineToolbar.setBackground(trans);
                             trans.startTransition(1500);

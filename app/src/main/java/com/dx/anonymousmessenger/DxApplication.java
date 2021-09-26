@@ -248,9 +248,7 @@ public class DxApplication extends Application {
         if(syncingAddress!=null && syncingAddress.equals(address)){
             return;
         }
-        new Thread(()->{
-            doQueueUnsentMessages(address);
-        }).start();
+        new Thread(()-> doQueueUnsentMessages(address)).start();
     }
 
     public synchronized void doQueueUnsentMessages(String address){

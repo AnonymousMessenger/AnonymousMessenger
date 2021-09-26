@@ -8,7 +8,7 @@ android {
     }
     defaultConfig {
         applicationId "com.dx.anonymousmessenger"
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 35
         versionName "0.8.3"

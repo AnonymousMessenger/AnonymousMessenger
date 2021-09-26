@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.ui.view.MainActivity;
@@ -58,7 +59,7 @@ public class CrashActivity extends AppCompatActivity {
 
         FloatingActionButton copy = findViewById(R.id.fab_copy_error);
         copy.setOnClickListener((v) -> {
-            ClipboardManager clipboard = getSystemService(ClipboardManager.class);
+            ClipboardManager clipboard = ContextCompat.getSystemService(this, ClipboardManager.class);
             ClipData clip = ClipData.newPlainText("label", error);
             Objects.requireNonNull(clipboard).setPrimaryClip(clip);
             Snackbar.make(v, R.string.copied, Snackbar.LENGTH_SHORT).setAnchorView(restartApp).show();

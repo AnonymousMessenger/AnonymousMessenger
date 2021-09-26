@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.account.DxAccount;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import net.sqlcipher.Cursor;
@@ -79,6 +80,9 @@ public class PasswordEntryFragment extends Fragment {
         btn_next = rootView.findViewById(R.id.next);
         errorBox = rootView.findViewById(R.id.error_box);
         app = ((DxApplication) requireActivity().getApplication());
+        //clean app bar
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).getMenu().clear();
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_stat_name);
         btn_next.setOnClickListener(v -> {
             btn_next.setEnabled(false);
             txtPassword.setEnabled(false);

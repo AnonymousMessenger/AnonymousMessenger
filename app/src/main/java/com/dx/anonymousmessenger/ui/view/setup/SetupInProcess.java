@@ -156,7 +156,6 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
                     }
                     Thread.sleep(1000);
                 }catch (Exception ignored){
-                    ignored.printStackTrace();
                     break;}
             }
         });
