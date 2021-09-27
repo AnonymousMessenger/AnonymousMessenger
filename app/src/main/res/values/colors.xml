@@ -12,6 +12,7 @@
     <color name="black_opacity_75">#C4000000</color>
     <color name="transparent">#00000000</color>
     <color name="dialog_background">@color/dx_night_940</color>
+    <color name="white_opacity_05">#0CFFFFFF</color>
 
     <!-- text colors -->
 

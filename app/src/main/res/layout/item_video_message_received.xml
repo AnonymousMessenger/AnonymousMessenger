@@ -57,6 +57,7 @@
                 android:id="@+id/image_message_profile"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/circle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
