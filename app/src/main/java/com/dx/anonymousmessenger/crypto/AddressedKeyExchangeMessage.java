@@ -21,26 +21,32 @@ public class AddressedKeyExchangeMessage {
         return kem;
     }
 
-    public void setKem(KeyExchangeMessage kem) {
-        this.kem = kem;
-    }
+// --Commented out by Inspection START (9/27/21, 10:15 AM):
+//    public void setKem(KeyExchangeMessage kem) {
+//        this.kem = kem;
+//    }
+// --Commented out by Inspection STOP (9/27/21, 10:15 AM)
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+// --Commented out by Inspection START (9/27/21, 10:15 AM):
+//    public void setAddress(String address) {
+//        this.address = address;
+//    }
+// --Commented out by Inspection STOP (9/27/21, 10:15 AM)
 
-    public AddressedKeyExchangeMessage(KeyExchangeMessage kem, String address) throws IllegalStateException {
-        if(!Utils.isValidAddress(address)){
-            throw new IllegalStateException("Invalid Address");
-        }
-        this.kem = kem;
-        this.address = address;
-        this.response = false;
-    }
+// --Commented out by Inspection START (9/27/21, 10:15 AM):
+//    public AddressedKeyExchangeMessage(KeyExchangeMessage kem, String address) throws IllegalStateException {
+//        if(!Utils.isValidAddress(address)){
+//            throw new IllegalStateException("Invalid Address");
+//        }
+//        this.kem = kem;
+//        this.address = address;
+//        this.response = false;
+//    }
+// --Commented out by Inspection STOP (9/27/21, 10:15 AM)
 
     public AddressedKeyExchangeMessage(KeyExchangeMessage kem, String address, boolean response) throws IllegalStateException{
         if(!Utils.isValidAddress(address)){

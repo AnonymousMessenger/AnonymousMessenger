@@ -9,7 +9,6 @@ import com.dx.anonymousmessenger.R;
 
 
 public class WelcomeTextView extends androidx.appcompat.widget.AppCompatTextView {
-    private final int ANIM_DURATION_PER_LETTER = 100;
 
     public WelcomeTextView(Context context, AttributeSet as) {
         super(context, as);
@@ -34,11 +33,12 @@ public class WelcomeTextView extends androidx.appcompat.widget.AppCompatTextView
     }
 
     private void animationLoop(int i, String text){
+        int ANIM_DURATION_PER_LETTER = 100;
         new Handler().postDelayed(() -> {
             setText(text.substring(0,i));
             if(i<text.length()){
                 animationLoop(i+1, text);
             }
-        },ANIM_DURATION_PER_LETTER);
+        }, ANIM_DURATION_PER_LETTER);
     }
 }

@@ -50,15 +50,15 @@ public class PasswordEntryFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+//    @Override
+//    public void onPause() {
+//        super.onPause();
 //        txtPassword = null;
 //        rootView = null;
 //        progressBar = null;
 //        btn_next = null;
 //        app = null;
-    }
+//    }
 
     @Override
     public void onDestroyView() {

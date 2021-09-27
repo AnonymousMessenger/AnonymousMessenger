@@ -86,19 +86,17 @@ public class ContactProfileActivity extends DxActivity {
                 }
                 Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
                 new Handler(Looper.getMainLooper()).post(()->{
-                    if(profileImage!=null){
-                        profileImage.setImageBitmap(bitmap);
-                        profileImage.setOnClickListener((v) -> {
-                            Intent intent = new Intent(this, PictureViewerActivity.class);
-                            intent.putExtra("address",getIntent().getStringExtra("address"));
-                            intent.putExtra("nickname",nickname1);
-                            intent.putExtra("time",0L);
-                            intent.putExtra("appData",true);
-                            intent.putExtra("path",path);
-                            intent.putExtra("message","");
-                            v.getContext().startActivity(intent);
-                        });
-                    }
+                    profileImage.setImageBitmap(bitmap);
+                    profileImage.setOnClickListener((v) -> {
+                        Intent intent = new Intent(this, PictureViewerActivity.class);
+                        intent.putExtra("address",getIntent().getStringExtra("address"));
+                        intent.putExtra("nickname",nickname1);
+                        intent.putExtra("time",0L);
+                        intent.putExtra("appData",true);
+                        intent.putExtra("path",path);
+                        intent.putExtra("message","");
+                        v.getContext().startActivity(intent);
+                    });
                 });
             }catch (Exception ignored){}
         }).start();

@@ -27,9 +27,9 @@ import java.util.Objects;
 import static androidx.core.content.ContextCompat.getSystemService;
 
 public class BridgeRecyclerViewAdapter extends RecyclerView.Adapter<BridgeRecyclerViewAdapter.ViewHolder>{
-    Context context;
-    LayoutInflater mInflater;
-    List<String> list;
+    final Context context;
+    final LayoutInflater mInflater;
+    final List<String> list;
     public BridgeRecyclerViewAdapter(Context context, List<String> list) {
         this.context = context;
         this.list = list;
@@ -45,7 +45,7 @@ public class BridgeRecyclerViewAdapter extends RecyclerView.Adapter<BridgeRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String string = list.get(holder.getAdapterPosition());
+        String string = list.get(holder.getAbsoluteAdapterPosition());
         holder.bridge.setText(string);
         holder.bridge.setOnClickListener((v)->{
             PopupMenu popup = new PopupMenu(v.getContext(), holder.itemView);
@@ -69,9 +69,7 @@ public class BridgeRecyclerViewAdapter extends RecyclerView.Adapter<BridgeRecycl
 
                                         }
 
-                                        new Handler(Looper.getMainLooper()).post(()->{
-                                            notifyItemRemoved(holder.getAbsoluteAdapterPosition());
-                                        });
+                                        new Handler(Looper.getMainLooper()).post(()-> notifyItemRemoved(holder.getAbsoluteAdapterPosition()));
                                     }).start();
                                 } catch (Exception ignored) {
                                 }
@@ -102,8 +100,8 @@ public class BridgeRecyclerViewAdapter extends RecyclerView.Adapter<BridgeRecycl
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        View itemView;
-        TextView bridge;
+        final View itemView;
+        final TextView bridge;
 
         ViewHolder(View itemView) {
             super(itemView);

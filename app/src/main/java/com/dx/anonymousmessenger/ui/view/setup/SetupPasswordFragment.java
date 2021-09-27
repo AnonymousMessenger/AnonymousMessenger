@@ -44,7 +44,6 @@ public class SetupPasswordFragment extends Fragment {
     private StrengthMeter strengthMeter;
     private Button nextButton;
     private ProgressBar progressBar;
-    private FloatingActionButton help;
 
     public SetupPasswordFragment() {
         // Required empty public constructor
@@ -76,11 +75,9 @@ public class SetupPasswordFragment extends Fragment {
         passwordConfirmation = v.findViewById(R.id.password_confirm);
         nextButton = v.findViewById(R.id.next);
         progressBar = v.findViewById(R.id.progress);
-        help = v.findViewById(R.id.fab_password_help);
+        FloatingActionButton help = v.findViewById(R.id.fab_password_help);
 
-        help.setOnClickListener(view -> {
-            Utils.showHelpAlert(requireContext(),getString(R.string.setup_password_explanation), getString(R.string.password_explain_title));
-        });
+        help.setOnClickListener(view -> Utils.showHelpAlert(requireContext(),getString(R.string.setup_password_explanation), getString(R.string.password_explain_title)));
 
         passwordEntry.addTextChangedListener(new TextWatcher() {
             @Override

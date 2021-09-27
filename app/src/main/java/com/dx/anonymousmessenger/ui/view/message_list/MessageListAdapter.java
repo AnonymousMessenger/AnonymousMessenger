@@ -105,7 +105,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private final List<QuotedUserMessage> itemsPendingRemoval = new ArrayList<>();
     private boolean undoOn = true;
     private final Handler handler = new Handler(); // handler for running delayed runnables
-    HashMap<QuotedUserMessage, Runnable> pendingRunnables = new HashMap<>(); // map of items to pending runnables, so we can cancel a removal if need be
+    final HashMap<QuotedUserMessage, Runnable> pendingRunnables = new HashMap<>(); // map of items to pending runnables, so we can cancel a removal if need be
 
     public MessageListAdapter(Context context, List<QuotedUserMessage> messageList, DxApplication app, RecyclerView mMessageRecycler, CallBack permissionCallback) {
         this.app = app;
@@ -296,13 +296,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         QuotedUserMessage message = mMessageList.get(position);
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
+            case VIEW_TYPE_MESSAGE_SENT_OK:
                 ((MessageHolder) holder).bind(message);
                 break;
             case VIEW_TYPE_MESSAGE_RECEIVED:
                 ((ReceivedMessageHolder) holder).bind(message);
-                break;
-            case VIEW_TYPE_MESSAGE_SENT_OK:
-                ((MessageHolder) holder).bind(message);
                 break;
             case VIEW_TYPE_MESSAGE_SENT_OK_QUOTE:
             case VIEW_TYPE_MESSAGE_SENT_QUOTE:
@@ -334,7 +332,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.itemView.setBackgroundColor(Color.RED);
             ((MessageHolder)holder).undoButton.setVisibility(View.VISIBLE);
             ((MessageHolder)holder).undoButton.setElevation(R.dimen.margin_large);
-            ((MessageHolder)holder).undoButton.setOnClickListener((View.OnClickListener) v -> {
+            ((MessageHolder)holder).undoButton.setOnClickListener(v -> {
                 // user wants to undo the removal, let's cancel the pending task
                 Runnable pendingRemovalRunnable = pendingRunnables.get(message);
                 pendingRunnables.remove(message);
@@ -357,9 +355,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     //on click listeners
     public class ListItemOnClickListener implements View.OnClickListener {
-        QuotedUserMessage message;
-        View itemView;
-        TextView messageText;
+        final QuotedUserMessage message;
+        final View itemView;
+        final TextView messageText;
 
         ListItemOnClickListener(QuotedUserMessage message,View itemView,TextView messageText){
             this.itemView = itemView;
@@ -411,8 +409,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public class QuoteItemOnClickListener implements View.OnClickListener {
-        QuotedUserMessage message;
-        View itemView;
+        final QuotedUserMessage message;
+        final View itemView;
 
         QuoteItemOnClickListener(QuotedUserMessage message,View itemView){
             this.itemView = itemView;
@@ -474,9 +472,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public class AudioItemOnClickListener implements View.OnClickListener, CallBack {
-        QuotedUserMessage message;
-        View itemView;
-        ImageView playPauseButton;
+        final QuotedUserMessage message;
+        final View itemView;
+        final ImageView playPauseButton;
 
         AudioItemOnClickListener(QuotedUserMessage message,View itemView,ImageView playPauseButton){
             this.itemView = itemView;
@@ -546,9 +544,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     //message holders
     private class FileMessageHolder extends MessageHolder{
-        TextView filenameText;
-        FloatingActionButton imageHolder;
-        ProgressBar fileProgress;
+        final TextView filenameText;
+        final FloatingActionButton imageHolder;
+        final ProgressBar fileProgress;
 
         FileMessageHolder(View itemView){
             super(itemView);
@@ -781,9 +779,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 //    }
 
     private class MediaMessageHolder extends MessageHolder {
-        ImageView imageHolder;
-        ImageView sent;
-        ProgressBar progress;
+        final ImageView imageHolder;
+        final ImageView sent;
+        final ProgressBar progress;
 
         MediaMessageHolder(View itemView){
             super(itemView);
@@ -843,8 +841,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private class AudioMessageHolder extends MessageHolder {
-        TextView sizeText;
-        FloatingActionButton playPauseButton;
+        final TextView sizeText;
+        final FloatingActionButton playPauseButton;
 
         AudioMessageHolder(View itemView){
             super(itemView);
@@ -869,10 +867,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private class MessageHolder extends RecyclerView.ViewHolder {
-        TextView nameText, messageText, timeText;
-        Button undoButton;
-        ImageView sent,profileImage;
-        FloatingActionButton pin;
+        final TextView nameText;
+        final TextView messageText;
+        final TextView timeText;
+        final Button undoButton;
+        final ImageView sent;
+        final ImageView profileImage;
+        final FloatingActionButton pin;
 
         MessageHolder(View itemView) {
             super(itemView);
@@ -911,9 +912,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             options.inSampleSize = 8;
                             Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length, options);
                             new Handler(Looper.getMainLooper()).post(()->{
-                                if(profileImage!=null){
-                                    profileImage.setImageBitmap(bitmap);
-                                }
+                                profileImage.setImageBitmap(bitmap);
                                 setIsRecyclable(true);
                             });
                         }catch (Exception ignored){
@@ -929,9 +928,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }else{
                     pin.setAlpha(0.2f);
                 }
-                pin.setOnClickListener(v -> {
-                    handlePin(app,(MessageListActivity) mContext, message);
-                });
+                pin.setOnClickListener(v -> handlePin(app,(MessageListActivity) mContext, message));
             }
 
             if(messageText == null){
@@ -946,11 +943,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     if(i==(span.length()-1)){
                         if(charStart>=0){
                             span.setSpan(new RelativeSizeSpan(3f), charStart, i+1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            charStart = -1;
                         }else{
                             span.setSpan(new RelativeSizeSpan(3f), i, i+1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            charStart = -1;
                         }
+                        charStart = -1;
                     }else if (charStart < 0) {
                         charStart = i;
                     }
@@ -982,8 +978,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private class ReceivedMessageHolder extends MessageHolder {
-        TextView nameText;
-        ImageView profileImage;
+        final TextView nameText;
+        final ImageView profileImage;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
@@ -1003,9 +999,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         return;
                     }
                     Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-                    new Handler(Looper.getMainLooper()).post(()->{
-                        profileImage.setImageBitmap(bitmap);
-                    });
+                    new Handler(Looper.getMainLooper()).post(()-> profileImage.setImageBitmap(bitmap));
                 }catch (Exception ignored){
 //                    e.printStackTrace();
                 }
@@ -1016,8 +1010,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private class QuoteMessageHolder extends MessageHolder{
-        TextView quote;
-        TextView quoteSender;
+        final TextView quote;
+        final TextView quoteSender;
         QuoteMessageHolder(View itemView) {
             super(itemView);
             quote = itemView.findViewById(R.id.quote_text);

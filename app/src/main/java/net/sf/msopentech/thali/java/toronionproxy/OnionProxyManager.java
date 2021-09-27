@@ -480,10 +480,10 @@ public class OnionProxyManager {
             try {
                 enableNetwork(online);
                 //todo: if tor is not running then start tor
-                // broadcast to the service to start syncing
                 if(!DxApplication.isServiceRunningInForeground(ctx, DxService.class)){
                     return;
                 }
+                // broadcast to the service to start syncing
                 Intent gcm_rec = new Intent("dx_service");
                 gcm_rec.putExtra("start_syncing",1);
                 LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);

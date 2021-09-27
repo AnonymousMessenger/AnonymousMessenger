@@ -44,18 +44,16 @@ public class MyProfileActivity extends DxActivity {
 
     private final ActivityResultLauncher<String> mGetContent = registerForActivityResult(new
                     ActivityResultContracts.GetContent(),
-            uri -> {
-                new Thread(() -> {
-                    try{
-                        Intent intent = new Intent(MyProfileActivity.this, PictureViewerActivity.class);
-                        intent.putExtra("address","addkih;,hklkjkjljklklkl;l'l;ress".substring(0,10));
-                        intent.putExtra("nickname","nickname");
-                        intent.putExtra("uri",uri.toString());
-                        intent.putExtra("type", MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE);
-                        startActivity(intent);
-                    }catch (Exception e){e.printStackTrace();}
-                }).start();
-            });
+            uri -> new Thread(() -> {
+                try{
+                    Intent intent = new Intent(MyProfileActivity.this, PictureViewerActivity.class);
+                    intent.putExtra("address","addkih;,hklkjkjljklklkl;l'l;ress".substring(0,10));
+                    intent.putExtra("nickname","nickname");
+                    intent.putExtra("uri",uri.toString());
+                    intent.putExtra("type", MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE);
+                    startActivity(intent);
+                }catch (Exception e){e.printStackTrace();}
+            }).start());
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -153,9 +151,7 @@ public class MyProfileActivity extends DxActivity {
                 if(image==null){
                     return;
                 }
-                new Handler(getMainLooper()).post(() -> {
-                    profileImage.setImageBitmap(BitmapFactory.decodeByteArray(image,0,image.length));
-                });
+                new Handler(getMainLooper()).post(() -> profileImage.setImageBitmap(BitmapFactory.decodeByteArray(image,0,image.length)));
             }catch (Exception ignored){}
         }).start();
         FloatingActionButton editProfPic = findViewById(R.id.fab_edit_prof_pic);

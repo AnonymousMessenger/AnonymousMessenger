@@ -137,7 +137,7 @@ public class AppFragment extends Fragment {
             }
             }
         };
-        ((AppActivity)requireActivity()).setTitle(getString(R.string.app_name));
+        requireActivity().setTitle(getString(R.string.app_name));
         checkMessages();
         if(!started){
             updateUi();
@@ -213,7 +213,7 @@ public class AppFragment extends Fragment {
                         Intent intent = new Intent(getContext(), MyProfileActivity.class);
                         if(getContext()!=null){
                             View v = requireActivity().findViewById(R.id.action_my_profile);
-                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation((AppActivity) requireActivity(), v, "profile_picture");
+                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(requireActivity(), v, "profile_picture");
                             v.getContext().startActivity(intent,activityOptions.toBundle());
 //                        getContext().startActivity(intent);
                         }
@@ -359,9 +359,7 @@ public class AppFragment extends Fragment {
                     checkConnectivity();
                     updateUi();
                     ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setRefreshing(true);
-                    new Handler().postDelayed(() -> {
-                        ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setRefreshing(false);
-                    },500);
+                    new Handler().postDelayed(() -> ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setRefreshing(false),500);
                 }
         );
 
@@ -477,9 +475,7 @@ public class AppFragment extends Fragment {
                     }
                     RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
                     drawable.setCircular(true);
-                    new Handler(Looper.getMainLooper()).post(()->{
-                        ((MaterialToolbar) requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
-                    });
+                    new Handler(Looper.getMainLooper()).post(()-> ((MaterialToolbar) requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable));
                 }catch (Exception ignored){}
                 if(tmp!=null){
                     lst = tmp;

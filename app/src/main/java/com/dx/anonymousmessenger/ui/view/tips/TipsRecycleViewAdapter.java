@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dx.anonymousmessenger.R;
 
 public class TipsRecycleViewAdapter extends RecyclerView.Adapter<TipsRecycleViewAdapter.ViewHolder>{
-    Context context;
-    LayoutInflater mInflater;
-    String[] strings;
+    final Context context;
+    final LayoutInflater mInflater;
+    final String[] strings;
     public TipsRecycleViewAdapter(Context context, String[] strings) {
         this.context = context;
         this.strings = strings;
@@ -40,8 +40,8 @@ public class TipsRecycleViewAdapter extends RecyclerView.Adapter<TipsRecycleView
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        View itemView;
-        TextView tip;
+        final View itemView;
+        final TextView tip;
 
         ViewHolder(View itemView) {
             super(itemView);

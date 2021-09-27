@@ -14,7 +14,7 @@ public class BytesUtil {
 
     // toByteArray and toObject are taken from: http://tinyurl.com/69h8l7x
     public static byte[] toByteArray(Object obj) throws IOException {
-        byte[] bytes = null;
+        byte[] bytes;
         ByteArrayOutputStream bos = null;
         ObjectOutputStream oos = null;
         try {
@@ -35,7 +35,7 @@ public class BytesUtil {
     }
 
     public static Object toObject(byte[] bytes) throws IOException, ClassNotFoundException {
-        Object obj = null;
+        Object obj;
         ByteArrayInputStream bis = null;
         ObjectInputStream ois = null;
         try {

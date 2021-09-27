@@ -79,9 +79,7 @@ public class SetupUsernameFragment extends Fragment {
             }
         });
 
-        help.setOnClickListener(v -> {
-            Utils.showHelpAlert(requireContext(),getString(R.string.nickname_explain), getString(R.string.nickname_explain_title));
-        });
+        help.setOnClickListener(v -> Utils.showHelpAlert(requireContext(),getString(R.string.nickname_explain), getString(R.string.nickname_explain_title)));
 
         final Button next = rootView.findViewById(R.id.next);
         next.setOnClickListener(v -> {

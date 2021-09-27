@@ -154,9 +154,7 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
     public void setBackEnabled(boolean visible){
         if (findViewById(R.id.top_bar) != null && visible) {
             ((MaterialToolbar)findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
-            ((MaterialToolbar)findViewById(R.id.toolbar)).setNavigationOnClickListener((v)->{
-                onSupportNavigateUp();
-            });
+            ((MaterialToolbar)findViewById(R.id.toolbar)).setNavigationOnClickListener((v)-> onSupportNavigateUp());
         }
     }
 

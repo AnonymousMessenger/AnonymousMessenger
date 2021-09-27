@@ -17,7 +17,6 @@ import static android.graphics.Color.BLACK;
 import static android.graphics.Paint.Style.FILL;
 import static android.graphics.Paint.Style.STROKE;
 import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
-import static android.view.Gravity.LEFT;
 import static android.view.Gravity.START;
 import static com.dx.anonymousmessenger.crypto.PasswordStrengthEstimator.QUITE_STRONG;
 import static com.dx.anonymousmessenger.crypto.PasswordStrengthEstimator.QUITE_WEAK;
@@ -43,7 +42,7 @@ public class StrengthMeter extends ProgressBar {
         super(context, attrs, android.R.attr.progressBarStyleHorizontal);
         bar = new ShapeDrawable();
         bar.getPaint().setColor(RED);
-        ClipDrawable clip = new ClipDrawable(bar, LEFT & START, HORIZONTAL);
+        ClipDrawable clip = new ClipDrawable(bar, START, HORIZONTAL);
         ShapeDrawable background = new ShapeDrawable();
         Paint p = background.getPaint();
         p.setStyle(FILL);

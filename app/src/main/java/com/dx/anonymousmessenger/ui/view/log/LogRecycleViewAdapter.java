@@ -28,8 +28,8 @@ import static androidx.core.content.ContextCompat.getSystemService;
 
 
 public class LogRecycleViewAdapter extends RecyclerView.Adapter<LogRecycleViewAdapter.ViewHolder>{
-    Context context;
-    LayoutInflater mInflater;
+    final Context context;
+    final LayoutInflater mInflater;
     List<Object[]> list;
     public LogRecycleViewAdapter(Context context, List<Object[]> list) {
         this.context = context;
@@ -46,9 +46,9 @@ public class LogRecycleViewAdapter extends RecyclerView.Adapter<LogRecycleViewAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String type = (String)(list.get(holder.getAdapterPosition())[2]);
-        String string = (String)(list.get(holder.getAdapterPosition())[0]);
-        long createdAt = (long)(list.get(holder.getAdapterPosition())[1]);
+        String type = (String)(list.get(holder.getAbsoluteAdapterPosition())[2]);
+        String string = (String)(list.get(holder.getAbsoluteAdapterPosition())[0]);
+        long createdAt = (long)(list.get(holder.getAbsoluteAdapterPosition())[1]);
         holder.log.setText(String.format("[%s] %s", type,string));
         holder.time.setText(Utils.formatDateTime(createdAt));
         holder.log.setOnClickListener((v)->{
@@ -67,8 +67,8 @@ public class LogRecycleViewAdapter extends RecyclerView.Adapter<LogRecycleViewAd
                                         new Thread(()->{
                                             DbHelper.deleteLog(createdAt,string,(DxApplication)((LogActivity)context).getApplication());
                                             new Handler(Looper.getMainLooper()).post(()->{
-                                                list.remove(holder.getAdapterPosition());
-                                                notifyItemRemoved(holder.getAdapterPosition());
+                                                list.remove(holder.getAbsoluteAdapterPosition());
+                                                notifyItemRemoved(holder.getAbsoluteAdapterPosition());
                                             });
                                         }).start();
                                     } catch (Exception ignored) {
@@ -100,8 +100,9 @@ public class LogRecycleViewAdapter extends RecyclerView.Adapter<LogRecycleViewAd
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        View itemView;
-        TextView log,time;
+        final View itemView;
+        final TextView log;
+        final TextView time;
 
         ViewHolder(View itemView) {
             super(itemView);

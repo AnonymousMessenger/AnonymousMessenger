@@ -2,7 +2,6 @@ package com.dx.anonymousmessenger.ui.view.single_activity;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
-import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.pm.PackageManager;
@@ -108,17 +107,15 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
         flickListener.setContentHeightProvider(new FlickGestureListener.ContentHeightProvider() {
             @Override
             public int getContentHeightForDismissAnimation() {
-                return (int) imageView.getMaxHeight();
+                return imageView.getMaxHeight();
             }
 
             @Override
             public int getContentHeightForCalculatingThreshold() {
-                return (int) imageView.getMaxHeight();
+                return imageView.getMaxHeight();
             }
         });
-        flickListener.setOnGestureIntercepter((deltaY) -> {
-            return false;
-        });
+        flickListener.setOnGestureIntercepter((deltaY) -> false);
         fdl.setFlickGestureListener(flickListener);
 
         // if image is from encrypted app storage
@@ -159,15 +156,9 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                         imageView.setImageBitmap(finalImage);
                     }catch (Exception ignored) {}
                     GestureTextView textCaption = findViewById(R.id.txt_caption_view);
-                    textCaption.setOnClickListener(v -> {
-                        toggleUiVisibility(textCaption);
-                    });
-                    imageView.setOnClickListener(v -> {
-                        toggleUiVisibility(textCaption);
-                    });
-                    findViewById(R.id.btn_save).setOnClickListener(v ->{
-                        saveWithAlert();
-                    });
+                    textCaption.setOnClickListener(v -> toggleUiVisibility(textCaption));
+                    imageView.setOnClickListener(v -> toggleUiVisibility(textCaption));
+                    findViewById(R.id.btn_save).setOnClickListener(v -> saveWithAlert());
                     findViewById(R.id.layout_controls).setVisibility(View.VISIBLE);
                     if(getIntent().getStringExtra("message")==null || Objects.equals(getIntent().getStringExtra("message"), "")){
                         return;
@@ -191,7 +182,6 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                     if(image.getHeight()>500 && image.getWidth()>500){
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inSampleSize = 4;
-                        image = null;
                         is = FileHelper.getInputStreamFromUri(Uri.parse(getIntent().getStringExtra("uri")),this);
                         image = BitmapFactory.decodeStream(is,null,options);
                     }
@@ -204,7 +194,6 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                     return;
                 }
                 Bitmap finalImage = image;
-                image = null;
                 new Handler(Looper.getMainLooper()).post(()->{
 //                    imageView.getController().getSettings().setZoomEnabled(false);
 //                    imageView.getController().getSettings().setDoubleTapEnabled(false);
@@ -301,17 +290,14 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
             textInputLayout.setVisibility(View.VISIBLE);
             findViewById(R.id.layout_send_controls).setVisibility(View.VISIBLE);
             TextInputEditText msg = findViewById(R.id.txt_caption);
-            msg.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-                    if(hasFocus){
-                        params.gravity = Gravity.TOP;
-                    }else{
-                        params.gravity = Gravity.CENTER;
-                    }
-                    animateParamsChange(textInputLayout,params,500);
+            msg.setOnFocusChangeListener((v, hasFocus) -> {
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+                if(hasFocus){
+                    params.gravity = Gravity.TOP;
+                }else{
+                    params.gravity = Gravity.CENTER;
                 }
+                animateParamsChange(textInputLayout,params,500);
             });
 //            InputMethodManager imm = requireNonNull(ContextCompat.getSystemService(this, InputMethodManager.class));
 //            imm.hideSoftInputFromWindow(msg.getWindowToken(), 0);
@@ -463,13 +449,8 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
         root_layout.setBackground(back);
         ValueAnimator var1 = ObjectAnimator.ofFloat(0.5F, 0.0F);
         var1.setDuration(200L);
-        var1.setInterpolator((TimeInterpolator)(new FastOutSlowInInterpolator()));
-        var1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                updateBackgroundDimmingAlpha((Float) animation.getAnimatedValue());
-            }
-        });
+        var1.setInterpolator(new FastOutSlowInInterpolator());
+        var1.addUpdateListener(animation -> updateBackgroundDimmingAlpha((Float) animation.getAnimatedValue()));
 //        var1.addUpdateListener((ValueAnimator.AnimatorUpdateListener)(new ImageViewerActivity$animateDimmingOnEntry$$inlined$apply$lambda$1(this)));
         var1.start();
     }

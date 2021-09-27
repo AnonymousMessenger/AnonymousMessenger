@@ -91,9 +91,7 @@ public class SimpleScannerActivity extends DxActivity implements ZXingScannerVie
                         }
                     }
                 }).start();
-                runOnUiThread(()->{
-                    Snackbar.make(mScannerView, R.string.contact_added,Snackbar.LENGTH_SHORT).show();
-                });
+                runOnUiThread(()-> Snackbar.make(mScannerView, R.string.contact_added,Snackbar.LENGTH_SHORT).show());
                 Thread.sleep(500);
                 runOnUiThread(()->{
                     if (getParent() == null) {

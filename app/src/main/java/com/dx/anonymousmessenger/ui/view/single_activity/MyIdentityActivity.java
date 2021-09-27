@@ -29,13 +29,9 @@ public class MyIdentityActivity extends DxActivity {
         new Thread(()->{
             try{
                 String identity = Hex.toString(((DxApplication) getApplication()).getEntity().getStore().getIdentityKeyPair().getPublicKey().serialize());
-                runOnUiThread(()->{
-                    tv.setText(identity);
-                });
+                runOnUiThread(()-> tv.setText(identity));
             }catch (Exception ignored) {
-                runOnUiThread(()->{
-                    tv.setText(R.string.identity_key_fail);
-                });
+                runOnUiThread(()-> tv.setText(R.string.identity_key_fail));
             }
         }).start();
     }

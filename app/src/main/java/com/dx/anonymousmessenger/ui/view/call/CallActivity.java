@@ -1,6 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.call;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -43,6 +44,7 @@ public class CallActivity extends DxActivity {
     String address;
     BroadcastReceiver br;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

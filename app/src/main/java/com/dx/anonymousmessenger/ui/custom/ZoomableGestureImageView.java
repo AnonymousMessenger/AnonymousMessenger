@@ -11,7 +11,6 @@ import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 
 import com.alexvasilkov.gestures.GestureController;
-import com.alexvasilkov.gestures.GestureControllerForPager;
 import com.alexvasilkov.gestures.Settings;
 import com.alexvasilkov.gestures.State;
 import com.alexvasilkov.gestures.views.GestureImageView;
@@ -47,13 +46,13 @@ public class ZoomableGestureImageView extends GestureImageView implements Zoomab
 
         getController().setOnGesturesListener(new GestureController.SimpleOnGestureListener() {
             @Override
-            public boolean onSingleTapConfirmed(MotionEvent event) {
+            public boolean onSingleTapConfirmed(@NonNull MotionEvent event) {
                 performClick();
                 return true;
             }
 
             @Override
-            public void onUpOrCancel(MotionEvent event) {
+            public void onUpOrCancel(@NonNull MotionEvent event) {
                 // Bug workaround: Image zoom stops working after first overzoom. Resetting it when the
                 // finger is lifted seems to solve the problem.
                 getController().getSettings().setOverzoomFactor(MAX_OVER_ZOOM);
@@ -182,12 +181,6 @@ public class ZoomableGestureImageView extends GestureImageView implements Zoomab
 
 //        return false;
         return super.onTouchEvent(event);
-    }
-
-    @NonNull
-    @Override
-    public GestureControllerForPager getController() {
-        return super.getController();
     }
 
     @Override

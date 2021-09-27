@@ -41,9 +41,7 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
         Button gotoContact = findViewById(R.id.btn_goto_contacts);
         Button restartTorButton = findViewById(R.id.btn_restart_tor);
         restartTorButton.setVisibility(View.VISIBLE);
-        restartTorButton.setOnClickListener(v -> {
-            restartTorWithAlert();
-        });
+        restartTorButton.setOnClickListener(v -> restartTorWithAlert());
 //        if(!getIntent().getBooleanExtra("first_time",true)){
             gotoContact.setVisibility(View.VISIBLE);
             gotoContact.setOnClickListener(v -> {
@@ -70,9 +68,7 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
             .setTitle(R.string.restart_tor)
             .setMessage(R.string.restart_tor_explain)
             .setIcon(android.R.drawable.ic_dialog_alert)
-            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                ((DxApplication) getApplication()).restartTor();
-            })
+            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> ((DxApplication) getApplication()).restartTor())
             .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
     }
 
@@ -167,9 +163,7 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
                 .setTitle(R.string.tor_error_title)
                 .setMessage(R.string.tor_error)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(R.string.restart_tor, (dialog, whichButton) -> {
-                    restartTorWithAlert();
-                })
+                .setPositiveButton(R.string.restart_tor, (dialog, whichButton) -> restartTorWithAlert())
                 .setNegativeButton(R.string.stay_offline, (dialog, whichButton) -> {
                 }).show();
     }

@@ -170,9 +170,9 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public class ListItemOnClickListener implements View.OnLongClickListener {
-        View itemView;
-        String address;
-        int pos;
+        final View itemView;
+        final String address;
+        final int pos;
 
         ListItemOnClickListener(View itemView, String address, int pos){
             this.itemView = itemView;
@@ -279,9 +279,13 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private class ReadContactHolder extends ViewHolder {
-        TextView contactName,msgText,timeText;
-        ImageView imageView,seen,contactOnline;
-        CircleImageView profileImage;
+        final TextView contactName;
+        final TextView msgText;
+        final TextView timeText;
+        final ImageView imageView;
+        final ImageView seen;
+        final ImageView contactOnline;
+        final CircleImageView profileImage;
 
         ReadContactHolder(View itemView) {
             super(itemView);
@@ -354,8 +358,8 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             else{
                 Drawable drawable = AppCompatResources.getDrawable(app,R.drawable.circle);
-                int width = 0;
-                int height = 0;
+                int width;
+                int height;
                 if (drawable != null) {
                     width = drawable.getIntrinsicWidth();
                     width = width > 0 ? width : 1;
@@ -366,7 +370,9 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
                     drawable.draw(canvas);
                     //profileImage.setBackground(AppCompatResources.getDrawable(app,R.drawable.circle));
-                    profileImage.setImageBitmap(bitmap);
+                    if (profileImage != null) {
+                        profileImage.setImageBitmap(bitmap);
+                    }
                     //profileImage.setImageBitmap(BitmapFactory.decodeResource(app.getResources(),R.drawable.circle));
                 }
             }

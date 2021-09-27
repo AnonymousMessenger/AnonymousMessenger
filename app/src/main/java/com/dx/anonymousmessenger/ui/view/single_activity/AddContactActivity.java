@@ -56,7 +56,7 @@ public class AddContactActivity extends DxActivity {
     final int QR_RESULT_CODE = 0;
     final int CAMERA_REQUEST_CODE = 1;
 
-    ActivityResultLauncher<Intent> mScanQrCode = registerForActivityResult(
+    final ActivityResultLauncher<Intent> mScanQrCode = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {

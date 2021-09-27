@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -106,6 +107,7 @@ public class Utils {
     }
 
     // From: https://programming.guide/worlds-most-copied-so-snippet.html
+    @SuppressLint("DefaultLocale")
     public static strictfp String humanReadableByteCount(long bytes) {
         int unit = 1000;
         long absBytes = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);

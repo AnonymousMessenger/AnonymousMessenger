@@ -17,17 +17,23 @@ public class AddressedEncryptedMessage {
         return msg;
     }
 
-    public void setMsg(byte[] msg) {
-        this.msg = msg;
-    }
+// --Commented out by Inspection START (9/27/21, 10:01 AM):
+//    public void setMsg(byte[] msg) {
+//        this.msg = msg;
+//    }
+// --Commented out by Inspection STOP (9/27/21, 10:01 AM)
 
-    public String getAddress() {
-        return address;
-    }
+// --Commented out by Inspection START (9/27/21, 10:01 AM):
+//    public String getAddress() {
+//        return address;
+//    }
+// --Commented out by Inspection STOP (9/27/21, 10:01 AM)
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+// --Commented out by Inspection START (9/27/21, 10:01 AM):
+//    public void setAddress(String address) {
+//        this.address = address;
+//    }
+// --Commented out by Inspection STOP (9/27/21, 10:01 AM)
 
     public AddressedEncryptedMessage(byte[] msg, String address) throws Exception {
         if(!address.trim().endsWith(".onion")){

@@ -16,13 +16,13 @@ import static com.dx.anonymousmessenger.file.FileHelper.getFile;
 public class AudioPlayer {
     private AudioTrack at;
 //    public AudioManager audioManager;
-    private DxApplication app;
+    private final DxApplication app;
     private String path;
     private final int sampleRate = 16000 ; // 44100 for music
     private final int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_MONO;
     private final int audioFormat = AudioFormat.ENCODING_PCM_8BIT;
     private final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
-    byte[] receiveData = new byte[minBufSize];
+    final byte[] receiveData = new byte[minBufSize];
     boolean play = false;
     private CallBack callBack;
 

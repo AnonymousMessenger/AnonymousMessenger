@@ -48,7 +48,7 @@ public class CallController {
 
     private MediaPlayer player;
 
-    private DxApplication app;
+    private final DxApplication app;
 
     public int getCallTimer() {
         return callTimer;
@@ -240,7 +240,9 @@ public class CallController {
             stopCall();
         }
         if (stopService) {
-            app.commandCallService(address, "hangup");
+            if (app != null) {
+                app.commandCallService(address, "hangup");
+            }
         }
     }
 

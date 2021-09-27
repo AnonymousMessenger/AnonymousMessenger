@@ -440,7 +440,7 @@ public class FileHelper {
     public static void cleanDir(File dir) {
 //        long bytesDeleted = 0;
         File[] files = dir.listFiles();
-        for (File file : files) {
+        for (File file : Objects.requireNonNull(files)) {
 //            bytesDeleted += file.length();
             file.delete();
 //            if (bytesDeleted >= bytes) {

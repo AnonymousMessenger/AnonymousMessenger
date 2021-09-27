@@ -73,10 +73,10 @@ public class DxApplication extends Application {
 //    private volatile boolean syncing;
     private volatile String syncingAddress;
 //    private volatile boolean pinging;
-    public List<String> onlineList = new ArrayList<>();
+    public final List<String> onlineList = new ArrayList<>();
 
     private boolean sendingFile;
-    public List<String> sendingTo = new ArrayList<>();
+    public final List<String> sendingTo = new ArrayList<>();
 
     //settings
     //settings array: bridgesEnabled,acceptUnknown,acceptCalls,receiveFiles,testAddress,fileSizeLimit
@@ -486,7 +486,7 @@ public class DxApplication extends Application {
 
     public String getMyAddressOffline(){
         try{
-            return new String(FileUtilities.read(new File(this.getDir("torfiles", MODE_PRIVATE),"/hiddenservice/hostname")),"UTF-8").trim();
+            return new String(FileUtilities.read(new File(this.getDir("torfiles", MODE_PRIVATE),"/hiddenservice/hostname")), StandardCharsets.UTF_8).trim();
         }catch (Exception e){
             e.printStackTrace();
             return "Couldn't read hostname file";

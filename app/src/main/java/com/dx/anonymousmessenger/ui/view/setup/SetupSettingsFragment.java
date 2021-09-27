@@ -148,7 +148,7 @@ public class SetupSettingsFragment extends Fragment {
         }else{
             try{
                 ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).getMenu().clear();
-                ((DxActivity)requireActivity()).setTitle(R.string.action_settings);
+                requireActivity().setTitle(R.string.action_settings);
                 ((DxActivity)requireActivity()).setBackEnabled(true);
             }catch (Exception ignored){}
             //set about & license text view buttons to be visible

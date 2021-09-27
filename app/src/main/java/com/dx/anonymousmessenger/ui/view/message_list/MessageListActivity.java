@@ -116,23 +116,21 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
     private final ActivityResultLauncher<String> mGetContent = registerForActivityResult(new
                     ActivityResultContracts.GetContent(),
-            uri -> {
-                new Thread(() -> {
-                    try{
-                        if(uri == null){
-                            return;
-                        }
-                        Intent intent = new Intent(this, FileViewerActivity.class);
-                        intent.putExtra("uri",uri);
-                        intent.putExtra("filename", FileHelper.getFileName(uri,this));
-                        intent.putExtra("size",FileHelper.getFileSize(uri,this));
-                        intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
-                        startActivity(intent);
-                    }catch (Exception e){
-//                        e.printStackTrace();
+            uri -> new Thread(() -> {
+                try{
+                    if(uri == null){
+                        return;
                     }
-                }).start();
-            });
+                    Intent intent = new Intent(this, FileViewerActivity.class);
+                    intent.putExtra("uri",uri);
+                    intent.putExtra("filename", FileHelper.getFileName(uri,this));
+                    intent.putExtra("size",FileHelper.getFileSize(uri,this));
+                    intent.putExtra("address", Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                    startActivity(intent);
+                }catch (Exception e){
+//                        e.printStackTrace();
+                }
+            }).start());
 
     @SuppressLint({"ClickableViewAccessibility", "ShowToast"})
     @Override
@@ -147,7 +145,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             setTitle(getIntent().getStringExtra("nickname"));
             setSubtitle(getIntent().getStringExtra("address"));
             setBackEnabled(true);
-            ((MaterialToolbar)findViewById(R.id.toolbar)).setTransitionName("title");
+            findViewById(R.id.toolbar).setTransitionName("title");
         }catch (Exception ignored){}
 
 
@@ -579,7 +577,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 //        updateUi();
 //    }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "ShowToast"})
     @Override
     protected void onStart() {
         super.onStart();
@@ -604,9 +602,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 }
                 RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
                 drawable.setCircular(true);
-                new Handler(Looper.getMainLooper()).post(()->{
-                    ((MaterialToolbar) findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable);
-                });
+                new Handler(Looper.getMainLooper()).post(()-> ((MaterialToolbar) findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -708,7 +704,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     new Thread(()->{
                         try{
                             if(mMessageAdapter!=null && mMessageAdapter.ap!=null){
-                                mMessageAdapter.ap.stop(1);
+                                mMessageAdapter.ap.stop();
                                 mMessageAdapter.ap = null;
                             }
                         }catch (Exception ignored) {}
@@ -860,6 +856,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         });
         /* end init stuff */
         mMyBroadcastReceiver = new BroadcastReceiver() {
+            @SuppressLint("ShowToast")
             @Override
             public void onReceive(Context context, Intent intent)
             {

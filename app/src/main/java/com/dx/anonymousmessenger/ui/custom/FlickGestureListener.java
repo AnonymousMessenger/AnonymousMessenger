@@ -130,7 +130,7 @@ public class FlickGestureListener implements View.OnTouchListener {
             case MotionEvent.ACTION_DOWN:
                 downX = touchX;
                 downY = touchY;
-                touchStartedOnLeftSide = touchX < view.getWidth() / 2;
+                touchStartedOnLeftSide = touchX < view.getWidth() / 2.0;
                 if (velocityTracker == null) {
                     velocityTracker = VelocityTracker.obtain();
                 }
@@ -247,7 +247,6 @@ public class FlickGestureListener implements View.OnTouchListener {
         animateViewFlick(view, downwards, 200);
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void animateViewFlick(View view, boolean downwards, long flickAnimDuration) {
         if (view.getPivotY() != 0f) {
             throw new AssertionError("Formula used for calculating distance rotated only works if the pivot is at (x,0");

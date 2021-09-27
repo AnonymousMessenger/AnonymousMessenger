@@ -74,16 +74,16 @@ import javax.crypto.ShortBufferException;
 public class CipherInputStream extends FilterInputStream {
 
     // the cipher engine to use to process stream data
-    private Cipher cipher;
+    private final Cipher cipher;
 
     // the underlying input stream
-    private InputStream input;
+    private final InputStream input;
 
     /* the buffer holding data that have been read in from the
        underlying stream, but have not been processed by the cipher
        engine. the size 512 bytes is somewhat randomly chosen */
     // we change that to 8192 "randomly"
-    private byte[] ibuffer = new byte[8192];
+    private final byte[] ibuffer = new byte[8192];
 
     // having reached the end of the underlying input stream
     private boolean done = false;
@@ -208,7 +208,7 @@ public class CipherInputStream extends FilterInputStream {
             if (i == -1) return -1;
         }
         return ((int) obuffer[ostart++] & 0xff);
-    };
+    }
 
     /**
      * Reads up to <code>b.length</code> bytes of data from this input
@@ -226,7 +226,7 @@ public class CipherInputStream extends FilterInputStream {
      * @see        java.io.InputStream#read(byte[], int, int)
      * @since      JCE1.2
      */
-    public int read(byte b[]) throws IOException {
+    public int read(byte[] b) throws IOException {
         return read(b, 0, b.length);
     }
 
@@ -247,7 +247,7 @@ public class CipherInputStream extends FilterInputStream {
      * @see        java.io.InputStream#read()
      * @since      JCE1.2
      */
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
         if (ostart >= ofinish) {
             // we loop for new data as the spec says we are blocking
             int i = 0;
@@ -284,7 +284,7 @@ public class CipherInputStream extends FilterInputStream {
      * @exception  IOException  if an I/O error occurs.
      * @since JCE1.2
      */
-    public long skip(long n) throws IOException {
+    public long skip(long n) {
         int available = ofinish - ostart;
         if (n > available) {
             n = available;
@@ -307,7 +307,7 @@ public class CipherInputStream extends FilterInputStream {
      * @exception  IOException  if an I/O error occurs.
      * @since      JCE1.2
      */
-    public int available() throws IOException {
+    public int available() {
         return (ofinish - ostart);
     }
 

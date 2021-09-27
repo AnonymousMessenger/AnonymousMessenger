@@ -19,11 +19,6 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
     private boolean isAppFragmentShown;
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);

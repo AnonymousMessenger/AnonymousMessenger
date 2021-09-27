@@ -27,8 +27,7 @@ public class ScreenFilterDialogFragment extends DialogFragment {
     private DismissListener dismissListener = null;
 
     public static ScreenFilterDialogFragment newInstance() {
-        ScreenFilterDialogFragment frag = new ScreenFilterDialogFragment();
-        return frag;
+        return new ScreenFilterDialogFragment();
     }
 
     public void setDismissListener(DismissListener dismissListener) {
@@ -36,7 +35,7 @@ public class ScreenFilterDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Context ctx) {
+    public void onAttach(@NonNull Context ctx) {
         super.onAttach(ctx);
     }
 

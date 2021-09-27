@@ -3,7 +3,6 @@ package com.dx.anonymousmessenger.media;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioFormat;
-import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
@@ -32,7 +31,7 @@ public class AudioRecordingService extends Service {
     private final int audioFormat = AudioFormat.ENCODING_PCM_8BIT;
     private final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
     private boolean status = true;
-    AudioManager audioManager;
+    // --Commented out by Inspection (9/27/21, 10:04 AM):AudioManager audioManager;
     private int callTimer = 0;
     ByteArrayOutputStream outputStream;
     private String address;
@@ -153,9 +152,7 @@ public class AudioRecordingService extends Service {
 //                return;
 //            }
         }catch (Exception e){Handler handler = new Handler(getMainLooper());
-            handler.post(()->{
-                Toast.makeText(this, R.string.recording_failed, Toast.LENGTH_LONG).show();
-            });
+            handler.post(()-> Toast.makeText(this, R.string.recording_failed, Toast.LENGTH_LONG).show());
             stopRecording();
             return;
         }

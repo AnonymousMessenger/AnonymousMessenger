@@ -24,15 +24,13 @@ import java.util.List;
 
 public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleViewAdapter.ViewHolder> {
 
-    private final MessageListActivity context;
-    public List<String> paths;
-    public List<String> types;
+    public final List<String> paths;
+    public final List<String> types;
     private final LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
     // data is passed into the constructor
     public MediaRecycleViewAdapter(MessageListActivity context, List<String> paths, List<String> types) {
-        this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.paths = paths;
         this.types = types;
@@ -87,9 +85,9 @@ public class MediaRecycleViewAdapter extends RecyclerView.Adapter<MediaRecycleVi
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView myView;
-        View itemView;
-        TextView info;
+        final ImageView myView;
+        final View itemView;
+        final TextView info;
 
         ViewHolder(View itemView) {
             super(itemView);
