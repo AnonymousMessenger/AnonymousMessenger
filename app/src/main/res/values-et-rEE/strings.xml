@@ -355,5 +355,13 @@
     <string name="retry">"Uuesti proovima "</string>
     <string name="unknown_exception">Tundmatu viga</string>
     <string name="restart_app">"Taaskäivitage rakendus "</string>
+    <string name="use_proxy">"Kasutage Socks5 puhverserverit "</string>
+    <string name="proxy_address">"Soki5 puhverserveri aadress "</string>
+    <string name="proxy_username">Kasutajanimi</string>
+    <string name="proxy_password">Parool</string>
+    <string name="tor_error">Tor ei õnnestunud 300 sekundi jooksul ühendust luua. Võite proovida kasutada sildu või ühendada seadetes mis tahes soki5 puhverserveri kaudu</string>
+    <string name="tor_error_title">Viga Tor käivitamisel</string>
+    <string name="stay_offline">"Jääge võrguühenduseta "</string>
+    <string name="proxy">"Sokk5 puhverserver (jõustub Tor uuesti, et see jõustuks) "</string>
 
 </resources>

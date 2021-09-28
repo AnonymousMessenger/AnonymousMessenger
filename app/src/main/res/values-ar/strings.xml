@@ -261,7 +261,7 @@
     <string name="delete_bridge_details">لا يمكن إلغاء هذه العملية</string>
     <string name="online_check_address">عنوان التحقق من الإتصال</string>
     <string name="reset_settings">إعادة ظبط الإعدادات</string>
-    <string name="bridges">الجسور</string>
+    <string name="bridges">الجسور (أعد تشغيل تور ليأخذ مفعوله)</string>
     <string name="other">غير ذلك</string>
     <string name="reset">إعادة الظبط</string>
     <string name="security">الآمان</string>
@@ -290,4 +290,12 @@
     <string name="error_occurred">حدث خطأ ما</string>
     <string name="error_details">تفاصيل الخطأ</string>
     <string name="retry">إعادة المحاولة</string>
+    <string name="use_proxy">إستعمل بروكسي سوكس5</string>
+    <string name="proxy_address">عنوان بروكسي سوكس5</string>
+    <string name="proxy_username">إسم المستخدم</string>
+    <string name="proxy_password">كلمة المرور</string>
+    <string name="tor_error">"لم يتمكن تور من الإتصال خلال 300 ثانية, يمكنك محاولة إستخدام الجسور أو الإتصال عبر بروكسي سوكس5 في الإعدادات "</string>
+    <string name="tor_error_title">حدث خطأ عند تشغيل تور</string>
+    <string name="stay_offline">عدم الإتصال</string>
+    <string name="proxy">بروكسي سوكس5 (أعد تشغيل تور ليأخذ مفعوله)</string>
 </resources>
