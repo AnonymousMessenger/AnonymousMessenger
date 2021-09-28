@@ -1,0 +1,9 @@
+Added socks5 proxy support.
+Added German translations.
+Added support for Android 5.
+Design changes.
+Fixed a bug that makes the app unresponsive when it starts syncing after net
+work gets reconnected.
+Added Tor error detection in hold on screen.
+Now the app generates keys before connecting online to allow users to start new accounts and add users offline.
+Design changes.

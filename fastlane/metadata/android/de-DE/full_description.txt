@@ -1,0 +1,25 @@
+Ein Peer-to-Peer, privater, anonymer und sicherer Messenger, der über Tor funktioniert.
+
+    Funktionen
+    * Keine Werbung, keine Server und keine Tracker.
+    * Völlig kostenlose Software und Open Source und alles ist über Tor.
+    * Doppelte Dreifach-Diffie-Hellman-End-to-End-Verschlüsselung
+    * Vollständig Peer-to-Peer unter Verwendung versteckter Dienste
+    * Enthält Tor und obfs4proxy, sodass Sie keine andere App zum Verbinden benötigen
+    * Möglichkeit zur Verwendung von Tor-Brücken (meek_lite,obfs2,obfs3,obfs4,scramblesuite)
+    * Kryptografische Identitätsprüfung
+    * Ausgezeichnete Netzwerksicherheit
+    * Verschlüsselter Speicherung von Dateien auf Android
+    * Verschwinden von Nachrichten standardmäßig eingestellt
+    * Bildschirmsicherheit
+    * Beide Peers müssen gegenseitig Onion-Adressen hinzufügen, um kommunizieren zu können
+    * Live-Sprachanrufe über Tor (Alpha-Funktion)
+    * Profilbilder
+    * Textnachrichten
+    * Sprachnachrichten
+    * Mediennachrichten mit entfernten Metadaten
+    * Senden von Rohdateien jeder Größe (100 GB+)
+    * Verschlüsselter Notizblock
+    * Weitere Funktionen in Kürze
+
+Stand Dezember 2020 Es ist immer noch eine fortlaufende Anstrengung und obwohl es voll funktionsfähig ist, ist es bisher nur für Android verfügbar.
