@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+      
+  <string name="app_name">Messenger anonimo</string>
+      
+  <string name="create_account_button">Comincia</string>
+      
+  <string name="nickname">Soprannome</string>
+      
+  <string name="nickname_error">Soprannome non valido</string>
+      
+  <string name="nickname_help">Inserisci il soprannome per continuare</string>
+      
+  <string name="nickname_okay">Bel soprannome!</string>
+      
+  <string name="next_button">Avanti</string>
+      
+  <string name="choose_password">Scegli la password</string>
+      
+  <string name="confirm_password">Conferma la password</string>
+      
+  <string name="setup_password_explanation">La password che inserisci sarà utilizzata per criptare i dati sul tuo dispositivo. Questa non è una password di accesso e non può essere utilizzata per il recupero. Dovrai inserire la tua password in seguito, quando aprirai l\'app dopo essere uscito. Questa app non si connette mai a nessun server.</string>
+      
+  <string name="password_too_weak">La tua password è troppo semplice, non possiamo autorizzarla perché ci preoccupiamo della tua sicurezza</string>
+      
+  <string name="passwords_do_not_match">Le passwords non corrispondono</string>
+      
+  <string name="channel4">canale4</string>
+      
+  <string name="channel_description">questo e quello</string>
+      
+  <string name="hello_blank_fragment">Frammento vuoto di saluto</string>
+      
+  <string name="enter_password">Inserisci la password</string>
+      
+  <string name="decrypt_button">Decifra</string>
+      
+  <string name="myaddress">Il mio indirizzo</string>
+      
+  <string name="hint_contact_address">Inserisci l\'indirizzo di contatto (.onion)</string>
+      
+  <string name="lbl_contact_address">Inserisci l\'indirizzo di contatto</string>
+      
+  <string name="enter_message">Proteggi il messaggio...</string>
+      
+  <string name="send_button">INVIA</string>
+      
+  <string name="reply">Rispondi</string>
+      
+  <string name="pin">Pin</string>
+      
+  <string name="copy">Copia</string>
+      
+  <string name="you">tu</string>
+      
+  <string name="action_reset_session">Ripristina sessione</string>
+      
+  <string name="action_verify_identity">Verifica identità</string>
+      
+  <string name="action_clear_conversation">Rimuovi conversazione</string>
+      
+  <string name="action_search">Ricerca</string>
+      
+  <string name="action_shutdown">Spegnimento</string>
+      
+  <string name="action_my_identity">La mia identità</string>
+      
+  <string name="action_restart_tor">Riavvia Tor</string>
+      
+  <string name="my_identity_explanation">Chiave pubblica utilizzata per verificare l\'identità</string>
+      
+  <string name="verify_identity_explanation">Entrambe le chiavi pubbliche insieme per verificare entrambe le identità</string>
+      
+  <string name="action_call">Chiama</string>
+      
+  <string name="ask_me_again">Chiedi di nuovo</string>
+      
+  <string name="no_thanks">No, grazie</string>
+      
+  <string name="why_need_mic">l\'app ne ha bisogno per effettuare o ricevere chiamate</string>
+      
+  <string name="mic_perm_ask_title">Autorizzazione microfono</string>
+      
+  <string name="ask_for_mic_btn">OK</string>
+      
+  <string name="accept_call">Accetta</string>
+      
+  <string name="dx_call">CHIAMATA TOR</string>
+      
+  <string name="call_picture_description">immagine della schermata di chiamata</string>
+      
+  <string name="end_call">Riaggancia</string>
+      
+  <string name="connecting">Collegamento in corso...</string>
+      
+  <string name="CallNotificationBuilder_connecting">Collegamento</string>
+      
+  <string name="NotificationBarManager__incoming_call">Chiamata in arrivo</string>
+      
+  <string name="NotificationBarManager_call_in_progress">Chiamata in corso</string>
+      
+  <string name="NotificationBarManager__establishing_call">Stabilire una chiamata</string>
+      
+  <string name="trying">provare</string>
+      
+  <string name="ringing">Sta squillando</string>
+      
+  <string name="connected">Collegato</string>
+      
+  <string name="answer">rispondi</string>
+      
+  <string name="incoming_call">Chiamata in arrivo</string>
+      
+  <string name="identity_verification_fail">Impossibile recuperare le chiavi di identità</string>
+      
+  <string name="identity_key_fail">Impossibile trovare la tua chiave di identità</string>
+      
+  <string name="delete_contact">Elimina contatto</string>
+      
+  <string name="no_contacts">Nessun contatto trovato!</string>
+      
+  <string name="tor_output">Uscita Tor</string>
+      
+  <string name="anonymous_messenger">Messenger anonimo</string>
+      
+  <string name="by_drxtreme">di DrXtreme</string>
+      
+  <string name="welcome_to">benvenuto a</string>
+      
+  <string name="recording">Registrazione</string>
+      
+  <string name="send">INVIA</string>
+      
+  <string name="_00_00" translatable="false">00:00</string>
+      
+  <string name="to_show_when_it_is_unread">da mostrare quando non è letto</string>
+      
+  <string name="text_msg_placeholder">Si è dimenticato di ricordarti quella cosa laggiù</string>
+      
+  <string name="profile_image">immagine del profilo</string>
+      
+  <string name="really_long_word">sfsdfdgsdhfdghfdghfghfghghsdfgdfghdfghdsfgdfgdfgsdfgfds</string>
+      
+  <string name="time_passed_placeholder">31m</string>
+      
+  <string name="seen_image">immagine vista</string>
+      
+  <string name="msg_place_holder">ciao, come stai?</string>
+      
+  <string name="indicates_secure_messaging">indica la messaggistica sicura</string>
+      
+  <string name="textview">Visualizzazione testo</string>
+      
+  <string name="john_doe">John Doe</string>
+      
+  <string name="hi_man_how_are_you">ciao, come stai?</string>
+      
+  <string name="time_placeholder" translatable="false">11:40</string>
+      
+  <string name="offline">offline</string>
+      
+  <string name="picture_of_contact">foto del contatto</string>
+      
+  <string name="hold_on">Attendi!</string>
+      
+  <string name="starting_up_tor">avvio di Tor</string>
+      
+  <string name="doing_stuff">ti sto rendendo anonimo...</string>
+      
+  <string name="go_to_contacts">Salta</string>
+      
+  <string name="checking">Controllo</string>
+      
+  <string name="online">online</string>
+      
+  <string name="synced">sincronizzato</string>
+      
+  <string name="add_contact">Aggiungi contatto</string>
+      
+  <string name="waiting_for_tor">aspettando Tor</string>
+      
+  <string name="oh_no">Oh, no!</string>
+      
+  <string name="did_you_forget_your_password">Hai dimenticato la tua password?</string>
+      
+  <string name="hello_hello" translatable="false">hello, hello!</string>
+      
+  <string name="_11_40" translatable="false">11:40</string>
+      
+  <string name="crash_message">Messenger anonimo: hai esaurito la RAM!</string>
+      
+  <string name="no_encryption_yet">Non ancora pronto per la crittografia</string>
+      
+  <string name="no_session">La sessione non esiste, inizio della sessione ora</string>
+      
+  <string name="audio_message">messaggio audio</string>
+      
+  <string name="user_is_online">L\'utente è online</string>
+      
+  <string name="user_is_offline">L\'utente è offline</string>
+      
+  <string name="cant_encrypt_message">Impossibile crittografare il messaggio, devi attendere lo scambio di chiavi</string>
+      
+  <string name="resp_key_exchange">Messaggio di risposta dello scambio chiave</string>
+      
+  <string name="key_exchange_message">Messaggio di scambio chiave</string>
+      
+  <string name="image_to_send">immagine da inviare</string>
+      
+  <string name="read_storage_perm_ask_title">Leggi il permesso di archiviazione</string>
+      
+  <string name="why_need_read_storage">l\'app ne ha bisogno per poter inviare le immagini memorizzate sul telefono</string>
+      
+  <string name="icon_for_image_to_send">icona per l\'immagine da inviare</string>
+      
+  <string name="image">Immagine</string>
+      
+  <string name="pic_help">Chiudi</string>
+      
+  <string name="send_media_to">Invia media a </string>
+      
+  <string name="picure_view">Visualizzazione immagine</string>
+      
+  <string name="media_message">messaggio multimediale</string>
+      
+  <string name="caption">Scrivi un titolo</string>
+      
+  <string name="still_background">Ancora in esecuzione in background</string>
+      
+  <string name="click_to_hide">Nascondi notifica</string>
+      
+  <string name="unpin">Sblocca</string>
+      
+  <string name="profile_contact">Vedi profilo</string>
+      
+  <string name="save_picture">Salva immagine</string>
+      
+  <string name="confirm_add_contact">\"Vuoi davvero aggiungere \"</string>
+      
+  <string name="contact_exists">Il contatto esiste già!</string>
+      
+  <string name="cant_add_contact">impossibile aggiungere il contatto!</string>
+      
+  <string name="save_to_storage">Salva in memoria condivisa?</string>
+      
+  <string name="save_to_storage_explain">Se salvata su uno spazio di archiviazione condiviso, altre app avranno accesso a questa immagine.</string>
+      
+  <string name="action_my_profile">Il mio profilo</string>
+      
+  <string name="action_help">Aiuto</string>
+      
+  <string name="action_about">Informazioni</string>
+      
+  <string name="change_nickname">Cambia soprannome</string>
+      
+  <string name="new_nickname">Nuovo soprannome</string>
+      
+  <string name="confirm">Conferma</string>
+      
+  <string name="action_license">Licenza</string>
+      
+  <string name="license">Messenger Anonimo, una soluzione di comunicazione privata completa funzionante su Tor.\n Copyright © 2021  Sofian M. Benissa&#13;\n&#13;\n Questo programma è un software libero: puoi redistribuirlo e/o modificarlo secondo i termini della GNU General Public License pubblicata dalla Free Software Foundation, sia la versione 3 della licenza, sia (a tua scelta) qualsiasi versione successiva.\n Questo programma viene distribuito nella speranza che sia utile,&#13;\n ma SENZA ALCUNA GARANZIA; senza nemmeno la garanzia implicita di COMMERCIABILITÀ o IDONEITÀ PER UN PARTICOLARE SCOPO.  Per maggiori dettagli si veda la GNU General Public License.\n Insieme a questo programma dovresti aver ricevuto una copia della GNU General Public License.  In caso contrario, visita https://www.gnu.org/licenses .</string>
+      
+  <string name="copied_address">Indirizzo copiato</string>
+      
+  <string name="empty_nickname_help">Non è possibile avere un soprannome vuoto</string>
+      
+  <string name="theiraddress">Il loro indirizzo</string>
+      
+  <string name="turn_off_battery">Disattivare l\'ottimizzazione della batteria?</string>
+      
+  <string name="allow_in_background">permettere al Messenger anonimo di continuare a funzionare in background?</string>
+      
+  <string name="shut_app">Spegnere l\'app?</string>
+      
+  <string name="shut_app_explain">Non sarai in grado di ricevere messaggi fino a quando non li decodificherai di nuovo con la tua password</string>
+      
+  <string name="restart_tor">Riavviare Tor?</string>
+      
+  <string name="restart_tor_explain">Questo non dovrebbe essere necessario durante il normale funzionamento, a meno che non si pensi che Tor non stia funzionando correttamente in questo momento</string>
+      
+  <string name="restarting_service">Riavvio del servizio</string>
+      
+  <string name="connection_restored">Connessione ripristinata</string>
+      
+  <string name="lost_connection">Connessione persa</string>
+      
+  <string name="connection_is_coming">la connessione dovrebbe tornare presto</string>
+      
+  <string name="will_receive_messages_soon">dovresti essere in grado di ricevere messaggi entro 2 minuti</string>
+      
+  <string name="waiting_for_connectivity">in attesa di connettività</string>
+      
+  <string name="almost_ready">Quasi pronti!</string>
+      
+  <string name="starting_tor_first_time">Avvio di Tor e preparazione per ottenere tutto ciò di cui abbiamo bisogno per connetterci!</string>
+      
+  <string name="ready_to_chat">Pronto a chattare in sicurezza!</string>
+      
+  <string name="you_got_all_you_need">Hai tutto ciò di cui hai bisogno per chattare in sicurezza con i tuoi amici!</string>
+      
+  <string name="new_message">Nuovo messaggio!</string>
+      
+  <string name="you_have_message">hai un nuovo messaggio segreto</string>
+      
+  <string name="wrong_password">Password errata</string>
+      
+  <string name="no_key">chiave di crittografia non trovata</string>
+      
+  <string name="error">errore</string>
+      
+  <string name="failed_to_decrypt">DECODIFICAZIONE DEL MESSAGGIO NON RIUSCITA</string>
+      
+  <string name="failed_to_read_after_decrypt">LETTURA DEL MESSAGGIO NON RIUSCITA DOPO LA DECODIFICAZIONE</string>
+      
+  <string name="failed_to_get_AEM">IMPOSSIBILE OTTENERE MessaggioCriptatoIndirizzato DAL MESSAGGIO</string>
+      
+  <string name="cant_add_self">Non puoi aggiungerti!</string>
+      
+  <string name="waiting_for_response">Chiave inviata, In attesa di risposta</string>
+      
+  <string name="decrypting">Decodificazione in corso...</string>
+      
+  <string name="stale_key">Ricevuta chiave scaduta (ignora)</string>
+      
+  <string name="invalid_key">Ricevuta chiave non valida</string>
+      
+  <string name="untrusted_identity">RIcevuta chiave da un\'identità non attendibile</string>
+      
+  <string name="bad_message">Messaggio corrotto</string>
+      
+  <string name="decrypt_reminder_title">Decodifica per ricevere messaggi</string>
+      
+  <string name="decrypt_reminder_message">è necessario inserire la password per eseguire in background</string>
+      
+  <string name="denied_microphone">Permesso microfono negato</string>
+      
+  <string name="denied_microphone_help">in questo modo non potrai né effettuare né ricevere chiamate</string>
+      
+  <string name="delete_messages">Eliminare tutti i messaggi?</string>
+      
+  <string name="delete_messages_help">questo cancellerà anche i messaggi pinnati!</string>
+      
+  <string name="yes">Sì</string>
+      
+  <string name="pinned_message">Messaggio pinnato</string>
+      
+  <string name="unpinned_message">Messaggio sbloccato</string>
+      
+  <string name="copied">Copiato</string>
+      
+  <string name="saved_to_storage">Salvato in memoria</string>
+      
+  <string name="about">Un progetto finanziato da Alton James Steele e sviluppato da Sofian Mahmoud Benissa per mettervi a disposizione una messaggistica anonima sicura e conveniente. Poiché non eravamo soddisfatti di ciò che era disponibile, abbiamo deciso di creare la nostra idea di un\'applicazione di messaggistica e di condividerla con il mondo. Il codice sorgente è disponibile e il progetto è concesso in licenza sotto la GNU General Public License in modo da poterne trarre pieno vantaggio e avere la libertà di modificarlo insieme ad altre libertà</string>
+      
+  <string name="copyright">Copyright © 2021 Sofian M. Benissa</string>
+      
+  <string name="action_tips">Suggerimenti per la sicurezza</string>
+      
+  <string name="hide_notification">disabilita la notifica service_running</string>
+      
+  <string name="record_audio">registra audio</string>
+      
+  <string name="send_file">invia file</string>
+      
+  <string name="scroll_down">scorri verso il basso</string>
+      
+  <string name="file">File</string>
+      
+  <string name="unknown_file_name">Nome file sconosciuto</string>
+      
+  <string name="unknown_file_size">Dimensione file sconosciuta</string>
+      
+  <string name="recording_failed">Impossibile registrare ora, forse c\'è una chiamata in corso?</string>
+      
+  <string name="feature_unready">questa funzione sarà pronta nel prossimo aggiornamento</string>
+      
+  <string-array name="security_tips">
+            
+    <item>@string/security_tips01</item>
+            
+    <item>@string/security_tips02</item>
+            
+    <item>@string/security_tips03</item>
+            
+    <item>@string/security_tips04</item>
+            
+    <item>@string/security_tips05</item>
+            
+    <item>@string/security_tips06</item>
+            
+    <item>@string/security_tips07</item>
+            
+    <item>@string/security_tips08</item>
+            
+    <item>@string/security_tips09</item>
+            
+    <item>@string/security_tips10</item>
+            
+    <item>@string/security_tips11</item>
+            
+    <item>@string/security_tips12</item>
+            
+    <item>@string/security_tips13</item>
+            
+    <item>@string/security_tips14</item>
+            
+    <item>@string/security_tips15</item>
+        
+  </string-array>
+      
+  <string name="security_tips01">Usa una tastiera che rispetti la tua libertà e non si connetta a internet, ti consigliamo di usare OpenBoard</string>
+      
+  <string name="security_tips02">La tua sicurezza dipende molto dalle applicazioni installate sul dispositivo: ti consigliamo di cambiare le tue applicazioni di default con quelle presenti nel repository di f-droid</string>
+      
+  <string name="security_tips03">Cerca di non incollare per sbaglio l\'indirizzo del tuo amico nel tuo browser perché ciò potrebbe compromettere il tuo/loro anonimato</string>
+      
+  <string name="security_tips04">Disinstalla Messenger anonimo per cancellare il tuo account e azzerare tutto.</string>
+      
+  <string name="security_tips05">Scaricare dal nostro servizio onion è più sicuro dei nostri server clear net.</string>
+      
+  <string name="security_tips06">La crittografia dei tuoi dati è sicura solo quanto la tua password: ti consigliamo una password lunga composta da parole che non significano nulla per te.</string>
+      
+  <string name="security_tips07">Il testo è più sicuro e anonimo di qualsiasi altra cosa.</string>
+      
+  <string name="security_tips08">Condividi il tuo indirizzo nel modo più sicuro possibile.</string>
+      
+  <string name="security_tips09">Se possibile, crittografa la memoria del telefono.</string>
+      
+  <string name="security_tips10">Quando desideri usare una VPN, assicurati che il client che usi sia un software libero open source come OpenVPN.</string>
+      
+  <string name="security_tips11">L\'uscita da Messenger anonimo mantiene i dati criptati sul tuo telefono.</string>
+      
+  <string name="security_tips12">Crea Messenger anonimo dalla fonte, se possibile.</string>
+      
+  <string name="security_tips13">Verifica le identità.</string>
+      
+  <string name="security_tips14">Assicurati di non usare nessuna app proprietaria sul tuo telefono e di usare un programma open source gratuito per accedere ai tuoi siti di social media, ai servizi finanziari, e in generale di non avere nessuna app di cui non ti puoi fidare o che richiede più permessi di quanti ne debba avere, o che abbia pubblicità di terze parti presenti nell\'app stessa.</string>
+      
+  <string name="security_tips15">Considera di fare una donazione per contribuire a rendere questo progetto ancora migliore e aiutarci a fornire la migliore soluzione a tutti per la messaggistica anonima.</string>
+      
+  <string name="opening_socks_listener">Apertura del server Socks listener</string>
+      
+  <string name="socks_listener_listening">Ascolto del server Socks listener</string>
+      
+  <string name="opened_socks_listener">Server Socks listener aperto</string>
+      
+  <string name="opening_control_listener">Apertura controllo listener</string>
+      
+  <string name="control_listener_listening">Ascolto del controllo listener</string>
+      
+  <string name="opened_control_listener">Controllo listener aperto</string>
+      
+  <string name="action_notepad">Blocco note</string>
+      
+  <string name="save">Salva</string>
+      
+  <string name="enter_note">Salva nota crittografata</string>
+      
+  <string name="delete_contact_question">Eliminare questo contatto?</string>
+      
+  <string name="delete_contact_details">l\'azione non può essere annullata; inoltre, verrà cancellata la sessione e la conversazione di questo contatto</string>
+      
+  <string name="delete_note_question">Eliminare questa nota?</string>
+      
+  <string name="delete_note_details">l\'azione non può essere annullato</string>
+      
+  <string name="delete_note">Elimina</string>
+      
+  <string name="open_link_question">Aprire questo link?</string>
+      
+  <string name="open_link_describe">L\'apertura di link esterni alle app private potrebbe deanonimizzarti, fallo solo se ti fidi del link oppure utilizza il browser Tor se possibile</string>
+      
+  <string name="scan">Scansiona il codice QR</string>
+      
+  <string name="contact_added">Contatto aggiunto</string>
+      
+  <string name="cam_perm_ask_title">Autorizzazione fotocamera</string>
+      
+  <string name="why_need_cam">La scansione QR non funzionerà senza l\'autorizzazione della fotocamera</string>
+      
+  <string name="ask_for_cam_btn">OK</string>
+      
+  <string name="invalid_address">Indirizzo non valido</string>
+      
+  <string name="action_log">Registro di sicurezza</string>
+      
+  <string name="delete_log_question">Elimina?</string>
+      
+  <string name="delete_log_details">L\'azione non può essere annullata</string>
+      
+  <string name="action_log_notice">Includi avviso</string>
+      
+  <string name="action_clear_log">Rimuovi il log</string>
+      
+  <string name="include_notice_logs">Includi i log delle notifiche</string>
+      
+  <string name="decrypting2">Decodificazione</string>
+      
+  <string name="open_file_question">Aprire il file in un\'altra app?</string>
+      
+  <string name="open_file_describe">L\'azione permetterà di decriptare il file e di dare accesso a un\'applicazione         di terze parti che potrebbe compromettere il file</string>
+      
+  <string name="deleted_logs">Il log è stato cancellato</string>
+      
+  <string name="saving">Salvataggio </string>
+      
+  <string name="cancel">Annulla</string>
+      
+  <string name="slide_to_cancel">Scorri per annullare</string>
+      
+  <string name="sending_file">Invio file</string>
+      
+  <string name="sending_part_one">Invio parte 1</string>
+      
+  <string name="screen_filter_body">Un\'altra app si sta sovrapponendo a MessengerAnonimo,         lo schermo è stato bloccato per proteggere la tua privacy</string>
+      
+  <string name="screen_filter_title">Rilevata sovrapposizione dello schermo</string>
+      
+  <string name="try_now">Prova ora</string>
+      
+  <string name="mic_in_use">Il microfono potrebbe essere utilizzato da un\'altra app</string>
+      
+  <string name="back_image">torna indietro</string>
+      
+  <string name="subtitle">Sottotitolo</string>
+      
+  <string name="qr_code_image">Immagine contenente il codice QR</string>
+      
+  <string name="go_to_app">apri l\'app</string>
+      
+  <string name="use_bridges">Usa i ponti</string>
+      
+  <string name="request_bridge">Richiedi ponte</string>
+      
+  <string name="done_button">Fatto</string>
+      
+  <string name="allow_unknown">Accetta contatti sconosciuti</string>
+      
+  <string name="allow_files">Consenti la ricezione di file</string>
+      
+  <string name="file_limit">Limite dimensione file</string>
+      
+  <string name="allow_calls">Consenti chiamate</string>
+      
+  <string name="action_settings">Impostazioni</string>
+      
+  <string name="delete_bridge_question">Eliminare questo ponte?</string>
+      
+  <string name="delete_bridge_details">l\'azione non può essere annullato</string>
+      
+  <string name="online_check_address">Indirizzo online di controllo</string>
+      
+  <string name="reset_settings">Ripristina le impostazioni</string>
+      
+  <string name="bridges">Ponti (riavvia Tor per avere effetto)</string>
+      
+  <string name="other">Altro</string>
+      
+  <string name="reset">Ripristina</string>
+      
+  <string name="security">Sicurezza</string>
+      
+  <string name="connectivity">Connettività</string>
+      
+  <string name="add_bridge">Aggiungi ponte</string>
+      
+  <string name="request_bridge_help">È possibile richiedere un ponte dal progetto Tor seguendo questo link: https://bridges.torproject.org/bridges?transport=obfs4   in alternativa si può scrivere una mail a bridges\@torproject.org oppure si può avviare il proprio ponte.</string>
+      
+  <string name="button_undo">Annulla</string>
+      
+  <string name="insert_bridge_line">Inserisci la linea del ponte</string>
+      
+  <string name="nickname_explain_title">Utilizzo del soprannome</string>
+      
+  <string name="nickname_explain">Il tuo soprannome viene memorizzato sul tuo dispositivo e inviato criptato con il tuo messaggio direttamente al tuo contatto, non dovrai mai connetterti a un server quando usi questa app.</string>
+      
+  <string name="password_explain_title">Utilizzo della password</string>
+      
+  <string name="online_check_address_explain">Questo indirizzo viene utilizzato per assicurarsi che tu sia online e che tutto sia impostato correttamente. Questo può essere qualsiasi indirizzo di server web, dato che controlliamo solo la raggiungibilità; inoltre, potrebbe trattarsi di un servizio nascosto oppure di un indirizzo regolare.</string>
+      
+  <string name="running_on">In esecuzione su: </string>
+      
+  <string name="processors">processori</string>
+      
+  <string name="and">e </string>
+      
+  <string name="free_memory">memoria libera</string>
+      
+  <string name="ok">OK</string>
+      
+  <string name="with">insieme a</string>
+      
+  <string name="welcome_to_anonymous_messenger">Questo è il tuo prossimo messenger sicuro</string>
+      
+  <string name="change_profile_image">Cambia immagine</string>
+      
+  <string name="remove_profile_image">Rimuovi immagine</string>
+      
+  <string name="remove_profile_image_details">Sei sicuro di voler rimuovere la tua immagine del profilo?</string>
+      
+  <string name="profile_image_changed">L\'immagine del profilo è stata cambiata</string>
+      
+  <string name="profile_image_removed">L\'immagine del profilo è stata rimossa</string>
+      
+  <string name="restart_app">Riavvia l\'app</string>
+      
+  <string name="unknown_exception">Errore sconosciuto</string>
+      
+  <string name="error_occurred">Qualcosa è andato storto</string>
+      
+  <string name="error_details">Dettagli circa l\'errore</string>
+      
+  <string name="retry">Riprova</string>
+      
+  <string name="use_proxy">Usa un proxy Socks5</string>
+      
+  <string name="proxy_address">Indirizzo del proxy Socks5</string>
+      
+  <string name="proxy_username">Nome utente</string>
+      
+  <string name="proxy_password">Password</string>
+      
+  <string name="tor_error">Tor non ha potuto connettersi entro 300s. Puoi provare a usare i ponti o connetterti attraverso qualsiasi proxy socks5 presente nelle impostazioni.</string>
+      
+  <string name="tor_error_title">Errore durante l\'avvio di Tor</string>
+      
+  <string name="stay_offline">Rimani offline</string>
+      
+  <string name="proxy">Proxy Socks5 (riavvia Tor per avere effetto)</string>
+  
+</resources>
