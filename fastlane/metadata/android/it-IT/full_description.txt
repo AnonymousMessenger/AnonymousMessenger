@@ -1,0 +1,27 @@
+Un messenger "peer to peer", privato, anonimo e sicuro funzionante su tor. È anche un software libero e open source che dà agli utenti la libertà di modificarlo e redistribuirlo sotto i termini della GNU General Public License v3.
+
+    Caratteristiche:
+    *nessun annuncio, nessun server e nessun tracker.
+    *Software completamente gratuito, open source e tutto è su Tor.
+    *Doppia tripla crittografia Diffie-Hellman "end to end"
+    *Completamente "peer to peer" utilizzando servizi nascosti
+    *Include Tor e obfs4proxy in modo da non aver bisogno di altre app per connettersi
+    *Possibilità di utilizzare i ponti Tor (meek_lite, obfs2, obfs3, obfs4, scramblesuite)
+    *Verifica crittografica dell'identità
+    *Eccellente sicurezza di rete
+    *Archiviazione crittografata dei file su Android
+    *Scomparsa dei messaggi di impostazione predefinita
+    *Sicurezza dello schermo
+    *Entrambi i peer devono aggiungere gli indirizzi onion dell'altro per essere in grado di comunicare
+    *Chiamate vocali dal vivo su tor (funzione alfa)
+    *Immagini del profilo
+    *Messaggi di testo
+    *Messaggi vocali
+    *Messaggi multimediali senza metadati
+    *Invio di file grezzi di qualsiasi dimensione (100 GB+)
+    *Blocco note crittografato
+    *Altre caratteristiche in arrivo
+
+Come si usa: https://anonymousmessenger.ly/how-to-use.html
+
+A partire da dicembre 2020 è tuttora un lavoro in corso e, sebbene sia pienamente funzionale, per ora è disponibile solo per Android.

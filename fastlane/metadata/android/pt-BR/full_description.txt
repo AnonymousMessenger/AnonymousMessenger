@@ -1,0 +1,26 @@
+Um mensageiro ponto a ponto, privado, anônimo e seguro que funciona com tor. Também é um software de código aberto e gratuito que dá aos usuários a liberdade de alterá-lo e redistribuí-lo de acordo com os termos da Licença Pública Geral GNU v3.
+
+    Características:
+    *Sem anúncios, sem servidores e sem rastreadores.
+    *Software totalmente gratuito e de código aberto e tudo está sobre o Tor.
+    *Criptografia Diffie-Hellman ponto a ponto dupla/tripla Totalmente ponto a ponto usando serviços ocultos
+    *Inclui Tor e obfs4proxy para que você não precise de nenhum outro aplicativo para se conectar
+    *Capacidade de usar pontes Tor (meek_lite,obfs2,obfs3,obfs4,scramblesuite)
+    *Verificação de identidade criptográfica
+    *Excelente segurança de rede
+    *Armazenamento de arquivos criptografados no Android Desaparecimento de mensagens por padrão
+    *Tela de segurança
+    *Ambos os pares têm que adicionar endereços onion um do outro para poder se comunicar
+    *Chamadas de voz ao vivo por tor (recurso alfa)
+    *Imagens de perfil
+    *Mensagens de texto
+    *Mensagens de voz
+    *Mensagens de mídia sem metadados
+    *Envio de arquivo bruto de qualquer tamanho (100 GB +)
+    *Bloco de notas criptografado
+    *Mais recursos em breve
+
+Como usar: https://anonymousmessenger.ly/how-to-use.html
+
+A partir de dezembro de 2020
+Ainda é um esforço contínuo e, embora totalmente funcional, só está disponível para Android até agora.
