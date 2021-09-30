@@ -49,8 +49,8 @@
     </style>
 
     <style name="TextAppearance.App.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle1">
-        <item name="fontFamily">@font/kurale</item>
-        <item name="android:fontFamily">@font/kurale</item>
+        <item name="fontFamily">monospace</item>
+        <item name="android:fontFamily">monospace</item>
     </style>
 
 <!--    <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">-->

@@ -127,10 +127,6 @@
             android:enabled="true"
             android:exported="false" />
 
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="@string/file_provider"
