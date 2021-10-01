@@ -10,8 +10,9 @@ android {
         applicationId "com.dx.anonymousmessenger"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 37
-        versionName "0.8.5"
+        versionCode 39
+        versionName "0.8.6-alpha-internal"
+        setProperty("archivesBaseName", applicationId + "-v" + versionCode + "(" + versionName + ")")
         ndk{
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
         }

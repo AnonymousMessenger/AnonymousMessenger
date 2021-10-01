@@ -30,6 +30,33 @@ public class CreateUserActivity extends DxActivity {
     private String socks5AddressAndPort = "";
     private String socks5Username = "";
     private String socks5Password = "";
+    private String excludeText = "";
+    private boolean excludeUnknown = false;
+    private boolean strictExclude = false;
+
+    public String getExcludeText() {
+        return excludeText;
+    }
+
+    public boolean isExcludeUnknown(){
+        return excludeUnknown;
+    }
+
+    public boolean isStrictExclude(){
+        return strictExclude;
+    }
+
+    public void setExcludeText(String excludeText) {
+        this.excludeText = excludeText;
+    }
+
+    public void setExcludeUnknown(boolean excludeUnknown) {
+        this.excludeUnknown = excludeUnknown;
+    }
+
+    public void setStrictExclude(boolean strictExclude) {
+        this.strictExclude = strictExclude;
+    }
 
     public boolean isEnableSocks5Proxy() {
         return enableSocks5Proxy;
@@ -111,7 +138,6 @@ public class CreateUserActivity extends DxActivity {
         this.fileSizeLimit = fileSizeLimit;
     }
 
-
     public List<String> getBridgeList() {
         return bridgeList;
     }
@@ -183,7 +209,7 @@ public class CreateUserActivity extends DxActivity {
         }
         try{
             //create account and start tor
-            ((DxApplication)getApplication()).createAccount(password,nickname,bridgesEnabled,bridgeList,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username, socks5Password);
+            ((DxApplication)getApplication()).createAccount(password,nickname,bridgesEnabled,bridgeList,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username,socks5Password,excludeText,excludeUnknown,strictExclude);
             Intent intent = new Intent(this, SetupInProcess.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
@@ -205,4 +231,6 @@ public class CreateUserActivity extends DxActivity {
         startActivity(intent);
         finish();
     }
+
+
 }

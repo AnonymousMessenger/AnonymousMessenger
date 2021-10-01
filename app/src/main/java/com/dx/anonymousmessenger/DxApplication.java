@@ -79,8 +79,8 @@ public class DxApplication extends Application {
     public final List<String> sendingTo = new ArrayList<>();
 
     //settings
-    //settings array: bridgesEnabled,acceptUnknown,acceptCalls,receiveFiles,testAddress,fileSizeLimit
-    public final Object[] DEFAULT_SETTINGS = {0,0,1,1,"duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion","3gb",0,"","",""};
+    //settings array: bridgesEnabled,acceptUnknown,acceptCalls,receiveFiles,testAddress,fileSizeLimit,proxyAddress,proxyUsername,proxyPassword,excludeText,excludeUnknown,strictExclude
+    public final Object[] DEFAULT_SETTINGS = {0,0,1,1,"duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion","3gb",0,"","","","",0,0};
     private boolean bridgesEnabled;
     private boolean isAcceptingUnknownContactsEnabled;
     private boolean isAcceptingCallsAllowed;
@@ -90,11 +90,26 @@ public class DxApplication extends Application {
     private String socks5AddressAndPort;
     private String socks5Username;
     private String socks5Password;
+    private String excludeText;
+    private boolean excludeUnknown;
+    private boolean strictExclude;
     //the ddg site to check if we are online (can be overridden in the settings)
     private String testAddress = DEFAULT_SETTINGS[4].toString();
 
     public String getTestAddress() {
         return testAddress;
+    }
+
+    public String getExcludeText() {
+        return excludeText;
+    }
+
+    public boolean isExcludeUnknown() {
+        return excludeUnknown;
+    }
+
+    public boolean isStrictExclude() {
+        return strictExclude;
     }
 
     public boolean isEnableSocks5Proxy() {
@@ -414,7 +429,7 @@ public class DxApplication extends Application {
         }
     }
 
-    public void createAccount(byte[] password, String nickname, boolean bridgesEnabled, List<String> bridgeList, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed,boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password){
+    public void createAccount(byte[] password, String nickname, boolean bridgesEnabled, List<String> bridgeList, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed,boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password, String excludeText, boolean excludeUnknown, boolean strictExclude){
         new Thread(() -> {
             try{
                 if(nickname==null || password==null){
@@ -442,7 +457,7 @@ public class DxApplication extends Application {
                 }
 
                 //save the settings to DB
-                DbHelper.saveSettings(bridgesEnabled, isAcceptingUnknownContactsEnabled, isAcceptingCallsAllowed, isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username, socks5Password,this);
+                DbHelper.saveSettings(bridgesEnabled, isAcceptingUnknownContactsEnabled, isAcceptingCallsAllowed, isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username, socks5Password,excludeText,excludeUnknown,strictExclude,this);
 
                 startTor();
 
@@ -459,7 +474,7 @@ public class DxApplication extends Application {
             if(settings == null){
                 Log.d("GENERAL","settings were null when got from the db");
                 settings = DEFAULT_SETTINGS;
-                DbHelper.saveSettings((int)settings[0]>0,(int)settings[1]>0,(int)settings[2]>0,(int)settings[3]>0,(String)settings[4],(String)settings[5],(int)settings[6]>0, (String) settings[7], (String) settings[8], (String) settings[9],this);
+                DbHelper.saveSettings((int)settings[0]>0,(int)settings[1]>0,(int)settings[2]>0,(int)settings[3]>0,(String)settings[4],(String)settings[5],(int)settings[6]>0, (String) settings[7], (String) settings[8], (String) settings[9], (String) settings[10], (int)settings[11]>0, (int)settings[12]>0,this);
             }
             this.bridgesEnabled = (int)settings[0]>0;
             this.isAcceptingUnknownContactsEnabled = (int)settings[1]>0;
@@ -471,6 +486,9 @@ public class DxApplication extends Application {
             this.socks5AddressAndPort = (String) settings[7];
             this.socks5Username = (String) settings[8];
             this.socks5Password = (String) settings[9];
+            this.excludeText = (String) settings[10];
+            this.excludeUnknown = (int)settings[11]>0;
+            this.strictExclude = (int)settings[12]>0;
         }catch (Exception e){
             e.printStackTrace();
         }

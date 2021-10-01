@@ -138,6 +138,50 @@
             </com.google.android.material.textfield.TextInputLayout>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txt_layout_exclude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/transition"
+            android:padding="8dp"
+            android:visibility="visible"
+            app:helperText="Country code : xx,xx..."
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView11">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_exclude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="eg.: CN,US,RU,FR"
+                android:imeOptions="flagNoPersonalizedLearning|actionDone"
+                android:singleLine="true"
+                android:textSize="12sp" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_exclude_unknown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:padding="5dp"
+                android:text="@string/exclude_unknown"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:visibility="visible" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_strict_exclude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:padding="5dp"
+                android:text="@string/strict_exclude"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:visibility="visible" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_bridges"
             android:layout_width="0dp"
@@ -330,13 +374,12 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_marginStart="164dp"
-            android:layout_marginTop="4dp"
             android:padding="5dp"
             android:text="@string/bridges"
             android:textColor="#523967"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_layout_proxy" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_check_address" />
 
         <TextView
             android:id="@+id/textView9"
@@ -348,7 +391,7 @@
             android:textColor="#523967"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_check_address" />
+            app:layout_constraintTop_toBottomOf="@id/bridge_settings_layout" />
 
         <TextView
             android:id="@+id/txt_other"
@@ -361,7 +404,7 @@
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bridge_settings_layout" />
+            app:layout_constraintTop_toBottomOf="@id/txt_layout_exclude" />
 
         <TextView
             android:id="@+id/txt_other2"
@@ -374,7 +417,7 @@
             android:textStyle="bold"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_license" />
+            app:layout_constraintTop_toBottomOf="@id/btn_license" />
 
         <TextView
             android:id="@+id/textView15"
@@ -400,6 +443,18 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/switch_allow_calls" />
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:text="@string/exclude_tor_nodes"
+            android:textColor="#523967"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_layout_proxy" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

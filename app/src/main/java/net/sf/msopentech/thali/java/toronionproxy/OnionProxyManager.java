@@ -69,7 +69,7 @@ public class OnionProxyManager {
         eventHandler = new OnionProxyManagerEventHandler(onionProxyContext);
     }
 
-    public boolean startWithoutRepeat(int hiddenServicePort, int localPort, int secondsBeforeTimeOut, List<String> bridges, boolean enableBridges, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password) throws IOException, InterruptedException, RuntimeException {
+    public boolean startWithoutRepeat(int hiddenServicePort, int localPort, int secondsBeforeTimeOut, List<String> bridges, boolean enableBridges, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password, String excludeText, boolean excludeUnknown, boolean strictExclude) throws IOException, InterruptedException, RuntimeException {
 
         File hostnameFile = onionProxyContext.getHostNameFile();
 
@@ -82,7 +82,7 @@ public class OnionProxyManager {
             throw new RuntimeException("Could not create hostnameFile");
         }
 
-        if (!installAndStartTorOp(hiddenServicePort,localPort,bridges, enableBridges, enableSocks5Proxy, socks5AddressAndPort, socks5Username, socks5Password)) {
+        if (!installAndStartTorOp(hiddenServicePort,localPort,bridges, enableBridges, enableSocks5Proxy, socks5AddressAndPort, socks5Username, socks5Password, excludeText, excludeUnknown, strictExclude)) {
 //            stop();
 //            onionProxyContext.deleteAllFilesButHiddenServices();
             return false;
@@ -158,7 +158,7 @@ public class OnionProxyManager {
         return new String(FileUtilities.read(hostnameFile), StandardCharsets.UTF_8).trim();
     }
 
-    public synchronized boolean installAndStartTorOp(int hiddenServicePort, int localPort, List<String> bridges, boolean enableBridges, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password) throws IOException, InterruptedException {
+    public synchronized boolean installAndStartTorOp(int hiddenServicePort, int localPort, List<String> bridges, boolean enableBridges, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password, String excludeText, boolean excludeUnknown, boolean strictExclude) throws IOException, InterruptedException {
         // The Tor OP will die if it looses the connection to its socket so if there is no controlSocket defined
         // then Tor is dead. This assumes, of course, that takeOwnership works and we can't end up with Zombies.
         if (controlConnection != null) {
@@ -191,6 +191,11 @@ public class OnionProxyManager {
                 if(socks5Password!=null && !socks5Password.isEmpty()){
                     printWriter.println("Socks5ProxyPassword " + socks5Password);
                 }
+            }
+            if(excludeText!=null && !excludeText.isEmpty()){
+                printWriter.println("ExcludeNodes " + excludeText);
+                printWriter.println("GeoIPExcludeUnknown " + (excludeUnknown?"1":"0"));
+                printWriter.println("StrictNodes " + (strictExclude?"1":"0"));
             }
             String obfs4proxyfilename = getOnionProxyContext().getTorExecutableFileName().replace("libtor", "obfs4proxy");
             File obfs4proxyfile = new File(getOnionProxyContext().ctx.getApplicationInfo().nativeLibraryDir + "/" + obfs4proxyfilename);

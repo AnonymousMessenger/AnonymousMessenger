@@ -107,7 +107,7 @@ public class ServerSocketViaTor {
                 }
             }
 
-            if (!node.startWithoutRepeat(hiddenservicedirport, localport, TOTAL_SEC_PER_STARTUP, DbHelper.getBridgeList(app), app.isBridgesEnabled(), app.isEnableSocks5Proxy(), app.getSocks5AddressAndPort(), app.getSocks5Username(), app.getSocks5Password())) {
+            if (!node.startWithoutRepeat(hiddenservicedirport, localport, TOTAL_SEC_PER_STARTUP, DbHelper.getBridgeList(app), app.isBridgesEnabled(), app.isEnableSocks5Proxy(), app.getSocks5AddressAndPort(), app.getSocks5Username(), app.getSocks5Password(), app.getExcludeText(), app.isExcludeUnknown(), app.isStrictExclude())) {
                 Log.d("GENERAL","Could not Start Tor.");
                 tryKill();
                 throw new IOException("Could not Start Tor.");

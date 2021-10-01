@@ -102,6 +102,10 @@ public class SetupSettingsFragment extends Fragment {
         final TextInputEditText txtProxyAddress = rootView.findViewById(R.id.txt_proxy_address);
         final TextInputEditText txtProxyUsername = rootView.findViewById(R.id.txt_proxy_username);
         final TextInputEditText txtProxyPassword = rootView.findViewById(R.id.txt_proxy_password);
+        final TextInputLayout layoutExclude = rootView.findViewById(R.id.txt_layout_exclude);
+        final TextInputEditText txtExclude = rootView.findViewById(R.id.txt_exclude);
+        final SwitchMaterial excludeUnknown = rootView.findViewById(R.id.switch_exclude_unknown);
+        final SwitchMaterial strictExclude = rootView.findViewById(R.id.switch_strict_exclude);
         final TextView reset = rootView.findViewById(R.id.btn_reset);
 
         rootView.findViewById(R.id.fab_check_address_help).setOnClickListener(v -> Utils.showHelpAlert(requireContext(),getString(R.string.online_check_address_explain), getString(R.string.online_check_address)));
@@ -128,6 +132,9 @@ public class SetupSettingsFragment extends Fragment {
             txtProxyAddress.setText((String) settings[7]);
             txtProxyUsername.setText((String) settings[8]);
             txtProxyPassword.setText((String) settings[9]);
+            txtExclude.setText((String) settings[10]);
+            excludeUnknown.setChecked((int)settings[11]>0);
+            strictExclude.setChecked((int)settings[12]>0);
         });
 
         //get default values
@@ -145,6 +152,9 @@ public class SetupSettingsFragment extends Fragment {
             txtProxyAddress.setText(((CreateUserActivity) requireActivity()).getSocks5AddressAndPort());
             txtProxyUsername.setText(((CreateUserActivity) requireActivity()).getSocks5Username());
             txtProxyPassword.setText(((CreateUserActivity) requireActivity()).getSocks5Password());
+            txtExclude.setText(((CreateUserActivity) requireActivity()).getExcludeText());
+            excludeUnknown.setChecked(((CreateUserActivity) requireActivity()).isExcludeUnknown());
+            strictExclude.setChecked(((CreateUserActivity) requireActivity()).isStrictExclude());
         }else{
             try{
                 ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).getMenu().clear();
@@ -193,10 +203,63 @@ public class SetupSettingsFragment extends Fragment {
                 txtProxyAddress.setText((String) settings[7]);
                 txtProxyUsername.setText((String) settings[8]);
                 txtProxyPassword.setText((String) settings[9]);
+                txtExclude.setText((String) settings[10]);
+                excludeUnknown.setChecked((int)settings[11]>0);
+                strictExclude.setChecked((int)settings[12]>0);
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
+
+        //exclude Tor nodes related
+        txtExclude.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //validate and output errors
+                //accepted format is : xx,xx...
+
+                String[] array = s.toString().split(",");
+                for (String value : array) {
+                    if (value.length() != 2 && value.length() != 0) {
+                        txtExclude.setError("Bad format, setting unchanged");
+                        return;
+                    }
+                }
+
+                //if good: save it
+                if(isInSetup){
+                    ((CreateUserActivity) requireActivity()).setExcludeText(s.toString());
+                }else{
+                    DbHelper.saveExcludeText(s.toString(),(DxApplication)requireActivity().getApplication());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        excludeUnknown.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+            if(isInSetup){
+                ((CreateUserActivity) requireActivity()).setExcludeUnknown(isChecked);
+            }else{
+                DbHelper.saveExcludeUnknown(isChecked,(DxApplication)requireActivity().getApplication());
+            }
+        }));
+
+        strictExclude.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+            if(isInSetup){
+                ((CreateUserActivity) requireActivity()).setStrictExclude(isChecked);
+            }else{
+                DbHelper.saveStrictExclude(isChecked,(DxApplication)requireActivity().getApplication());
+            }
+        }));
 
         //proxy related
         enableSocks5Proxy.setOnCheckedChangeListener(((buttonView, isChecked) -> {

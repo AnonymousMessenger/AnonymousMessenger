@@ -352,4 +352,7 @@
     <string name="tor_error_title">Error while starting Tor</string>
     <string name="stay_offline">Stay offline</string>
     <string name="proxy">Socks5 proxy (restart Tor to take effect)</string>
+    <string name="exclude_tor_nodes">Exclude Tor nodes (restart Tor to take effect)</string>
+    <string name="exclude_unknown">Exclude Unkown Nodes</string>
+    <string name="strict_exclude">Strict Exclude</string>
 </resources>

@@ -499,7 +499,7 @@ public class DbHelper {
      */
 
     private static String getSettingsColumns(){
-        return "(bridgesEnabled,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username,socks5Password)";
+        return "(bridgesEnabled,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username,socks5Password,excludeText,excludeUnknown,strictExclude)";
     }
 
     private static String getSettingsTableSqlCreate(){
@@ -510,14 +510,32 @@ public class DbHelper {
         return "INSERT INTO settings "+getSettingsColumns()+" VALUES(?"+giveMeQMarks(getSettingsColumns().split(",").length-1)+")";
     }
 
-    private static Object[] getSettingsSqlValues(boolean bridgesEnabled, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed, boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password){
-        return new Object[]{bridgesEnabled?1:0,isAcceptingUnknownContactsEnabled?1:0,isAcceptingCallsAllowed?1:0,isReceivingFilesAllowed?1:0,checkAddress,fileSizeLimit,enableSocks5Proxy?1:0,socks5AddressAndPort,socks5Username,socks5Password};
+    private static Object[] getSettingsSqlValues(boolean bridgesEnabled, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed, boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password, String excludeText, boolean excludeUnknown, boolean strictExclude){
+        return new Object[]{bridgesEnabled?1:0,isAcceptingUnknownContactsEnabled?1:0,isAcceptingCallsAllowed?1:0,isReceivingFilesAllowed?1:0,checkAddress,fileSizeLimit,enableSocks5Proxy?1:0,socks5AddressAndPort,socks5Username,socks5Password,excludeText,excludeUnknown?1:0,strictExclude?1:0};
     }
 
-    public static void saveSettings(boolean bridgesEnabled, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed, boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password, DxApplication app){
+    public static void saveSettings(boolean bridgesEnabled, boolean isAcceptingUnknownContactsEnabled, boolean isAcceptingCallsAllowed, boolean isReceivingFilesAllowed, String checkAddress, String fileSizeLimit, boolean enableSocks5Proxy, String socks5AddressAndPort, String socks5Username, String socks5Password, String excludeText, boolean excludeUnknown, boolean strictExclude, DxApplication app){
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getSettingsTableSqlCreate());
-        database.execSQL(DbHelper.getSettingsSqlInsert(),DbHelper.getSettingsSqlValues(bridgesEnabled,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username,socks5Password));
+        database.execSQL(DbHelper.getSettingsSqlInsert(),DbHelper.getSettingsSqlValues(bridgesEnabled,isAcceptingUnknownContactsEnabled,isAcceptingCallsAllowed,isReceivingFilesAllowed,checkAddress,fileSizeLimit,enableSocks5Proxy,socks5AddressAndPort,socks5Username,socks5Password,excludeText,excludeUnknown,strictExclude));
+    }
+
+    public static void saveExcludeText(String excludeText, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET excludeText=?", new Object[]{excludeText});
+    }
+
+    public static void saveExcludeUnknown(boolean excludeUnknown, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET excludeUnknown=?", new Object[]{excludeUnknown?1:0});
+    }
+
+    public static void saveStrictExclude(boolean strictExclude, DxApplication app){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getSettingsTableSqlCreate());
+        database.execSQL("UPDATE settings SET strictExclude=?", new Object[]{strictExclude?1:0});
     }
 
     public static void saveSocks5Password(String socks5Password, DxApplication app){
@@ -605,7 +623,7 @@ public class DbHelper {
         Cursor cr = database.rawQuery("SELECT * FROM settings ;",null);
         Object[] settings = null;
         if (cr.moveToFirst()) {
-            settings = new Object[10];
+            settings = new Object[13];
             settings[0] = cr.getInt(0);//enable bridges
             settings[1] = cr.getInt(1);//isAcceptingUnknownContacts
             settings[2] = cr.getInt(2);//isAcceptingCallsAllowed
@@ -616,6 +634,9 @@ public class DbHelper {
             settings[7] = cr.getString(7);//socks5AddressAndPort
             settings[8] = cr.getString(8);//socks5Username
             settings[9] = cr.getString(9);//socks5Password
+            settings[10] = cr.getString(10);//excludeText
+            settings[11] = cr.getInt(11);//excludeUnknown
+            settings[12] = cr.getInt(12);//strictExclude
         }
         cr.close();
         return settings;
