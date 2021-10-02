@@ -1,0 +1,2 @@
+Added Exclude Tor nodes by country code in the settings.
+Fixed AAB bundle support for smaller downloads.

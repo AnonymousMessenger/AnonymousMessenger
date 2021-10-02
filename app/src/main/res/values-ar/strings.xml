@@ -185,6 +185,23 @@
     <string name="unknown_file_name">إسم الملف غير معروف</string>
     <string name="unknown_file_size">حجم الملف غير معروف</string>
     <string name="recording_failed">ﻻ يمكن التسجيل اﻵن, ربما توجد مكالمة جارية؟</string>
+    <string-array name="security_tips">
+        <item>@string/security_tips01</item>
+        <item>@string/security_tips02</item>
+        <item>@string/security_tips03</item>
+        <item>@string/security_tips04</item>
+        <item>@string/security_tips05</item>
+        <item>@string/security_tips06</item>
+        <item>@string/security_tips07</item>
+        <item>@string/security_tips08</item>
+        <item>@string/security_tips09</item>
+        <item>@string/security_tips10</item>
+        <item>@string/security_tips11</item>
+        <item>@string/security_tips12</item>
+        <item>@string/security_tips13</item>
+        <item>@string/security_tips14</item>
+        <item>@string/security_tips15</item>
+    </string-array>
     <string name="security_tips01">إستعمل كيبورد يحترم حريتك وﻻ يتصل بالإنترنت, نحن ننصح بإستعمال OpenBoard</string>
     <string name="security_tips02">أمنك يعتمد بشكل كبير على التطبيقات المثبتة على جهازك, نحن ننصح
         بتغيير برامجك الإفترضية لبرامج من مخزن f-droid</string>
@@ -298,4 +315,7 @@
     <string name="tor_error_title">حدث خطأ عند تشغيل تور</string>
     <string name="stay_offline">عدم الإتصال</string>
     <string name="proxy">بروكسي سوكس5 (أعد تشغيل تور ليأخذ مفعوله)</string>
+    <string name="exclude_tor_nodes">إستبعاد التوجيه عبر دول معينة (أعد تشغيل تور ليأخذ مفعوله)</string>
+    <string name="exclude_unknown">إستبعد التوجيه من أماكن غير معروفه</string>
+    <string name="strict_exclude">إستبعاد صارم</string>
 </resources>

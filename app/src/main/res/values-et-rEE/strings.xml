@@ -363,5 +363,8 @@
     <string name="tor_error_title">Viga Tor käivitamisel</string>
     <string name="stay_offline">"Jääge võrguühenduseta "</string>
     <string name="proxy">"Sokk5 puhverserver (jõustub Tor uuesti, et see jõustuks) "</string>
+    <string name="exclude_tor_nodes">"Tor -sõlmede välistamine (jõustumiseks käivitage Tor uuesti) "</string>
+    <string name="exclude_unknown">"Tundmatute sõlmede välistamine "</string>
+    <string name="strict_exclude">"Range välistamine "</string>
 
 </resources>
