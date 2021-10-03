@@ -21,13 +21,29 @@
         app:layout_constraintStart_toEndOf="@+id/frameLayout"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/textViewOptions"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentTop="true"-->
+    <!--        android:layout_alignParentRight="true"-->
+    <!--        android:paddingLeft="@dimen/margin_activity_horizontal"-->
+    <!--        android:text="&#8942;"-->
+    <!--        android:textAppearance="?android:textAppearanceLarge"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent" />-->
+
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_rectangle_steel"
         android:padding="12dp"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fab_pin"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -42,13 +58,14 @@
                 android:layout_margin="2dp"
                 android:alpha="@dimen/material_emphasis_disabled"
                 android:background="@drawable/rounded_rectangle_dark"
-                android:maxWidth="240dp"
                 android:maxLines="4"
 
                 android:padding="16dp"
                 android:text="@string/textview"
                 android:textColor="#ffffff"
                 android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote_sender" />
 
@@ -57,6 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
+                android:layout_marginTop="8dp"
                 android:alpha="@dimen/material_emphasis_disabled"
                 android:background="@drawable/nickname_background"
                 android:ellipsize="end"
@@ -65,6 +83,8 @@
                 android:singleLine="true"
                 android:text="@string/really_long_word"
                 android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -81,8 +101,10 @@
                 android:text="@string/really_long_word"
                 android:textColor="#ffffff"
                 android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toEndOf="@+id/image_message_profile"
-                app:layout_constraintTop_toBottomOf="@+id/quote_text"/>
+                app:layout_constraintTop_toBottomOf="@+id/quote_text" />
 
             <com.alexvasilkov.gestures.commons.circle.CircleImageView
                 android:id="@+id/image_message_profile"
@@ -108,16 +130,17 @@
 
             <TextView
                 android:id="@+id/text_message_body"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autoLink="all"
                 android:background="@drawable/rounded_rectangle_steel"
-                android:maxWidth="240dp"
+                android:gravity="start"
                 android:padding="8dp"
                 android:text="@string/hi_man_how_are_you"
                 android:textColor="#ffffff"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_message_name" />
 
@@ -135,19 +158,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
-
-    <!--    <TextView-->
-    <!--        android:id="@+id/textViewOptions"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_alignParentTop="true"-->
-    <!--        android:layout_alignParentRight="true"-->
-    <!--        android:paddingLeft="@dimen/margin_activity_horizontal"-->
-    <!--        android:text="&#8942;"-->
-    <!--        android:textAppearance="?android:textAppearanceLarge"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent" />-->
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_pin"
         android:layout_width="wrap_content"
@@ -159,7 +169,7 @@
         android:tint="#FFA025"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/frameLayout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_push_pin_24" />
 

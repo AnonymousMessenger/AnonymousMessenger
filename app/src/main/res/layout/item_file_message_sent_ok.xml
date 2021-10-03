@@ -27,7 +27,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_rectangle_dark"
         android:padding="8dp"
+        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@+id/fab_pin"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -94,8 +97,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/rounded_rectangle_dark"
-                android:maxWidth="200dp"
                 android:text="@string/send_file"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toBottomOf="@+id/img_holder"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/img_holder"
                 app:layout_constraintTop_toTopOf="@+id/img_holder" />
@@ -114,7 +118,7 @@
         android:tint="#FFA025"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/frameLayout"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_push_pin_24" />
 
