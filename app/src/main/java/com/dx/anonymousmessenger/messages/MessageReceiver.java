@@ -74,7 +74,7 @@ public class MessageReceiver {
                         SessionBuilder sb = new SessionBuilder(app.getEntity().getStore(), new SignalProtocolAddress(akem.getAddress(),1));
                         sb.process(akem.getKem());
 
-                        DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.resp_key_exchange), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
+                        DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.resp_key_exchange), json.getString("address"),new Date().getTime(),false,app.getHostname(),false),app,json.getString("address"),false);
                         Intent gcm_rec = new Intent("your_action");
                         gcm_rec.putExtra("address",json.getString("address").substring(0,10));
                         LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
@@ -89,7 +89,7 @@ public class MessageReceiver {
                                 json.getString("address"),
                                 new Date().getTime(),
                                 false,
-                                json.getString("address"),
+                                app.getHostname(),
                                 false),app,json.getString("address"),false);
                         Intent gcm_rec = new Intent("your_action");
                         gcm_rec.putExtra("address",json.getString("address").substring(0,10));
@@ -101,7 +101,7 @@ public class MessageReceiver {
                         Log.e("MESSAGE RECEIVER ERROR", "FAILED!!! Received Response Key Exchange Message : ");
                     }
                 }else{
-                    DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.key_exchange_message), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
+                    DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.key_exchange_message), json.getString("address"),new Date().getTime(),false,app.getHostname(),false),app,json.getString("address"),false);
                     sendKeyExchangeMessage(app,akem.getAddress(),akem.getKem());
 //                    Log.e("MESSAGE RECEIVER", "GOT KEM: SENDING KEM BACK TO : "+json.getString("address"));
                 }
