@@ -177,6 +177,14 @@ public class LogActivity extends DxActivity {
             adapter.notifyDataSetChanged();
             updateUi();
             checkLogs();
+        }else if(item.getItemId()==R.id.action_scroll_up){
+            if(list!=null && list.size()>0){
+                recyclerView.scrollToPosition(0);
+            }
+        }else if(item.getItemId()==R.id.action_scroll_down){
+            if(list!=null && list.size()>0){
+                recyclerView.scrollToPosition(list.size()-1);
+            }
         }
         return super.onOptionsItemSelected(item);
     }

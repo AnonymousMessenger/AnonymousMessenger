@@ -355,4 +355,6 @@
     <string name="exclude_tor_nodes">Exclude Tor nodes (restart Tor to take effect)</string>
     <string name="exclude_unknown">Exclude Unknown Nodes</string>
     <string name="strict_exclude">Strict Exclude</string>
+    <string name="action_scroll_up">Scroll up</string>
+    <string name="action_scroll_down">Scroll down</string>
 </resources>
