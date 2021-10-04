@@ -3,6 +3,8 @@ Official repository:    https://git.anonymousmessenger.ly/dx/AnonymousMessenger
 
 Official website:       https://www.anonymousmessenger.ly/
 
+Translate:              https://www.transifex.com/liberty-for-all/anonymous-messenger/
+
 ## What is it
 A peer to peer private anonymous and secure messenger that works over Tor. It's also free and open source software which gives users the freedom of changing it and redistributing it under the terms of the GNU General Public License v3.
 
