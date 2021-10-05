@@ -1,0 +1,17 @@
+Od grudnia 2020 roku jest to wciąż trwający wysiłek i chociaż w pełni funkcjonalny, jest dostępny tylko dla Androida, jak na razie.
+
+Projekt ten został rozpoczęty w lipcu 2020 roku przez Sofian Mahmoud Benisse (programistę znanego również jako DrXtreme lub DX) po serii spotkań z Altonem Jamesem Steelem (fundatorem projektu), na których przedstawiona została idea projektu.
+
+Cechy
+* Podwójne potrójne szyfrowanie Diffie-Hellman od końca do końca
+* Całkowicie P2P z wykorzystaniem ukrytych serwisów sieci Tor
+* Kryptograficzna weryfikacja tożsamości
+* Doskonałe bezpieczeństwo sieci
+* Wiadomości Głosowe* Połączenia Głosowe przez Tora (funkcja alpha)
+* Wiadomości Tekstowe
+* Wiadomości multimedialne z usuniętymi metadanymi
+* Wysyłanie plików o dowolnej wielkości (100 GB+)
+* Obie strony muszą dodać wzajemnie swoje adresy, aby móc się komunikować.
+* Domyślnie znikające wiadomości
+* Szyfrowane przechowywanie plików na Androidzie
+* Bezpieczeństwo ekranu
