@@ -356,6 +356,13 @@ public class OnionProxyManager {
         return onionProxyContext.getWorkingDirectory();
     }
 
+    public synchronized void clearTorCache() throws IOException {
+        if (controlConnection == null) {
+            throw new RuntimeException("Tor is not running!");
+        }
+        controlConnection.signal("NEWNYM");
+    }
+
     public void stop() throws IOException {
         if(stopping){
             Log.d("GENERAL","already stopping");

@@ -101,6 +101,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_push_pin_24" />
+        app:srcCompat="@drawable/ic_baseline_push_pin_24"
+        android:contentDescription="@string/pin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

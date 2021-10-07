@@ -279,7 +279,7 @@
     <string name="why_need_cam">QR scanning won\'t work without camera permission</string>
     <string name="ask_for_cam_btn">OK</string>
     <string name="invalid_address">Invalid address</string>
-    <string name="action_log">Security log</string>
+    <string name="action_log">Security Log</string>
     <string name="delete_log_question">Delete?</string>
     <string name="delete_log_details">This can\'t be undone</string>
     <string name="action_log_notice">Include Notice</string>
@@ -357,4 +357,6 @@
     <string name="strict_exclude">Strict Exclude</string>
     <string name="action_scroll_up">Scroll up</string>
     <string name="action_scroll_down">Scroll down</string>
+    <string name="action_clear_tor_cache">Clear Tor Cache</string>
+    <string name="clear_tor_cache_explain">This can be useful if cached descriptors are outdated, but is not adviced to do it too much due to performance and anonymity concerns.</string>
 </resources>

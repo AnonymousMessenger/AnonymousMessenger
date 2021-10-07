@@ -44,6 +44,12 @@
 <!--        app:showAsAction="never"/>-->
 
     <item
+        android:id="@+id/action_clear_tor_cache"
+        android:title="@string/action_clear_tor_cache"
+        android:icon="@drawable/ic_baseline_cleaning_services_24"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_restart_tor"
         android:title="@string/action_restart_tor"
         android:icon="@drawable/ic_baseline_refresh_24"

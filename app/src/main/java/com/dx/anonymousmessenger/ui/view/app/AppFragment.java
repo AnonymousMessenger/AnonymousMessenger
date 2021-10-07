@@ -55,6 +55,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -231,6 +232,20 @@ public class AppFragment extends Fragment {
             popup.setOnMenuItemClickListener(item -> {
                 if(item.getItemId()==R.id.action_settings){
                     ((AppActivity)requireActivity()).changeToSettingsFragment();
+                    return true;
+                }else if(item.getItemId()==R.id.action_clear_tor_cache){
+                    new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
+                        .setTitle(R.string.action_clear_tor_cache)
+                        .setMessage(R.string.clear_tor_cache_explain)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            try {
+                                ((DxApplication) requireActivity().getApplication()).getAndroidTorRelay().clearTorCache();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
                     return true;
                 }else if(item.getItemId()==R.id.action_restart_tor){
                     new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
