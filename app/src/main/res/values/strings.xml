@@ -313,7 +313,7 @@
     <string name="delete_bridge_question">Delete this bridge ?</string>
     <string name="delete_bridge_details">this can\'t be undone</string>
     <string name="online_check_address">Online Check Address</string>
-    <string name="reset_settings">Reset settings</string>
+    <string name="reset_settings">Reset Settings</string>
     <string name="bridges">Bridges (restart Tor to take effect)</string>
     <string name="other">Other</string>
     <string name="reset">Reset</string>
@@ -359,4 +359,5 @@
     <string name="action_scroll_down">Scroll down</string>
     <string name="action_clear_tor_cache">Clear Tor Cache</string>
     <string name="clear_tor_cache_explain">This can be useful if cached descriptors are outdated, but is not adviced to do it too much due to performance and anonymity concerns.</string>
+    <string name="disappearing_messages_default">Delete Unpinned Messages After 24hrs</string>
 </resources>

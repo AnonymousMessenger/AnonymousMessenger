@@ -26,9 +26,26 @@
             android:padding="5dp"
             android:text="@string/allow_files"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switch_disappearing_messages" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_disappearing_messages"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:checked="true"
+            android:enabled="false"
+            android:padding="5dp"
+            android:text="@string/disappearing_messages_default"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.609"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
@@ -40,7 +57,7 @@
             android:padding="5dp"
             android:text="@string/allow_unknown"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +71,7 @@
             android:padding="5dp"
             android:text="@string/allow_calls"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -68,7 +85,7 @@
             android:padding="5dp"
             android:text="@string/use_proxy"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -143,7 +160,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/transition"
-            android:padding="8dp"
+            android:padding="4dp"
             android:visibility="visible"
             app:helperText="Country code : xx,xx..."
             app:layout_constraintEnd_toEndOf="parent"
@@ -190,7 +207,7 @@
             android:padding="5dp"
             android:text="@string/use_bridges"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -240,12 +257,12 @@
             style="@style/DXButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:enabled="true"
             android:text="@string/done_button"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_reset"
+            app:layout_constraintTop_toTopOf="parent"
             tools:enabled="true" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -275,7 +292,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/transition"
-            android:padding="8dp"
+            android:padding="4dp"
             app:boxBackgroundColor="#443657"
             app:helperText="Connectivity check address (anything that's always online)"
             app:helperTextEnabled="true"
@@ -306,10 +323,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:clickable="true"
+                    android:focusable="true"
                     android:src="@drawable/ic_baseline_undo_24"
                     app:fabSize="mini"
-                    tools:ignore="ContentDescription"
-                    android:focusable="true" />
+                    tools:ignore="ContentDescription" />
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputEditText
@@ -318,53 +335,59 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/online_check_address"
                 android:selectAllOnFocus="true"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="12sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/btn_about"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_margin="5dp"
-            android:background="@drawable/custom_ripple"
+            android:background="@drawable/rounded_alpha_ripple"
             android:fontFamily="monospace"
             android:gravity="center_vertical"
+            android:padding="5dp"
             android:text="@string/action_about"
-            android:textSize="24sp"
-            android:visibility="gone"
+            android:textSize="16sp"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txt_other" />
 
         <TextView
             android:id="@+id/btn_license"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_margin="5dp"
-            android:background="@drawable/custom_ripple"
+            android:background="@drawable/rounded_alpha_ripple"
             android:fontFamily="monospace"
             android:gravity="center_vertical"
+            android:padding="5dp"
             android:text="@string/action_license"
-            android:textSize="24sp"
-            android:visibility="gone"
+            android:textSize="16sp"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.38"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_about" />
 
         <TextView
             android:id="@+id/btn_reset"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_margin="5dp"
-            android:background="@drawable/custom_ripple"
+            android:background="@drawable/rounded_alpha_ripple"
             android:fontFamily="monospace"
             android:gravity="center_vertical"
+            android:padding="5dp"
             android:text="@string/reset_settings"
-            android:textSize="24sp"
+            android:textColor="@color/red_500"
+            android:textSize="16sp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.38"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txt_other2" />
 
@@ -402,7 +425,7 @@
             android:text="@string/other"
             android:textColor="#523967"
             android:textStyle="bold"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txt_layout_exclude" />
 
@@ -430,7 +453,7 @@
             android:textColor="#523967"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/done" />
 
         <TextView
             android:id="@+id/textView16"
