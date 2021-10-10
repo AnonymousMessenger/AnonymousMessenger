@@ -125,6 +125,22 @@
     <string name="new_nickname">Nowy Pseudonim</string>
     <string name="confirm">Potwierdź</string>
     <string name="action_license">Licencja</string>
+    <string name="license">
+        Anonymous Messenger, w pełni prywatne rozwiązanie komunikacyjne, które działa przez sieć Tor.\n
+    Prawa autorskie © 2021 Sofian M. Benissa\n\n
+
+    Ten program jest darmowym oprogramowaniem: możesz go redystrybuować i/lub modyfikować
+    zgodnie z warunkami licencji GNU GPL opublikowanej przez
+    Free Software Foundation, wersja 3 licencji lub
+    (według Twojego wyboru) dowolna nowsza wersja.\n
+
+    Ten program jest rozpowszechniany z nadzieją, że będzie przydatny,\n
+    ale BEZ ŻADNEJ GWARANCJI; bez dorozumianej gwarancji
+    PRZYDATNOŚCI HANDLOWEJ lub PRZYDATNOŚĆ DO OKREŚLONEGO CELU. Zobacz
+    licencje GNU GPL, aby uzyskać więcej informacji.\n
+
+    Powinieneś otrzymać kopię licencji GNU GPL
+    wraz z tym programem. Jeśli nie, zobacz https://www.gnu.org/licenses .</string>
     <string name="copied_address">Skopiowano adres</string>
     <string name="empty_nickname_help">Nie można mieć pustego pseudonimu</string>
     <string name="theiraddress">Ich Adres</string>
@@ -189,6 +205,23 @@
     <string name="unknown_file_size">Nieznany rozmiar pliku</string>
     <string name="recording_failed">Nie można teraz nagrywać, może trwa połączenie?</string>
     <string name="feature_unready">ta funkcja będzie gotowa w następnej aktualizacji</string>
+    <string-array name="security_tips">
+        <item>@string/security_tips01</item>
+        <item>@string/security_tips02</item>
+        <item>@string/security_tips03</item>
+        <item>@string/security_tips04</item>
+        <item>@string/security_tips05</item>
+        <item>@string/security_tips06</item>
+        <item>@string/security_tips07</item>
+        <item>@string/security_tips08</item>
+        <item>@string/security_tips09</item>
+        <item>@string/security_tips10</item>
+        <item>@string/security_tips11</item>
+        <item>@string/security_tips12</item>
+        <item>@string/security_tips13</item>
+        <item>@string/security_tips14</item>
+        <item>@string/security_tips15</item>
+    </string-array>
     <string name="security_tips01">Używaj klawiatury, która szanuje Twoją wolność oraz nie
         lączy się z internetem, my zalecamy używanie OpenBoard</string>
     <string name="security_tips02">Twoje bezpieczeństwo zależy w dużej mierze od aplikacji
@@ -322,37 +355,4 @@
     <string name="clear_tor_cache_explain">Może to być w przydatne, jeśli deskryptory w pamięci podręcznej są nieaktualne, ale nie zaleca się robienia tego zbyt często ze względu na wydajność oraz anonimowość.</string>
     <string name="disappearing_messages_default">Usuwaj Odpięte Wiadomości Po 24h</string>
     <string name="tor_exited">Tor wyłączył się</string>
-    <string-array name="security_tips">
-
-        <item>@string/security_tips01</item>
-
-        <item>@string/security_tips02</item>
-
-        <item>@string/security_tips03</item>
-
-        <item>@string/security_tips04</item>
-
-        <item>@string/security_tips05</item>
-
-        <item>@string/security_tips06</item>
-
-        <item>@string/security_tips07</item>
-
-        <item>@string/security_tips08</item>
-
-        <item>@string/security_tips09</item>
-
-        <item>@string/security_tips10</item>
-
-        <item>@string/security_tips11</item>
-
-        <item>@string/security_tips12</item>
-
-        <item>@string/security_tips13</item>
-
-        <item>@string/security_tips14</item>
-
-        <item>@string/security_tips15</item>
-
-    </string-array>
 </resources>
