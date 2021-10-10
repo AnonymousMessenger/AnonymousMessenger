@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Anonymous Messenger</string>
     <string name="create_account_button">بدء</string>
@@ -9,9 +8,12 @@
     <string name="next_button">التالي</string>
     <string name="choose_password">إختار كلمة مرور</string>
     <string name="confirm_password">أكٍِد كلمة المرور</string>
+    <string name="setup_password_explanation">سيتم تشفير حسابك وأي بيانات على جهازك ، لذلك إذا نسيت كلمة المرور ، فلن تكون هناك طريقة لاستعادتها.</string>
     <string name="password_too_weak">كلمة المرور التي أدخلتها ليست قوية بما يكفي, لا نستطيع ان نتركك تفعل هذا لأن أمنك يهمنا</string>
     <string name="passwords_do_not_match">كلمتا المرور غير متطابقتين</string>
+    <string name="channel4">القناة4</string>
     <string name="channel_description">هذا و ذاك</string>
+    <string name="hello_blank_fragment">مرحبا جزء فارغ</string>
     <string name="enter_password">أدخل كلمة المرور</string>
     <string name="decrypt_button">فك التشفير</string>
     <string name="myaddress">عنواني</string>
@@ -81,9 +83,6 @@
     <string name="go_to_contacts">تجاوز</string>
     <string name="checking">تدقيق</string>
     <string name="online">متصل</string>
-    <string name="hello_blank_fragment">مرحبا جزء فارغ</string>
-    <string name="setup_password_explanation">سيتم تشفير حسابك وأي بيانات على جهازك ، لذلك إذا نسيت كلمة المرور ، فلن تكون هناك طريقة لاستعادتها.</string>
-    <string name="channel4">القناة4</string>
     <string name="synced">تمت المزامنة</string>
     <string name="add_contact">إضافة جهة اتصال</string>
     <string name="waiting_for_tor">إنتظار الرد من قبل تور</string>
@@ -185,6 +184,7 @@
     <string name="unknown_file_name">إسم الملف غير معروف</string>
     <string name="unknown_file_size">حجم الملف غير معروف</string>
     <string name="recording_failed">ﻻ يمكن التسجيل اﻵن, ربما توجد مكالمة جارية؟</string>
+    <string name="feature_unready">ستكون هذه الميزة متوفرة في الإصدار القادم</string>
     <string-array name="security_tips">
         <item>@string/security_tips01</item>
         <item>@string/security_tips02</item>
@@ -205,7 +205,6 @@
     <string name="security_tips01">إستعمل كيبورد يحترم حريتك وﻻ يتصل بالإنترنت, نحن ننصح بإستعمال OpenBoard</string>
     <string name="security_tips02">أمنك يعتمد بشكل كبير على التطبيقات المثبتة على جهازك, نحن ننصح
         بتغيير برامجك الإفترضية لبرامج من مخزن f-droid</string>
-    <string name="feature_unready">ستكون هذه الميزة متوفرة في الإصدار القادم</string>
     <string name="security_tips03">حاول أﻻ تلصق عنوان صديقك في المتصفح لأن هذا قد يضع مجهوليتكما في خطر</string>
     <string name="security_tips04">قم بإزالة المسنجر المجهول ليتم حذف حسابك و كافة البيانات نهائيا</string>
     <string name="security_tips05">التنزيل من خدمتنا البصلية .onion هو أكثر أماناََ من إلتنزيل عبر الموقع العادي</string>
@@ -266,7 +265,6 @@
     <string name="qr_code_image">صورة تحتوي على كود QRز</string>
     <string name="go_to_app">فتح التطبيق</string>
     <string name="use_bridges">إستعمال الجسور</string>
-    <string name="add_bridge">إضافة جسر</string>
     <string name="request_bridge">طلب جسر</string>
     <string name="done_button">تم</string>
     <string name="allow_unknown">قبول الرسائل من أي أحد</string>
@@ -283,19 +281,20 @@
     <string name="reset">إعادة الظبط</string>
     <string name="security">الآمان</string>
     <string name="connectivity">الإتصال</string>
+    <string name="add_bridge">إضافة جسر</string>
     <string name="request_bridge_help">يمكنك طلب جسر من مشروع تور عن طريق هذا الرابط: https://bridges.torproject.org/bridges?transport=obfs4 أو عن طريق إرسال بريد ألكتروني إلى: bridges@torproject.org أو عن طريق تشغيل جسر خاص بك و من ثم إستعماله</string>
     <string name="button_undo">إلغاء</string>
     <string name="insert_bridge_line">أدخل سطر الجسر</string>
-    <string name="ok">حسناً</string>
     <string name="nickname_explain_title">إستعمال الإسم المستعار</string>
     <string name="nickname_explain">إسمك المستعار يخزن في جهازك و يرسل فقط مع الرسائل التي ترسلها و يرسل مشفراً مباشرة إلى من تريد, هذا البرنامج لا يقوم بالإتصال بأي خوادم</string>
     <string name="password_explain_title">إستعمال كلمة المرور</string>
     <string name="online_check_address_explain">هذا العنوان يستعمل فقط للتأكد من عمل الإنترنت عبر تور بشكل صحيح و يمكن لهذا العنوان أن يكون أي خادم ويب تختاره من الإنترنت العادي أو عبر من عناوين تورلأننا فقط نتحقق من القدرة على الإتصال.</string>
     <string name="running_on">"يشتغل على: "</string>
-    <string name="with">مع</string>
     <string name="processors">معالجات</string>
     <string name="and">و</string>
     <string name="free_memory">ذاكرة متاحة</string>
+    <string name="ok">حسناً</string>
+    <string name="with">مع</string>
     <string name="welcome_to_anonymous_messenger">هذا هو برنامجك التالي للمراسلة الآمنة</string>
     <string name="change_profile_image">غيِر الصورة</string>
     <string name="remove_profile_image">إزالة الصورة</string>
@@ -318,4 +317,10 @@
     <string name="exclude_tor_nodes">إستبعاد التوجيه عبر دول معينة (أعد تشغيل تور ليأخذ مفعوله)</string>
     <string name="exclude_unknown">إستبعد التوجيه من أماكن غير معروفه</string>
     <string name="strict_exclude">إستبعاد صارم</string>
+    <string name="action_scroll_up">إنتقل إلى أعلى</string>
+    <string name="action_scroll_down">إنتقل إلى أسفل</string>
+    <string name="action_clear_tor_cache">مسح تخزين تور المؤقت</string>
+    <string name="clear_tor_cache_explain">يمكن أن يكون هذا مفيداً إن كانت المعرفات المخزنه قديمة, و لكنه لا ينصح بفعلها كثيراً لأسباب تتعلق بالأداء و المجهولية.</string>
+    <string name="disappearing_messages_default">حذف الرسائل القديمة بعد 24 ساعة</string>
+    <string name="tor_exited">توقف تور عن العمل</string>
 </resources>
