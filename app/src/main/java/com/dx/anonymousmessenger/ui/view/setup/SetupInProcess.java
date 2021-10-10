@@ -78,12 +78,12 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
     }
 
     @Override
-    protected void onPause() {
+    protected void onStop() {
         if(alert!=null){
             alert.dismiss();
             alert = null;
         }
-        super.onPause();
+        super.onStop();
         if(mMyBroadcastReceiver==null){
             return;
         }
@@ -93,8 +93,8 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         if(((DxApplication) getApplication()).isServerReady()){
             Intent intent = new Intent(this, AppActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -109,11 +109,11 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                new Thread(()->{
+//                new Thread(()->{
                     try{
                         updateUi(intent.getStringExtra("tor_status"));
                     }catch (Exception ignored) {}
-                }).start();
+//                }).start();
             }
         };
         checkServerReady();
@@ -139,7 +139,7 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
             if(!((DxApplication) getApplication()).isExitingHoldup() && ((DxApplication) getApplication()).getTorStartTime()!=0 && new Date().getTime()>(((DxApplication) getApplication()).getTorStartTime()+5000) && !((DxApplication) getApplication()).isServerReady() && ((DxApplication) getApplication()).getAndroidTorRelay()==null || (((DxApplication) getApplication()).getAndroidTorRelay()!=null && !((DxApplication) getApplication()).getAndroidTorRelay().isTorRunning())){
                 runOnUiThread(this::displayTorError);
             }
-            while (true){
+//            while (true){
                 try{
                     if(((DxApplication) getApplication()).isServerReady()){
                         runOnUiThread(()->{
@@ -148,12 +148,13 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
                             startActivity(intent);
                             finish();
                         });
-                        return;
+//                        return;
                     }
-                    Thread.sleep(1000);
+//                    Thread.sleep(1000);
                 }catch (Exception ignored){
-                    break;}
-            }
+//                    break;
+                }
+//            }
         });
         serverChecker.start();
     }
@@ -163,7 +164,7 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
                 .setTitle(R.string.tor_error_title)
                 .setMessage(R.string.tor_error)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(R.string.restart_tor, (dialog, whichButton) -> restartTorWithAlert())
+                .setPositiveButton(R.string.restart_tor, (dialog, whichButton) -> ((DxApplication) getApplication()).restartTor())
                 .setNegativeButton(R.string.stay_offline, (dialog, whichButton) -> {
                 }).show();
     }
@@ -193,26 +194,34 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
             runOnUiThread(this::displayTorError);
             return;
         }
-        if(torStatus.contains("DisableNetwork is set")){
-            torStatus = getString(R.string.waiting_for_tor);
-        }
+//        if(torStatus.contains("DisableNetwork is set")){
+//            torStatus = getString(R.string.waiting_for_tor);
+//            runOnUiThread(()-> statusText.setText(getString(R.string.waiting_for_tor)));
+//            return;
+//        }
         if(torStatus.contains("Opening Socks listener")){
-            torStatus = getString(R.string.opening_socks_listener);
+            runOnUiThread(()-> statusText.setText(getString(R.string.opening_socks_listener)));
+            return;
         }
         if(torStatus.contains("Socks listener listening")){
-            torStatus = getString(R.string.socks_listener_listening);
+            runOnUiThread(()-> statusText.setText(getString(R.string.socks_listener_listening)));
+            return;
         }
         if(torStatus.contains("Opened Socks listener")){
-            torStatus = getString(R.string.opened_socks_listener);
+            runOnUiThread(()-> statusText.setText(getString(R.string.opened_socks_listener)));
+            return;
         }
         if(torStatus.contains("Opening Control listener")){
-            torStatus = getString(R.string.opening_control_listener);
+            runOnUiThread(()-> statusText.setText(getString(R.string.opening_control_listener)));
+            return;
         }
         if(torStatus.contains("Control listener listening")){
-            torStatus = getString(R.string.control_listener_listening);
+            runOnUiThread(()-> statusText.setText(getString(R.string.control_listener_listening)));
+            return;
         }
         if(torStatus.contains("Opened Control listener")){
-            torStatus = getString(R.string.opened_control_listener);
+            runOnUiThread(()-> statusText.setText(getString(R.string.opened_control_listener)));
+            return;
         }
         if(torStatus.contains("Bootstrapped 100%") || torStatus.contains("ALL GOOD")){
             ((DxApplication)getApplication()).setExitingHoldup(true);
@@ -221,10 +230,9 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
                 ((DxApplication) this.getApplication()).sendNotification(getString(R.string.ready_to_chat),
                         getString(R.string.you_got_all_you_need),false);
             }
-            String finalTorStatus = torStatus;
             runOnUiThread(()->{
                 try {
-                    statusText.setText(finalTorStatus);
+                    statusText.setText(torStatus);
                 }catch (Exception ignored) {}
             });
             try {
@@ -238,8 +246,7 @@ public class SetupInProcess extends DxActivity implements ComponentCallbacks2 {
             finish();
         }else{
             try {
-                String finalTorStatus1 = torStatus;
-                runOnUiThread(()-> statusText.setText(finalTorStatus1));
+                runOnUiThread(()-> statusText.setText(torStatus));
             }catch (Exception ignored){}
         }
     }

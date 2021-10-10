@@ -634,6 +634,9 @@ public class AppFragment extends Fragment {
     }
 
     private void updateTorOutput(String tor_status) {
+        if(tor_status!=null && tor_status.equals("tor_error")){
+            torOutput.setText(getText(R.string.tor_exited));
+        }
         torOutput.setText(tor_status);
     }
 
