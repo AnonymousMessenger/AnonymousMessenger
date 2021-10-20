@@ -445,7 +445,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             }
                             Handler h = new Handler(Looper.getMainLooper());
                             h.post(()-> {
-                                mMessageRecycler.smoothScrollToPosition(mMessageList.indexOf(msg));
+                                mMessageRecycler.scrollToPosition(mMessageList.indexOf(msg));
                                 notifyItemChanged(mMessageList.indexOf(msg));
                             });
                             return;
@@ -458,7 +458,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             }
                             Handler h = new Handler(Looper.getMainLooper());
                             h.post(()-> {
-                                mMessageRecycler.smoothScrollToPosition(mMessageList.indexOf(msg));
+                                mMessageRecycler.scrollToPosition(mMessageList.indexOf(msg));
                                 notifyItemChanged(mMessageList.indexOf(msg));
                             });
                             return;
