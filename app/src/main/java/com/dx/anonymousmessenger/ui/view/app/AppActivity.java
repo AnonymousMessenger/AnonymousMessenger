@@ -83,7 +83,7 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
 
     public void showNextFragment(Fragment f) {
         getSupportFragmentManager().beginTransaction()
-            .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right)
+            .setCustomAnimations(R.anim.slide_from_right,R.anim.slide_to_left)
             .replace(R.id.fragment_container, f)
             .addToBackStack(null)
             .commit();

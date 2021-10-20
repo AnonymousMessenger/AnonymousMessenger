@@ -209,4 +209,16 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
         }
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
     }
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
 }
