@@ -121,8 +121,8 @@ public class MessageReceiver {
                         DbHelper.saveMessage(new QuotedUserMessage("","",json.getString("address"),app.getString(R.string.failed_to_read_after_decrypt), json.getString("address"),new Date().getTime(),false,json.getString("address"),false),app,json.getString("address"),false);
                         return;
                     }
-                    new Thread(()-> DbHelper.setContactNickname(um.getSender(),um.getAddress(),app)).start();
-                    new Thread(()-> DbHelper.setContactUnread(um.getAddress(),app)).start();
+                    DbHelper.setContactNickname(um.getSender(),um.getAddress(),app);
+                    DbHelper.setContactUnread(um.getAddress(),app);
                     DbHelper.saveMessage(um,app,um.getAddress(),true);
                     Intent gcm_rec = new Intent("your_action");
                     gcm_rec.putExtra("address",um.getAddress().substring(0,10));

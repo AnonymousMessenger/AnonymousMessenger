@@ -530,10 +530,12 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 }
                 messageList = DbHelper.getMessageList(((DxApplication) getApplication()) ,
                         address);
+                String nickname = DbHelper.getContactNickname(address,app);
                 runOnUiThread(()->{
                     try{
                         mMessageAdapter.setMessageList(messageList);
                         mMessageAdapter.notifyDataSetChanged();
+                        setTitle(nickname);
 //                        mMessageRecycler.scheduleLayoutAnimation();
                         if(scrollDown){
                             if(!messageList.isEmpty()){
@@ -552,6 +554,19 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                         }
                     }catch (Exception ignored) {}
                 });
+                new Thread(() -> {
+                    try{
+                        byte[] image = FileHelper.getFile(DbHelper.getContactProfileImagePath(address,(DxApplication)getApplication()), (DxApplication)getApplication());
+                        if (image == null) {
+                            return;
+                        }
+                        RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
+                        drawable.setCircular(true);
+                        new Handler(Looper.getMainLooper()).post(()-> ((MaterialToolbar) findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }).start();
             }).start();
         }catch (Exception ignored) {}
     }
