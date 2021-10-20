@@ -368,7 +368,7 @@ public class AppFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
         ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setProgressBackgroundColor(R.color.dx_night_940);
         ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setColorSchemeResources(R.color.dx_white);
-        ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setDistanceToTriggerSync(20);
+        ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setDistanceToTriggerSync(100);
         ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setOnRefreshListener(
                 (direction) -> {
                     checkConnectivity();
