@@ -86,15 +86,39 @@
         <activity
             android:name=".ui.view.setup.CreateUserActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
+
         <activity
             android:name=".ui.view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity-alias
+            android:label="Securoo"
+            android:name=".ui.view.Securoo"
+            android:enabled="true"
+            android:targetActivity=".ui.view.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:label="AM"
+            android:name=".ui.view.AM"
+            android:enabled="true"
+            android:targetActivity=".ui.view.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <receiver android:name=".receiver.NotificationHiderReceiver" />
         <receiver

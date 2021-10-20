@@ -1,8 +1,12 @@
 package com.dx.anonymousmessenger.ui.view.setup;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -163,6 +167,58 @@ public class SetupSettingsFragment extends Fragment {
             }catch (Exception ignored){}
             //set about & license text view buttons to be visible
             rootView.findViewById(R.id.txt_other).setVisibility(View.VISIBLE);
+            TextView changeAppName = rootView.findViewById(R.id.btn_change_app_name);
+            changeAppName.setVisibility(View.VISIBLE);
+            changeAppName.setOnClickListener(v -> {
+                //make an alert pop up with a selector for possible aliases
+                CharSequence[] names = new CharSequence[]{"Anonymous Messenger", "Securoo", "AM"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setTitle(R.string.select_app_name);
+                builder.setItems(names, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                            prefs.edit().putString("app-name",".ui.view.MainActivity").apply();
+                            requireActivity().getPackageManager().setComponentEnabledSetting(
+                            new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.MainActivity"),
+                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+                            requireActivity().getPackageManager().setComponentEnabledSetting(
+                            new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.AM"),
+                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                            requireActivity().getPackageManager().setComponentEnabledSetting(
+                                    new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.Securoo"),
+                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                            break;
+                        case 1:
+                            SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                            prefs2.edit().putString("app-name",".ui.view.Securoo").apply();
+                            requireActivity().getPackageManager().setComponentEnabledSetting(
+                            new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.Securoo"),
+                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+                            requireActivity().getPackageManager().setComponentEnabledSetting(
+                            new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.MainActivity"),
+                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                            requireActivity().getPackageManager().setComponentEnabledSetting(
+                                    new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.AM"),
+                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                            break;
+                        case 2:
+                            SharedPreferences prefs3 = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                            prefs3.edit().putString("app-name",".ui.view.AM").apply();
+                            requireActivity().getPackageManager().setComponentEnabledSetting(
+                                    new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.AM"),
+                                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+                            requireActivity().getPackageManager().setComponentEnabledSetting(
+                                    new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.MainActivity"),
+                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                            requireActivity().getPackageManager().setComponentEnabledSetting(
+                                    new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.Securoo"),
+                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                            break;
+                    }
+                });
+                builder.show();
+            });
             TextView license = rootView.findViewById(R.id.btn_license);
             license.setVisibility(View.VISIBLE);
             license.setOnClickListener((v)->{

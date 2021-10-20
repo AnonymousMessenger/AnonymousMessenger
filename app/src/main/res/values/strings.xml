@@ -361,4 +361,6 @@
     <string name="clear_tor_cache_explain">This can be useful if cached descriptors are outdated, but is not adviced to do it too much due to performance and anonymity concerns.</string>
     <string name="disappearing_messages_default">Delete Unpinned Messages After 24hrs</string>
     <string name="tor_exited">Tor exited</string>
+    <string name="action_change_app_name">Change App Name</string>
+    <string name="select_app_name">Select App Name</string>
 </resources>

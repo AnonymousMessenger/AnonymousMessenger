@@ -7,12 +7,15 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -709,6 +712,12 @@ public class DxApplication extends Application {
         Notification notification;
         Intent intent = new Intent(this, NotificationHiderReceiver.class);
         Intent resultIntent = new Intent(this, MainActivity.class);
+        String packageName = getPackageName();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String alias = prefs.getString("app-name",".ui.view.MainActivity");
+        ComponentName componentName = new ComponentName(packageName,
+                packageName + alias);
+        resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
         PendingIntent gotoApp = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);

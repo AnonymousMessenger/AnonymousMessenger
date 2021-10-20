@@ -24,6 +24,7 @@
         <item name="android:actionModeStyle">@style/Theme.App</item>
         <item name="actionModeBackground">@color/dx_night_950</item>
         <item name="switchTextAppearance">@color/dx_white</item>
+        <item name="android:textColorAlertDialogListItem">@color/dx_white</item>
     </style>
 
     <style name="Widget.App.ActionMode" parent="Widget.AppCompat.ActionMode">
@@ -88,7 +89,8 @@
 <!--        <item name="android:background">@color/dx_night_940</item>-->
         <item name="android:windowTitleStyle">@android:style/TextAppearance.Material.WindowTitle</item>
         <item name="android:windowBackground">@drawable/background_dialog</item>
-
+        <item name="android:textColorSecondary">@color/dx_white</item>
+        <item name="textColorAlertDialogListItem">@color/dx_white</item>
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
     </style>
