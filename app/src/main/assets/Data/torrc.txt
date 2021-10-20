@@ -1,6 +1,6 @@
 ControlPort auto
 CookieAuthentication 1
-DisableNetwork 1
+DisableNetwork 0
 #PidFile pid
 RunAsDaemon 1
 SafeSocks 1
