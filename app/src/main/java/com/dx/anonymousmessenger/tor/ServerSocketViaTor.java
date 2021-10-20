@@ -301,6 +301,13 @@ public class ServerSocketViaTor {
                                 DbHelper.saveLog("RECEIVED MESSAGE",new Date().getTime(),"NOTICE",app);
                             }catch (Exception e){
                                 sockets.getAndDecrement();
+                                if(!sock.isClosed()){
+                                    try {
+                                        sock.close();
+                                    } catch (IOException ioException) {
+                                        ioException.printStackTrace();
+                                    }
+                                }
                                 e.printStackTrace();
                                 DbHelper.saveLog("ERROR WHILE RECEIVING MESSAGE: "+ Arrays.toString(e.getStackTrace()),new Date().getTime(),"NOTICE",app);
                             }
@@ -313,6 +320,7 @@ public class ServerSocketViaTor {
                         Log.e("SERVER ERROR", "ERROR");
                         e.printStackTrace();
                         DbHelper.saveLog("LOCAL SERVER ERROR "+e.getMessage(),new Date().getTime(),"SEVERE",app);
+                        break;
                     }
                 }
             } catch (Exception  e) {
