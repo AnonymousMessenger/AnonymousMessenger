@@ -325,4 +325,7 @@
     <string name="tor_exited">توقف تور عن العمل</string>
     <string name="action_change_app_name">غيِّر إسم البرنامج</string>
     <string name="select_app_name">إختار إسم البرنامج</string>
+    <string name="action_change_theme">غيِّر السمة</string>
+    <string name="dark_theme">السمة الداكنة</string>
+    <string name="light_theme">السمة الخفيفة</string>
 </resources>
