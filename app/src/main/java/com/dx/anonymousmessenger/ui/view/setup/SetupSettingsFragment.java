@@ -170,7 +170,6 @@ public class SetupSettingsFragment extends Fragment {
             TextView changeAppName = rootView.findViewById(R.id.btn_change_app_name);
             changeAppName.setVisibility(View.VISIBLE);
             changeAppName.setOnClickListener(v -> {
-                //make an alert pop up with a selector for possible aliases
                 CharSequence[] names = new CharSequence[]{"Anonymous Messenger", "Securoo", "AM"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                 builder.setTitle(R.string.select_app_name);
@@ -214,6 +213,30 @@ public class SetupSettingsFragment extends Fragment {
                             requireActivity().getPackageManager().setComponentEnabledSetting(
                                     new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.Securoo"),
                                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                            break;
+                    }
+                });
+                builder.show();
+            });
+            TextView changeTheme = rootView.findViewById(R.id.btn_change_theme);
+            changeTheme.setVisibility(View.VISIBLE);
+            changeTheme.setOnClickListener(v -> {
+                CharSequence[] names = new CharSequence[]{getString(R.string.dark_theme), getString(R.string.light_theme)};
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setTitle(R.string.select_app_name);
+                builder.setItems(names, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                            prefs.edit().putString("app-theme","dark").apply();
+                            requireActivity().setTheme(R.style.AppTheme);
+                            requireActivity().recreate();
+                            break;
+                        case 1:
+                            SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                            prefs2.edit().putString("app-theme","light").apply();
+                            requireActivity().setTheme(R.style.LightTheme);
+                            requireActivity().recreate();
                             break;
                     }
                 });

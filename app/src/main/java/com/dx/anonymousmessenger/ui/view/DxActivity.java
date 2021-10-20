@@ -1,8 +1,10 @@
 package com.dx.anonymousmessenger.ui.view;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -33,6 +35,15 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
+        SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(this);
+        String theme = prefs2.getString("app-theme","dark");
+        if (theme != null) {
+            if(theme.equals("dark")){
+                setTheme(R.style.AppTheme);
+            }else if(theme.equals("light")){
+                setTheme(R.style.LightTheme);
+            }
+        }
 
         Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
             new Thread() {

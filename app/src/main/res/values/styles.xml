@@ -1,4 +1,35 @@
 <resources>
+    <!-- Light application theme. -->
+    <style name="LightTheme" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/dx_white</item>
+        <item name="colorPrimaryDark">@color/dx_white</item>
+        <item name="android:textColorSecondary">@color/dx_dark</item>
+        <item name="android:textColorPrimary">@color/dx_dark</item>
+        <item name="android:textColor">@color/dx_dark</item>
+        <item name="android:textColorHint">@color/dx_dark</item>
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="colorAccent">@color/dx_night_950</item>
+        <item name="android:textColorLink">@color/dx_dark</item>
+        <item name="android:windowBackground">@color/dx_white</item>
+        <item name="android:navigationBarColor">@color/dx_white</item>
+        <item name="android:itemBackground">@color/dx_white</item>
+        <item name="placeholderTextColor">@color/dx_dark</item>
+        <item name="android:textColorHighlight">@color/green_tor</item>
+        <item name="android:textColorTertiary">@color/dx_dark</item>
+        <item name="alertDialogTheme">@style/AppAlertDialog</item>
+        <item name="colorControlNormal">@color/dx_dark</item>
+        <item name="colorControlActivated">@color/dx_dark</item>
+        <item name="colorControlHighlight">@color/dx_dark</item>
+        <item name="android:actionModeStyle">@style/Theme.App</item>
+        <item name="actionModeBackground">@color/dx_night_950</item>
+        <item name="switchTextAppearance">@color/dx_night_950</item>
+        <item name="android:textColorAlertDialogListItem">@color/dx_white</item>
+        <item name="android:editTextColor">#000000</item>
+        <item name="iconTint">#000000</item>
+        <item name="android:actionMenuTextColor">#000000</item>
+        <item name="navigationIconTint">#000000</item>
+    </style>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
@@ -23,8 +54,15 @@
         <item name="colorControlHighlight">@color/dx_white</item>
         <item name="android:actionModeStyle">@style/Theme.App</item>
         <item name="actionModeBackground">@color/dx_night_950</item>
-        <item name="switchTextAppearance">@color/dx_white</item>
+        <item name="switchStyle">@style/SwitchWhiteText</item>
         <item name="android:textColorAlertDialogListItem">@color/dx_white</item>
+        <item name="editTextColor">@color/dx_white</item>
+        <item name="android:editTextColor">@color/dx_white</item>
+    </style>
+
+    <style name="SwitchWhiteText" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="android:textColor">@color/dx_white</item>
+        <item name="backgroundColor">@color/transparent</item>
     </style>
 
     <style name="Widget.App.ActionMode" parent="Widget.AppCompat.ActionMode">

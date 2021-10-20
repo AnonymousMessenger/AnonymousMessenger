@@ -363,4 +363,7 @@
     <string name="tor_exited">Tor exited</string>
     <string name="action_change_app_name">Change App Name</string>
     <string name="select_app_name">Select App Name</string>
+    <string name="action_change_theme">Change Theme</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="light_theme">Light Theme</string>
 </resources>

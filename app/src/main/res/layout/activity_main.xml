@@ -48,6 +48,7 @@
         android:fontFamily="monospace"
         android:padding="4dp"
         android:text="@string/by_drxtreme"
+        android:textColor="#FFFFFF"
         android:textSize="14sp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/next"

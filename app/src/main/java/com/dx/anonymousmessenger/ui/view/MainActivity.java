@@ -25,18 +25,6 @@ public class MainActivity extends DxActivity {
         }catch (Exception ignored){}
         setContentView(R.layout.activity_main);
 
-        /*
-        getPackageManager().setComponentEnabledSetting(
-        new ComponentName(this, this.getPackageName() + ".ui.view.MainActivity"),
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-        getPackageManager().setComponentEnabledSetting(
-        new ComponentName(this, this.getPackageName() + ".ui.view.AM"),
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-        getPackageManager().setComponentEnabledSetting(
-                new ComponentName(this, this.getPackageName() + ".ui.view.Securoo"),
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-        */
-
         ((DxApplication) getApplication()).enableStrictMode();
         new Thread(() -> {
 

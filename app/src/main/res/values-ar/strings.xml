@@ -323,4 +323,6 @@
     <string name="clear_tor_cache_explain">يمكن أن يكون هذا مفيداً إن كانت المعرفات المخزنه قديمة, و لكنه لا ينصح بفعلها كثيراً لأسباب تتعلق بالأداء و المجهولية.</string>
     <string name="disappearing_messages_default">حذف الرسائل القديمة بعد 24 ساعة</string>
     <string name="tor_exited">توقف تور عن العمل</string>
+    <string name="action_change_app_name">غيِّر إسم البرنامج</string>
+    <string name="select_app_name">إختار إسم البرنامج</string>
 </resources>
