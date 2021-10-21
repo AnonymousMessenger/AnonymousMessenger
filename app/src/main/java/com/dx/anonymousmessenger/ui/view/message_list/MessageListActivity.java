@@ -869,6 +869,9 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
             openGallery();
         });
+        if(mMessageRecycler!=null){
+            mMessageRecycler.suppressLayout(false);
+        }
         /* end init stuff */
         mMyBroadcastReceiver = new BroadcastReceiver() {
             @SuppressLint("ShowToast")
@@ -936,6 +939,9 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     @Override
     protected void onStop() {
         super.onStop();
+        if(mMessageRecycler!=null){
+            mMessageRecycler.suppressLayout(true);
+        }
         stopCheckingMessages();
         if(mMyBroadcastReceiver==null){
             return;
