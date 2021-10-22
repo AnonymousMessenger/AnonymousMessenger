@@ -48,7 +48,9 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:contentDescription="@string/online"
-                android:src="@drawable/ic_online" />
+                android:src="@drawable/ic_online"
+                android:visibility="gone"
+                tools:layout_editor_absoluteX="16dp" />
 
             <ImageView
                 android:id="@+id/unsynced_image"
@@ -57,14 +59,15 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:contentDescription="@string/offline"
-                android:src="@drawable/ic_offline" />
+                android:src="@drawable/ic_offline"
+                android:visibility="gone"
+                tools:layout_editor_absoluteX="16dp" />
 
             <TextView
                 android:id="@+id/sync_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="monospace"
-                android:text="@string/online"
                 tools:layout_editor_absoluteX="51dp"
                 tools:layout_editor_absoluteY="18dp" />
         </androidx.appcompat.widget.Toolbar>
