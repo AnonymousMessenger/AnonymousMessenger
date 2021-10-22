@@ -275,7 +275,10 @@ public class AppFragment extends Fragment {
                         .setTitle(R.string.shut_app)
                         .setMessage(R.string.shut_app_explain)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> ((DxApplication) requireActivity().getApplication()).shutdown())
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) ->{
+                            requireActivity().finishAndRemoveTask();
+                            ((DxApplication) requireActivity().getApplication()).shutdown();
+                        })
                         .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
                     return true;
                 }else if(item.getItemId()==R.id.action_my_identity){
