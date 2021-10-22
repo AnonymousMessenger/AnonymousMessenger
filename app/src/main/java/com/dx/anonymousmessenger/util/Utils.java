@@ -1,9 +1,12 @@
 package com.dx.anonymousmessenger.util;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.os.Build;
 import android.text.util.Linkify;
 import android.view.View;
 import android.widget.TextView;
@@ -279,5 +282,26 @@ public class Utils {
 
     public static boolean isValidAddress(String address){
         return address.trim().length() == 62 && address.trim().endsWith(".onion");
+    }
+
+
+    public static void getCameraPerms(Activity activity, int requestCode){
+//        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+//            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
+//                .setTitle(R.string.cam_perm_ask_title)
+//                .setMessage(R.string.why_need_cam)
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .setPositiveButton(R.string.ask_for_cam_btn, (dialog, which) -> requestPermissions(
+//                        new String[] { Manifest.permission.CAMERA },
+//                        CAMERA_REQUEST_CODE))
+//                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+//                });
+//        } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity.requestPermissions(
+                new String[] { Manifest.permission.CAMERA },
+                    requestCode);
+        }
+//        }
     }
 }

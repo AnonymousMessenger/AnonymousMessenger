@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -36,6 +35,7 @@ import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
+import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.zxing.BarcodeFormat;
@@ -128,7 +128,7 @@ public class AddContactActivity extends DxActivity {
 //                requestPermissions(
 //                    new String[] { Manifest.permission.CAMERA },
 //                    CAMERA_REQUEST_CODE);
-                getCameraPerms();
+                Utils.getCameraPerms(this,CAMERA_REQUEST_CODE);
             }
         });
 
@@ -251,26 +251,6 @@ public class AddContactActivity extends DxActivity {
             e.printStackTrace();
             Log.e("FAILED TO SAVE CONTACT", "SAME " );
         }
-    }
-
-    public void getCameraPerms(){
-//        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-//            new AlertDialog.Builder(getApplicationContext(),R.style.AppAlertDialog)
-//                .setTitle(R.string.cam_perm_ask_title)
-//                .setMessage(R.string.why_need_cam)
-//                .setIcon(android.R.drawable.ic_dialog_alert)
-//                .setPositiveButton(R.string.ask_for_cam_btn, (dialog, which) -> requestPermissions(
-//                        new String[] { Manifest.permission.CAMERA },
-//                        CAMERA_REQUEST_CODE))
-//                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-//                });
-//        } else {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(
-                new String[] { Manifest.permission.CAMERA },
-                CAMERA_REQUEST_CODE);
-        }
-//        }
     }
 
     @Override

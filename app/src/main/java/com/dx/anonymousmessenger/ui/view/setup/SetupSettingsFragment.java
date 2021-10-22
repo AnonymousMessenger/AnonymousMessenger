@@ -1,5 +1,6 @@
 package com.dx.anonymousmessenger.ui.view.setup;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -19,8 +20,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,12 +36,14 @@ import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.AboutActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.LicenseActivity;
+import com.dx.anonymousmessenger.ui.view.single_activity.SimpleScannerActivity;
 import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,6 +57,34 @@ public class SetupSettingsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
 
     private boolean isInSetup;
+    final ActivityResultLauncher<Intent> mScanQrCode = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    if (result.getData() != null) {
+                        String bridges = result.getData().getStringExtra("RESULT");
+                        if (bridges != null) {
+                            String[] lines = bridges.split(",");
+                            for (String line : lines) {
+                                DbHelper.saveBridge(line.trim().replace("'", "").replace("[","").replace("]",""), (DxApplication) requireActivity().getApplication());
+                            }
+                        }
+                    }
+                    updateBridgeList();
+                }
+            });
+    final ActivityResultLauncher<String> mPermissionResult = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean result) {
+                    if(result) {
+                        Intent intent = new Intent(requireContext(), SimpleScannerActivity.class);
+                        intent.putExtra("SCAN_MODE", "ADD_BRIDGE");
+                        mScanQrCode.launch(intent);
+                    }
+                }
+            });
 
     public SetupSettingsFragment() {
         // Required empty public constructor
@@ -101,6 +136,7 @@ public class SetupSettingsFragment extends Fragment {
         final TextInputEditText txtCheckAddress = rootView.findViewById(R.id.txt_check_address);
         final RecyclerView rvBridges = rootView.findViewById(R.id.rv_bridges);
         final Button addBridge = rootView.findViewById(R.id.btn_add_bridge);
+        final Button scanBridge = rootView.findViewById(R.id.btn_scan_bridges);
         final SwitchMaterial enableSocks5Proxy = rootView.findViewById(R.id.switch_use_proxy);
         final TextInputLayout layoutProxy = rootView.findViewById(R.id.txt_layout_proxy);
         final TextInputEditText txtProxyAddress = rootView.findViewById(R.id.txt_proxy_address);
@@ -470,7 +506,21 @@ public class SetupSettingsFragment extends Fragment {
             bridgesLayout.setVisibility(isChecked?View.VISIBLE:View.GONE);
         }));
 
+        scanBridge.setOnClickListener(v -> {
+//            final int QR_RESULT_CODE = 0;
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                Intent intent = new Intent(requireContext(), SimpleScannerActivity.class);
+                intent.putExtra("SCAN_MODE", "ADD_BRIDGE");
+                mScanQrCode.launch(intent);
+            }else{
+
+                mPermissionResult.launch(Manifest.permission.CAMERA);
+//                Utils.getCameraPerms(requireActivity(),2);
+            }
+        });
+
         addBridge.setOnClickListener(v -> {
+            //todo: add explain. u can paste multiline and no need for the word bridge and it's meek_lite not meek
             AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
             builder.setTitle(R.string.insert_bridge_line);
 
@@ -483,12 +533,16 @@ public class SetupSettingsFragment extends Fragment {
             // Set up the buttons
             builder.setPositiveButton(R.string.ok, (dialog, which) -> {
                 ((InputMethodManager) requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(requireView().getWindowToken(), 0);
+                //split input into bridge lines separated by \n
+                String[] lines = input.getText().toString().split(System.lineSeparator());
                 if(isInSetup){
                     List<String> list = ((CreateUserActivity) requireActivity()).getBridgeList();
-                    list.add(input.getText().toString());
+                    list.addAll(Arrays.asList(lines));
                     ((CreateUserActivity) requireActivity()).setBridgeList(list);
                 }else{
-                    DbHelper.saveBridge(input.getText().toString(),(DxApplication) requireActivity().getApplication());
+                    for (String line : lines) {
+                        DbHelper.saveBridge(line, (DxApplication) requireActivity().getApplication());
+                    }
                 }
                 updateBridgeList();
             });

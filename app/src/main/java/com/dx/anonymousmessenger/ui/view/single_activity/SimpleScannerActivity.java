@@ -1,6 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.single_activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,10 +13,13 @@ import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.messages.MessageSender;
 import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
+import com.dx.anonymousmessenger.util.Utils;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.Result;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
+
+import java.util.Objects;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -48,7 +52,38 @@ public class SimpleScannerActivity extends DxActivity implements ZXingScannerVie
     @Override
     public void handleResult(Result rawResult) {
         String s = rawResult.getText();
+        switch (Objects.requireNonNull(getIntent().getStringExtra("SCAN_MODE"))){
+            case "ADD_CONTACT":
+                addContact(s);
+                break;
+            case "ADD_BRIDGE":
+                addBridge(s);
+                break;
+        }
 
+    }
+    private void addBridge(String s){
+        if(Utils.isValidAddress(s)){
+            Snackbar.make(mScannerView, R.string.invalid_bridge,Snackbar.LENGTH_SHORT).show();
+            //continue scanning
+            mScannerView.resumeCameraPreview(this);
+            return;
+        }
+
+        Intent intent = new Intent();
+        intent.putExtra("RESULT",s);
+        setResult(Activity.RESULT_OK,intent);
+        Snackbar.make(mScannerView, R.string.bridge_added,Snackbar.LENGTH_SHORT).show();
+        new Thread(()->{
+            try {
+                Thread.sleep(500);
+            } catch (Exception ignored) {}
+            finish();
+        }).start();
+
+    }
+
+    private void addContact(String s){
         new Thread(()->{
             //add the contact if valid
             if(s.equals(((DxApplication)getApplication()).getHostname())){
