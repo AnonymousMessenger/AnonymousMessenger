@@ -101,7 +101,7 @@
         <activity-alias
             android:label="Securoo"
             android:name=".ui.view.Securoo"
-            android:enabled="true"
+            android:enabled="false"
             android:targetActivity=".ui.view.MainActivity"
             android:exported="true">
             <intent-filter>
@@ -113,7 +113,7 @@
         <activity-alias
             android:label="AM"
             android:name=".ui.view.AM"
-            android:enabled="true"
+            android:enabled="false"
             android:targetActivity=".ui.view.MainActivity"
             android:exported="true">
             <intent-filter>
