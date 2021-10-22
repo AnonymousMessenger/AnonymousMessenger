@@ -11,12 +11,27 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:paddingStart="@dimen/margin_activity_horizontal"
         android:paddingLeft="@dimen/margin_activity_horizontal"
         android:paddingTop="@dimen/margin_activity_vertical"
         android:paddingEnd="@dimen/margin_activity_horizontal"
         android:paddingRight="@dimen/margin_activity_horizontal"
         android:paddingBottom="@dimen/margin_activity_vertical">
+
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:focusable="true"
+            android:padding="5dp"
+            android:text="@string/security"
+            android:textColor="#523967"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/done" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_allow_files"
@@ -38,6 +53,7 @@
             android:layout_margin="5dp"
             android:checked="true"
             android:enabled="false"
+            android:focusable="true"
             android:padding="5dp"
             android:text="@string/disappearing_messages_default"
             android:textSize="16sp"
@@ -261,6 +277,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:enabled="true"
+            android:focusable="true"
             android:text="@string/done_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -273,7 +290,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/transition"
             android:padding="8dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:helperText="Accepted format is : 0-999[gb/mb/kb]"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -477,19 +494,6 @@
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_license" />
-
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:focusable="true"
-            android:padding="5dp"
-            android:text="@string/security"
-            android:textColor="#523967"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/done" />
 
         <TextView
             android:id="@+id/textView16"

@@ -259,7 +259,7 @@ public class SetupSettingsFragment extends Fragment {
             changeTheme.setOnClickListener(v -> {
                 CharSequence[] names = new CharSequence[]{getString(R.string.dark_theme), getString(R.string.light_theme)};
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                builder.setTitle(R.string.select_app_name);
+                builder.setTitle(R.string.action_change_theme);
                 builder.setItems(names, (dialog, which) -> {
                     switch (which) {
                         case 0:

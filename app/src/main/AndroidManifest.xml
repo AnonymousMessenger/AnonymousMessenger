@@ -48,7 +48,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".ui.view.single_activity.SettingsActivity" />
+        <activity
+            android:name=".ui.view.single_activity.SettingsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity android:name=".ui.view.single_activity.CrashActivity" />
         <activity
             android:name=".ui.view.log.LogActivity"

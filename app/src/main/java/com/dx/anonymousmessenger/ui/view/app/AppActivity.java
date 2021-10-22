@@ -25,7 +25,7 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app);
 
-        new Thread(()->{
+//        new Thread(()->{
             if(((DxApplication) this.getApplication()).isExitingHoldup()){
                 loadAppFragment();
                 ((DxApplication) this.getApplication()).setExitingHoldup(false);
@@ -54,7 +54,7 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
             }else{
                 loadPasswordEntryFragment();
             }
-        }).start();
+//        }).start();
     }
 
     public void goToTorActivity() {
