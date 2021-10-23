@@ -318,4 +318,9 @@
     <string name="clear_tor_cache_explain">Это может быть помочь, если кэшированные дескрипторы устарели, но не рекомендуется делать это слишком часто из-за проблем с производительностью и анонимностью.</string>
     <string name="disappearing_messages_default">Удалять не закрепленные сообщения через 24 часа</string>
     <string name="tor_exited">Вышел из Tor</string>
-</resources>
+    <string name="action_change_app_name">Изменить название приложения</string>
+    <string name="select_app_name">Выбрать название приложения</string>
+    <string name="action_change_theme">Сменить тему оформления</string>
+    <string name="dark_theme">Тёмная тема оформления</string>
+    <string name="light_theme">Светлая тема оформления</string>
+    </resources>

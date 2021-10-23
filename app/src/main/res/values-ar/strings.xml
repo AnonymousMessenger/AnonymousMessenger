@@ -327,5 +327,7 @@
     <string name="select_app_name">إختار إسم البرنامج</string>
     <string name="action_change_theme">غيِّر السمة</string>
     <string name="dark_theme">السمة الداكنة</string>
-    <string name="light_theme">السمة الخفيفة</string>
+    <string name="light_theme">السمة المضيئة</string>
+    <string name="invalid_bridge">جسر غير صالح</string>
+    <string name="bridge_added">تمت إضافة جسر</string>
 </resources>

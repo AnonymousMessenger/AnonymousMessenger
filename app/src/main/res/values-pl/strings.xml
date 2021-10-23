@@ -360,4 +360,6 @@
     <string name="action_change_theme">Zmień Motyw</string>
     <string name="dark_theme">Ciemny Motyw</string>
     <string name="light_theme">Jasny Motyw</string>
+    <string name="invalid_bridge">Nieprawidłowy Most</string>
+    <string name="bridge_added">Most Dodany</string>
 </resources>
