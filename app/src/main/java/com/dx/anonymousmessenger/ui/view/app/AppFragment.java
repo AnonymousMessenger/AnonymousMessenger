@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
@@ -14,6 +15,7 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -138,7 +140,16 @@ public class AppFragment extends Fragment {
             }
             }
         };
-        requireActivity().setTitle(getString(R.string.app_name));
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+        if(alias!=null && alias.equals("com.dx.anonymousmessenger.ui.view.MainActivity")){
+            requireActivity().setTitle(getString(R.string.app_name));
+        }else if(alias!=null){
+            requireActivity().setTitle(
+                    alias.split("\\.")[alias.split("\\.").length-1]
+            );
+        }
+
         checkMessages();
         if(!started){
             updateUi();
@@ -381,26 +392,26 @@ public class AppFragment extends Fragment {
                 }
         );
 
-        if(!((DxApplication) requireActivity().getApplication()).isWeAsked()){
-            new Thread(()->{
-                try{
-                    Thread.sleep(1000);
-                }catch (Exception ignored){}
-                try{
-                    if(!((DxApplication) requireActivity().getApplication()).isIgnoringBatteryOptimizations()){
-                        requireActivity().runOnUiThread(()-> new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
-                            .setTitle(R.string.turn_off_battery)
-                            .setMessage(R.string.allow_in_background)
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                                ((DxApplication) requireActivity().getApplication()).requestBatteryOptimizationOff();
-                                ((DxApplication) requireActivity().getApplication()).setWeAsked(true);
-                            })
-                            .setNegativeButton(android.R.string.no, (dialog, whichButton)-> ((DxApplication) requireActivity().getApplication()).setWeAsked(true)).show());
-                    }
-                }catch (Exception ignored){}
-            }).start();
-        }
+//        if(!((DxApplication) requireActivity().getApplication()).isWeAsked()){
+//            new Thread(()->{
+//                try{
+//                    Thread.sleep(1000);
+//                }catch (Exception ignored){}
+//                try{
+//                    if(!((DxApplication) requireActivity().getApplication()).isIgnoringBatteryOptimizations()){
+//                        requireActivity().runOnUiThread(()-> new AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
+//                            .setTitle(R.string.turn_off_battery)
+//                            .setMessage(R.string.allow_in_background)
+//                            .setIcon(android.R.drawable.ic_dialog_alert)
+//                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+//                                ((DxApplication) requireActivity().getApplication()).requestBatteryOptimizationOff();
+//                                ((DxApplication) requireActivity().getApplication()).setWeAsked(true);
+//                            })
+//                            .setNegativeButton(android.R.string.no, (dialog, whichButton)-> ((DxApplication) requireActivity().getApplication()).setWeAsked(true)).show());
+//                    }
+//                }catch (Exception ignored){}
+//            }).start();
+//        }
         return rootView;
     }
 

@@ -34,6 +34,7 @@ import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
+import com.dx.anonymousmessenger.ui.view.MainActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.AboutActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.LicenseActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.SimpleScannerActivity;
@@ -213,41 +214,41 @@ public class SetupSettingsFragment extends Fragment {
                     switch (which) {
                         case 0:
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                            prefs.edit().putString("app-name",".ui.view.MainActivity").apply();
+                            prefs.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity").apply();
                             requireActivity().getPackageManager().setComponentEnabledSetting(
-                            new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.MainActivity"),
+                            new ComponentName(requireActivity(), MainActivity.class),
                                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
                             requireActivity().getPackageManager().setComponentEnabledSetting(
-                            new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.AM"),
+                            new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.AM"),
                                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                             requireActivity().getPackageManager().setComponentEnabledSetting(
-                                    new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.Securoo"),
+                                    new ComponentName(requireActivity(),  "com.dx.anonymousmessenger.ui.view.Securoo"),
                                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                             break;
                         case 1:
                             SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                            prefs2.edit().putString("app-name",".ui.view.Securoo").apply();
+                            prefs2.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.Securoo").apply();
                             requireActivity().getPackageManager().setComponentEnabledSetting(
-                            new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.Securoo"),
+                            new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.Securoo"),
                                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
                             requireActivity().getPackageManager().setComponentEnabledSetting(
-                            new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.MainActivity"),
+                            new ComponentName(requireActivity(), MainActivity.class),
                                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                             requireActivity().getPackageManager().setComponentEnabledSetting(
-                                    new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.AM"),
+                                    new ComponentName(requireActivity(),  "com.dx.anonymousmessenger.ui.view.AM"),
                                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                             break;
                         case 2:
                             SharedPreferences prefs3 = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                            prefs3.edit().putString("app-name",".ui.view.AM").apply();
+                            prefs3.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.AM").apply();
                             requireActivity().getPackageManager().setComponentEnabledSetting(
-                                    new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.AM"),
+                                    new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.AM"),
                                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
                             requireActivity().getPackageManager().setComponentEnabledSetting(
-                                    new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.MainActivity"),
+                                    new ComponentName(requireActivity(), MainActivity.class),
                                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                             requireActivity().getPackageManager().setComponentEnabledSetting(
-                                    new ComponentName(requireActivity(), requireActivity().getPackageName() + ".ui.view.Securoo"),
+                                    new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.Securoo"),
                                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
                             break;
                     }

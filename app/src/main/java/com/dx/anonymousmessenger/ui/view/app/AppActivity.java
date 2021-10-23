@@ -2,7 +2,9 @@ package com.dx.anonymousmessenger.ui.view.app;
 
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -24,6 +26,16 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
         getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+        if(alias!=null && alias.equals("com.dx.anonymousmessenger.ui.view.MainActivity")){
+            setTitle(getString(R.string.app_name));
+        }else if(alias!=null){
+            setTitle(
+                    alias.split("\\.")[alias.split("\\.").length-1]
+            );
+        }
 
 //        new Thread(()->{
             if(((DxApplication) this.getApplication()).isExitingHoldup()){

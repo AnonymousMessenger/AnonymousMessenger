@@ -714,9 +714,9 @@ public class DxApplication extends Application {
         Intent resultIntent = new Intent(this, MainActivity.class);
         String packageName = getPackageName();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String alias = prefs.getString("app-name",".ui.view.MainActivity");
+        String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
         ComponentName componentName = new ComponentName(packageName,
-                packageName + alias);
+                alias);
         resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
