@@ -91,6 +91,7 @@
 
         <activity
             android:name=".ui.view.MainActivity"
+            android:label="@string/anonymous_messenger"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
