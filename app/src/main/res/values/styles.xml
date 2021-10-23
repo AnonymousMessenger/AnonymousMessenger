@@ -3,7 +3,7 @@
     <style name="LightTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/dx_white</item>
-        <item name="colorPrimaryDark">@color/dx_white</item>
+        <item name="colorPrimaryDark">@color/dx_accent</item>
         <item name="android:textColorSecondary">@color/dx_dark</item>
         <item name="android:textColorPrimary">@color/dx_dark</item>
         <item name="android:textColor">@color/dx_dark</item>
@@ -58,6 +58,9 @@
         <item name="android:textColorAlertDialogListItem">@color/dx_white</item>
         <item name="editTextColor">@color/dx_white</item>
         <item name="android:editTextColor">@color/dx_white</item>
+        <item name="iconTint">@color/dx_white</item>
+        <item name="android:actionMenuTextColor">@color/dx_white</item>
+        <item name="navigationIconTint">@color/dx_white</item>
     </style>
 
     <style name="SwitchWhiteText" parent="Widget.AppCompat.CompoundButton.Switch">

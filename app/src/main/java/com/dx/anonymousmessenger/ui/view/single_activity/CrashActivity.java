@@ -51,7 +51,7 @@ public class CrashActivity extends AppCompatActivity {
             intent.setAction(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             }
-            finish();
+            finishAndRemoveTask();
             startActivity(intent);
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(10);

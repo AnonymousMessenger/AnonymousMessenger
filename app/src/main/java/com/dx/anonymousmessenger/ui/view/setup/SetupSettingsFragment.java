@@ -202,103 +202,7 @@ public class SetupSettingsFragment extends Fragment {
                 requireActivity().setTitle(R.string.action_settings);
                 ((DxActivity)requireActivity()).setBackEnabled(true);
             }catch (Exception ignored){}
-            //set about & license text view buttons to be visible
-            rootView.findViewById(R.id.txt_other).setVisibility(View.VISIBLE);
-            TextView changeAppName = rootView.findViewById(R.id.btn_change_app_name);
-            changeAppName.setVisibility(View.VISIBLE);
-            changeAppName.setOnClickListener(v -> {
-                CharSequence[] names = new CharSequence[]{"Anonymous Messenger", "Securoo", "AM"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                builder.setTitle(R.string.select_app_name);
-                builder.setItems(names, (dialog, which) -> {
-                    switch (which) {
-                        case 0:
-                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                            prefs.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity").apply();
-                            requireActivity().getPackageManager().setComponentEnabledSetting(
-                            new ComponentName(requireActivity(), MainActivity.class),
-                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-                            requireActivity().getPackageManager().setComponentEnabledSetting(
-                            new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.AM"),
-                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                            requireActivity().getPackageManager().setComponentEnabledSetting(
-                                    new ComponentName(requireActivity(),  "com.dx.anonymousmessenger.ui.view.Securoo"),
-                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                            break;
-                        case 1:
-                            SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                            prefs2.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.Securoo").apply();
-                            requireActivity().getPackageManager().setComponentEnabledSetting(
-                            new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.Securoo"),
-                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-                            requireActivity().getPackageManager().setComponentEnabledSetting(
-                            new ComponentName(requireActivity(), MainActivity.class),
-                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                            requireActivity().getPackageManager().setComponentEnabledSetting(
-                                    new ComponentName(requireActivity(),  "com.dx.anonymousmessenger.ui.view.AM"),
-                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                            break;
-                        case 2:
-                            SharedPreferences prefs3 = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                            prefs3.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.AM").apply();
-                            requireActivity().getPackageManager().setComponentEnabledSetting(
-                                    new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.AM"),
-                                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-                            requireActivity().getPackageManager().setComponentEnabledSetting(
-                                    new ComponentName(requireActivity(), MainActivity.class),
-                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                            requireActivity().getPackageManager().setComponentEnabledSetting(
-                                    new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.Securoo"),
-                                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                            break;
-                    }
-                });
-                builder.show();
-            });
-            TextView changeTheme = rootView.findViewById(R.id.btn_change_theme);
-            changeTheme.setVisibility(View.VISIBLE);
-            changeTheme.setOnClickListener(v -> {
-                CharSequence[] names = new CharSequence[]{getString(R.string.dark_theme), getString(R.string.light_theme)};
-                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                builder.setTitle(R.string.action_change_theme);
-                builder.setItems(names, (dialog, which) -> {
-                    switch (which) {
-                        case 0:
-                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                            prefs.edit().putString("app-theme","dark").apply();
-                            requireActivity().setTheme(R.style.AppTheme);
-                            requireActivity().recreate();
-                            break;
-                        case 1:
-                            SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                            prefs2.edit().putString("app-theme","light").apply();
-                            requireActivity().setTheme(R.style.LightTheme);
-                            requireActivity().recreate();
-                            break;
-                    }
-                });
-                builder.show();
-            });
-            TextView license = rootView.findViewById(R.id.btn_license);
-            license.setVisibility(View.VISIBLE);
-            license.setOnClickListener((v)->{
-                try{
-                    Intent intent = new Intent(getContext(), LicenseActivity.class);
-                    if(getContext()!=null){
-                        getContext().startActivity(intent);
-                    }
-                }catch (Exception ignored) {}
-            });
-            TextView about = rootView.findViewById(R.id.btn_about);
-            about.setVisibility(View.VISIBLE);
-            about.setOnClickListener((v)->{
-                try{
-                    Intent intent = new Intent(getContext(), AboutActivity.class);
-                    if(getContext()!=null){
-                        getContext().startActivity(intent);
-                    }
-                }catch (Exception ignored) {}
-            });
+
             //read from db in this case or fallback to defaults
             try{
                 Object[] settings = DbHelper.getSettingsList((DxApplication)requireActivity().getApplication());
@@ -326,6 +230,151 @@ public class SetupSettingsFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+
+        //set about & license text view buttons to be visible
+        rootView.findViewById(R.id.txt_other).setVisibility(View.VISIBLE);
+        TextView changeAppName = rootView.findViewById(R.id.btn_change_app_name);
+        changeAppName.setVisibility(View.VISIBLE);
+        changeAppName.setOnClickListener(v -> {
+            CharSequence[] names = new CharSequence[]{"Anonymous Messenger", "Securoo", "AM"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle(R.string.select_app_name);
+            builder.setItems(names, (dialog, which) -> {
+                switch (which) {
+                    case 0:
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                        prefs.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity").apply();
+                        requireActivity().getPackageManager().setComponentEnabledSetting(
+                                new ComponentName(requireActivity(), MainActivity.class),
+                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+                        requireActivity().getPackageManager().setComponentEnabledSetting(
+                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.AM"),
+                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                        requireActivity().getPackageManager().setComponentEnabledSetting(
+                                new ComponentName(requireActivity(),  "com.dx.anonymousmessenger.ui.view.Securoo"),
+                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                        Intent intent = new Intent();
+                        String packageName = requireContext().getPackageName();
+                        String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+                        ComponentName componentName = new ComponentName(packageName,
+                                alias);
+                        intent.setComponent(componentName);
+                        requireActivity().finishAndRemoveTask();
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                        prefs2.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.Securoo").apply();
+                        requireActivity().getPackageManager().setComponentEnabledSetting(
+                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.Securoo"),
+                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+                        requireActivity().getPackageManager().setComponentEnabledSetting(
+                                new ComponentName(requireActivity(), MainActivity.class),
+                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                        requireActivity().getPackageManager().setComponentEnabledSetting(
+                                new ComponentName(requireActivity(),  "com.dx.anonymousmessenger.ui.view.AM"),
+                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                        intent = new Intent();
+                        packageName = requireContext().getPackageName();
+                        alias = prefs2.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+                        componentName = new ComponentName(packageName,
+                                alias);
+                        intent.setComponent(componentName);
+                        requireActivity().finishAndRemoveTask();
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        startActivity(intent);
+                        break;
+                    case 2:
+                        SharedPreferences prefs3 = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                        prefs3.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.AM").apply();
+                        requireActivity().getPackageManager().setComponentEnabledSetting(
+                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.AM"),
+                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+                        requireActivity().getPackageManager().setComponentEnabledSetting(
+                                new ComponentName(requireActivity(), MainActivity.class),
+                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                        requireActivity().getPackageManager().setComponentEnabledSetting(
+                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.Securoo"),
+                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                        intent = new Intent();
+                        packageName = requireContext().getPackageName();
+                        alias = prefs3.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+                        componentName = new ComponentName(packageName,
+                                alias);
+                        intent.setComponent(componentName);
+                        requireActivity().finishAndRemoveTask();
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        startActivity(intent);
+                        break;
+                }
+            });
+            builder.show();
+        });
+        TextView changeTheme = rootView.findViewById(R.id.btn_change_theme);
+        changeTheme.setVisibility(View.VISIBLE);
+        changeTheme.setOnClickListener(v -> {
+            CharSequence[] names = new CharSequence[]{getString(R.string.dark_theme), getString(R.string.light_theme)};
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle(R.string.action_change_theme);
+            builder.setItems(names, (dialog, which) -> {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                Intent intent = new Intent();
+                String packageName = requireContext().getPackageName();
+                String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+                ComponentName componentName = new ComponentName(packageName,
+                        alias);
+                intent.setComponent(componentName);
+                switch (which) {
+                    case 0:
+                        prefs.edit().putString("app-theme","dark").apply();
+                        requireActivity().setTheme(R.style.AppTheme);
+                        requireActivity().finishAndRemoveTask();
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                        prefs2.edit().putString("app-theme","light").apply();
+                        requireActivity().setTheme(R.style.LightTheme);
+                        requireActivity().finishAndRemoveTask();
+                        startActivity(intent);
+                        break;
+                }
+            });
+            builder.show();
+        });
+        TextView license = rootView.findViewById(R.id.btn_license);
+        license.setVisibility(View.VISIBLE);
+        license.setOnClickListener((v)->{
+            try{
+                Intent intent = new Intent(getContext(), LicenseActivity.class);
+                if(getContext()!=null){
+                    getContext().startActivity(intent);
+                }
+            }catch (Exception ignored) {}
+        });
+        TextView about = rootView.findViewById(R.id.btn_about);
+        about.setVisibility(View.VISIBLE);
+        about.setOnClickListener((v)->{
+            try{
+                Intent intent = new Intent(getContext(), AboutActivity.class);
+                if(getContext()!=null){
+                    getContext().startActivity(intent);
+                }
+            }catch (Exception ignored) {}
+        });
 
         //exclude Tor nodes related
         txtExclude.addTextChangedListener(new TextWatcher() {
