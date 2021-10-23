@@ -104,7 +104,7 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 1){
-            finish();
+            finishAndRemoveTask();
         }else{
             super.onBackPressed();
         }
