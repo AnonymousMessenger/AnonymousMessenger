@@ -64,6 +64,15 @@ public class CrashActivity extends AppCompatActivity {
             Objects.requireNonNull(clipboard).setPrimaryClip(clip);
             Snackbar.make(v, R.string.copied, Snackbar.LENGTH_SHORT).setAnchorView(restartApp).show();
         });
+    }
 
+    @Override
+    public void onBackPressed() {
+        finishAndRemoveTask();
+    }
+
+    @Override
+    public void finish() {
+        finishAndRemoveTask();
     }
 }
