@@ -105,6 +105,7 @@ public class AppActivity extends DxActivity implements ComponentCallbacks2 {
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 1){
             finishAndRemoveTask();
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
         }else{
             super.onBackPressed();
         }
