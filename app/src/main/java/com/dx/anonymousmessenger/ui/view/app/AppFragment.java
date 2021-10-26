@@ -288,6 +288,9 @@ public class AppFragment extends Fragment {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, (dialog, whichButton) ->{
                             requireActivity().finishAndRemoveTask();
+                            try {
+                                Thread.sleep(250);
+                            } catch (Exception ignored) {}
                             ((DxApplication) requireActivity().getApplication()).shutdown();
                         })
                         .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
