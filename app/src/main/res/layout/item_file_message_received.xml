@@ -108,6 +108,7 @@
                 android:layout_width="16dp"
                 android:layout_height="19dp"
                 android:layout_marginStart="2dp"
+                app:tint="#FFFFFF"
                 android:contentDescription="@string/indicates_secure_messaging"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

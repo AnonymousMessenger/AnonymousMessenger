@@ -87,6 +87,7 @@
                 android:layout_marginStart="2dp"
                 android:contentDescription="@string/indicates_secure_messaging"
                 android:elevation="10dp"
+                app:tint="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_message_body"
