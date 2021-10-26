@@ -323,4 +323,6 @@
     <string name="action_change_theme">Сменить тему оформления</string>
     <string name="dark_theme">Тёмная тема оформления</string>
     <string name="light_theme">Светлая тема оформления</string>
-    </resources>
+    <string name="invalid_bridge">Мост не работает</string>
+    <string name="bridge_added">Добавить мост</string>
+</resources>
