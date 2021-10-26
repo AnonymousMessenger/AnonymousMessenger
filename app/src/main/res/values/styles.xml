@@ -12,7 +12,7 @@
         <item name="colorAccent">@color/dx_night_950</item>
         <item name="android:textColorLink">@color/dx_dark</item>
         <item name="android:windowBackground">@color/dx_white</item>
-        <item name="android:navigationBarColor">@color/dx_white</item>
+        <item name="android:navigationBarColor">#000000</item>
         <item name="android:itemBackground">@color/dx_white</item>
         <item name="placeholderTextColor">@color/dx_dark</item>
         <item name="android:textColorHighlight">@color/green_tor</item>
@@ -29,6 +29,7 @@
         <item name="iconTint">#000000</item>
         <item name="android:actionMenuTextColor">#000000</item>
         <item name="navigationIconTint">#000000</item>
+        <item name="android:statusBarColor">#000000</item>
     </style>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
@@ -132,6 +133,7 @@
         <item name="android:windowBackground">@drawable/background_dialog</item>
         <item name="android:textColorSecondary">@color/dx_white</item>
         <item name="textColorAlertDialogListItem">@color/dx_white</item>
+        <item name="android:textColor">@color/dx_white</item>
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
     </style>
