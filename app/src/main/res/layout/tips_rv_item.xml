@@ -13,6 +13,7 @@
         android:fontFamily="monospace"
         android:padding="20dp"
         android:text="TextView"
+        android:textColor="#FFFFFF"
         android:textIsSelectable="true"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
