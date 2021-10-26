@@ -737,7 +737,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 //                try{
 //                    final byte[] img_bin = FileHelper.getFile(message.getPath(), app);
 //                    if(img_bin == null){
-//                        Log.d("GENERAL","no img_bin!!!");
+//                        Log.d("ANONYMOUSMESSENGER","no img_bin!!!");
 //                        return;
 //                    }
 //                    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
@@ -762,7 +762,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 //                    byte[] thumb = mmr.getEmbeddedPicture();
 //                    Bitmap bitmap = BitmapFactory.decodeByteArray(thumb,0,thumb.length);
 //                    if(bitmap==null){
-//                        Log.d("GENERAL","no bitmap!!!");
+//                        Log.d("ANONYMOUSMESSENGER","no bitmap!!!");
 //                        return;
 //                    }
 //                    new Handler(Looper.getMainLooper()).post(()->{
@@ -833,7 +833,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation((MessageListActivity) mContext, v, "picture");
                         v.getContext().startActivity(intent,activityOptions.toBundle());
-
                     });
                 });
             }).start();

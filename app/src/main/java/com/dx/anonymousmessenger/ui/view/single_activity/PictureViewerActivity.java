@@ -67,7 +67,7 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+//        setTheme(R.style.AppTheme_TransparentFullscreen);
         super.onCreate(savedInstanceState);
         try{
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
@@ -517,5 +517,4 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
         TransitionManager.beginDelayedTransition(textInputLayout, trans);
         textInputLayout.setLayoutParams(params);
     }
-
 }

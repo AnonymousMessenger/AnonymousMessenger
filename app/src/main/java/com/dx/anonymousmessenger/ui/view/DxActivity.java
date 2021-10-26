@@ -23,6 +23,7 @@ import com.dx.anonymousmessenger.ui.custom.ScreenFilterDialogFragment;
 import com.dx.anonymousmessenger.ui.custom.TapSafeFrameLayout;
 import com.dx.anonymousmessenger.ui.custom.TapSafeToolbar;
 import com.dx.anonymousmessenger.ui.view.single_activity.CrashActivity;
+import com.dx.anonymousmessenger.ui.view.single_activity.PictureViewerActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -35,15 +36,18 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
-        SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(this);
-        String theme = prefs2.getString("app-theme","dark");
-        if (theme != null) {
-            if(theme.equals("dark")){
-                setTheme(R.style.AppTheme);
-            }else if(theme.equals("light")){
-                setTheme(R.style.LightTheme);
+        if(this.getClass() != PictureViewerActivity.class){
+            SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(this);
+            String theme = prefs2.getString("app-theme","dark");
+            if (theme != null) {
+                if(theme.equals("dark")){
+                    setTheme(R.style.AppTheme);
+                }else if(theme.equals("light")){
+                    setTheme(R.style.LightTheme);
+                }
             }
         }
+
 
         Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {
             new Thread() {
@@ -118,6 +122,9 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
     }
 
     protected void useCustomActionBarToolbar() {
+        if(getSupportActionBar()==null){
+            return;
+        }
         requireNonNull(getSupportActionBar()).hide();
         if (findViewById(R.id.toolbar) != null) {
             requireNonNull(getSupportActionBar()).hide();
