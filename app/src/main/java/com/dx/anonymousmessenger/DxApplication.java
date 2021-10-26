@@ -19,6 +19,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -767,6 +768,12 @@ public class DxApplication extends Application {
                     CHANNEL_ID,NotificationManager.IMPORTANCE_LOW));
         }
         return notification;
+    }
+
+    public void updateServiceNotification(){
+        Notification ntf = getServiceNotification(getString(R.string.still_background), getString(R.string.click_to_hide), DxService.SERVICE_NOTIFICATION_CHANNEL);
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(3,ntf);
     }
 
     @SuppressLint("BatteryLife")

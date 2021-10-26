@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.service.DxService;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.MainActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.AboutActivity;
@@ -319,6 +320,10 @@ public class SetupSettingsFragment extends Fragment {
                         }
                         startActivity(intent);
                         break;
+                }
+                // refresh service notification
+                if(DxApplication.isServiceRunningInForeground(requireContext(), DxService.class)){
+                    ((DxApplication)requireActivity().getApplication()).updateServiceNotification();
                 }
             });
             builder.show();

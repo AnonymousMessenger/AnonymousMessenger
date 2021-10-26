@@ -40,9 +40,9 @@ public class DxService extends Service {
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                if(intent.getIntExtra("start_syncing",0)>0){
-                    new Thread(()-> app.queueAllUnsentMessages()).start();
-                }
+            if(intent.getIntExtra("start_syncing",0)>0){
+                new Thread(()-> app.queueAllUnsentMessages()).start();
+            }
             }
         };
         try {
