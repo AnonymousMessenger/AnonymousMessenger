@@ -227,9 +227,17 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 
+    public void superStartActivity(Intent intent){
+        super.startActivity(intent);
+    }
+
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    public void superFinish(){
+        super.finish();
     }
 }
