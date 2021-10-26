@@ -98,12 +98,12 @@ public class DxCallService extends Service {
                     if (((DxApplication) getApplication()).isInCall()) {
                         try {
                             ((DxApplication) getApplication()).getCc().answerCall(false);
-                            Log.d("GENERAL","call answered");
+                            Log.d("ANONYMOUSMESSENGER","call answered");
                             Intent gcm_rec = new Intent("call_action");
                             gcm_rec.putExtra("action","answer");
                             LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                         } catch (Exception e) {
-                            Log.d("GENERAL","call not answered");
+                            Log.d("ANONYMOUSMESSENGER","call not answered");
                             e.printStackTrace();
                             Intent gcm_rec = new Intent("call_action");
                             gcm_rec.putExtra("action","hangup");

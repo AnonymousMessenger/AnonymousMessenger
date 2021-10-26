@@ -112,8 +112,8 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
 //        v.getGlobalVisibleRect(visibleRect);
 //        boolean b = visibleRect.height() == v.getHeight() && visibleRect.width() == v.getWidth();
 //        if(b){
-//            Log.d("GENERAL","!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//            Log.d("GENERAL","SCREEEEEEEEEEEEEN OBSTRUCTEDDDDDDDD");
+//            Log.d("ANONYMOUSMESSENGER","!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//            Log.d("ANONYMOUSMESSENGER","SCREEEEEEEEEEEEEN OBSTRUCTEDDDDDDDD");
 //        }
     }
 

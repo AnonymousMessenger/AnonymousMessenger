@@ -162,13 +162,13 @@ public class OnionProxyManager {
         // The Tor OP will die if it looses the connection to its socket so if there is no controlSocket defined
         // then Tor is dead. This assumes, of course, that takeOwnership works and we can't end up with Zombies.
         if (controlConnection != null) {
-            Log.d("GENERAL","Tor is already running");
+            Log.d("ANONYMOUSMESSENGER","Tor is already running");
             return true;
         }
 
         // The code below is why this method is synchronized, we don't want two instances of it running at once
         // as the result would be a mess of screwed up files and connections.
-        Log.d("GENERAL","Tor is not running");
+        Log.d("ANONYMOUSMESSENGER","Tor is not running");
 
         onionProxyContext.installFiles();
         setExecutable(onionProxyContext.getTorExecutableFile());
@@ -200,7 +200,7 @@ public class OnionProxyManager {
             String obfs4proxyfilename = getOnionProxyContext().getTorExecutableFileName().replace("libtor", "obfs4proxy");
             File obfs4proxyfile = new File(getOnionProxyContext().ctx.getApplicationInfo().nativeLibraryDir + "/" + obfs4proxyfilename);
             if (obfs4proxyfile.exists()) {
-                Log.d("GENERAL","OBFS4PROXY EXISTS");
+                Log.d("ANONYMOUSMESSENGER","OBFS4PROXY EXISTS");
                 printWriter.println("ClientTransportPlugin meek_lite,obfs2,obfs3,obfs4,scramblesuit exec " + obfs4proxyfile.getAbsolutePath());
                 printWriter.println("UseBridges " + (enableBridges ? "1" : "0"));
                 for (String bridge : bridges) {
@@ -209,7 +209,7 @@ public class OnionProxyManager {
             }
         }
 
-        Log.d("GENERAL","Starting Tor");
+        Log.d("ANONYMOUSMESSENGER","Starting Tor");
 //        Intent gcm_rec = new Intent("tor_status");
 //        gcm_rec.putExtra("tor_status","Starting Tor");
 //        LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -236,13 +236,13 @@ public class OnionProxyManager {
                 if ( !file.delete() ) {
                     System.err.println( "Can't remove " + file.getAbsolutePath() );
                 }else{
-                    Log.d("GENERAL", "Removed " + file.getAbsolutePath() );
+                    Log.d("ANONYMOUSMESSENGER", "Removed " + file.getAbsolutePath() );
                 }
             }
         }
 
         if(!new File(torPath).exists()){
-            Log.d("GENERAL",torPath+" doesn't exist !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            Log.d("ANONYMOUSMESSENGER",torPath+" doesn't exist !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
         String pid = onionProxyContext.getProcessId();
@@ -268,7 +268,7 @@ public class OnionProxyManager {
 //            int exit = torProcess.waitFor();
 //            torProcess = null;
 //            if (exit != 0) {
-//                Log.d("GENERAL","Tor exited with value " + exit);
+//                Log.d("ANONYMOUSMESSENGER","Tor exited with value " + exit);
 //                return false;
 //            }
 
@@ -278,9 +278,9 @@ public class OnionProxyManager {
 
             // Open a control connection and authenticate using the cookie file
             TorControlConnection controlConnection = new TorControlConnection(controlSocket);
-            Log.d("GENERAL","authenticating");
+            Log.d("ANONYMOUSMESSENGER","authenticating");
             controlConnection.authenticate(FileUtilities.read(cookieFile));
-            Log.d("GENERAL","authenticated");
+            Log.d("ANONYMOUSMESSENGER","authenticated");
             // Tell Tor to exit when the control connection is closed
             controlConnection.takeOwnership();
             controlConnection.resetConf(Collections.singletonList(OWNER));
@@ -293,7 +293,7 @@ public class OnionProxyManager {
             NetworkStateReceiver networkStateReceiver = new NetworkStateReceiver();
             IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
             onionProxyContext.ctx.registerReceiver(networkStateReceiver, filter);
-            Log.d("GENERAL","done with tor startup");
+            Log.d("ANONYMOUSMESSENGER","done with tor startup");
             return true;
         } catch (SecurityException e) {
             if (torProcess != null) {
@@ -319,7 +319,7 @@ public class OnionProxyManager {
                 try {
                     while (scanner.hasNextLine()) {
                         if (stdError) {
-                            Log.d("GENERAL",scanner.nextLine());
+                            Log.d("ANONYMOUSMESSENGER",scanner.nextLine());
                             Intent gcm_rec = new Intent("tor_status");
                             gcm_rec.putExtra("tor_status",scanner.nextLine());
                             LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -331,7 +331,7 @@ public class OnionProxyManager {
                                         = Integer.parseInt(
                                         nextLine.substring(nextLine.lastIndexOf(" ") + 1, nextLine.length() - 1));
                             }
-                            Log.d("GENERAL",nextLine);
+                            Log.d("ANONYMOUSMESSENGER",nextLine);
                             Intent gcm_rec = new Intent("tor_status");
                             gcm_rec.putExtra("tor_status",nextLine);
                             LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -341,7 +341,7 @@ public class OnionProxyManager {
                     try {
                         inputStream.close();
                     } catch (IOException e) {
-                        Log.d("GENERAL","Couldn't close input stream in eatStream"+ e);
+                        Log.d("ANONYMOUSMESSENGER","Couldn't close input stream in eatStream"+ e);
                     }
                 }
             }
@@ -365,28 +365,28 @@ public class OnionProxyManager {
 
     public void stop() throws IOException {
         if(stopping){
-            Log.d("GENERAL","already stopping");
+            Log.d("ANONYMOUSMESSENGER","already stopping");
             return;
         }
         stopping = true;
-        Log.d("GENERAL","starting stop");
+        Log.d("ANONYMOUSMESSENGER","starting stop");
         try {
             if(torProcess!=null){
-                Log.d("GENERAL","process not null so we are destroying it");
+                Log.d("ANONYMOUSMESSENGER","process not null so we are destroying it");
                 torProcess.destroy();
                 torProcess.waitFor();
-                Log.d("GENERAL","done with process destruction");
+                Log.d("ANONYMOUSMESSENGER","done with process destruction");
             }
             if (controlConnection != null) {
-                Log.d("GENERAL","control connection not null");
+                Log.d("ANONYMOUSMESSENGER","control connection not null");
                 controlConnection.setConf("DisableNetwork", "1");
                 controlConnection.shutdownTor("TERM");
                 System.err.println("SIGTERM SENT !!!!!!!!!!!!!!!!!!!");
                 controlConnection = null;
-                Log.d("GENERAL","nullified control connection successfully");
+                Log.d("ANONYMOUSMESSENGER","nullified control connection successfully");
             }
 
-            Log.d("GENERAL","pkilling tor");
+            Log.d("ANONYMOUSMESSENGER","pkilling tor");
             String[] cmd = {"pkill", "tor"};
             ProcessBuilder processBuilder = new ProcessBuilder(cmd);
             processBuilder.redirectErrorStream(true);
@@ -397,7 +397,7 @@ public class OnionProxyManager {
             }catch (Exception e){
                 e.printStackTrace();
             }
-            Log.d("GENERAL","done with pkilling tor");
+            Log.d("ANONYMOUSMESSENGER","done with pkilling tor");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -458,7 +458,7 @@ public class OnionProxyManager {
 //            gcm_rec.putExtra("tor_status","Bootstrapped: "+phase);
 //            LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
         } catch (IOException e) {
-            Log.d("GENERAL","Control connection is not responding properly to getInfo "+e);
+            Log.d("ANONYMOUSMESSENGER","Control connection is not responding properly to getInfo "+e);
         }
 
         return phase != null && phase.contains("PROGRESS=100");
@@ -477,7 +477,7 @@ public class OnionProxyManager {
 //            try {
 //                if(!isRunning()) return;
 //            } catch (IOException e) {
-//                Log.d("GENERAL","Did someone call before Tor was ready?"+ e);
+//                Log.d("ANONYMOUSMESSENGER","Did someone call before Tor was ready?"+ e);
 //                return;
 //            }
             boolean online = !i.getBooleanExtra(EXTRA_NO_CONNECTIVITY, false);
@@ -488,7 +488,7 @@ public class OnionProxyManager {
                 NetworkInfo net = cm.getActiveNetworkInfo();
                 if(net == null || !net.isConnected()) online = false;
             }
-            Log.d("GENERAL","Online: " + online);
+            Log.d("ANONYMOUSMESSENGER","Online: " + online);
             try {
                 enableNetwork(online);
                 //todo: if tor is not running then start tor
@@ -500,7 +500,7 @@ public class OnionProxyManager {
                 gcm_rec.putExtra("start_syncing",1);
                 LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
             } catch(Exception e) {
-                Log.d("GENERAL",e.toString()+e);
+                Log.d("ANONYMOUSMESSENGER",e.toString()+e);
             }
         }
     }

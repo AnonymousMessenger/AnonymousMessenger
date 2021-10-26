@@ -256,38 +256,38 @@ public class FileHelper {
                 while(true){
                     byte[] iv = new byte[IV_LENGTH];
                     fis.read(iv,0,IV_LENGTH);
-//                    Log.d("GENERAL","IV: "+ Arrays.toString(iv));
+//                    Log.d("ANONYMOUSMESSENGER","IV: "+ Arrays.toString(iv));
                     cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
                     byte[] chunkSize = new byte[4];
                     fis.read(chunkSize,0,chunkSize.length);
                     int casted = ByteBuffer.wrap(chunkSize).order(ByteOrder.LITTLE_ENDIAN).getInt();
-//                    Log.d("GENERAL","length of next chapter: "+casted);
+//                    Log.d("ANONYMOUSMESSENGER","length of next chapter: "+casted);
                     if(casted==0){
                         break;
                     }
                     byte[] buf = new byte[casted];
                     int read;
-//                    Log.d("GENERAL","avail: "+fis.available());
+//                    Log.d("ANONYMOUSMESSENGER","avail: "+fis.available());
                     if(f.length()-done >= buf.length){
-//                        Log.d("GENERAL","a lot more is left");
+//                        Log.d("ANONYMOUSMESSENGER","a lot more is left");
 //                        while(fis.available()<buf.length){
-//                            Log.d("GENERAL","waiting for availability");
+//                            Log.d("ANONYMOUSMESSENGER","waiting for availability");
 //                        }
                         read = fis.read(buf,0,buf.length);
                     }else{
-//                        Log.d("GENERAL","not much is left");
+//                        Log.d("ANONYMOUSMESSENGER","not much is left");
                         read = fis.read(buf);
                     }
                     if(read==-1){
-//                        Log.d("GENERAL","nothing is left");
+//                        Log.d("ANONYMOUSMESSENGER","nothing is left");
                         break;
                     }
-//                    Log.d("GENERAL","read: "+read);
+//                    Log.d("ANONYMOUSMESSENGER","read: "+read);
                     out.write(cipher.doFinal(buf,0,read));
                     out.flush();
                     done=done+read;
-//                    Log.d("GENERAL","done: "+done);
-//                    Log.d("GENERAL","left: "+(f.length()-done));
+//                    Log.d("ANONYMOUSMESSENGER","done: "+done);
+//                    Log.d("ANONYMOUSMESSENGER","left: "+(f.length()-done));
                     progressListener.onProgress(((int) (((double) done/(double) f.length())*100.0)));
                 }
                 progressListener.onProgress(100);
@@ -320,28 +320,28 @@ public class FileHelper {
             while(true){
                 Runtime.getRuntime().gc();
                 byte[] iv = Utils.getSecretBytes(IV_LENGTH);
-//                Log.d("GENERAL","iv:" + Arrays.toString(iv));
+//                Log.d("ANONYMOUSMESSENGER","iv:" + Arrays.toString(iv));
                 cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
                 byte[] buf = new byte[1024*1024*5];
                 int read;
-//                Log.d("GENERAL","done: "+done);
-//                Log.d("GENERAL","length: "+length);
-//                Log.d("GENERAL","avail: "+in.available());
+//                Log.d("ANONYMOUSMESSENGER","done: "+done);
+//                Log.d("ANONYMOUSMESSENGER","length: "+length);
+//                Log.d("ANONYMOUSMESSENGER","avail: "+in.available());
                 if(length-done >= buf.length){
-//                    Log.d("GENERAL","a lot is left");
+//                    Log.d("ANONYMOUSMESSENGER","a lot is left");
                     if(in.available()>=buf.length){
-//                        Log.d("GENERAL","its more than enough");
+//                        Log.d("ANONYMOUSMESSENGER","its more than enough");
                         read = in.read(buf,0,buf.length);
                     }else{
-//                        Log.d("GENERAL","its not enough");
+//                        Log.d("ANONYMOUSMESSENGER","its not enough");
                         continue;
                     }
                 }else{
-//                    Log.d("GENERAL","not much is left");
+//                    Log.d("ANONYMOUSMESSENGER","not much is left");
                     read = in.read(buf);
                 }
                 if(read==-1){
-//                    Log.d("GENERAL","nothing is left");
+//                    Log.d("ANONYMOUSMESSENGER","nothing is left");
                     break;
                 }
                 fos.write(iv);
@@ -351,12 +351,12 @@ public class FileHelper {
                 fos.write(enc);
                 fos.flush();
                 done += read;
-//                Log.d("GENERAL","encrypted chunk size: "+enc.length);
-//                Log.d("GENERAL","done: "+done);
-//                Log.d("GENERAL","------- STARTING ALL OVER AGAIN ------");
+//                Log.d("ANONYMOUSMESSENGER","encrypted chunk size: "+enc.length);
+//                Log.d("ANONYMOUSMESSENGER","done: "+done);
+//                Log.d("ANONYMOUSMESSENGER","------- STARTING ALL OVER AGAIN ------");
             }
 
-//            Log.d("GENERAL",eFilename);
+//            Log.d("ANONYMOUSMESSENGER",eFilename);
             fos.close();
             //return its "path"
             return eFilename;

@@ -68,7 +68,7 @@ public class MessageReceiver {
                     return;
                 }
 
-                Log.d("GENERAL", String.valueOf(akem.isResponse()));
+                Log.d("ANONYMOUSMESSENGER", String.valueOf(akem.isResponse()));
                 if(akem.isResponse()){
                     try {
                         SessionBuilder sb = new SessionBuilder(app.getEntity().getStore(), new SignalProtocolAddress(akem.getAddress(),1));

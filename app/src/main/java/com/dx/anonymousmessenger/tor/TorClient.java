@@ -105,8 +105,8 @@ public class TorClient {
                             ByteArrayInputStream bais = new ByteArrayInputStream(media);
                             byte[] buffer;
                             while(bais.available()>0){
-                                //Log.d("GENERAL","sending part");
-                                Log.d("GENERAL", "sending part");
+                                //Log.d("ANONYMOUSMESSENGER","sending part");
+                                Log.d("ANONYMOUSMESSENGER", "sending part");
                                 if(bais.available()<1024){
                                     buffer = new byte[bais.available()];
                                 }else{
@@ -305,7 +305,7 @@ public class TorClient {
         inputStream.readFully(header, 0, 4);
 
         if (header[1] != (byte) 0x00) {
-            Log.d("GENERAL","ERROR REQUEST NOT OK: "+header[1]);
+            Log.d("ANONYMOUSMESSENGER","ERROR REQUEST NOT OK: "+header[1]);
             throw new IOException("SOCKS5 connect failed");
         }
 
@@ -317,7 +317,7 @@ public class TorClient {
             inputStream.readFully(header, 0, 2);
             return socket;
         }else if(header[3] == (byte) 0x03){
-            Log.d("GENERAL","GOT ADDRESS BACK");
+            Log.d("ANONYMOUSMESSENGER","GOT ADDRESS BACK");
             int len = header[1];
             byte[] host = new byte[len];
             inputStream.readFully(host, 0, len);

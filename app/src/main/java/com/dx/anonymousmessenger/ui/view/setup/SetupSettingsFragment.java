@@ -208,7 +208,7 @@ public class SetupSettingsFragment extends Fragment {
             try{
                 Object[] settings = DbHelper.getSettingsList((DxApplication)requireActivity().getApplication());
                 if (settings == null || settings.length <= 5) {
-                    Log.d("GENERAL","not right");
+                    Log.d("ANONYMOUSMESSENGER","not right");
                     settings = ((DxApplication) requireActivity().getApplication()).DEFAULT_SETTINGS;
                 }
                 bridgesSwitch.setChecked(((int)settings[0]>0));

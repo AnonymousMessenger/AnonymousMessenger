@@ -50,12 +50,12 @@ public class OnionProxyContext {
   @SuppressLint("DefaultLocale")
   public String getTorExecutableFileName() {
     String arch = Objects.requireNonNull(System.getProperty("os.arch")).toLowerCase();
-    Log.d("GENERAL",arch);
+    Log.d("ANONYMOUSMESSENGER",arch);
 
     //in case the apk has another ABI also compatible with the device
     for (File file : Objects.requireNonNull(new File(ctx.getApplicationInfo().nativeLibraryDir).listFiles())) {
       System.out.println(file.getName());
-      Log.d("GENERAL",file.getName());
+      Log.d("ANONYMOUSMESSENGER",file.getName());
       if (file.getName().startsWith("libtor")) {
         return file.getName();
       }

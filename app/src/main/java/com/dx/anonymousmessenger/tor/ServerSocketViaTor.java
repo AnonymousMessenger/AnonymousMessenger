@@ -108,13 +108,13 @@ public class ServerSocketViaTor {
             }
 
             if (!node.startWithoutRepeat(hiddenservicedirport, localport, TOTAL_SEC_PER_STARTUP, DbHelper.getBridgeList(app), app.isBridgesEnabled(), app.isEnableSocks5Proxy(), app.getSocks5AddressAndPort(), app.getSocks5Username(), app.getSocks5Password(), app.getExcludeText(), app.isExcludeUnknown(), app.isStrictExclude())) {
-                Log.d("GENERAL","Could not Start Tor.");
+                Log.d("ANONYMOUSMESSENGER","Could not Start Tor.");
                 tryKill();
                 throw new IOException("Could not Start Tor.");
             } else {
                 Runtime.getRuntime().addShutdownHook(new Thread() {
                     public void run() {
-                    Log.d("GENERAL","shutdown hook");
+                    Log.d("ANONYMOUSMESSENGER","shutdown hook");
                     app.resetTorStartTime();
                     tryKill();
                     }
@@ -122,7 +122,7 @@ public class ServerSocketViaTor {
             }
         }catch (Exception e){
             e.printStackTrace();
-            Log.d("GENERAL","exception with tor start");
+            Log.d("ANONYMOUSMESSENGER","exception with tor start");
             tryKill();
             // tell user about the error
             Intent gcm_rec = new Intent("tor_status");
@@ -135,7 +135,7 @@ public class ServerSocketViaTor {
 
         try{
             if(node == null){
-                Log.d("GENERAL","error after tor start");
+                Log.d("ANONYMOUSMESSENGER","error after tor start");
                 tryKill();
                 // tell user about the error
                 Intent gcm_rec = new Intent("tor_status");
@@ -146,7 +146,7 @@ public class ServerSocketViaTor {
             app.setHostname(new String(FileUtilities.read(node.getOnionProxyContext().getHostNameFile()), StandardCharsets.UTF_8).trim());
         }catch (Exception e){
             e.printStackTrace();
-            Log.d("GENERAL","cannot start a hiddenservice");
+            Log.d("ANONYMOUSMESSENGER","cannot start a hiddenservice");
             tryKill();
             // tell user about the error
             Intent gcm_rec = new Intent("tor_status");
@@ -192,12 +192,12 @@ public class ServerSocketViaTor {
         }
         if(node!=null){
             try {
-                Log.d("GENERAL","starting node stop");
+                Log.d("ANONYMOUSMESSENGER","starting node stop");
                 node.stop();
-                Log.d("GENERAL","done with node stop");
+                Log.d("ANONYMOUSMESSENGER","done with node stop");
             }catch (Exception e){
                 e.printStackTrace();
-                Log.d("GENERAL","exception with node stop");
+                Log.d("ANONYMOUSMESSENGER","exception with node stop");
             }
             node = null;
         }
@@ -425,7 +425,7 @@ public class ServerSocketViaTor {
                     in.read(buffer,0,buffer.length);
                     int chunkLength = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
-//                    Log.d("GENERAL","CHUNK LENGTH:::: "+chunkLength);
+//                    Log.d("ANONYMOUSMESSENGER","CHUNK LENGTH:::: "+chunkLength);
                     if(chunkLength==0){
                         break;
                     }

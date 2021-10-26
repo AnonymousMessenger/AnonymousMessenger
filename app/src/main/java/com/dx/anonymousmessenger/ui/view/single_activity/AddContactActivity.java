@@ -207,20 +207,20 @@ public class AddContactActivity extends DxActivity {
             s = str;
         }
         if(s.equals(((DxApplication)getApplication()).getHostname())){
-            Log.d("GENERAL","same as hostname");
+            Log.d("ANONYMOUSMESSENGER","same as hostname");
             return;
         }
         if(s.equals(((DxApplication)getApplication()).getMyAddressOffline())){
-            Log.d("GENERAL","same as hostname");
+            Log.d("ANONYMOUSMESSENGER","same as hostname");
             return;
         }
         if(s.trim().length()!=62 || !s.trim().endsWith(".onion")){
-            Log.d("GENERAL","not valid");
+            Log.d("ANONYMOUSMESSENGER","not valid");
             return;
         }
         try{
             if(DbHelper.contactExists(s,(DxApplication)getApplication())){
-                Log.d("GENERAL","exists");
+                Log.d("ANONYMOUSMESSENGER","exists");
                 return;
             }
 

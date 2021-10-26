@@ -201,7 +201,7 @@ public class DxApplication extends Application {
 
     public synchronized void sendQueuedMessages(){
         for (QuotedUserMessage msg:messageQueue){
-//            Log.d("GENERAL","sending a message");
+//            Log.d("ANONYMOUSMESSENGER","sending a message");
             if(msg.getPath()!=null && !msg.getPath().equals("")){
                 if(msg.getType().equals("file")){
                     MessageSender.sendQueuedFile(msg,this,msg.getTo());
@@ -217,7 +217,7 @@ public class DxApplication extends Application {
 
     public synchronized void queueAllUnsentMessages(){
 //        if(pinging /*|| syncing*/){
-//            Log.d("GENERAL","still pinging or syncing!");
+//            Log.d("ANONYMOUSMESSENGER","still pinging or syncing!");
 //            return;
 //        }
         try{
@@ -472,11 +472,11 @@ public class DxApplication extends Application {
     }
 
     public void reloadSettings(){
-        Log.d("GENERAL", String.valueOf(isAcceptingCallsAllowed));
+        Log.d("ANONYMOUSMESSENGER", String.valueOf(isAcceptingCallsAllowed));
         try{
             Object[] settings = DbHelper.getSettingsList(this);
             if(settings == null){
-                Log.d("GENERAL","settings were null when got from the db");
+                Log.d("ANONYMOUSMESSENGER","settings were null when got from the db");
                 settings = DEFAULT_SETTINGS;
                 DbHelper.saveSettings((int)settings[0]>0,(int)settings[1]>0,(int)settings[2]>0,(int)settings[3]>0,(String)settings[4],(String)settings[5],(int)settings[6]>0, (String) settings[7], (String) settings[8], (String) settings[9], (String) settings[10], (int)settings[11]>0, (int)settings[12]>0,this);
             }
@@ -875,7 +875,7 @@ public class DxApplication extends Application {
     }
 
     public boolean isServerReady() {
-        Log.d("GENERAL","isServerReady: "+serverReady);
+        Log.d("ANONYMOUSMESSENGER","isServerReady: "+serverReady);
         return serverReady;
     }
 
@@ -890,11 +890,11 @@ public class DxApplication extends Application {
     }
 
     public void startTor(){
-        Log.d("GENERAL","start tor requested");
+        Log.d("ANONYMOUSMESSENGER","start tor requested");
         torStartTime = new Date().getTime();
         reloadSettings();
         if(isServiceRunningInForeground(this, DxService.class)){
-            Log.d("GENERAL","Service already running, not starting tor");
+            Log.d("ANONYMOUSMESSENGER","Service already running, not starting tor");
             return;
         }
         Intent serviceIntent = new Intent(this, DxService.class);
@@ -908,18 +908,18 @@ public class DxApplication extends Application {
 
     public void restartTor(){
         if(restartingTor){
-            Log.d("GENERAL","still restarting, abort");
+            Log.d("ANONYMOUSMESSENGER","still restarting, abort");
             return;
         }
-        Log.d("GENERAL","starting restart now");
+        Log.d("ANONYMOUSMESSENGER","starting restart now");
         restartingTor = true;
         torStartTime = 0;
         new Thread(()->{
         if(torSocket!=null){
             try {
-                Log.d("GENERAL","starting trykill");
+                Log.d("ANONYMOUSMESSENGER","starting trykill");
                 torSocket.tryKill();
-                Log.d("GENERAL","trykill ok");
+                Log.d("ANONYMOUSMESSENGER","trykill ok");
                 Thread.sleep(1500);
             } catch (Exception ignored) {}
             if(serverReady){
@@ -928,10 +928,10 @@ public class DxApplication extends Application {
         }
 
         try{
-            Log.d("GENERAL","stopping service");
+            Log.d("ANONYMOUSMESSENGER","stopping service");
             Intent serviceIntent = new Intent(this, DxService.class);
             stopService(serviceIntent);
-            Log.d("GENERAL","service stopped");
+            Log.d("ANONYMOUSMESSENGER","service stopped");
 
             try {
                 Thread.sleep(3500);
@@ -939,7 +939,7 @@ public class DxApplication extends Application {
                 e.printStackTrace();
             }
 
-            Log.d("GENERAL","restarting service");
+            Log.d("ANONYMOUSMESSENGER","restarting service");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(serviceIntent);
             }else{

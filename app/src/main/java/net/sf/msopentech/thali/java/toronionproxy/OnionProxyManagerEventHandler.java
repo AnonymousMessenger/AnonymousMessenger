@@ -110,7 +110,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
     }
 
     public void bandwidthUsed(long read, long written) {
-        Log.d("GENERAL","bandwidthUsed: read: " + read + ", written: " + written);
+        Log.d("ANONYMOUSMESSENGER","bandwidthUsed: read: " + read + ", written: " + written);
         Intent gcm_rec = new Intent("tor_status");
         gcm_rec.putExtra("tor_status","bandwidthUsed: read: " + read + ", written: " + written);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -122,7 +122,7 @@ public class OnionProxyManagerEventHandler implements EventHandler {
         while (iterator.hasNext()) {
             stringBuilder.append(iterator.next());
         }
-        Log.d("GENERAL","newDescriptors: " + stringBuilder.toString());
+        Log.d("ANONYMOUSMESSENGER","newDescriptors: " + stringBuilder.toString());
         Intent gcm_rec = new Intent("tor_status");
         gcm_rec.putExtra("tor_status","newDescriptors: " + stringBuilder.toString());
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
@@ -130,14 +130,14 @@ public class OnionProxyManagerEventHandler implements EventHandler {
 
     //fetch Exit Node
     public void message(String severity, String msg) {
-        Log.d("GENERAL",severity + "," + msg);
+        Log.d("ANONYMOUSMESSENGER",severity + "," + msg);
         Intent gcm_rec = new Intent("tor_status");
         gcm_rec.putExtra("tor_status",severity + "," + msg);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);
     }
 
     public void unrecognized(String type, String msg) {
-        Log.d("GENERAL","unrecognized: msg: " + type + ", " + msg);
+        Log.d("ANONYMOUSMESSENGER","unrecognized: msg: " + type + ", " + msg);
         Intent gcm_rec = new Intent("tor_status");
         gcm_rec.putExtra("tor_status","unrecognized: msg: " + type + ", " + msg);
         LocalBroadcastManager.getInstance(onionProxyContext.ctx).sendBroadcast(gcm_rec);

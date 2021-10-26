@@ -156,7 +156,7 @@ public class Utils {
         }else if(fileSize.endsWith("kb") || fileSize.endsWith("KB")){
             n = n * 1024;
         }
-//        Log.d("GENERAL","file size in bytes is : " + n);
+//        Log.d("ANONYMOUSMESSENGER","file size in bytes is : " + n);
         return n;
     }
 
