@@ -87,7 +87,7 @@ import static java.util.Objects.requireNonNull;
 public class MessageListActivity extends DxActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, ContactListAdapter.ItemClickListener, CallBack {
 
     private static final int READ_STORAGE_REQUEST_CODE = 1;
-    public static final int REQUEST_PICK_FILE = 2;
+//    public static final int REQUEST_PICK_FILE = 2;
     private static final int RECORD_AUDIO_REQUEST_CODE = 3;
     public TextView quoteTextTyping;
     public TextView quoteSenderTyping;

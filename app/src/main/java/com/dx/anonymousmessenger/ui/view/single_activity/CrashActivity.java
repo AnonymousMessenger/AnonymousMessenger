@@ -52,6 +52,7 @@ public class CrashActivity extends AppCompatActivity {
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             }
             finishAndRemoveTask();
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
             startActivity(intent);
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(10);
@@ -69,10 +70,12 @@ public class CrashActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         finishAndRemoveTask();
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 
     @Override
     public void finish() {
         finishAndRemoveTask();
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 }

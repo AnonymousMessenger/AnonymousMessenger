@@ -250,11 +250,13 @@ public class AppFragment extends Fragment {
                         .setMessage(R.string.clear_tor_cache_explain)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                            try {
-                                ((DxApplication) requireActivity().getApplication()).getAndroidTorRelay().clearTorCache();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            new Thread(()->{
+                                try {
+                                    ((DxApplication) requireActivity().getApplication()).getAndroidTorRelay().clearTorCache();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }).start();
                         })
                         .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
                     return true;
@@ -288,6 +290,7 @@ public class AppFragment extends Fragment {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, (dialog, whichButton) ->{
                             requireActivity().finishAndRemoveTask();
+                            requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                             try {
                                 Thread.sleep(250);
                             } catch (Exception ignored) {}

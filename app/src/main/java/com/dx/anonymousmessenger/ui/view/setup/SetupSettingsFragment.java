@@ -261,6 +261,7 @@ public class SetupSettingsFragment extends Fragment {
                                 alias);
                         intent.setComponent(componentName);
                         requireActivity().finishAndRemoveTask();
+                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
@@ -287,6 +288,7 @@ public class SetupSettingsFragment extends Fragment {
                                 alias);
                         intent.setComponent(componentName);
                         requireActivity().finishAndRemoveTask();
+                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
@@ -313,6 +315,7 @@ public class SetupSettingsFragment extends Fragment {
                                 alias);
                         intent.setComponent(componentName);
                         requireActivity().finishAndRemoveTask();
+                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
@@ -347,6 +350,7 @@ public class SetupSettingsFragment extends Fragment {
                         prefs.edit().putString("app-theme","dark").apply();
                         requireActivity().setTheme(R.style.AppTheme);
                         requireActivity().finishAndRemoveTask();
+                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                         startActivity(intent);
                         break;
                     case 1:
@@ -354,6 +358,7 @@ public class SetupSettingsFragment extends Fragment {
                         prefs2.edit().putString("app-theme","light").apply();
                         requireActivity().setTheme(R.style.LightTheme);
                         requireActivity().finishAndRemoveTask();
+                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                         startActivity(intent);
                         break;
                 }
