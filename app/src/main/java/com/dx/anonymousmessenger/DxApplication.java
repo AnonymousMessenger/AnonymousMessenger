@@ -592,10 +592,15 @@ public class DxApplication extends Application {
     }
 
     public void sendNotification(String title, String msg){
+        Intent intent = new Intent(this, NotificationHiderReceiver.class);
         Intent resultIntent = new Intent(this, MainActivity.class);
-        // Create the TaskStackBuilder and add the intent, which inflates the back stack
+        String packageName = getPackageName();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+        ComponentName componentName = new ComponentName(packageName,
+                alias);
+        resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        //change this to not add to stack but delete it
         stackBuilder.addNextIntentWithParentStack(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -639,10 +644,18 @@ public class DxApplication extends Application {
             return;
         }
         String CHANNEL_ID = "status_messages";
+        Intent intent = new Intent(this, NotificationHiderReceiver.class);
         Intent resultIntent = new Intent(this, MainActivity.class);
+        String packageName = getPackageName();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+        ComponentName componentName = new ComponentName(packageName,
+                alias);
+        resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification = new NotificationCompat.Builder(this,CHANNEL_ID)
