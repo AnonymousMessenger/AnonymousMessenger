@@ -2,6 +2,6 @@ New feature: Change app name.
 New feature: Add multiple bridges at once by text or QR code.
 New feature: Change app theme.
 New feature: Clear Tor cache.
-Design changes.
 Added scroll up and down buttons in Notepad and Security Log.
 Performance improvements.
+Design changes.
