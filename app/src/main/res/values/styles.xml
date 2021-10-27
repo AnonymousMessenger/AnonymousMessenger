@@ -140,17 +140,17 @@
 
     <style name="OverlayAlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <!-- Used for the buttons -->
-        <item name="colorAccent">@color/dx_white</item>
+<!--        <item name="colorAccent">@color/dx_white</item>-->
         <!-- Used for the title and text -->
-        <item name="android:textColorPrimary">@color/dx_white</item>
+<!--        <item name="android:textColorPrimary">@color/dx_white</item>-->
         <!-- Used for the background -->
-        <item name="android:background">@color/green_tor</item>
+<!--        <item name="android:background">@color/dx_received</item>-->
 
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">fill_parent</item>
-        <!-- No backgrounds, titles or window float -->
-        <item name="android:windowBackground">@null</item>
-        <item name="android:windowNoTitle">true</item>
+<!--        <item name="android:layout_width">match_parent</item>-->
+<!--        <item name="android:layout_height">match_parent</item>-->
+        <!-- No titles or window float -->
+        <item name="android:windowBackground">@color/green_tor</item>
+<!--        <item name="android:windowNoTitle">true</item>-->
         <item name="android:windowIsFloating">false</item>
 
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>

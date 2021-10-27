@@ -368,4 +368,5 @@
     <string name="light_theme">Light Theme</string>
     <string name="invalid_bridge">Invalid Bridge</string>
     <string name="bridge_added">Bridge Added</string>
+    <string name="nickname_help_explain">Click to get info about nickname use</string>
 </resources>
