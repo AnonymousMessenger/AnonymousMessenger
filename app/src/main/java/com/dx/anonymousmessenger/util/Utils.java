@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Utils {
+    @SuppressLint("SimpleDateFormat")
     public static String formatDateTime(long datetime){
         if(new SimpleDateFormat("MM/dd").format(new Date(datetime)).equals(new SimpleDateFormat("MM/dd").format(new Date().getTime()))){
             return new SimpleDateFormat("HH:mm").format(new Date(datetime));

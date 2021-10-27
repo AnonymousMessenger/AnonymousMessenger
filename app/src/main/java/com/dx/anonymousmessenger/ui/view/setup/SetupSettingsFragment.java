@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
@@ -47,6 +46,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,14 +77,11 @@ public class SetupSettingsFragment extends Fragment {
             });
     final ActivityResultLauncher<String> mPermissionResult = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
-            new ActivityResultCallback<Boolean>() {
-                @Override
-                public void onActivityResult(Boolean result) {
-                    if(result) {
-                        Intent intent = new Intent(requireContext(), SimpleScannerActivity.class);
-                        intent.putExtra("SCAN_MODE", "ADD_BRIDGE");
-                        mScanQrCode.launch(intent);
-                    }
+            result -> {
+                if(result) {
+                    Intent intent = new Intent(requireContext(), SimpleScannerActivity.class);
+                    intent.putExtra("SCAN_MODE", "ADD_BRIDGE");
+                    mScanQrCode.launch(intent);
                 }
             });
 
@@ -258,7 +255,7 @@ public class SetupSettingsFragment extends Fragment {
                         String packageName = requireContext().getPackageName();
                         String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
                         ComponentName componentName = new ComponentName(packageName,
-                                alias);
+                                Objects.requireNonNull(alias));
                         intent.setComponent(componentName);
                         requireActivity().finishAndRemoveTask();
                         requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
@@ -285,7 +282,7 @@ public class SetupSettingsFragment extends Fragment {
                         packageName = requireContext().getPackageName();
                         alias = prefs2.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
                         componentName = new ComponentName(packageName,
-                                alias);
+                                Objects.requireNonNull(alias));
                         intent.setComponent(componentName);
                         requireActivity().finishAndRemoveTask();
                         requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
@@ -312,7 +309,7 @@ public class SetupSettingsFragment extends Fragment {
                         packageName = requireContext().getPackageName();
                         alias = prefs3.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
                         componentName = new ComponentName(packageName,
-                                alias);
+                                Objects.requireNonNull(alias));
                         intent.setComponent(componentName);
                         requireActivity().finishAndRemoveTask();
                         requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
@@ -343,7 +340,7 @@ public class SetupSettingsFragment extends Fragment {
                 String packageName = requireContext().getPackageName();
                 String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
                 ComponentName componentName = new ComponentName(packageName,
-                        alias);
+                        Objects.requireNonNull(alias));
                 intent.setComponent(componentName);
                 switch (which) {
                     case 0:

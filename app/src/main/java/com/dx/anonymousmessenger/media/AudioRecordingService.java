@@ -123,6 +123,7 @@ public class AudioRecordingService extends Service {
         MessageSender.sendMediaMessage(qum,app,address);
     }
 
+    @SuppressWarnings("BusyWait")
     public void startTiming(){
         try{
             while(status){

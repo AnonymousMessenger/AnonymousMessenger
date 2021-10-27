@@ -1006,74 +1006,66 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.action_notepad:
-                stopCheckingMessages();
-                Intent intent = new Intent(this, NotepadActivity.class);
-                intent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
-                startActivity(intent);
-                break;
-            case R.id.action_contact_profile:
-                stopCheckingMessages();
-                new Handler().postDelayed(()->{
-                    Intent intent2 = new Intent(this, ContactProfileActivity.class);
-                    intent2.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
-                    View v = findViewById(R.id.action_contact_profile);
-                    ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(this, v, "profile_picture");
-                    this.startActivity(intent2,activityOptions.toBundle());
-                },150);
+        if(item.getItemId() == R.id.action_notepad){
+            stopCheckingMessages();
+            Intent intent = new Intent(this, NotepadActivity.class);
+            intent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+            startActivity(intent);
+        } else if(item.getItemId() == R.id.action_contact_profile){
+            stopCheckingMessages();
+            new Handler().postDelayed(()->{
+                Intent intent2 = new Intent(this, ContactProfileActivity.class);
+                intent2.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                View v = findViewById(R.id.action_contact_profile);
+                ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(this, v, "profile_picture");
+                this.startActivity(intent2,activityOptions.toBundle());
+            },150);
 //                startActivity(intent2);
-                break;
-            case R.id.action_call:
-                new Thread(()->{
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-                        if(((DxApplication)getApplication()).isInCall()){
-                            runOnUiThread(()-> Snackbar.make(send,"Already in a call",Snackbar.LENGTH_SHORT).show());
-                            return;
-                        }
-                        Intent callIntent = new Intent(this, CallActivity.class);
-                        callIntent.setAction("start_out_call");
-                        callIntent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
-                        callIntent.putExtra("nickname",getIntent().getStringExtra("nickname"));
-                        startActivity(callIntent);
-                    }else{
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },RECORD_AUDIO_REQUEST_CODE);
-                        }
+        } else if(item.getItemId() == R.id.action_call){
+            new Thread(()->{
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                    if(((DxApplication)getApplication()).isInCall()){
+                        runOnUiThread(()-> Snackbar.make(send,"Already in a call",Snackbar.LENGTH_SHORT).show());
+                        return;
                     }
-                }).start();
-                break;
-            case R.id.action_reset_session:
-                //reset session
-                resetSession();
-
-                //((DxSignalKeyStore)app.getEntity().getStore()).removeIdentity(new
-                // SignalProtocolAddress(address,1));
-                break;
-            case R.id.action_verify_identity:
-                stopCheckingMessages();
-                intent = new Intent(this, VerifyIdentityActivity.class);
-                intent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
-                startActivity(intent);
-                break;
-            case R.id.action_clear_conversation:
-                new AlertDialog.Builder(this,R.style.AppAlertDialog)
-                        .setTitle(R.string.delete_messages)
-                        .setMessage(R.string.delete_messages_help)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(R.string.yes, (dialog, which) -> new Thread(()-> {
-                            try{
-                                DbHelper.clearConversation(address,
-                                        (DxApplication) getApplication());
-                            }catch (Exception ignored) {}
-                            runOnUiThread(()->{
-                                scrollDownFab.setVisibility(View.GONE);
-                                updateUi(false,false);
-                            });
-                        }).start())
-                        .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
-                        }).show();
-                break;
+                    Intent callIntent = new Intent(this, CallActivity.class);
+                    callIntent.setAction("start_out_call");
+                    callIntent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                    callIntent.putExtra("nickname",getIntent().getStringExtra("nickname"));
+                    startActivity(callIntent);
+                }else{
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO },RECORD_AUDIO_REQUEST_CODE);
+                    }
+                }
+            }).start();
+        } else if(item.getItemId() == R.id.action_reset_session){
+            //reset session
+            resetSession();
+            //((DxSignalKeyStore)app.getEntity().getStore()).removeIdentity(new
+            // SignalProtocolAddress(address,1));
+        } else if(item.getItemId() == R.id.action_verify_identity){
+            stopCheckingMessages();
+            Intent intent = new Intent(this, VerifyIdentityActivity.class);
+            intent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+            startActivity(intent);
+        } else if(item.getItemId() == R.id.action_clear_conversation){
+            new AlertDialog.Builder(this,R.style.AppAlertDialog)
+                .setTitle(R.string.delete_messages)
+                .setMessage(R.string.delete_messages_help)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(R.string.yes, (dialog, which) -> new Thread(()-> {
+                    try{
+                        DbHelper.clearConversation(address,
+                                (DxApplication) getApplication());
+                    }catch (Exception ignored) {}
+                    runOnUiThread(()->{
+                        scrollDownFab.setVisibility(View.GONE);
+                        updateUi(false,false);
+                    });
+                }).start())
+                .setNegativeButton(R.string.no_thanks, (dialog, which) -> {
+                }).show();
         }
         return super.onOptionsItemSelected(item);
     }

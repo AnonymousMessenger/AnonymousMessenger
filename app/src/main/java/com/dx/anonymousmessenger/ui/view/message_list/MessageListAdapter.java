@@ -376,28 +376,26 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 pinButton.setTitle(R.string.unpin);
             }
             popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.navigation_drawer_item1:
-                        //handle reply click
-                        replyTo((MessageListActivity) mContext,message);
+                if(item.getItemId() == R.id.navigation_drawer_item1){
+                    //handle reply click
+                    replyTo((MessageListActivity) mContext,message);
 //                        RecyclerView rv = ((MessageListActivity) mContext).findViewById(R.id.reyclerview_message_list);
 //                        rv.smoothScrollToPosition(mMessageList.size() - 1);
-                        return true;
-                    case R.id.navigation_drawer_item2:
-                        //handle pin click
-                        handlePin(app,(MessageListActivity)mContext,message);
-                        return true;
-                    case R.id.navigation_drawer_item3:
-                        //handle copy click
-                        ClipboardManager clipboard = getSystemService(Objects.requireNonNull(mContext), ClipboardManager.class);
-                        ClipData clip = ClipData.newPlainText("label", messageText.getText().toString());
-                        Objects.requireNonNull(clipboard).setPrimaryClip(clip);
-                        Snackbar sb = Snackbar.make(rv, R.string.copied, Snackbar.LENGTH_SHORT).setAnchorView(((MessageListActivity) mContext).findViewById(R.id.layout_chatbox));
-                        sb.show();
-                        return true;
-                    default:
-                        return false;
+                    return true;
+                } else if(item.getItemId() == R.id.navigation_drawer_item2){
+                    //handle pin click
+                    handlePin(app,(MessageListActivity)mContext,message);
+                    return true;
+                } else if(item.getItemId() == R.id.navigation_drawer_item3){
+                    //handle copy click
+                    ClipboardManager clipboard = getSystemService(Objects.requireNonNull(mContext), ClipboardManager.class);
+                    ClipData clip = ClipData.newPlainText("label", messageText.getText().toString());
+                    Objects.requireNonNull(clipboard).setPrimaryClip(clip);
+                    @SuppressLint("ShowToast") Snackbar sb = Snackbar.make(rv, R.string.copied, Snackbar.LENGTH_SHORT).setAnchorView(((MessageListActivity) mContext).findViewById(R.id.layout_chatbox));
+                    sb.show();
+                    return true;
                 }
+                return false;
             });
             //displaying the popup
             popup.show();
@@ -669,12 +667,12 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         if (message.isPinned()) {
                             DbHelper.unPinMessage(message, app);
                             message.setPinned(false);
-                            Snackbar sb = Snackbar.make(v, R.string.unpinned_message, Snackbar.LENGTH_SHORT).setAnchorView(v.findViewById(R.id.layout_chatbox));
+                            @SuppressLint("ShowToast") Snackbar sb = Snackbar.make(v, R.string.unpinned_message, Snackbar.LENGTH_SHORT).setAnchorView(v.findViewById(R.id.layout_chatbox));
                             sb.show();
                         } else {
                             DbHelper.pinMessage(message, app);
                             message.setPinned(true);
-                            Snackbar sb = Snackbar.make(v, R.string.pinned_message, Snackbar.LENGTH_SHORT).setAnchorView(v.findViewById(R.id.layout_chatbox));
+                            @SuppressLint("ShowToast") Snackbar sb = Snackbar.make(v, R.string.pinned_message, Snackbar.LENGTH_SHORT).setAnchorView(v.findViewById(R.id.layout_chatbox));
                             sb.show();
                         }
                     } catch (Exception e) {

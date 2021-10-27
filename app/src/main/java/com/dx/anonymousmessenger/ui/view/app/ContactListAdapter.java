@@ -241,16 +241,14 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             popup.inflate(R.menu.contact_menu);
 
             popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.profile_contact:
-                        try{
-                            Intent intent = new Intent(itemView.getContext(), ContactProfileActivity.class);
-                            intent.putExtra("address",address.substring(0,10));
-                            itemView.getContext().startActivity(intent);
-                        }catch (Exception ignored) {}
-                        break;
-                    case R.id.delete_contact:
-                        new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
+                if(item.getItemId() == R.id.profile_contact){
+                    try{
+                        Intent intent = new Intent(itemView.getContext(), ContactProfileActivity.class);
+                        intent.putExtra("address",address.substring(0,10));
+                        itemView.getContext().startActivity(intent);
+                    }catch (Exception ignored) {}
+                }else if(item.getItemId() == R.id.delete_contact){
+                    new AlertDialog.Builder(itemView.getContext(), R.style.AppAlertDialog)
                             .setTitle(R.string.delete_contact_question)
                             .setMessage(R.string.delete_contact_details)
                             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -266,7 +264,6 @@ public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
 
                             }).show();
-                        break;
                 }
                 return false;
             });

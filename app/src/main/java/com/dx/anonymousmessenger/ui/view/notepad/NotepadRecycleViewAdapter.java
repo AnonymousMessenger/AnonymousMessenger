@@ -55,38 +55,34 @@ public class NotepadRecycleViewAdapter extends RecyclerView.Adapter<NotepadRecyc
             PopupMenu popup = new PopupMenu(v.getContext(), holder.itemView);
             popup.inflate(R.menu.note_menu);
             popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.delete_note:
-                        new AlertDialog.Builder(holder.itemView.getContext(), R.style.AppAlertDialog)
-                                .setTitle(R.string.delete_note_question)
-                                .setMessage(R.string.delete_note_details)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                                    try {
-                                        //delete
-                                        new Thread(()->{
-                                            DbHelper.deleteNote(createdAt,(DxApplication)((NotepadActivity)context).getApplication());
-                                            new Handler(Looper.getMainLooper()).post(()->{
-                                                list.remove(holder.getAbsoluteAdapterPosition());
-                                                notifyItemRemoved(holder.getAbsoluteAdapterPosition());
-                                            });
-                                        }).start();
-                                    } catch (Exception ignored) {
-                                    }
-                                })
-                                .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
-
-                                }).show();
-                        break;
-                    case R.id.copy:
-                        try{
-                            //copy
-                            ClipboardManager clipboard = getSystemService(Objects.requireNonNull(holder.itemView.getContext()), ClipboardManager.class);
-                            ClipData clip = ClipData.newPlainText("label", holder.note.getText().toString());
-                            Objects.requireNonNull(clipboard).setPrimaryClip(clip);
-                            Snackbar.make(v, R.string.copied, Snackbar.LENGTH_SHORT).setAnchorView(((NotepadActivity)context).findViewById(R.id.layout_chatbox)).show();
-                        }catch (Exception ignored) {}
-                        break;
+                if(item.getItemId() == R.id.delete_note){
+                    new AlertDialog.Builder(holder.itemView.getContext(), R.style.AppAlertDialog)
+                            .setTitle(R.string.delete_note_question)
+                            .setMessage(R.string.delete_note_details)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                                try {
+                                    //delete
+                                    new Thread(()->{
+                                        DbHelper.deleteNote(createdAt,(DxApplication)((NotepadActivity)context).getApplication());
+                                        new Handler(Looper.getMainLooper()).post(()->{
+                                            list.remove(holder.getAbsoluteAdapterPosition());
+                                            notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                                        });
+                                    }).start();
+                                } catch (Exception ignored) {
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
+                            }).show();
+                } else if(item.getItemId() == R.id.copy){
+                    try{
+                        //copy
+                        ClipboardManager clipboard = getSystemService(Objects.requireNonNull(holder.itemView.getContext()), ClipboardManager.class);
+                        ClipData clip = ClipData.newPlainText("label", holder.note.getText().toString());
+                        Objects.requireNonNull(clipboard).setPrimaryClip(clip);
+                        Snackbar.make(v, R.string.copied, Snackbar.LENGTH_SHORT).setAnchorView(((NotepadActivity)context).findViewById(R.id.layout_chatbox)).show();
+                    }catch (Exception ignored) {}
                 }
                 return false;
             });

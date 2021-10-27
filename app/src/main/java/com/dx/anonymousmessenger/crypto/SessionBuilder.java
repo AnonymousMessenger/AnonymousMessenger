@@ -45,7 +45,7 @@ public class SessionBuilder {
      *
      * @param sessionStore The {@link org.whispersystems.libsignal.state.SessionStore} to store the constructed session in.
      * @param preKeyStore The {@link  org.whispersystems.libsignal.state.PreKeyStore} where the client's local {@link org.whispersystems.libsignal.state.PreKeyRecord}s are stored.
-     * @param signedPreKeyStore
+     * @param signedPreKeyStore The {@link org.whispersystems.libsignal.state.SignedPreKeyStore} containing the client's Pre Key store that is signed.
      * @param identityKeyStore The {@link org.whispersystems.libsignal.state.IdentityKeyStore} containing the client's identity key information.
      * @param remoteAddress The address of the remote user to build a session with.
      */

@@ -140,6 +140,7 @@ public class DxApplication extends Application {
         return isAcceptingUnknownContactsEnabled;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isAcceptingCallsAllowed() {
         return isAcceptingCallsAllowed;
     }
@@ -599,7 +600,7 @@ public class DxApplication extends Application {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
         ComponentName componentName = new ComponentName(packageName,
-                alias);
+                Objects.requireNonNull(alias));
         resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
@@ -651,7 +652,7 @@ public class DxApplication extends Application {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
         ComponentName componentName = new ComponentName(packageName,
-                alias);
+                Objects.requireNonNull(alias));
         resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
@@ -730,7 +731,7 @@ public class DxApplication extends Application {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
         ComponentName componentName = new ComponentName(packageName,
-                alias);
+                Objects.requireNonNull(alias));
         resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);

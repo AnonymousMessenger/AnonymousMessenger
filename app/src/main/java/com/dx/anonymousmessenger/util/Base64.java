@@ -138,6 +138,7 @@ import java.nio.charset.StandardCharsets;
  * @author rob@iharder.net
  * @version 2.3.3
  */
+@SuppressWarnings("ALL")
 public class Base64
 {
 

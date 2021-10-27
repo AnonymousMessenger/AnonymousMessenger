@@ -239,6 +239,7 @@ public class ServerSocketViaTor {
                     try{
                         if(sockets.get() >= ALLOWED_CONCURRENT_CONNECTIONS){
                             Log.e("TOO MANY SOCKETS","open sockets: "+sockets);
+                            //noinspection BusyWait
                             Thread.sleep(200);
                             continue;
                         }

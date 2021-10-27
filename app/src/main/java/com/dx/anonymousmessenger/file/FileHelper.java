@@ -176,43 +176,36 @@ public class FileHelper {
                 file.delete();
             }
             file.createNewFile();
-            FileInputStream fis = new FileInputStream(f);
-            FileOutputStream out = new FileOutputStream(file);
             Cipher   cipher     = Cipher.getInstance("AES/GCM/NoPadding");
-            try {
+            try (FileInputStream fis = new FileInputStream(f); FileOutputStream out = new FileOutputStream(file)) {
                 progressListener.onProgress(0);
                 int done = 0;
-                while(true){
+                while (true) {
                     byte[] iv = new byte[IV_LENGTH];
-                    fis.read(iv,0,IV_LENGTH);
+                    fis.read(iv, 0, IV_LENGTH);
                     cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
                     byte[] chunkSize = new byte[4];
-                    fis.read(chunkSize,0,chunkSize.length);
+                    fis.read(chunkSize, 0, chunkSize.length);
                     int casted = ByteBuffer.wrap(chunkSize).order(ByteOrder.LITTLE_ENDIAN).getInt();
-                    if(casted==0){
+                    if (casted == 0) {
                         break;
                     }
                     byte[] buf = new byte[casted];
                     int read;
-                    if(f.length()-done >= buf.length){
-                        read = fis.read(buf,0,buf.length);
-                    }else{
+                    if (f.length() - done >= buf.length) {
+                        read = fis.read(buf, 0, buf.length);
+                    } else {
                         read = fis.read(buf);
                     }
-                    if(read==-1){
+                    if (read == -1) {
                         break;
                     }
-                    out.write(cipher.doFinal(buf,0,read));
+                    out.write(cipher.doFinal(buf, 0, read));
                     out.flush();
-                    done=done+read;
-                    progressListener.onProgress(((int) (((double) done/(double) f.length())*100.0)));
+                    done = done + read;
+                    progressListener.onProgress(((int) (((double) done / (double) f.length()) * 100.0)));
                 }
                 progressListener.onProgress(100);
-            } finally {
-                try{
-                    out.close();
-                    fis.close();
-                }catch (Exception ignored) {}
             }
 
             String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(suffix.replace(".",""));
@@ -247,55 +240,48 @@ public class FileHelper {
             cleanDir(Objects.requireNonNull(app.getExternalCacheDir()));
             cleanDir(Objects.requireNonNull(app.getCacheDir()));
             File tmp = File.createTempFile(filename.replace(suffix,""),suffix,app.getExternalCacheDir());
-            FileInputStream fis = new FileInputStream(f);
-            FileOutputStream out = new FileOutputStream(tmp);
             Cipher   cipher     = Cipher.getInstance("AES/GCM/NoPadding");
-            try {
+            try (FileInputStream fis = new FileInputStream(f); FileOutputStream out = new FileOutputStream(tmp)) {
                 progressListener.onProgress(0);
                 int done = 0;
-                while(true){
+                while (true) {
                     byte[] iv = new byte[IV_LENGTH];
-                    fis.read(iv,0,IV_LENGTH);
+                    fis.read(iv, 0, IV_LENGTH);
 //                    Log.d("ANONYMOUSMESSENGER","IV: "+ Arrays.toString(iv));
                     cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(sha1b, "AES"), new GCMParameterSpec(128, iv));
                     byte[] chunkSize = new byte[4];
-                    fis.read(chunkSize,0,chunkSize.length);
+                    fis.read(chunkSize, 0, chunkSize.length);
                     int casted = ByteBuffer.wrap(chunkSize).order(ByteOrder.LITTLE_ENDIAN).getInt();
 //                    Log.d("ANONYMOUSMESSENGER","length of next chapter: "+casted);
-                    if(casted==0){
+                    if (casted == 0) {
                         break;
                     }
                     byte[] buf = new byte[casted];
                     int read;
 //                    Log.d("ANONYMOUSMESSENGER","avail: "+fis.available());
-                    if(f.length()-done >= buf.length){
+                    if (f.length() - done >= buf.length) {
 //                        Log.d("ANONYMOUSMESSENGER","a lot more is left");
 //                        while(fis.available()<buf.length){
 //                            Log.d("ANONYMOUSMESSENGER","waiting for availability");
 //                        }
-                        read = fis.read(buf,0,buf.length);
-                    }else{
+                        read = fis.read(buf, 0, buf.length);
+                    } else {
 //                        Log.d("ANONYMOUSMESSENGER","not much is left");
                         read = fis.read(buf);
                     }
-                    if(read==-1){
+                    if (read == -1) {
 //                        Log.d("ANONYMOUSMESSENGER","nothing is left");
                         break;
                     }
 //                    Log.d("ANONYMOUSMESSENGER","read: "+read);
-                    out.write(cipher.doFinal(buf,0,read));
+                    out.write(cipher.doFinal(buf, 0, read));
                     out.flush();
-                    done=done+read;
+                    done = done + read;
 //                    Log.d("ANONYMOUSMESSENGER","done: "+done);
 //                    Log.d("ANONYMOUSMESSENGER","left: "+(f.length()-done));
-                    progressListener.onProgress(((int) (((double) done/(double) f.length())*100.0)));
+                    progressListener.onProgress(((int) (((double) done / (double) f.length()) * 100.0)));
                 }
                 progressListener.onProgress(100);
-            } finally {
-                try{
-                    out.close();
-                    fis.close();
-                }catch (Exception ignored) {}
             }
             tmp.deleteOnExit();
             return tmp;

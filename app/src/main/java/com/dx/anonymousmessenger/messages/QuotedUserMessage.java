@@ -13,6 +13,7 @@ import org.whispersystems.libsignal.SignalProtocolAddress;
 
 import java.util.Date;
 
+@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class QuotedUserMessage extends UserMessage {
 
     private String quotedMessage;

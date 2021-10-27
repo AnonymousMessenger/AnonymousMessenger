@@ -37,6 +37,7 @@ public class MessageSender {
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 while (app.sendingTo.contains(to)){
                     try{
+                        //noinspection BusyWait
                         Thread.sleep(200);
                     }catch (Exception ignored){}
                 }
@@ -72,6 +73,7 @@ public class MessageSender {
         try {
             while (app.sendingTo.contains(to)){
                 try{
+                    //noinspection BusyWait
                     Thread.sleep(200);
                 }catch (Exception ignored){}
             }
@@ -125,6 +127,7 @@ public class MessageSender {
 
                 while (app.isSendingFile()){
                     try{
+                        //noinspection BusyWait
                         Thread.sleep(200);
                     }catch (Exception ignored){}
                 }
@@ -172,6 +175,7 @@ public class MessageSender {
 
                 while (app.isSendingFile()){
                     try{
+                        //noinspection BusyWait
                         Thread.sleep(200);
                     }catch (Exception ignored){}
                 }
@@ -222,6 +226,7 @@ public class MessageSender {
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 while (app.sendingTo.contains(to)){
                     try{
+                        //noinspection BusyWait
                         Thread.sleep(200);
                     }catch (Exception ignored){}
                 }
@@ -271,6 +276,7 @@ public class MessageSender {
 
                 while (app.sendingTo.contains(to)){
                     try{
+                        //noinspection BusyWait
                         Thread.sleep(200);
                     }catch (Exception ignored){}
                 }
@@ -339,6 +345,7 @@ public class MessageSender {
         try {
             while (app.sendingTo.contains(to)){
                 try{
+                    //noinspection BusyWait
                     Thread.sleep(200);
                 }catch (Exception ignored){}
             }

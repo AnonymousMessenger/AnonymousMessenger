@@ -51,9 +51,8 @@ public class BridgeRecyclerViewAdapter extends RecyclerView.Adapter<BridgeRecycl
             PopupMenu popup = new PopupMenu(v.getContext(), holder.itemView);
             popup.inflate(R.menu.bridge_menu);
             popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.delete_bridge:
-                        new AlertDialog.Builder(holder.itemView.getContext(), R.style.AppAlertDialog)
+                if(item.getItemId() == R.id.delete_bridge){
+                    new AlertDialog.Builder(holder.itemView.getContext(), R.style.AppAlertDialog)
                             .setTitle(R.string.delete_bridge_question)
                             .setMessage(R.string.delete_bridge_details)
                             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -75,18 +74,15 @@ public class BridgeRecyclerViewAdapter extends RecyclerView.Adapter<BridgeRecycl
                                 }
                             })
                             .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
-
                             }).show();
-                        break;
-                    case R.id.copy:
-                        try{
-                            //copy
-                            ClipboardManager clipboard = getSystemService(Objects.requireNonNull(holder.itemView.getContext()), ClipboardManager.class);
-                            ClipData clip = ClipData.newPlainText("label", holder.bridge.getText().toString());
-                            Objects.requireNonNull(clipboard).setPrimaryClip(clip);
-                            Snackbar.make(v, R.string.copied, Snackbar.LENGTH_SHORT).show();
-                        }catch (Exception ignored) {}
-                        break;
+                }else if(item.getItemId() == R.id.copy){
+                    try{
+                        //copy
+                        ClipboardManager clipboard = getSystemService(Objects.requireNonNull(holder.itemView.getContext()), ClipboardManager.class);
+                        ClipData clip = ClipData.newPlainText("label", holder.bridge.getText().toString());
+                        Objects.requireNonNull(clipboard).setPrimaryClip(clip);
+                        Snackbar.make(v, R.string.copied, Snackbar.LENGTH_SHORT).show();
+                    }catch (Exception ignored) {}
                 }
                 return false;
             });

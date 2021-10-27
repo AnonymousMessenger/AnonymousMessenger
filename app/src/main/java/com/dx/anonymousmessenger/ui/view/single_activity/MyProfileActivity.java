@@ -159,45 +159,41 @@ public class MyProfileActivity extends DxActivity {
             PopupMenu popup = new PopupMenu(v.getContext(), v);
             popup.inflate(R.menu.prof_pic_menu);
             popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.remove_pic:
-                        new AlertDialog.Builder(v.getContext(), R.style.AppAlertDialog)
-                                .setTitle(R.string.remove_profile_image)
-                                .setMessage(R.string.remove_profile_image_details)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                                        //delete
-                                        new Thread(()->{
-                                            try{
-                                                // delete pic from db/file
-                                                String path = ((DxApplication)getApplication()).getAccount().getProfileImagePath();
-                                                if(path!=null && !path.equals("")){
-                                                    FileHelper.deleteFile(path,((DxApplication)getApplication()));
-                                                }
-                                                ((DxApplication)getApplication()).getAccount().changeProfileImage("",((DxApplication)getApplication()));
-                                                new Handler(Looper.getMainLooper()).post(()->{
-                                                    //remove pic from imageview
-                                                    Snackbar.make(v, R.string.profile_image_removed, Snackbar.LENGTH_SHORT).show();
-                                                });
-                                            }catch (Exception ignored){}
-                                        }).start();
-                                })
-                                .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
-
-                                }).show();
-                        break;
-                    case R.id.change_pic:
-                        try{
-                            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, STORAGE_CODE);
-                                }
-                                break;
+                if(item.getItemId() == R.id.remove_pic){
+                    new AlertDialog.Builder(v.getContext(), R.style.AppAlertDialog)
+                            .setTitle(R.string.remove_profile_image)
+                            .setMessage(R.string.remove_profile_image_details)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                                //delete
+                                new Thread(()->{
+                                    try{
+                                        // delete pic from db/file
+                                        String path = ((DxApplication)getApplication()).getAccount().getProfileImagePath();
+                                        if(path!=null && !path.equals("")){
+                                            FileHelper.deleteFile(path,((DxApplication)getApplication()));
+                                        }
+                                        ((DxApplication)getApplication()).getAccount().changeProfileImage("",((DxApplication)getApplication()));
+                                        new Handler(Looper.getMainLooper()).post(()->{
+                                            //remove pic from imageview
+                                            Snackbar.make(v, R.string.profile_image_removed, Snackbar.LENGTH_SHORT).show();
+                                        });
+                                    }catch (Exception ignored){}
+                                }).start();
+                            })
+                            .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
+                            }).show();
+                } else if(item.getItemId() == R.id.change_pic){
+                    try{
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, STORAGE_CODE);
                             }
-                            mGetContent.launch("image/*");
+                            return false;
+                        }
+                        mGetContent.launch("image/*");
 //                            Snackbar.make(v, R.string.profile_image_changed, Snackbar.LENGTH_SHORT).show();
-                        }catch (Exception ignored) {}
-                        break;
+                    }catch (Exception ignored) {}
                 }
                 return false;
             });

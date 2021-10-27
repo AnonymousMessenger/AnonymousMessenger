@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@SuppressWarnings("SameParameterValue")
 public class DbHelper {
     public static final int LOG_LIMIT = 150;
 
@@ -55,12 +56,13 @@ public class DbHelper {
             return null;
         }
         SQLiteDatabase database = app.getDb();
-        while (database.isDbLockedByOtherThreads()){
+        if (database.isDbLockedByOtherThreads()){
             try {
                 Thread.sleep(150);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return getFullAddress(partialAddress,app);
         }
         partialAddress+="%";
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
@@ -77,13 +79,14 @@ public class DbHelper {
             return null;
         }
         SQLiteDatabase database = app.getDb();
-        while (database.isDbLockedByOtherThreads()){
+        if (database.isDbLockedByOtherThreads()){
 //            throw new IOException("DB locked, try again in a few mills");
             try {
                 Thread.sleep(150);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return getContactsList(app);
         }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         Cursor cr = database.rawQuery("SELECT * FROM contact ORDER BY unread DESC;",null);
@@ -165,14 +168,22 @@ public class DbHelper {
     }
 
     public static boolean saveContact(String address, DxApplication app) {
-        while (app.getAccount()==null){
+        if (app.getAccount()==null){
+            return false;
+        }
+
+        SQLiteDatabase database = app.getDb();
+
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
             try {
                 Thread.sleep(150);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+            return saveContact(address,app);
         }
-        SQLiteDatabase database = app.getDb();
+
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -191,14 +202,20 @@ public class DbHelper {
     }
 
     public static boolean saveContact(String address, String nickname, DxApplication app) {
-        while (app.getAccount()==null){
+        if (app.getAccount()==null){
+            return false;
+        }
+
+        SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
             try {
                 Thread.sleep(150);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+            return saveContact(address,nickname,app);
         }
-        SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -215,15 +232,21 @@ public class DbHelper {
     }
 
     public static void deleteContact(String address, DxApplication app) {
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return;
         }
         clearConversation(address,app);
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            deleteContact(address,app);
+            return;
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         database.execSQL("DELETE FROM contact WHERE address=?",new Object[]{address});
         app.getEntity().getStore().deleteSession(new SignalProtocolAddress(address,1));
@@ -231,14 +254,20 @@ public class DbHelper {
     }
 
     public static void setContactNickname(String nickname, String address, DxApplication app){
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return;
         }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            setContactNickname(nickname,address,app);
+            return;
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -253,14 +282,19 @@ public class DbHelper {
     }
 
     public static String getContactNickname(String address, DxApplication app) {
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return null;
         }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return getContactNickname(address,app);
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -277,14 +311,20 @@ public class DbHelper {
     }
 
     public static void setContactProfileImageHash(String profile_image_hash, String address, DxApplication app){
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return;
         }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            setContactProfileImageHash(profile_image_hash,address,app);
+            return;
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -299,14 +339,19 @@ public class DbHelper {
     }
 
     public static String getContactProfileImageHash(String address, DxApplication app) {
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return null;
         }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return getContactProfileImageHash(address,app);
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -323,14 +368,20 @@ public class DbHelper {
     }
 
     public static void setContactProfileImagePath(String profile_image_path, String address, DxApplication app){
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return;
         }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            setContactProfileImagePath(profile_image_path,address,app);
+            return;
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -345,14 +396,19 @@ public class DbHelper {
     }
 
     public static String getContactProfileImagePath(String address, DxApplication app) {
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return null;
         }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return getContactProfileImagePath(address,app);
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -369,14 +425,20 @@ public class DbHelper {
     }
 
     public static void setContactSentProfileImagePath(String sent_profile_image_path, String address, DxApplication app){
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return;
         }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            setContactSentProfileImagePath(sent_profile_image_path,address,app);
+            return;
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -391,14 +453,19 @@ public class DbHelper {
     }
 
     public static String getContactSentProfileImagePath(String address, DxApplication app) {
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return null;
         }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return getContactSentProfileImagePath(address,app);
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -415,15 +482,20 @@ public class DbHelper {
     }
 
     public static void setContactUnread(String address, DxApplication app) {
-
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return;
         }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            setContactUnread(address,app);
+            return;
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery(CONTACT_SQL_UPDATE_UNREAD, getContactSqlValuesUnread(address));
         if(c.moveToFirst())
@@ -439,15 +511,19 @@ public class DbHelper {
     }
 
     public static boolean setContactRead(String address, DxApplication app) {
-
-        while (app.getAccount()==null){
-            try {
-                Thread.sleep(150);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (app.getAccount()==null){
+            return false;
         }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return setContactRead(address,app);
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -479,7 +555,19 @@ public class DbHelper {
     }
 
     public static boolean contactExists(String address, DxApplication app){
+        if (app.getAccount()==null){
+            return false;
+        }
         SQLiteDatabase database = app.getDb();
+        if (database.isDbLockedByOtherThreads()){
+//            throw new IOException("DB locked, try again in a few mills");
+            try {
+                Thread.sleep(150);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return contactExists(address,app);
+        }
         database.execSQL(DbHelper.CONTACT_TABLE_SQL_CREATE);
         android.database.Cursor c=database.rawQuery("SELECT * FROM contact WHERE address=?", new Object[]{address});
         if(c.moveToFirst())
@@ -913,13 +1001,14 @@ public class DbHelper {
         return new Object[]{from,to,number,msg,sender,createdAt,conversation,received,quote,quoteSender,false,null,null,null};
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static Object[] getFullMessageSqlValues(String from, String to, String number, String msg, String sender, long createdAt, String conversation, boolean received, String quote, String quoteSender, String filename, String path, String type){
         return new Object[]{from,to,number,msg,sender,createdAt,conversation,received,quote,quoteSender,false,filename,path,type};
     }
 
-    private static Object[] getMediaMessageSqlValues(String from, String to, String number, String sender, long createdAt, String conversation, boolean received, String filename, String path, String type){
-        return new Object[]{from,to,number,"",sender,createdAt,conversation,received,"","",false,filename,path,type};
-    }
+//    private static Object[] getMediaMessageSqlValues(String from, String to, String number, String sender, long createdAt, String conversation, boolean received, String filename, String path, String type){
+//        return new Object[]{from,to,number,"",sender,createdAt,conversation,received,"","",false,filename,path,type};
+//    }
 
     public static List<QuotedUserMessage> getMessageList(DxApplication app, String conversation){
         SQLiteDatabase database = app.getDb();
@@ -1315,7 +1404,7 @@ public class DbHelper {
         return result.toString();
     }
 
-    private static int getNumberOfRows(String tableName, SQLiteDatabase database) {
+    private static int getNumberOfRows(@SuppressWarnings("SameParameterValue") String tableName, SQLiteDatabase database) {
         Cursor cursor = database.query(tableName, null, null, null, null, null, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {

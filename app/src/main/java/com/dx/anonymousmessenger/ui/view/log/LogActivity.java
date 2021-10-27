@@ -21,6 +21,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("BusyWait")
 public class LogActivity extends DxActivity {
     private Thread logChecker = null;
     List<Object[]> list = new ArrayList<>();
