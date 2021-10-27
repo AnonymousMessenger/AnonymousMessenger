@@ -54,8 +54,8 @@ public class OnionProxyContext {
 
     //in case the apk has another ABI also compatible with the device
     for (File file : Objects.requireNonNull(new File(ctx.getApplicationInfo().nativeLibraryDir).listFiles())) {
-      System.out.println(file.getName());
-      Log.d("ANONYMOUSMESSENGER",file.getName());
+//      System.out.println(file.getName());
+//      Log.d("ANONYMOUSMESSENGER",file.getName());
       if (file.getName().startsWith("libtor")) {
         return file.getName();
       }
