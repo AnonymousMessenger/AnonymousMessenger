@@ -952,6 +952,9 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
     @Override
     public boolean onSupportNavigateUp(){
+        if(mMessageRecycler!=null){
+            mMessageRecycler.suppressLayout(true);
+        }
         stopCheckingMessages();
         if(mMessageAdapter!=null && mMessageAdapter.ap!=null){
             mMessageAdapter.ap.stop();
