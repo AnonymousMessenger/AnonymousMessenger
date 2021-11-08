@@ -423,7 +423,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 //                    frameOnline.setVisibility(View.GONE);
 //                }catch (Exception ignored) {}
 //            });
-            pinging =false;
+            pinging = false;
         }).start();
     }
 
@@ -537,8 +537,9 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                         mMessageAdapter.notifyDataSetChanged();
                         setTitle(nickname);
 //                        mMessageRecycler.scheduleLayoutAnimation();
-                        if(scrollDown){
-                            if(!messageList.isEmpty()){
+                        if(!messageList.isEmpty()){
+                            findViewById(R.id.no_messages).setVisibility(View.GONE);
+                            if(scrollDown){
                                 mMessageRecycler.scrollToPosition(messageList.size() - 1);
                                 scrollDownFab.setVisibility(View.GONE);
                                 ((DxApplication)getApplication()).clearMessageNotification();
@@ -551,6 +552,8 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                                     mMessageRecycler.scheduleLayoutAnimation();
                                 }
                             }
+                        }else{
+                            findViewById(R.id.no_messages).setVisibility(View.VISIBLE);
                         }
                     }catch (Exception ignored) {}
                 });

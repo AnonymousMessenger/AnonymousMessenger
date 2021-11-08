@@ -57,7 +57,6 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -252,7 +251,7 @@ public class AppFragment extends Fragment {
                         .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(()->{
                             try {
                                 ((DxApplication) requireActivity().getApplication()).getAndroidTorRelay().clearTorCache();
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }).start())

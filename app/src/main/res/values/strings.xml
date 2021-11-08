@@ -369,4 +369,6 @@
     <string name="invalid_bridge">Invalid Bridge</string>
     <string name="bridge_added">Bridge Added</string>
     <string name="nickname_help_explain">Click to get info about nickname use</string>
+    <string name="no_recent_messages">No Recent Messages!</string>
+    <string name="unpinned_messages_get_deleted">Did you know unpinned messages get deleted every 24 hours?</string>
 </resources>
