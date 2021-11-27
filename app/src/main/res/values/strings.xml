@@ -358,7 +358,7 @@
     <string name="action_scroll_up">Scroll up</string>
     <string name="action_scroll_down">Scroll down</string>
     <string name="action_clear_tor_cache">Clear Tor Cache</string>
-    <string name="clear_tor_cache_explain">This can be useful if cached descriptors are outdated, but is not adviced to do it too much due to performance and anonymity concerns.</string>
+    <string name="clear_tor_cache_explain">This can be useful if cached descriptors are outdated, but is not advised to do it too much due to performance and anonymity concerns.</string>
     <string name="disappearing_messages_default">Delete Unpinned Messages After 24hrs</string>
     <string name="tor_exited">Tor exited</string>
     <string name="action_change_app_name">Change App Name</string>
