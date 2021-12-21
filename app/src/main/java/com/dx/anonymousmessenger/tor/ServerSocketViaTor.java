@@ -344,10 +344,13 @@ public class ServerSocketViaTor {
             sock.close();
             sockets.getAndDecrement();
             if(Utils.isValidAddress(msg.replace("hello-","")) && DbHelper.contactExists(msg.replace("hello-",""),app)){
+                DbHelper.saveLog("PING FROM: "+msg.replace("hello-",""),new Date().getTime(),"NOTICE",app);
                 app.addToOnlineList(msg.replace("hello-",""));
                 app.queueUnsentMessages(msg.replace("hello-",""));
             }
-            DbHelper.saveLog("PING FROM: "+msg.replace("hello-",""),new Date().getTime(),"NOTICE",app);
+            else{
+                DbHelper.saveLog("PING FROM UNKNOWN CONTACT: "+msg.replace("hello-",""),new Date().getTime(),"SEVERE",app);
+            }
         }
 
         private void handleFile(DataOutputStream outputStream, DataInputStream in, Socket sock, AtomicInteger sockets){
@@ -404,7 +407,7 @@ public class ServerSocketViaTor {
                 if(qum==null){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
-                    DbHelper.saveLog("REFUSED FILE WITH BAD MESSAGE FROM: "+address+" SIZE: "+length,new Date().getTime(),"NOTICE",app);
+                    DbHelper.saveLog("REFUSED FILE WITH BAD MESSAGE FROM: "+address+" SIZE: "+length,new Date().getTime(),"SEVERE",app);
                     return;
                 }
 
@@ -509,14 +512,14 @@ public class ServerSocketViaTor {
                 if(!Utils.isValidAddress(msg)){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
-                    DbHelper.saveLog("REFUSED MEDIA FROM: "+msg+" REASON: BAD ADDRESS",new Date().getTime(),"NOTICE",app);
+                    DbHelper.saveLog("REFUSED MEDIA FROM: "+msg+" REASON: BAD ADDRESS",new Date().getTime(),"SEVERE",app);
                     return;
                 }
                 address = msg.trim();
                 if(!DbHelper.contactExists(msg.trim(),app)){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
-                    DbHelper.saveLog("REFUSED MEDIA FROM: "+address+" REASON: UNKNOWN CONTACT",new Date().getTime(),"NOTICE",app);
+                    DbHelper.saveLog("REFUSED MEDIA FROM: "+address+" REASON: UNKNOWN CONTACT",new Date().getTime(),"SEVERE",app);
                     return;
                 }
                 outputStream.writeUTF("ok");
@@ -561,7 +564,11 @@ public class ServerSocketViaTor {
                     total_read += read;
                     cache.write(buffer,0,buffer.length);
                 }
-                in.close();
+                try{
+                    sock.close();
+                }catch (Exception ignored){
+
+                }
                 sockets.getAndDecrement();
                 if(isProfileImage){
                     MessageReceiver.mediaMessageReceiver(cache.toByteArray(),recMsg,app,true);
