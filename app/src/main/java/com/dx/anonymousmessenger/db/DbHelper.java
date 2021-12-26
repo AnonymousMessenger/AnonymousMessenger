@@ -1014,7 +1014,7 @@ public class DbHelper {
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getMessageTableSqlCreate());
         try{
-            database.query("SELECT "+DbHelper.getMessageColumns().trim().substring(1,getMessageColumns().length()-1)+" FROM message");
+            database.query("SELECT "+DbHelper.getMessageColumns().trim().substring(1,getMessageColumns().length()-1)+" FROM message LIMIT 1");
 //            database.query("SELECT "+DbHelper.getMessageColumns()+" FROM message");
         }catch (Exception e){
             Log.w("getMessageList", "updating DbSchema");
@@ -1056,6 +1056,41 @@ public class DbHelper {
         cr.close();
         setContactRead(conversation,database);
         return messages;
+    }
+
+    public static void deleteOldMessages(DxApplication app, String conversation){
+        SQLiteDatabase database = app.getDb();
+        database.execSQL(DbHelper.getMessageTableSqlCreate());
+        try{
+            database.query("SELECT "+DbHelper.getMessageColumns().trim().substring(1,getMessageColumns().length()-1)+" FROM message LIMIT 1");
+//            database.query("SELECT "+DbHelper.getMessageColumns()+" FROM message");
+        }catch (Exception e){
+            Log.w("getMessageList", "updating DbSchema");
+            e.printStackTrace();
+            updateDbSchema(database);
+        }
+        Cursor cr = database.rawQuery("SELECT * FROM message WHERE conversation=? AND pinned=0 AND created_at<?;",new Object[]{conversation,(new Date().getTime() - app.getTime2delete())});
+        if (cr.moveToFirst()) {
+            do {
+                QuotedUserMessage message = new QuotedUserMessage(cr.getString(9),
+                        cr.getString(8),
+                        cr.getString(0),
+                        cr.getString(3),
+                        cr.getString(4),
+                        cr.getLong(5),
+                        cr.getInt(7)>0,
+                        cr.getString(1),
+                        cr.getInt(10)>0,
+                        cr.getString(11),
+                        cr.getString(12),
+                        cr.getString(13));
+                deleteMessage(message, app);
+                Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("delete",message.getCreatedAt());
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
+            } while (cr.moveToNext());
+        }
+        cr.close();
     }
 
     public static List<QuotedUserMessage> getUndeliveredMessageList(DxApplication app, String conversation){

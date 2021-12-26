@@ -436,13 +436,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                 try{
                     //noinspection BusyWait
                     Thread.sleep(5000);
-                    DbHelper.getMessageList(((DxApplication) getApplication()) ,
-                            address);
-                    //mMessageAdapter.setMessageList(messageList);
-//                    if(messageList.size() != tmp.size()){
-//                        Log.d("ANONYMOUSMESSENGER","they'ren't equal");
-//                        updateUi(tmp);
-//                    }
+                    DbHelper.deleteOldMessages((DxApplication) getApplication(),address);
                 }catch (Exception ignored){break;}
             }
         });
