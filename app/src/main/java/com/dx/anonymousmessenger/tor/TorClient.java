@@ -74,12 +74,12 @@ public class TorClient {
     }
 
     public static boolean sendMedia(String onion, DxApplication app, String msg, byte[] media, boolean isProfileImage){
-        Socket socket;
+        Socket socket = null;
         try {
             socket = socks5SocketConnection(onion, 5780, "127.0.0.1", app.getTorSocket().getOnionProxyManager().getIPv4LocalHostSocksPort());
 
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-            DataInputStream in =new DataInputStream(socket.getInputStream());
+            DataInputStream in = new DataInputStream(socket.getInputStream());
             String msg2;
 
             if(isProfileImage){
@@ -88,42 +88,72 @@ public class TorClient {
                 outputStream.writeUTF("media");
             }
             outputStream.flush();
+            outputStream.writeUTF(app.getHostname());
+            outputStream.flush();
+            outputStream.writeUTF(msg);
+            outputStream.flush();
+            outputStream.writeInt(media.length);
+            outputStream.flush();
+
             msg2 = in.readUTF();
-            if(msg2.contains("ok")){
-                outputStream.writeUTF(app.getHostname());
-                outputStream.flush();
-                msg2 = in.readUTF();
-                if(msg2.contains("ok")){
-                    outputStream.writeUTF(msg);
-                    outputStream.flush();
-                    msg2 = in.readUTF();
-                    if(msg2.contains("ok")){
-                        outputStream.writeInt(media.length);
-                        outputStream.flush();
-                        msg2 = in.readUTF();
-                        if(msg2.contains("ok")){
-                            ByteArrayInputStream bais = new ByteArrayInputStream(media);
-                            byte[] buffer;
-                            while(bais.available()>0){
-                                //Log.d("ANONYMOUSMESSENGER","sending part");
-                                Log.d("ANONYMOUSMESSENGER", "sending part");
-                                if(bais.available()<1024){
-                                    buffer = new byte[bais.available()];
-                                }else{
-                                    buffer = new byte[1024];
-                                }
-                                bais.read(buffer,0,buffer.length);
-                                outputStream.write(buffer,0,buffer.length);
-                            }
-                            outputStream.flush();
-                            outputStream.close();
-                            return true;
-                        }
-                    }
+            if(!msg2.contains("ok")){
+                socket.close();
+                return false;
+            }
+            msg2 = in.readUTF();
+            if(!msg2.contains("ok")){
+                socket.close();
+                return false;
+            }
+            msg2 = in.readUTF();
+            if(!msg2.contains("ok")){
+                socket.close();
+                return false;
+            }
+            msg2 = in.readUTF();
+            if(!msg2.contains("ok")){
+                socket.close();
+                return false;
+            }
+
+            ByteArrayInputStream bais = new ByteArrayInputStream(media);
+            byte[] buffer;
+            while(true){
+                Log.d("ANONYMOUSMESSENGER", "sending part");
+                if(bais.available()<1024){
+                    buffer = new byte[bais.available()];
+                }else{
+                    buffer = new byte[1024];
+                }
+                int read = bais.read(buffer,0,buffer.length);
+                if(read<=0){
+                    break;
+                }
+                outputStream.write(buffer,0,buffer.length);
+            }
+            outputStream.flush();
+//            socket.setSoTimeout(1000);
+//            if(in.readByte()!=1){
+//                //return false
+//                try{
+//                    outputStream.close();
+//                    socket.close();
+//                }catch (Exception ignored){}
+//                return false;
+//            }
+            try{
+                outputStream.close();
+                socket.close();
+            }catch (Exception ignored){}
+            return true;
+        } catch (Exception e) {
+            if(socket!=null){
+                try {
+                    socket.close();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
                 }
             }
-            return false;
-        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -247,28 +277,47 @@ public class TorClient {
     }
 
     public static boolean test(DxApplication app){
-        Socket socket;
+        Socket socket = null;
         try {
             socket = socks5SocketConnection(app.getTestAddress(), 80, "127.0.0.1", app.getTorSocket().getOnionProxyManager().getIPv4LocalHostSocksPort());
             boolean b = socket.isConnected() && !socket.isClosed();
             socket.close();
             return b;
         }catch (Exception e){
+            try{
+                if (socket != null) {
+                    socket.close();
+                }
+            }catch (Exception ignored){}
             return false;
         }
     }
 
     public static boolean testAddress(DxApplication app, String address){
-        Socket socket;
+        Socket socket = null;
         try {
             socket = socks5SocketConnection(address, 5780, "127.0.0.1", app.getTorSocket().getOnionProxyManager().getIPv4LocalHostSocksPort());
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             outputStream.writeUTF("hello-"+app.getHostname());
             outputStream.flush();
+            try{
+                outputStream.close();
+                socket.close();
+            }catch (Exception ignored){}
             return true;
         }catch (EOFException e){
+            try{
+                if (socket != null) {
+                    socket.close();
+                }
+            }catch (Exception ignored){}
             return true;
         }catch (Exception e){
+            try{
+                if (socket != null) {
+                    socket.close();
+                }
+            }catch (Exception ignored){}
             return false;
         }
     }

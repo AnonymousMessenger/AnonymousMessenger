@@ -263,7 +263,7 @@ public class ServerSocketViaTor {
 
                                 String msg = in.readUTF();
 
-                                if(msg.contains("hello-")){
+                                if(msg.startsWith("hello-")){
                                     handleHello(msg,sock,sockets);
                                     return;
                                 }else if(msg.equals("call")){
@@ -291,10 +291,7 @@ public class ServerSocketViaTor {
                                     return;
                                 }
 
-                                //todo fix this vulnerability which allows attacker to send long utf to dos maybe
-                                //delayed due to breaking change
-                                final String rec = msg;
-                                new Thread(()-> MessageReceiver.messageReceiver(rec,app)).start();
+                                new Thread(()-> MessageReceiver.messageReceiver(msg,app)).start();
                                 outputStream.writeUTF("ack3");
                                 outputStream.flush();
                                 outputStream.close();
@@ -474,17 +471,22 @@ public class ServerSocketViaTor {
                     fos.flush();
                     done += chunkDone;
                 }
-                in.close();
-                fos.close();
-                sockets.getAndDecrement();
 
                 if(done<length){
                     //no bueno
                     refuseSocket(outputStream,sock,sockets);
                     FileHelper.deleteFile(eFilename,app);
-                    DbHelper.saveLog("OVERSIZED FILE FROM: "+address+" SIZE: "+length+" DONE: "+done,new Date().getTime(),"NOTICE",app);
+                    DbHelper.saveLog("UNDERSIZED FILE FROM: "+address+" SIZE: "+length+" DONE: "+done,new Date().getTime(),"NOTICE",app);
                     return;
                 }
+
+                try{
+                    outputStream.writeByte(1);
+                }catch (Exception ignored){}
+                try{
+                    sock.close();
+                }catch (Exception ignored){}
+                sockets.getAndDecrement();
 
                 DbHelper.saveMessage(qum,app,qum.getAddress(),true);
                 DbHelper.setContactNickname(qum.getSender(), qum.getAddress(), app);
@@ -565,10 +567,11 @@ public class ServerSocketViaTor {
                     cache.write(buffer,0,buffer.length);
                 }
                 try{
+                    outputStream.writeByte(1);
+                }catch (Exception ignored){}
+                try{
                     sock.close();
-                }catch (Exception ignored){
-
-                }
+                }catch (Exception ignored){}
                 sockets.getAndDecrement();
                 if(isProfileImage){
                     MessageReceiver.mediaMessageReceiver(cache.toByteArray(),recMsg,app,true);
@@ -579,6 +582,10 @@ public class ServerSocketViaTor {
                 }
 
             } catch (Exception e) {
+                try{
+                    sock.close();
+                }catch (Exception ignored){}
+                sockets.getAndDecrement();
                 Log.e("RECEIVING MEDIA MESSAGE","ERROR BELOW");
                 e.printStackTrace();
                 DbHelper.saveLog("ERROR WHILE RECEIVING MEDIA FROM: "+address+" ERROR: "+ Arrays.toString(e.getStackTrace()),new Date().getTime(),"NOTICE",app);

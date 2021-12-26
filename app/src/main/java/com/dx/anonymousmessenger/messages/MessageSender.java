@@ -242,10 +242,9 @@ public class MessageSender {
                 received = TorClient.sendMedia(to,app,aem.toJson().toString(), MessageEncryptor.encrypt(file,app.getEntity().getStore(),new SignalProtocolAddress(to,1)),false);
                 app.sendingTo.remove(to);
             }catch (Exception e){
-//                Toast.makeText(app,"Couldn't encrypt message",Toast.LENGTH_SHORT).show();
                 app.sendingTo.remove(to);
                 e.printStackTrace();
-                Log.e("MESSAGE SENDER","SENDING MESSAGE FAILED WITH ENCRYPTION");
+                Log.e("MESSAGE SENDER","SENDING MEDIA MESSAGE FAILED");
             }finally {
                 DbHelper.setMessageReceived(msg,app,to,received);
             }
