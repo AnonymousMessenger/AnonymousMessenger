@@ -1,5 +1,8 @@
 package com.dx.anonymousmessenger;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static com.dx.anonymousmessenger.messages.MessageSender.sendMediaMessageWithoutSaving;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Application;
@@ -52,9 +55,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static com.dx.anonymousmessenger.messages.MessageSender.sendMediaMessageWithoutSaving;
-
 public class DxApplication extends Application {
 
     private String hostname;
@@ -99,6 +99,9 @@ public class DxApplication extends Application {
     private boolean strictExclude;
     //the ddg site to check if we are online (can be overridden in the settings)
     private String testAddress = DEFAULT_SETTINGS[4].toString();
+
+    private final Object mainQueueLock = new Object();
+    private final Object peerQueueLock = new Object();
 
     public String getTestAddress() {
         return testAddress;
@@ -216,36 +219,52 @@ public class DxApplication extends Application {
         messageQueue.clear();
     }
 
-    public synchronized void queueAllUnsentMessages(){
+    public synchronized void sendQueuedMessages(List<QuotedUserMessage> messages){
+        for (QuotedUserMessage msg:messages){
+//            Log.d("ANONYMOUSMESSENGER","sending a message");
+            if(msg.getPath()!=null && !msg.getPath().equals("")){
+                if(msg.getType().equals("file")){
+                    MessageSender.sendQueuedFile(msg,this,msg.getTo());
+                    continue;
+                }
+                MessageSender.sendQueuedMediaMessage(msg,this,msg.getTo());
+                continue;
+            }
+            MessageSender.sendQueuedMessage(msg,this,msg.getTo());
+        }
+    }
+
+    public void queueAllUnsentMessages(){
+        synchronized (mainQueueLock) {
 //        if(pinging /*|| syncing*/){
 //            Log.d("ANONYMOUSMESSENGER","still pinging or syncing!");
 //            return;
 //        }
-        try{
+            try {
 //            pinging = true;
-            List<String[]> contactsList = DbHelper.getContactsList(this);
-            if(contactsList==null || contactsList.size()==0){
+                List<String[]> contactsList = DbHelper.getContactsList(this);
+                if (contactsList == null || contactsList.size() == 0) {
 //                pinging = false;
-                return;
-            }
-            for (String[] contact: contactsList){
-                boolean b = TorClient.testAddress(this, contact[1]);
-                if(!b){
-                    if(onlineList.contains(contact[1])){
-                        onlineList.remove(contact[1]);
+                    return;
+                }
+                for (String[] contact : contactsList) {
+                    boolean b = TorClient.testAddress(this, contact[1]);
+                    if (!b) {
+                        if (onlineList.contains(contact[1])) {
+                            onlineList.remove(contact[1]);
+                            Intent gcm_rec = new Intent("your_action");
+                            gcm_rec.putExtra("type", "online_status");
+                            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
+                        }
+                        continue;
+                    }
+                    if (!onlineList.contains(contact[1])) {
+                        onlineList.add(contact[1]);
                         Intent gcm_rec = new Intent("your_action");
-                        gcm_rec.putExtra("type","online_status");
+                        gcm_rec.putExtra("type", "online_status");
                         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
                     }
-                    continue;
-                }
-                if(!onlineList.contains(contact[1])){
-                    onlineList.add(contact[1]);
-                    Intent gcm_rec = new Intent("your_action");
-                    gcm_rec.putExtra("type","online_status");
-                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gcm_rec);
-                }
-                queueUnsentMessages(contact[1]);
+                    queueUnsentMessages(contact[1]);
 //                if(syncingAddress!=null && syncingAddress.equals(contact[1])){
 //                    continue;
 //                }
@@ -257,44 +276,62 @@ public class DxApplication extends Application {
 //                }
 //                addToMessagesQueue(undeliveredMessageList);
 //                sendQueuedMessages();
-            }
+                }
 //            syncing = false;
 //            pinging = false;
-            syncingAddress = null;
-        }catch (Exception ignored) {/*syncing = false;*/ /*pinging = false; syncingAddress = null;*/}
+                syncingAddress = null;
+            } catch (Exception ignored) {/*syncing = false;*/ /*pinging = false; syncingAddress = null;*/}
+        }
     }
 
     public void queueUnsentMessages(String address){
         if(syncingAddress!=null && syncingAddress.equals(address)){
+            System.out.println("Already Syncing with: "+syncingAddress);
             return;
         }
+        System.out.println("Starting Sync.............");
         new Thread(()-> doQueueUnsentMessages(address)).start();
     }
 
-    public synchronized void doQueueUnsentMessages(String address){
-        try{
+    public void doQueueUnsentMessages(String address){
+        System.out.println("Waiting sync start : "+address);
+        synchronized (peerQueueLock) {
+            System.out.println("sync start: "+address);
+            try {
 //                syncing = true;
-            syncingAddress = address;
-            //send profile image if not delivered from before
-            String path = getAccount().getProfileImagePath();
-            if(path!=null && !path.equals("")){
-                if(!Objects.equals(DbHelper.getContactSentProfileImagePath(address, this), path)){
-                    QuotedUserMessage qum = new QuotedUserMessage("","",getHostname(),"",
-                            getAccount().getNickname(),new Date().getTime(),false,address,false,"profile_image",path,"image");
-                    sendMediaMessageWithoutSaving(qum,this,address,false,true);
+                syncingAddress = address;
+                //send profile image if not delivered from before
+                String path = getAccount().getProfileImagePath();
+                if (path != null && !path.equals("")) {
+                    if (!Objects.equals(DbHelper.getContactSentProfileImagePath(address, this), path)) {
+                        QuotedUserMessage qum = new QuotedUserMessage("", "", getHostname(), "",
+                                getAccount().getNickname(), new Date().getTime(), false, address, false, "profile_image", path, "image");
+                        sendMediaMessageWithoutSaving(qum, this, address, false, true);
+                    }
                 }
-            }
-            List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
-            if(undeliveredMessageList.size()==0){
+                System.out.println("getting undelivered list.........");
+                List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
+                if (undeliveredMessageList.size() == 0) {
+                    System.out.println("LIST SIZE WAS ZERO 00000000");
 //                    syncing = false;
-                syncingAddress = null;
-                return;
-            }
-            addToMessagesQueue(undeliveredMessageList);
-            sendQueuedMessages();
+                    syncingAddress = null;
+                    return;
+                }
+                System.out.println("LIST SIZE : "+undeliveredMessageList.size());
+                //todo: double sending occurs because there is a queue pool, we need to stop using it
+                // the queue pool should be cleared if the message is already there
+                //double is because there are two syncing functions (all & by address)
+                //also bad because we clear the queue in separate functions and threads
+                //maybe make sendQueuedMessages synchronized?
+//            addToMessagesQueue(undeliveredMessageList);
+                System.out.println("Sending.........");
+                sendQueuedMessages(undeliveredMessageList);
 //                syncing = false;
-            syncingAddress = null;
-        }catch (Exception ignored) {/*syncing = false;*/ syncingAddress = null;}
+                syncingAddress = null;
+            } catch (Exception ignored) {/*syncing = false;*/
+                syncingAddress = null;
+            }
+        }
     }
 
     public boolean isExitingHoldup() {
@@ -330,17 +367,35 @@ public class DxApplication extends Application {
         contentIntent.putExtra("address",address.substring(0,10));
         contentIntent.setAction(type);
         contentIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, 0);
+        PendingIntent pendingIntent = null;
+        if (android.os.Build.VERSION.SDK_INT >= 31) {
+            pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_MUTABLE);
+        }else
+        {
+             pendingIntent = PendingIntent.getActivity
+                    (context, 0, contentIntent, PendingIntent.FLAG_ONE_SHOT);
+        }
+
 
         Intent answerIntent = new Intent(context, DxCallService.class);
         answerIntent.putExtra("address",address.substring(0,10));
         answerIntent.setAction("answer");
-        PendingIntent answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, 0);
+        PendingIntent answerPendingIntent = null;
+        if (Build.VERSION.SDK_INT >= 31) {
+            answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, PendingIntent.FLAG_MUTABLE);
+        }else{
+            answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, 0);
+        }
 
         Intent hangupIntent = new Intent(context, DxCallService.class);
         hangupIntent.putExtra("address",address.substring(0,10));
         hangupIntent.setAction("hangup");
-        PendingIntent hangupPendingIntent = PendingIntent.getService(context, 0, hangupIntent, 0);
+        PendingIntent hangupPendingIntent = null;
+        if (Build.VERSION.SDK_INT >= 31) {
+            hangupPendingIntent = PendingIntent.getService(context, 0, hangupIntent, PendingIntent.FLAG_MUTABLE);
+        }else{
+            hangupPendingIntent = PendingIntent.getService(context, 0, hangupIntent, 0);
+        }
 
         String CHANNEL_ID = "calls";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -604,7 +659,12 @@ public class DxApplication extends Application {
         resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = null;
+        if (Build.VERSION.SDK_INT >= 31) {
+            resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_MUTABLE);
+        }else{
+            resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         String CHANNEL_ID = "messages";
         Notification notification;
@@ -656,7 +716,12 @@ public class DxApplication extends Application {
         resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = null;
+        if (Build.VERSION.SDK_INT >= 31) {
+            resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_MUTABLE);
+        }else{
+            resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         Notification notification;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -735,19 +800,25 @@ public class DxApplication extends Application {
         resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
-        PendingIntent gotoApp = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent hideNotification = PendingIntent.getBroadcast(
-                this,
-                1,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-        );
+        PendingIntent gotoApp = null;
+        if (Build.VERSION.SDK_INT >= 31) {
+            gotoApp = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_MUTABLE);
+        }else{
+            gotoApp = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+        PendingIntent hideNotification = null;
+        if (Build.VERSION.SDK_INT >= 31) {
+            hideNotification = PendingIntent.getBroadcast(this,1, intent, PendingIntent.FLAG_MUTABLE);
+        }else{
+            hideNotification = PendingIntent.getBroadcast(this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setColor(getResources().getColor(R.color.dx_night_940,getTheme()))
                     .setSubText(title)
-                    .addAction(R.drawable.ic_baseline_settings_24, msg, hideNotification)
+//                    .addAction(R.drawable.ic_baseline_settings_24, msg, hideNotification)
                     .addAction(R.drawable.ic_baseline_settings_24, getString(R.string.go_to_app), gotoApp)
                     .setPriority(NotificationManager.IMPORTANCE_LOW)
 //                    .setContentText(msg)

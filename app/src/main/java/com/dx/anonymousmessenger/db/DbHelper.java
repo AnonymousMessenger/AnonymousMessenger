@@ -1121,9 +1121,10 @@ public class DbHelper {
                 QuotedUserMessage message = new QuotedUserMessage(cr.getString(9),cr.getString(8),cr.getString(0),cr.getString(3),cr.getString(4),
                         cr.getLong(5),cr.getInt(7)>0,cr.getString(1),cr.getInt(10)>0,cr.getString(11),cr.getString(12),cr.getString(13));
 
-                if ((new Date().getTime() - message.getCreatedAt()) < (60*1000)) {
-                    continue;
-                }
+                //commented out to allow resending without having to wait
+//                if ((new Date().getTime() - message.getCreatedAt()) < (60*1000)) {
+//                    continue;
+//                }
 
                 if(app.getEntity().getStore().loadSession(new SignalProtocolAddress(conversation,1)).getSessionState().hasPendingKeyExchange()){
                     if(message.getMessage().equals(app.getString(R.string.key_exchange_message))

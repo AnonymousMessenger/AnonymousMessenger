@@ -1,5 +1,8 @@
 package com.dx.anonymousmessenger.ui.view;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static java.util.Objects.requireNonNull;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -25,9 +28,6 @@ import com.dx.anonymousmessenger.ui.custom.TapSafeToolbar;
 import com.dx.anonymousmessenger.ui.view.single_activity.CrashActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.PictureViewerActivity;
 import com.google.android.material.appbar.MaterialToolbar;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static java.util.Objects.requireNonNull;
 
 public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.OnTapFilteredListener{
 
@@ -71,7 +71,7 @@ public class DxActivity extends AppCompatActivity implements TapSafeFrameLayout.
             }.start();
             try
             {
-                Thread.sleep(750); // Let the Toast display before app will get shutdown
+                Thread.sleep(7500); // Let the Toast display before app will get shutdown
             }
             catch (InterruptedException ignored) {    }
             android.os.Process.killProcess(android.os.Process.myPid());
