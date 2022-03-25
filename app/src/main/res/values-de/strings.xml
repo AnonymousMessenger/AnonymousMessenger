@@ -56,7 +56,7 @@
       
   <string name="action_verify_identity">Identität überprüfen</string>
       
-  <string name="action_clear_conversation">unverschlüsselte Unterhaltung</string>
+  <string name="action_clear_conversation">Unterhaltung löschen</string>
       
   <string name="action_search">Suche</string>
       
@@ -104,7 +104,7 @@
       
   <string name="ringing">Klingelt</string>
       
-  <string name="connected">Verbindung hergestellt</string>
+  <string name="connected">Verbunden</string>
       
   <string name="answer">Antworten</string>
       
@@ -412,7 +412,7 @@
       
   <string name="security_tips02">Ihre Sicherheit hängt stark von den auf dem Gerät installierten Anwendungen ab. Wir empfehlen, Ihre Standard-Apps in Apps aus dem f-droid-Repository zu ändern</string>
       
-  <string name="security_tips03">Versuche Sie nicht aus Versehen die Adresse eines Freundes in Ihren Browser einzufügen, da dies Ihre/dessen Anonymität gefährden könnte</string>
+  <string name="security_tips03">Versuchen Sie nicht aus Versehen die Adresse eines Freundes oder einer Freundin in Ihren Browser einzufügen, da dies die Anonymität von Ihnen beiden gefährden könnte</string>
       
   <string name="security_tips04">Deinstallieren Sie den Anonymous Messenger, um Ihr Konto zu löschen und alles zu löschen.</string>
       
@@ -430,11 +430,11 @@
       
   <string name="security_tips11">Beim Beenden des Anonymous Messengers bleiben Ihre Daten auf Ihrem Telefon verschlüsselt.</string>
       
-  <string name="security_tips12">Erstellen Sie den Anonymous Messenger nach Möglichkeit aus der Quelle.</string>
+  <string name="security_tips12">Kompilieren Sie den Anonymous Messenger nach Möglichkeit vom Quellcode.</string>
       
-  <string name="security_tips13">Identitäten überprüfen.</string>
+  <string name="security_tips13">Überprüfen Sie Identitäten.</string>
       
-  <string name="security_tips14">Stellen Sie sicher, dass Sie keine proprietären Apps auf Ihrem Telefon verwenden und dass Sie ein kostenloses Open-Source-Programm verwenden, um auf Ihre Social-Media-Sites und Finanzdienstleistungen zuzugreifen, und im Allgemeinen keine App zu haben, der Sie nicht vertrauen können oder die mehr Berechtigungen erfordert, als sie  wirklich benötigt, oder wenn die App selbst Werbung von Drittanbietern präsentiert.</string>
+  <string name="security_tips14">Stellen Sie sicher, dass Sie keine proprietären Apps auf Ihrem Telefon verwenden und dass Sie ein freies Open-Source-Programm verwenden, um auf Ihre Social-Media-Sites und Finanzdienstleistungen zuzugreifen, und im Allgemeinen keine App zu haben, der Sie nicht vertrauen können oder die mehr Berechtigungen erfordert, als sie  wirklich benötigt, oder wenn die App selbst Werbung von Drittanbietern präsentiert.</string>
       
   <string name="security_tips15">Erwägen Sie eine Spende, um dieses Projekt noch besser zu machen und uns dabei zu helfen, die beste Lösung für anonyme Nachrichten für Alle bereitzustellen.</string>
       
@@ -528,13 +528,13 @@
       
   <string name="go_to_app">App öffnen</string>
       
-  <string name="use_bridges">Verwenden von Brücken</string>
+  <string name="use_bridges">Brücken verwenden</string>
       
   <string name="request_bridge">Brücke anfordern</string>
       
   <string name="done_button">Fertig</string>
       
-  <string name="allow_unknown">Akzeptieren Sie unbekannte Kontakte</string>
+  <string name="allow_unknown">Unbekannte Kontakte akzeptieren</string>
       
   <string name="allow_files">Empfangen von Dateien zulassen</string>
       
@@ -548,7 +548,7 @@
       
   <string name="delete_bridge_details">Dies kann nicht rückgängig gemacht werden</string>
       
-  <string name="online_check_address">Adresse online prüfen</string>
+  <string name="online_check_address">Adresse zur Konnektivitätsprüfung</string>
       
   <string name="reset_settings">Einstellungen zurücksetzen</string>
       
@@ -612,7 +612,7 @@
       
   <string name="retry">Wiederholen</string>
       
-  <string name="use_proxy">Verwenden Sie einen SOCKS5-Proxy</string>
+  <string name="use_proxy">SOCKS5-Proxy verwenden</string>
       
   <string name="proxy_address">SOCKS5-Proxy-Adresse</string>
       
@@ -627,5 +627,27 @@
   <string name="stay_offline">Offline bleiben</string>
       
   <string name="proxy">Socks5-Proxy (Tor neu starten, damit es wirksam wird)</string>
+  
+  <string name="disappearing_messages_default">Nicht angepinnte nachrichten nach 24 stunden löschen</string>
+  
+  <string name="exclude_tor_nodes">Unbekannte Tor Nodes ausschließen (Tor neustarten, damit es wirksam wird)</string>
+  
+  <string name="exclude_unknown">Unbekannte Nodes ausschließen</string>
+  
+  <string name="strict_exclude">Striktes ausschließen</string>
+  
+  <string name="action_change_app_name">App Namen ändern</string>
+  
+  <string name="select_app_name">App Namen auswählen</string>
+  
+  <string name="action_change_theme">Design ändern</string>
+  
+  <string name="dark_theme">Dunkles Design</string>
+  
+  <string name="light_theme">Helles Design</string>
+  
+  <string name="action_clear_tor_cache">Tor Cache löschen</string>
+  
+  <string name="clear_tor_cache_explain">Dies kann nützleich sein wenn zwischengespeicherte Deskriptoren veraltet sind, ist aber aufgrund von Geschwindigkeits- und Anonymitätsbedenken nicht zu oft empfohlen.</string>
   
 </resources>
