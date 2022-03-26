@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="../../../.gradle/caches/transforms-2/files-2.1/b6d9f364fcb9135617143fff49e6cfd9/material-1.5.0/res/drawable/design_fab_background.xml" value="0.267" />
+        <entry key="app/src/main/res/drawable/background_dialog.xml" value="0.267" />
+        <entry key="app/src/main/res/drawable/bg_msg_from.xml" value="0.267" />
+        <entry key="app/src/main/res/drawable/bg_msg_you.xml" value="0.267" />
+        <entry key="app/src/main/res/drawable/image_rounded.xml" value="0.267" />
+        <entry key="app/src/main/res/drawable/rounded_rectangle_steel.xml" value="0.267" />
+        <entry key="app/src/main/res/drawable/triangle_msg_you.xml" value="0.267" />
+        <entry key="app/src/main/res/layout/activity_message_list.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/activity_notepad.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/activity_setup_in_process.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/fragment_password_entry.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/fragment_setup_password2.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/fragment_setup_settings.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/fragment_setup_username.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/item_audio_message_received.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/item_audio_message_sent_ok.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/item_file_message_received.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/item_file_message_sent_ok.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/item_media_message_received.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/item_media_message_sent_ok.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/item_message_received.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/item_message_received_quote.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/item_message_sent_candidate.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/item_message_sent_ok.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/item_message_sent_ok_quote.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/tips_rv_item.xml" value="0.23175675675675675" />
+      </map>
+    </option>
+  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
     <option name="myDefaultNotNull" value="androidx.annotation.NonNull" />

@@ -25,7 +25,7 @@
         android:id="@+id/frameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_rectangle_dark"
+        android:background="@drawable/bg_msg_you"
         android:padding="8dp"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,18 +44,17 @@
                 android:layout_height="20dp"
                 android:contentDescription="@string/seen_image"
                 android:elevation="10dp"
-                app:tint="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="@+id/img_sent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_message_body"
-                app:srcCompat="@android:drawable/ic_lock_lock" />
+                app:srcCompat="@android:drawable/ic_lock_lock"
+                app:tint="#FFFFFF" />
 
             <TextView
                 android:id="@+id/text_message_body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autoLink="all"
-                android:background="@drawable/rounded_rectangle_dark"
                 android:padding="8dp"
                 android:text="@string/really_long_word"
                 android:textColor="#ffffff"
@@ -95,14 +94,15 @@
         android:layout_height="wrap_content"
         android:alpha="0.2"
         android:clickable="true"
+        android:contentDescription="@string/pin"
         android:elevation="-6dp"
         android:focusable="true"
         android:tint="#FFA025"
+        app:backgroundTint="#FFA025"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_push_pin_24"
-        android:contentDescription="@string/pin" />
+        app:srcCompat="@drawable/ic_baseline_push_pin_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

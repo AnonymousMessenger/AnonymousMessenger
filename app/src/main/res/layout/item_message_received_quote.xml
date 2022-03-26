@@ -38,7 +38,7 @@
         android:id="@+id/frameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_rectangle_steel"
+        android:background="@drawable/bg_msg_from"
         android:padding="12dp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -121,18 +121,17 @@
                 android:layout_height="17dp"
                 android:contentDescription="@string/indicates_secure_messaging"
                 android:elevation="10dp"
-                app:tint="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_message_body"
-                app:srcCompat="@android:drawable/ic_lock_lock" />
+                app:srcCompat="@android:drawable/ic_lock_lock"
+                app:tint="#FFFFFF" />
 
             <TextView
                 android:id="@+id/text_message_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:autoLink="all"
-                android:background="@drawable/rounded_rectangle_steel"
                 android:gravity="start"
                 android:padding="8dp"
                 android:text="@string/hi_man_how_are_you"
@@ -167,6 +166,7 @@
         android:elevation="-6dp"
         android:focusable="true"
         android:tint="#FFA025"
+        app:backgroundTint="#FFA025"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

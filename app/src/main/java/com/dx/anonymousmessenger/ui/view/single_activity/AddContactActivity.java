@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.single_activity;
 
+import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -46,8 +48,6 @@ import org.whispersystems.libsignal.SignalProtocolAddress;
 
 import java.util.ArrayList;
 import java.util.Objects;
-
-import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
 public class AddContactActivity extends DxActivity {
 
@@ -166,8 +166,8 @@ public class AddContactActivity extends DxActivity {
                     view.addChildrenForAccessibility(viewArrayList);
                     AlertDialog.Builder builder =
                         new AlertDialog.Builder(context).
-                            setMessage("Message above the image").
-                            setPositiveButton("OK", (dialog, which) -> dialog.dismiss()).
+                            setMessage("QR").
+                            setPositiveButton(getString(R.string.ok), (dialog, which) -> dialog.dismiss()).
                             setView(newQr);
                     builder.create().show();
                 }catch (Exception e) {

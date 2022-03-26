@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
-        android:background="@drawable/rounded_rectangle_steel"
+        android:background="@drawable/bg_msg_from"
         android:padding="8dp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -108,12 +108,12 @@
                 android:layout_width="16dp"
                 android:layout_height="19dp"
                 android:layout_marginStart="2dp"
-                app:tint="#FFFFFF"
                 android:contentDescription="@string/indicates_secure_messaging"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/img_holder"
-                app:srcCompat="@android:drawable/ic_lock_lock" />
+                app:srcCompat="@android:drawable/ic_lock_lock"
+                app:tint="#FFFFFF" />
 
             <TextView
                 android:id="@+id/text_message_time"
@@ -131,6 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:text="@string/send_file"
+                android:textColor="#fff"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="@+id/img_holder"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -150,10 +151,12 @@
         android:elevation="-6dp"
         android:focusable="true"
         android:tint="#FFA025"
+        app:backgroundTint="#FFA025"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_push_pin_24" />
+        app:srcCompat="@drawable/ic_baseline_push_pin_24"
+        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
