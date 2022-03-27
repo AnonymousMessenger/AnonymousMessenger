@@ -7,9 +7,12 @@
         <entry key="app/src/main/res/drawable/background_dialog.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/bg_msg_from.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/bg_msg_you.xml" value="0.267" />
+        <entry key="app/src/main/res/drawable/glow_back.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/image_rounded.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/rounded_rectangle_steel.xml" value="0.267" />
+        <entry key="app/src/main/res/drawable/transition.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/triangle_msg_you.xml" value="0.267" />
+        <entry key="app/src/main/res/drawable/unread_circle.xml" value="0.267" />
         <entry key="app/src/main/res/layout/activity_message_list.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/activity_notepad.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/activity_setup_in_process.xml" value="0.23175675675675675" />
@@ -28,6 +31,7 @@
         <entry key="app/src/main/res/layout/item_message_sent_candidate.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/item_message_sent_ok.xml" value="0.33" />
         <entry key="app/src/main/res/layout/item_message_sent_ok_quote.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/my_text_view.xml" value="0.33" />
         <entry key="app/src/main/res/layout/tips_rv_item.xml" value="0.23175675675675675" />
       </map>
     </option>

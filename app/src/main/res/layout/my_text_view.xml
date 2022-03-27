@@ -90,7 +90,8 @@
             android:contentDescription="@string/to_show_when_it_is_unread"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/unread_circle" />
 
         <TextView
             android:id="@+id/time_text"
