@@ -24,7 +24,7 @@
         <entry key="app/src/main/res/layout/item_audio_message_sent_ok.xml" value="0.5" />
         <entry key="app/src/main/res/layout/item_file_message_received.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/item_file_message_sent_ok.xml" value="0.23175675675675675" />
-        <entry key="app/src/main/res/layout/item_media_message_received.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/item_media_message_received.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_media_message_sent_ok.xml" value="0.33" />
         <entry key="app/src/main/res/layout/item_message_received.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/item_message_received_quote.xml" value="0.23175675675675675" />
