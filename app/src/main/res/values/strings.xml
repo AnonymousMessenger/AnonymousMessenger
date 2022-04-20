@@ -34,6 +34,7 @@
     <string name="action_restart_tor">Restart Tor</string>
     <string name="my_identity_explanation">Public key used to verify identity</string>
     <string name="verify_identity_explanation">Both public keys together to verify both identities</string>
+    <string name="verify_identity_how_to">Compare these numbers on both devices, if they were the same then E2E encryption is working correctly…</string>
     <string name="action_call">Call</string>
     <string name="ask_me_again">Ask again</string>
     <string name="no_thanks">No thanks</string>

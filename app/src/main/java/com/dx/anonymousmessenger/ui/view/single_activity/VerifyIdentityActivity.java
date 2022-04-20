@@ -25,6 +25,7 @@ public class VerifyIdentityActivity extends DxActivity {
         setContentView(R.layout.activity_verify_identity);
         setTitle(R.string.action_verify_identity);
         setSubtitle(R.string.verify_identity_explanation);
+        ((TextView)findViewById(R.id.txt_identity_info)).setText(R.string.verify_identity_how_to);
         setBackEnabled(true);
         TextView tv = findViewById(R.id.txt_identity_key);
         new Thread(()->{
