@@ -203,7 +203,7 @@ public class SetupSettingsFragment extends Fragment {
 
             //read from db in this case or fallback to defaults
             try{
-                Object[] settings = DbHelper.getSettingsList((DxApplication)requireActivity().getApplication());
+                Object[] settings = DbHelper.getSettingsList((DxApplication)requireActivity().getApplication(),true);
                 if (settings == null || settings.length <= 5) {
                     Log.d("ANONYMOUSMESSENGER","not right");
                     settings = ((DxApplication) requireActivity().getApplication()).DEFAULT_SETTINGS;

@@ -609,9 +609,21 @@ public class DbHelper {
     }
 
     public static void saveExcludeText(String excludeText, DxApplication app){
+        //process text to add "{" and "}" for torrc
+        String[] raw = excludeText.split(",");
+        String processed = "";
+        for (String v: raw){
+            if(v.startsWith("{") && v.endsWith("}")){
+                continue;
+            }
+            processed = processed.concat("{"+v+"},");
+        }
+        if(processed.endsWith(",")){
+            processed = processed.substring(0,processed.length()-1);
+        }
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getSettingsTableSqlCreate());
-        database.execSQL("UPDATE settings SET excludeText=?", new Object[]{excludeText});
+        database.execSQL("UPDATE settings SET excludeText=?", new Object[]{processed});
     }
 
     public static void saveExcludeUnknown(boolean excludeUnknown, DxApplication app){
@@ -698,6 +710,15 @@ public class DbHelper {
         }
     }
 
+    public static Object[] getSettingsList(DxApplication app, boolean forUi){
+        Object[] o = getSettingsList(app);
+        //process text to remove {&}
+        if (o != null) {
+            o[10] = ((String)o[10]).replace("{","").replace("}","");
+        }
+        return o;
+    }
+
     public static Object[] getSettingsList(DxApplication app){
         SQLiteDatabase database = app.getDb();
         database.execSQL(DbHelper.getSettingsTableSqlCreate());
@@ -727,6 +748,7 @@ public class DbHelper {
             settings[12] = cr.getInt(12);//strictExclude
         }
         cr.close();
+
         return settings;
     }
 
