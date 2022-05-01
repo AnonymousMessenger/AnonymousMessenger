@@ -1,5 +1,12 @@
 package com.dx.anonymousmessenger.ui.view.message_list;
 
+import static androidx.core.content.ContextCompat.getColor;
+import static androidx.core.content.ContextCompat.getDrawable;
+import static androidx.core.content.ContextCompat.getMainExecutor;
+import static androidx.core.content.ContextCompat.getSystemService;
+import static androidx.core.content.ContextCompat.startActivity;
+import static com.dx.anonymousmessenger.file.FileHelper.getAudioFileLengthInSeconds;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
@@ -66,13 +73,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
-
-import static androidx.core.content.ContextCompat.getColor;
-import static androidx.core.content.ContextCompat.getDrawable;
-import static androidx.core.content.ContextCompat.getMainExecutor;
-import static androidx.core.content.ContextCompat.getSystemService;
-import static androidx.core.content.ContextCompat.startActivity;
-import static com.dx.anonymousmessenger.file.FileHelper.getAudioFileLengthInSeconds;
 
 public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
@@ -888,7 +888,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if(sent != null && message.isReceived()){
                 sent.setVisibility(View.VISIBLE);
             }
-            if(nameText!=null){
+            //if msg before this one was also received or has the same sender then don't display extra crap
+            if(nameText!=null && this.getAbsoluteAdapterPosition()>0 && (mMessageList.get(getAbsoluteAdapterPosition()-1).getSender().equals(message.getSender()))){
+                nameText.setVisibility(View.GONE);
+                profileImage.setVisibility(View.GONE);
+            }else if(nameText!=null){
                 nameText.setText(message.getSender());
                 if(profileImage!=null){
                     setIsRecyclable(false);
