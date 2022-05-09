@@ -37,9 +37,26 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:gravity="center|start"
-            android:padding="15dp"
+            android:padding="10dp"
             android:text=""
+            android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:typeface="monospace" />
+
+        <TextView
+            android:id="@+id/txt_identity_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:elegantTextHeight="false"
+            android:gravity="center|start"
+            android:padding="10dp"
+            android:text="dfhgdfsghfdghdf"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="16sp"
+            android:textStyle="italic"
             android:typeface="monospace" />
 
     </LinearLayout>

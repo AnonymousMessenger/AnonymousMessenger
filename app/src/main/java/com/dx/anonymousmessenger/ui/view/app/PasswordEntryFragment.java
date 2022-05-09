@@ -83,92 +83,10 @@ public class PasswordEntryFragment extends Fragment {
         //clean app bar
         ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).getMenu().clear();
         ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_stat_name);
+        //try the easy password here and login if it works
+        login(true);
         btn_next.setOnClickListener(v -> {
-            btn_next.setEnabled(false);
-            txtPassword.setEnabled(false);
-            btn_next.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
-            new Thread(() -> {
-                try {
-                    SQLiteDatabase database = isPasswordCorrect(Objects.requireNonNull(txtPassword.getText()).toString().getBytes(StandardCharsets.UTF_8));
-                    if (getActivity() != null) {
-                        requireActivity().runOnUiThread(() -> ((AppActivity) getActivity()).goToTorActivity());
-                    }
-                    String pass = txtPassword.getText().toString();
-                    txtPassword = null;
-                    btn_next = null;
-                    progressBar = null;
-                    rootView = null;
-                    Cursor cr = database.rawQuery("SELECT * FROM account LIMIT 1;", null);
-                    if (cr != null && cr.moveToFirst()) {
-                        DxAccount account = new DxAccount(cr.getString(0));
-                        try {
-                            database.execSQL("ALTER TABLE account ADD COLUMN profile_image_path TEXT default ''");
-                        }catch (Exception ignored){
-                            try{
-                                account.setProfileImagePath(cr.getString(2));
-                            }catch (Exception ignored2){}
-                        }
-
-                        cr.close();
-                        account.setPassword(pass.getBytes(StandardCharsets.UTF_8));
-                        app.setAccount(account,false);
-                        if (!app.isServerReady()) {
-//                            if (app.getTorThread() != null) {
-//                                app.getTorThread().interrupt();
-//                                app.setTorThread(null);
-//                            }
-                            app.startTor();
-                        }
-                    } else {
-//                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-//                            txtPassword.setEnabled(true);
-//                            btn_next.setVisibility(View.VISIBLE);
-//                            progressBar.setVisibility(View.GONE);
-//                            txtPassword.setError("An unexpected error happened");
-//                        });
-                        Intent intent = new Intent(getActivity(), AppActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                        getActivity().finish();
-                    }
-                    if (cr!=null && !cr.isClosed()) {
-                        cr.close();
-                    }
-                } catch (SQLiteException e) {
-                    e.printStackTrace();
-                    if (getActivity() != null) {
-                        requireActivity().runOnUiThread(() -> {
-                            try{
-                                txtPassword.setText("");
-                                txtPassword.setEnabled(true);
-                                txtPassword.setError(getString(R.string.wrong_password));
-                                errorBox.setVisibility(View.VISIBLE);
-                                Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.animation1);
-                                errorBox.startAnimation(hyperspaceJumpAnimation);
-                                btn_next.setVisibility(View.VISIBLE);
-                                progressBar.setVisibility(View.GONE);
-                            }catch (Exception ignored) {}
-                        });
-                    }
-                } catch (Exception e) {
-                    if (getActivity() != null) {
-//                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-//                            txtPassword.setEnabled(true);
-//                            btn_next.setVisibility(View.VISIBLE);
-//                            progressBar.setVisibility(View.GONE);
-//                            txtPassword.setError("An unexpected error happened");
-//                        });
-                        Intent intent = new Intent(getActivity(), AppActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(intent);
-                        try{
-                            requireActivity().finish();
-                        }catch (Exception ignored) {}
-                    }
-                    e.printStackTrace();
-                }
-            }).start();
+            login(false);
         });
 
         txtPassword.addTextChangedListener(new TextWatcher() {
@@ -201,6 +119,100 @@ public class PasswordEntryFragment extends Fragment {
 //        }
 
         return rootView;
+    }
+
+    public void login(boolean easy){
+        if(!easy){
+            btn_next.setEnabled(false);
+            txtPassword.setEnabled(false);
+            btn_next.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        new Thread(() -> {
+            try {
+                SQLiteDatabase database = isPasswordCorrect(easy?"easy_password".getBytes(StandardCharsets.UTF_8):Objects.requireNonNull(txtPassword.getText()).toString().getBytes(StandardCharsets.UTF_8));
+                if (getActivity() != null) {
+                    requireActivity().runOnUiThread(() -> ((AppActivity) getActivity()).goToTorActivity());
+                }
+                String pass = easy?"easy_password":txtPassword.getText().toString();
+                if (!easy) {
+                    txtPassword = null;
+                }
+                btn_next = null;
+                progressBar = null;
+                rootView = null;
+                Cursor cr = database.rawQuery("SELECT * FROM account LIMIT 1;", null);
+                if (cr != null && cr.moveToFirst()) {
+                    DxAccount account = new DxAccount(cr.getString(0));
+                    try {
+                        database.execSQL("ALTER TABLE account ADD COLUMN profile_image_path TEXT default ''");
+                    }catch (Exception ignored){
+                        try{
+                            account.setProfileImagePath(cr.getString(2));
+                        }catch (Exception ignored2){}
+                    }
+
+                    cr.close();
+                    account.setPassword(easy?"easy_password".getBytes(StandardCharsets.UTF_8):pass.getBytes(StandardCharsets.UTF_8));
+                    app.setAccount(account,false);
+                    if (!app.isServerReady()) {
+//                            if (app.getTorThread() != null) {
+//                                app.getTorThread().interrupt();
+//                                app.setTorThread(null);
+//                            }
+                        app.startTor();
+                    }
+                } else {
+//                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+//                            txtPassword.setEnabled(true);
+//                            btn_next.setVisibility(View.VISIBLE);
+//                            progressBar.setVisibility(View.GONE);
+//                            txtPassword.setError("An unexpected error happened");
+//                        });
+                    Intent intent = new Intent(getActivity(), AppActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+                if (cr!=null && !cr.isClosed()) {
+                    cr.close();
+                }
+            } catch (SQLiteException e) {
+                e.printStackTrace();
+                if (getActivity() != null) {
+                    requireActivity().runOnUiThread(() -> {
+                        if(!easy){
+                            try{
+                                txtPassword.setText("");
+                                txtPassword.setEnabled(true);
+                                txtPassword.setError(getString(R.string.wrong_password));
+                                errorBox.setVisibility(View.VISIBLE);
+                                Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.animation1);
+                                errorBox.startAnimation(hyperspaceJumpAnimation);
+                                btn_next.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
+                            }catch (Exception ignored) {}
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                if (getActivity() != null) {
+//                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+//                            txtPassword.setEnabled(true);
+//                            btn_next.setVisibility(View.VISIBLE);
+//                            progressBar.setVisibility(View.GONE);
+//                            txtPassword.setError("An unexpected error happened");
+//                        });
+                    Intent intent = new Intent(getActivity(), AppActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                    try{
+                        requireActivity().finish();
+                    }catch (Exception ignored) {}
+                }
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public SQLiteDatabase isPasswordCorrect(byte[] password) throws SQLiteException{

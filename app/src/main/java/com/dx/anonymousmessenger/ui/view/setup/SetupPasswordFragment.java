@@ -1,5 +1,10 @@
 package com.dx.anonymousmessenger.ui.view.setup;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static com.dx.anonymousmessenger.crypto.PasswordStrengthEstimator.QUITE_WEAK;
+
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
@@ -25,11 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Objects;
 
-import static android.content.Context.INPUT_METHOD_SERVICE;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-import static com.dx.anonymousmessenger.crypto.PasswordStrengthEstimator.QUITE_WEAK;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link SetupPasswordFragment#newInstance} factory method to
@@ -43,6 +43,7 @@ public class SetupPasswordFragment extends Fragment {
     private TextInputEditText passwordConfirmation;
     private StrengthMeter strengthMeter;
     private Button nextButton;
+    private Button easyButton;
     private ProgressBar progressBar;
 
     public SetupPasswordFragment() {
@@ -74,6 +75,7 @@ public class SetupPasswordFragment extends Fragment {
                 v.findViewById(R.id.password_confirm_wrapper);
         passwordConfirmation = v.findViewById(R.id.password_confirm);
         nextButton = v.findViewById(R.id.next);
+        easyButton = v.findViewById(R.id.btn_easy_password);
         progressBar = v.findViewById(R.id.progress);
         FloatingActionButton help = v.findViewById(R.id.fab_password_help);
 
@@ -163,6 +165,18 @@ public class SetupPasswordFragment extends Fragment {
 //            if(getActivity()!=null){
 //                getActivity().finish();
 //            }
+        });
+
+        easyButton.setOnClickListener(v1 ->{
+            IBinder token = passwordEntry.getWindowToken();
+            Object o = requireContext().getSystemService(INPUT_METHOD_SERVICE);
+            ((InputMethodManager) o).hideSoftInputFromWindow(token, 0);
+            passwordEntry.setEnabled(false);
+            passwordConfirmation.setEnabled(false);
+            nextButton.setVisibility(INVISIBLE);
+            progressBar.setVisibility(VISIBLE);
+            //set easy password here
+            ((CreateUserActivity) requireActivity()).createAccount("easy_password".getBytes(StandardCharsets.UTF_8));
         });
 
         return v;
