@@ -36,7 +36,7 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/dx_dark</item>
-        <item name="colorOnSurface">@color/dx_white</item>
+        <item name="colorOnSurface">@color/dx_background</item>
         <item name="colorPrimaryDark">@color/dx_dark</item>
         <item name="android:textColorSecondary">@color/dx_white</item>
         <item name="android:textColorPrimary">@color/dx_white</item>

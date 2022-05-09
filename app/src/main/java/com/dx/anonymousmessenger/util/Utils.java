@@ -11,7 +11,6 @@ import android.text.util.Linkify;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.dx.anonymousmessenger.R;
@@ -273,12 +272,25 @@ public class Utils {
         ArrayList<View> viewArrayList = new ArrayList<>();
         viewArrayList.add(help);
         view.addChildrenForAccessibility(viewArrayList);
-        AlertDialog.Builder builder =
-                new AlertDialog.Builder(context).
+        android.app.AlertDialog.Builder builder =
+                new android.app.AlertDialog.Builder(context,R.style.AppAlertDialog).
                         setMessage(helpTitle).
                         setPositiveButton(R.string.ok, (dialog, which) -> dialog.dismiss()).
                         setView(help);
         builder.create().show();
+
+//        new android.app.AlertDialog.Builder(getContext(),R.style.AppAlertDialog)
+//                .setTitle(R.string.action_clear_tor_cache)
+//                .setMessage(R.string.clear_tor_cache_explain)
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new Thread(()->{
+//                    try {
+//                        ((DxApplication) requireActivity().getApplication()).getAndroidTorRelay().clearTorCache();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }).start())
+//                .setNegativeButton(android.R.string.no, (dialog, whichButton)-> {} ).show();
     }
 
     public static boolean isValidAddress(String address){

@@ -235,7 +235,8 @@ public class SetupSettingsFragment extends Fragment {
         changeAppName.setVisibility(View.VISIBLE);
         changeAppName.setOnClickListener(v -> {
             CharSequence[] names = new CharSequence[]{"Anonymous Messenger", "Securoo", "AM"};
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext(),R.style.AppAlertDialog);
             builder.setTitle(R.string.select_app_name);
             builder.setItems(names, (dialog, which) -> {
                 switch (which) {
@@ -332,7 +333,7 @@ public class SetupSettingsFragment extends Fragment {
         changeTheme.setVisibility(View.VISIBLE);
         changeTheme.setOnClickListener(v -> {
             CharSequence[] names = new CharSequence[]{getString(R.string.dark_theme), getString(R.string.light_theme)};
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext(),R.style.AppAlertDialog);
             builder.setTitle(R.string.action_change_theme);
             builder.setItems(names, (dialog, which) -> {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
