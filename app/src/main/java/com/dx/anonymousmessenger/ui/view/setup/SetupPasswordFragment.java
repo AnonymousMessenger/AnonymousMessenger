@@ -99,14 +99,13 @@ public class SetupPasswordFragment extends Fragment {
                 strengthMeter.setStrength(strength);
                 boolean strongEnough = strength > QUITE_WEAK;
 
-                setError(passwordEntryWrapper, getString(R.string.password_too_weak),
-                        password1.length() > 0 && !strongEnough);
+//                setError(passwordEntryWrapper, getString(R.string.password_too_weak),
+//                        password1.length() > 0 && !strongEnough);
                 setError(passwordConfirmationWrapper,
                         getString(R.string.passwords_do_not_match),
                         password2.length() > 0 && !passwordsMatch);
 
-                boolean enabled = passwordsMatch && strongEnough;
-                nextButton.setEnabled(enabled);
+                nextButton.setEnabled(passwordsMatch);
 //                passwordConfirmation.setOnEditorActionListener(enabled ? (TextView.OnEditorActionListener) this : null);
             }
 
@@ -133,14 +132,13 @@ public class SetupPasswordFragment extends Fragment {
                 strengthMeter.setStrength(strength);
                 boolean strongEnough = strength > QUITE_WEAK;
 
-                setError(passwordEntryWrapper, getString(R.string.password_too_weak),
-                        password1.length() > 0 && !strongEnough);
+//                setError(passwordEntryWrapper, getString(R.string.password_too_weak),
+//                        password1.length() > 0 && !strongEnough);
                 setError(passwordConfirmationWrapper,
                         getString(R.string.passwords_do_not_match),
                         password2.length() > 0 && !passwordsMatch);
 
-                boolean enabled = passwordsMatch && strongEnough;
-                nextButton.setEnabled(enabled);
+                nextButton.setEnabled(passwordsMatch);
 //                passwordConfirmation.setOnEditorActionListener(enabled ? (TextView.OnEditorActionListener) this : null);
             }
 
