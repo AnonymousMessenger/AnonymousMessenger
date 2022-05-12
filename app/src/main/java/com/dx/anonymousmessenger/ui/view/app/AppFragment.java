@@ -1,7 +1,6 @@
 package com.dx.anonymousmessenger.ui.view.app;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
@@ -27,13 +25,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.view.menu.MenuPopupHelper;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -43,7 +36,6 @@ import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.account.DxAccount;
 import com.dx.anonymousmessenger.db.DbHelper;
-import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.tor.TorClient;
 import com.dx.anonymousmessenger.ui.view.log.LogActivity;
 import com.dx.anonymousmessenger.ui.view.notepad.NotepadActivity;
@@ -198,7 +190,7 @@ public class AppFragment extends Fragment {
             v.getContext().startActivity(intent);
         });
         ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).getMenu().clear();
-        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).inflateMenu(R.menu.app_menu2);
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).inflateMenu(R.menu.app_menu);
 
 //        new Thread(() -> {
 //            try{
@@ -216,30 +208,30 @@ public class AppFragment extends Fragment {
 //            }
 //        }).start();
 
-        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
-            if(item.getItemId()==R.id.action_my_profile){
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setNavigationOnClickListener((item)->{
+//            if(item.getItemId()==R.id.action_my_profile){
                 stopCheckingMessages();
                 new Handler().postDelayed(()->{
                     try{
                         Intent intent = new Intent(getContext(), MyProfileActivity.class);
                         if(getContext()!=null){
-                            View v = requireActivity().findViewById(R.id.action_my_profile);
-                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(requireActivity(), v, "profile_picture");
-                            v.getContext().startActivity(intent,activityOptions.toBundle());
+                            View v =  ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar));
+//                            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(requireActivity(), v, "profile_picture");
+                            v.getContext().startActivity(intent);
 //                        getContext().startActivity(intent);
                         }
                     }catch (Exception ignored) {}
                 },150);
-                return true;
-            }
-            return false;
+//                return true;
+//            }
+//            return false;
         });
-        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_baseline_menu_24);
-        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setNavigationOnClickListener((v)->{
-            PopupMenu popup = new PopupMenu(v.getContext(), v);
-//            popup.getMenuInflater()
-            popup.inflate(R.menu.app_menu);
-            popup.setOnMenuItemClickListener(item -> {
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_baseline_account_circle_24);
+        ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setOnMenuItemClickListener((item)->{
+//            PopupMenu popup = new PopupMenu(getContext(), v.);
+////            popup.getMenuInflater()
+//            popup.inflate(R.menu.app_menu);
+//            popup.setOnMenuItemClickListener(item -> {
                 if(item.getItemId()==R.id.action_settings){
                     ((AppActivity)requireActivity()).changeToSettingsFragment();
                     return true;
@@ -363,12 +355,12 @@ public class AppFragment extends Fragment {
                 }
             });
             //displaying the popup
-            @SuppressLint("RestrictedApi") MenuPopupHelper menuHelper = new MenuPopupHelper(v.getContext(), (MenuBuilder) popup.getMenu(), v);
-            menuHelper.setForceShowIcon(true);
-            menuHelper.show();
-
-//            popup.show();
-        });
+//            @SuppressLint("RestrictedApi") MenuPopupHelper menuHelper = new MenuPopupHelper(v.getContext(), (MenuBuilder) popup.getMenu(), v);
+//            menuHelper.setForceShowIcon(true);
+//            menuHelper.show();
+//
+////            popup.show();
+//        });
         onlineImg = rootView.findViewById(R.id.synced_image);
         offlineImg = rootView.findViewById(R.id.unsynced_image);
         onlineTxt = rootView.findViewById(R.id.sync_text);
@@ -502,13 +494,13 @@ public class AppFragment extends Fragment {
                     if(account.getProfileImagePath().equals("")){
                         throw new Resources.NotFoundException("");
                     }
-                    byte[] image = FileHelper.getFile(((DxApplication) requireActivity().getApplication()).getAccount().getProfileImagePath(), ((DxApplication) requireActivity().getApplication()));
-                    if (image == null) {
-                        throw new Resources.NotFoundException("");
-                    }
-                    RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
-                    drawable.setCircular(true);
-                    new Handler(Looper.getMainLooper()).post(()-> ((MaterialToolbar) requireActivity().findViewById(R.id.toolbar)).getMenu().getItem(0).setIcon(drawable));
+//                    byte[] image = FileHelper.getFile(((DxApplication) requireActivity().getApplication()).getAccount().getProfileImagePath(), ((DxApplication) requireActivity().getApplication()));
+//                    if (image == null) {
+//                        throw new Resources.NotFoundException("");
+//                    }
+//                    RoundedBitmapDrawable drawable = RoundedBitmapDrawableFactory.create(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
+//                    drawable.setCircular(true);
+//                    new Handler(Looper.getMainLooper()).post(()-> ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setNavigationIcon(drawable));
                 }catch (Exception ignored){}
                 if(tmp!=null){
                     lst = tmp;
