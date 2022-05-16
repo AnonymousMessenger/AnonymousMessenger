@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.setup;
 
+import static android.view.inputmethod.EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,8 +20,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
-
-import static android.view.inputmethod.EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING;
 
 public class SetupUsernameFragment extends Fragment {
     private String error;

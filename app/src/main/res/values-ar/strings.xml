@@ -330,4 +330,9 @@
     <string name="light_theme">السمة المضيئة</string>
     <string name="invalid_bridge">جسر غير صالح</string>
     <string name="bridge_added">تمت إضافة جسر</string>
+    <string name="nickname_help_explain">إضغط للحصول على مزيد من المعلومات حول إستعمال الإسم المستعار</string>
+    <string name="no_recent_messages">لا توجد رسائل حديثة</string>
+    <string name="unpinned_messages_get_deleted">هل تعلم أن الرسائل غير المثبتة تختفي بعد 24 ساعة؟</string>
+    <string name="continue_without_password">لا تستعمل كلمة مرور</string>
+    <string name="verify_identity_how_to">قارن هذه الأرقام على الجهازين, إذا كانا متماثلين إذا التشفير يعمل بشكل صحيح...</string>
 </resources>

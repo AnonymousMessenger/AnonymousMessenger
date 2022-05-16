@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.file;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
+
 import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
@@ -36,8 +38,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class FileHelper {
     public static final int IV_LENGTH = 12;
@@ -369,7 +369,7 @@ public class FileHelper {
         if (Objects.equals(uri.getScheme(), "content")) {
             try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    result = cursor.getString(Math.max(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME), 0));
                 }
             }
         }
@@ -394,7 +394,7 @@ public class FileHelper {
             };
             try (Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.SIZE));
+                    result = cursor.getString(Math.max(cursor.getColumnIndex(OpenableColumns.SIZE), 0));
                 }
             }
         }

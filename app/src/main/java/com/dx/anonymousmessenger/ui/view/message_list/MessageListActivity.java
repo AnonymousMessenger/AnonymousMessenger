@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.message_list;
 
+import static java.util.Objects.requireNonNull;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
@@ -81,8 +83,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static java.util.Objects.requireNonNull;
 
 public class MessageListActivity extends DxActivity implements ActivityCompat.OnRequestPermissionsResultCallback, ComponentCallbacks2, ContactListAdapter.ItemClickListener, CallBack {
 

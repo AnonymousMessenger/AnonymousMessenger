@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.app;
 
+import static androidx.recyclerview.widget.RecyclerView.ViewHolder;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
@@ -34,8 +36,6 @@ import com.dx.anonymousmessenger.ui.view.single_activity.ContactProfileActivity;
 import com.dx.anonymousmessenger.util.Utils;
 
 import java.util.List;
-
-import static androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 public class ContactListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_READ = 1;

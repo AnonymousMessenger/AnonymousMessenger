@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.tor;
 
+import static com.dx.anonymousmessenger.file.FileHelper.IV_LENGTH;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.StatFs;
@@ -45,8 +47,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import static com.dx.anonymousmessenger.file.FileHelper.IV_LENGTH;
 
 public class ServerSocketViaTor {
     private static final int TOTAL_SEC_PER_STARTUP = 300;//these are secs not millis

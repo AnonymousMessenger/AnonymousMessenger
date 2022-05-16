@@ -205,7 +205,7 @@ public class DxSignalKeyStore implements SignalProtocolStore {
         android.database.Cursor c=database.rawQuery("SELECT identity_key FROM identity WHERE address=?",new Object[]{addressName});
         if(c.moveToFirst())
         {
-            serializedIdentity = c.getString(c.getColumnIndex("identity_key"));
+            serializedIdentity = c.getString(Math.max(c.getColumnIndex("identity_key"),0));
             c.close();
 
         }else{

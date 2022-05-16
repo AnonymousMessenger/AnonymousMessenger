@@ -85,9 +85,7 @@ public class PasswordEntryFragment extends Fragment {
         ((MaterialToolbar)requireActivity().findViewById(R.id.toolbar)).setNavigationIcon(R.drawable.ic_stat_name);
         //try the easy password here and login if it works
         login(true);
-        btn_next.setOnClickListener(v -> {
-            login(false);
-        });
+        btn_next.setOnClickListener(v -> login(false));
 
         txtPassword.addTextChangedListener(new TextWatcher() {
             @Override

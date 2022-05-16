@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.notepad;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ClipData;
@@ -24,8 +26,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 import java.util.Objects;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class NotepadRecycleViewAdapter extends RecyclerView.Adapter<NotepadRecycleViewAdapter.ViewHolder>{
     final Context context;

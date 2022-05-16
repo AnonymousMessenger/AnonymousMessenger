@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.messages;
 
+import static com.dx.anonymousmessenger.messages.MessageSender.sendKeyExchangeMessage;
+
 import android.content.Intent;
 import android.util.Log;
 
@@ -22,8 +24,6 @@ import org.whispersystems.libsignal.StaleKeyExchangeException;
 import org.whispersystems.libsignal.UntrustedIdentityException;
 
 import java.util.Date;
-
-import static com.dx.anonymousmessenger.messages.MessageSender.sendKeyExchangeMessage;
 
 public class MessageReceiver {
 

@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.crypto;
 
+import static org.whispersystems.libsignal.protocol.SignalProtos.KeyExchangeMessage.Builder;
+
 import com.google.protobuf.ByteString;
 
 import org.whispersystems.libsignal.IdentityKey;
@@ -14,8 +16,6 @@ import org.whispersystems.libsignal.protocol.SignalProtos;
 import org.whispersystems.libsignal.util.ByteUtil;
 
 import java.io.IOException;
-
-import static org.whispersystems.libsignal.protocol.SignalProtos.KeyExchangeMessage.Builder;
 
 public class KeyExchangeMessage {
 

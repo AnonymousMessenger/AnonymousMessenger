@@ -494,6 +494,9 @@ public class AppFragment extends Fragment {
                     if(account.getProfileImagePath().equals("")){
                         throw new Resources.NotFoundException("");
                     }
+
+                    //commented this out because I was not able to make the profile image small enough here to fit in an icon correctly...
+
 //                    byte[] image = FileHelper.getFile(((DxApplication) requireActivity().getApplication()).getAccount().getProfileImagePath(), ((DxApplication) requireActivity().getApplication()));
 //                    if (image == null) {
 //                        throw new Resources.NotFoundException("");

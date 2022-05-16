@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.setup;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
@@ -23,8 +25,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 import java.util.Objects;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class BridgeRecyclerViewAdapter extends RecyclerView.Adapter<BridgeRecyclerViewAdapter.ViewHolder>{
     final Context context;

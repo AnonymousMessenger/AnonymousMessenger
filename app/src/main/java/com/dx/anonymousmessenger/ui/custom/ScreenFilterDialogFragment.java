@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.ui.custom;
 
+import static android.os.Build.VERSION.SDK_INT;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,8 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.dx.anonymousmessenger.R;
-
-import static android.os.Build.VERSION.SDK_INT;
 
 public class ScreenFilterDialogFragment extends DialogFragment {
 

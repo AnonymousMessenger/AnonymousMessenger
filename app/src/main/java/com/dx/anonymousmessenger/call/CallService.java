@@ -31,10 +31,10 @@ public class CallService extends Service {
         return null;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
+//    @Override
+//    public void onCreate() {
+//        super.onCreate();
+//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -48,9 +48,9 @@ public class CallService extends Service {
 //        else if (intent.getAction().equals(ACTION_LOCAL_HANGUP))                handleLocalHangup(intent);
 //        else if (intent.getAction().equals(ACTION_SET_MUTE_AUDIO))              handleSetMuteAudio(intent);
 //        else if (intent.getAction().equals(ACTION_START_OUTGOING_CALL))         handleStartOutgoingCall(intent);
-        else if (intent.getAction().equals(ACTION_START_OUTGOING_CALL_RESPONSE)) handleOutgoingCallResponse(intent);
+//        else if (intent.getAction().equals(ACTION_START_OUTGOING_CALL_RESPONSE)) handleOutgoingCallResponse(intent);
 //        else if (intent.getAction().equals(ACTION_START_INCOMING_CALL))         handleStartIncomingCall(intent);
-        else if (intent.getAction().equals(ACTION_ACCEPT_CALL))                 handleAcceptCall(intent);
+//        else if (intent.getAction().equals(ACTION_ACCEPT_CALL))                 handleAcceptCall(intent);
 //        else if (intent.getAction().equals(ACTION_LOCAL_RINGING))               handleLocalRinging(intent);
 //        else if (intent.getAction().equals(ACTION_REMOTE_RINGING))              handleRemoteRinging(intent);
 //        else if (intent.getAction().equals(ACTION_RECEIVE_ANSWER))              handleReceivedAnswer(intent);
@@ -60,12 +60,12 @@ public class CallService extends Service {
         return START_NOT_STICKY;
     }
 
-    private void handleOutgoingCallResponse(Intent intent) {
-        handleAcceptCall(intent);
-    }
+//    private void handleOutgoingCallResponse(Intent intent) {
+//        handleAcceptCall(intent);
+//    }
 
-    private void handleAcceptCall(Intent intent) {
-    }
+//    private void handleAcceptCall(Intent intent) {
+//    }
 
 //    private void handleStartIncomingCall(Intent intent) {
 //        startForeground(1,getCallNotification(intent.getStringExtra("address"),"Incoming call"));

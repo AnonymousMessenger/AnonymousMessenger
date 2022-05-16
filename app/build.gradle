@@ -7,11 +7,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        applicationId "com.dx.anonymousmessenger"
+        applicationId "com.example.anonymousmessenger"
         minSdkVersion 21
         targetSdkVersion 32
-        versionCode 49
-        versionName "0.8.13"
+        versionCode 50
+        versionName "0.8.14"
         setProperty("archivesBaseName", applicationId + "-v" + versionCode + "(" + versionName + ")")
         ndk{
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
@@ -25,7 +25,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            debuggable false
+            debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -62,7 +62,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 //    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.material:material:1.6.0'
     implementation 'com.google.zxing:core:3.3.3'
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
     implementation 'com.google.protobuf:protobuf-java:3.9.2' //later versions min api 26+

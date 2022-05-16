@@ -1,7 +1,9 @@
 package com.dx.anonymousmessenger.media;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -9,6 +11,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.DxApplication;
@@ -26,7 +29,7 @@ import java.util.Objects;
 
 public class AudioRecordingService extends Service {
     AudioRecord recorder;
-    private final int sampleRate = 16000 ; // 44100 for music
+    private final int sampleRate = 16000; // 44100 for music
     private final int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_MONO;
     private final int audioFormat = AudioFormat.ENCODING_PCM_8BIT;
     private final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
@@ -52,7 +55,7 @@ public class AudioRecordingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(Objects.equals(intent.getAction(), "stop_recording")){
+        if (Objects.equals(intent.getAction(), "stop_recording")) {
             outputStream = null;
             status = false;
             stopRecording();
@@ -68,7 +71,7 @@ public class AudioRecordingService extends Service {
 
     @Override
     public void onDestroy() {
-        new Thread(()->{
+        new Thread(() -> {
             try {
                 stopRecording();
             } catch (Exception e) {
@@ -80,26 +83,27 @@ public class AudioRecordingService extends Service {
 
     public void stopRecording() {
         status = false;
-        if(recorder==null || recorder.getState()==AudioRecord.STATE_UNINITIALIZED){
+        if (recorder == null || recorder.getState() == AudioRecord.STATE_UNINITIALIZED) {
             return;
         }
-        try{
+        try {
             recorder.stop();
             recorder.release();
-        }catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
 
-        if(outputStream==null){
+        if (outputStream == null) {
             return;
         }
         //put recorded stream into bytes
-        if(outputStream.size() >= Runtime.getRuntime().freeMemory()){
+        if (outputStream.size() >= Runtime.getRuntime().freeMemory()) {
             return;
         }
-        if(outputStream.size() <= 0){
+        if (outputStream.size() <= 0) {
             return;
         }
         byte[] recorded = outputStream.toByteArray();
-        if(recorded.length <= 0){
+        if (recorded.length <= 0) {
             return;
         }
         //get app ready
@@ -110,40 +114,51 @@ public class AudioRecordingService extends Service {
         String filename = String.valueOf(time);
         String path = null;
         try {
-            path = FileHelper.saveFile(recorded,app,filename);
+            path = FileHelper.saveFile(recorded, app, filename);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        if(path==null){
+        if (path == null) {
             return;
         }
         //save metadata in encrypted database with reference to encrypted file
-        QuotedUserMessage qum = new QuotedUserMessage(app.getHostname(),app.getAccount().getNickname(),time,false,address,filename,path,"audio");
+        QuotedUserMessage qum = new QuotedUserMessage(app.getHostname(), app.getAccount().getNickname(), time, false, address, filename, path, "audio");
         //send message and get received status
-        MessageSender.sendMediaMessage(qum,app,address);
+        MessageSender.sendMediaMessage(qum, app, address);
     }
 
     @SuppressWarnings("BusyWait")
-    public void startTiming(){
-        try{
-            while(status){
+    public void startTiming() {
+        try {
+            while (status) {
                 try {
                     Thread.sleep(1000);
-                }catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
                 callTimer++;
                 Intent gcm_rec = new Intent("recording_action");
-                gcm_rec.putExtra("action","timer");
-                gcm_rec.putExtra("time",Utils.getMinutesAndSecondsFromSeconds(callTimer));
+                gcm_rec.putExtra("action", "timer");
+                gcm_rec.putExtra("time", Utils.getMinutesAndSecondsFromSeconds(callTimer));
                 LocalBroadcastManager.getInstance(getApplication()).sendBroadcast(gcm_rec);
             }
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
         }
     }
 
-    public void startRecording(){
+    public void startRecording() {
         byte[] buffer = new byte[minBufSize];
-        try{
-            recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,channelConfig,audioFormat,buffer.length);
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channelConfig, audioFormat, buffer.length);
 //            if(recorder.getRecordingState() != AudioRecord.RECORDSTATE_STOPPED ){
 //                Handler handler = new Handler(getMainLooper());
 //                handler.post(()->{

@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.single_activity;
 
+import static java.util.Objects.requireNonNull;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ClipData;
@@ -34,8 +36,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-
-import static java.util.Objects.requireNonNull;
 
 public class MyProfileActivity extends DxActivity {
 

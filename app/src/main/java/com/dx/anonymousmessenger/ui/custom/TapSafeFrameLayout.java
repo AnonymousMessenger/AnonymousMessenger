@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.ui.custom;
 
+import static android.view.MotionEvent.FLAG_WINDOW_IS_OBSCURED;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -8,8 +10,6 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
-
-import static android.view.MotionEvent.FLAG_WINDOW_IS_OBSCURED;
 
 public class TapSafeFrameLayout extends FrameLayout {
 

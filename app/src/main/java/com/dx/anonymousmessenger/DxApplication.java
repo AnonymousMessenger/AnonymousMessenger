@@ -286,17 +286,17 @@ public class DxApplication extends Application {
 
     public void queueUnsentMessages(String address){
         if(syncingAddress!=null && syncingAddress.equals(address)){
-            System.out.println("Already Syncing with: "+syncingAddress);
+//            System.out.println("Already Syncing with: "+syncingAddress);
             return;
         }
-        System.out.println("Starting Sync.............");
+//        System.out.println("Starting Sync.............");
         new Thread(()-> doQueueUnsentMessages(address)).start();
     }
 
     public void doQueueUnsentMessages(String address){
-        System.out.println("Waiting sync start : "+address);
+//        System.out.println("Waiting sync start : "+address);
         synchronized (peerQueueLock) {
-            System.out.println("sync start: "+address);
+//            System.out.println("sync start: "+address);
             try {
 //                syncing = true;
                 syncingAddress = address;
@@ -309,22 +309,22 @@ public class DxApplication extends Application {
                         sendMediaMessageWithoutSaving(qum, this, address, false, true);
                     }
                 }
-                System.out.println("getting undelivered list.........");
+//                System.out.println("getting undelivered list.........");
                 List<QuotedUserMessage> undeliveredMessageList = DbHelper.getUndeliveredMessageList(this, address);
                 if (undeliveredMessageList.size() == 0) {
-                    System.out.println("LIST SIZE WAS ZERO 00000000");
+//                    System.out.println("LIST SIZE WAS ZERO 00000000");
 //                    syncing = false;
                     syncingAddress = null;
                     return;
                 }
-                System.out.println("LIST SIZE : "+undeliveredMessageList.size());
-                //todo: double sending occurs because there is a queue pool, we need to stop using it
+//                System.out.println("LIST SIZE : "+undeliveredMessageList.size());
+                //double sending occurs because there is a queue pool, we need to stop using it
                 // the queue pool should be cleared if the message is already there
                 //double is because there are two syncing functions (all & by address)
                 //also bad because we clear the queue in separate functions and threads
                 //maybe make sendQueuedMessages synchronized?
 //            addToMessagesQueue(undeliveredMessageList);
-                System.out.println("Sending.........");
+//                System.out.println("Sending.........");
                 sendQueuedMessages(undeliveredMessageList);
 //                syncing = false;
                 syncingAddress = null;
@@ -367,7 +367,7 @@ public class DxApplication extends Application {
         contentIntent.putExtra("address",address.substring(0,10));
         contentIntent.setAction(type);
         contentIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = null;
+        PendingIntent pendingIntent;
         if (android.os.Build.VERSION.SDK_INT >= 31) {
             pendingIntent = PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_MUTABLE);
         }else
@@ -380,7 +380,7 @@ public class DxApplication extends Application {
         Intent answerIntent = new Intent(context, DxCallService.class);
         answerIntent.putExtra("address",address.substring(0,10));
         answerIntent.setAction("answer");
-        PendingIntent answerPendingIntent = null;
+        PendingIntent answerPendingIntent;
         if (Build.VERSION.SDK_INT >= 31) {
             answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, PendingIntent.FLAG_MUTABLE);
         }else{
@@ -390,7 +390,7 @@ public class DxApplication extends Application {
         Intent hangupIntent = new Intent(context, DxCallService.class);
         hangupIntent.putExtra("address",address.substring(0,10));
         hangupIntent.setAction("hangup");
-        PendingIntent hangupPendingIntent = null;
+        PendingIntent hangupPendingIntent;
         if (Build.VERSION.SDK_INT >= 31) {
             hangupPendingIntent = PendingIntent.getService(context, 0, hangupIntent, PendingIntent.FLAG_MUTABLE);
         }else{
@@ -659,7 +659,7 @@ public class DxApplication extends Application {
         resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
-        PendingIntent resultPendingIntent = null;
+        PendingIntent resultPendingIntent;
         if (Build.VERSION.SDK_INT >= 31) {
             resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_MUTABLE);
         }else{
@@ -716,7 +716,7 @@ public class DxApplication extends Application {
         resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
-        PendingIntent resultPendingIntent = null;
+        PendingIntent resultPendingIntent;
         if (Build.VERSION.SDK_INT >= 31) {
             resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_MUTABLE);
         }else{
@@ -800,7 +800,7 @@ public class DxApplication extends Application {
         resultIntent.setComponent(componentName);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
-        PendingIntent gotoApp = null;
+        PendingIntent gotoApp;
         if (Build.VERSION.SDK_INT >= 31) {
             gotoApp = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_MUTABLE);
         }else{

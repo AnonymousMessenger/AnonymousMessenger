@@ -1,5 +1,7 @@
 package com.dx.anonymousmessenger.media;
 
+import static com.dx.anonymousmessenger.file.FileHelper.getFile;
+
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -10,8 +12,6 @@ import com.dx.anonymousmessenger.util.CallBack;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
-import static com.dx.anonymousmessenger.file.FileHelper.getFile;
 
 public class AudioPlayer {
     private AudioTrack at;
