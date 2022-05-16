@@ -1,0 +1,9 @@
+Fixed alert overlay style.
+Design and performance changes.
+Added no password mode when starting a new account.
+Saved vertical space with new message design.
+Changes in verify identity design.
+Fixed country route filter.
+Removed strong password restrictions.
+Updated Tor to 0.4.6.8.
+Changed main menu to the right side.
