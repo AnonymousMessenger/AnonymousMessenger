@@ -1,0 +1,371 @@
+<resources>
+    <string name="app_name">Mesager Anonim</string>
+    <string name="create_account_button">Începe</string>
+    <string name="nickname">Pseudonim</string>
+    <string name="nickname_error">Pseudonim greșit</string>
+    <string name="nickname_help">Introdu pseudonimul pentru a continua</string>
+    <string name="nickname_okay">Frumos pseudonim!</string>
+    <string name="next_button">Înainte</string>
+    <string name="choose_password">Alege parola</string>
+    <string name="confirm_password">Confirmă parola</string>
+    <string name="setup_password_explanation">Parola pe care o introduci va fi folosită pentru a cifra datele din aparatul tău. Aceasta nu este o parolă de conectare și nu poate fi folosită pentru recuperare. Va trebui să introduci parola mai tîrziu, atunci cînd deschizi aplicația după ce ai ieșit din ea. Această aplicație nu se conectează niciodată la niciun server.</string>
+    <string name="password_too_weak">Parola ta este prea slabă, nu-ți putem permite să faci acest lucru pentru că ne pasă de protecția ta.</string>
+    <string name="passwords_do_not_match">Parolele nu se potrivesc</string>
+    <string name="channel4">canalul4</string>
+    <string name="channel_description">acesta și acela</string>
+    <string name="hello_blank_fragment">Fragment gol de salut</string>
+    <string name="enter_password">Introdu parola</string>
+    <string name="decrypt_button">Descifrează</string>
+    <string name="myaddress">Adresa mea</string>
+    <string name="hint_contact_address">Introdu adresa de contact (.onion)</string>
+    <string name="lbl_contact_address">Introdu adresa de contact</string>
+    <string name="enter_message">Mesaj sigur…</string>
+    <string name="send_button">Trimite</string>
+    <string name="reply">Răspunde</string>
+    <string name="pin">Fixează</string>
+    <string name="copy">Copiază</string>
+    <string name="you">tu</string>
+    <string name="action_reset_session">Restabilește sesiunea</string>
+    <string name="action_verify_identity">Verifică identitatea</string>
+    <string name="action_clear_conversation">Șterge conversația</string>
+    <string name="action_search">Caută</string>
+    <string name="action_shutdown">Oprește</string>
+    <string name="action_my_identity">Identitatea mea</string>
+    <string name="action_restart_tor">Repornește Tor</string>
+    <string name="my_identity_explanation">Cheie publică folosită pentru a verifica identitatea</string>
+    <string name="verify_identity_explanation">Ambele chei publice împreună pentru a verifica ambele identități</string>
+    <string name="verify_identity_how_to">Comparați aceste numere pe ambele aparate. Dacă acestea sînt la fel, atunci cifrarea E2E funcționează corect…</string>
+    <string name="action_call">Apelează</string>
+    <string name="ask_me_again">Întreabă din nou</string>
+    <string name="no_thanks">Nu, mulțumesc</string>
+    <string name="why_need_mic">aplicația are nevoie de acest lucru pentru a efectua sau a primi apeluri</string>
+    <string name="mic_perm_ask_title">Acces la microfon</string>
+    <string name="ask_for_mic_btn">Aprobă</string>
+    <string name="accept_call">Acceptă</string>
+    <string name="dx_call">APEL TOR</string>
+    <string name="call_picture_description">imaginea paginii apelului</string>
+    <string name="end_call">Închide</string>
+    <string name="connecting">Se conectează…</string>
+    <string name="CallNotificationBuilder_connecting">Se conectează</string>
+    <string name="NotificationBarManager__incoming_call">Apel primit</string>
+    <string name="NotificationBarManager_call_in_progress">Apel în curs</string>
+    <string name="NotificationBarManager__establishing_call">Efectuare apel</string>
+    <string name="trying">se încearcă</string>
+    <string name="ringing">Sună</string>
+    <string name="connected">Conectat</string>
+    <string name="answer">răspunde</string>
+    <string name="incoming_call">Apel primit</string>
+    <string name="identity_verification_fail">Nu s-au putut obține cheile de identitate</string>
+    <string name="identity_key_fail">Nu găsesc cheia ta de identitate</string>
+    <string name="delete_contact">Șterge contactul</string>
+    <string name="no_contacts">Niciun contact!</string>
+    <string name="tor_output">Oprire Tor</string>
+    <string name="anonymous_messenger">Mesager Anonim</string>
+    <string name="by_drxtreme">de DrXtreme</string>
+    <string name="welcome_to">bun venit în</string>
+    <string name="recording">Înregistrare</string>
+    <string name="send">Trimite</string>
+    <string name="to_show_when_it_is_unread">de arătat atunci cînd este necitit</string>
+    <string name="text_msg_placeholder">am uitat să-ți amintesc despre chestia aia de acolo</string>
+    <string name="profile_image">poza de profil</string>
+    <string name="really_long_word">sfsdfdgsdhfdghfdghfghfghghsdfgdfghdfghdsfgdfgdfgsdfgfds</string>
+    <string name="time_passed_placeholder">31m</string>
+    <string name="seen_image">imagine văzută</string>
+    <string name="msg_place_holder">bună, ce mai faci?</string>
+    <string name="indicates_secure_messaging">indică mesajele sigure</string>
+    <string name="textview">Text</string>
+    <string name="john_doe">John Doe</string>
+    <string name="hi_man_how_are_you">bună, ce mai faci?</string>
+    <string name="offline">deconectat</string>
+    <string name="picture_of_contact">poza contactului</string>
+    <string name="hold_on">Așteaptă!</string>
+    <string name="starting_up_tor">se pornește Tor</string>
+    <string name="doing_stuff">te fac anonim…</string>
+    <string name="go_to_contacts">Saltă</string>
+    <string name="checking">Se caută</string>
+    <string name="online">conectat</string>
+    <string name="synced">sincronizat</string>
+    <string name="add_contact">Adaugă un contact</string>
+    <string name="waiting_for_tor">se așteaptă Tor</string>
+    <string name="oh_no">Oh nu!</string>
+    <string name="did_you_forget_your_password">Ți-ai uitat parola?</string>
+    <string name="crash_message">„Mesager Anonim”: ai terminat memoria RAM!</string>
+    <string name="no_encryption_yet">Nu este încă gata pentru cifrare</string>
+    <string name="no_session">Sesiunea nu există, se pornește acum</string>
+    <string name="audio_message">mesaj audio</string>
+    <string name="user_is_online">Utilizatorul e conectat</string>
+    <string name="user_is_offline">Utilizatorul e deconectat</string>
+    <string name="cant_encrypt_message">Nu s-a putut cifra mesajul, trebuie să aștepți schimbul de chei.</string>
+    <string name="resp_key_exchange">Mesaj de răspuns privind schimbul de chei</string>
+    <string name="key_exchange_message">Mesaj privind schimbul de chei</string>
+    <string name="image_to_send">imagine de trimis</string>
+    <string name="read_storage_perm_ask_title">Permisiune de stocare</string>
+    <string name="why_need_read_storage">aplicația are nevoie de aceasta pentru a putea
+       trimite imagini stocate pe telefon</string>
+    <string name="icon_for_image_to_send">simbolul imaginii de trimis</string>
+    <string name="image">imagine</string>
+    <string name="pic_help">Închide</string>
+    <string name="send_media_to">Trimite un fișier către</string>
+    <string name="picure_view">Vezi imaginea</string>
+    <string name="media_message">fișier</string>
+    <string name="caption">Scrie un titlu</string>
+    <string name="still_background">Funcționează ascuns</string>
+    <string name="click_to_hide">Ascunde notificarea</string>
+    <string name="unpin">Desprinde</string>
+    <string name="profile_contact">Vezi profilul</string>
+    <string name="save_picture">Salvează poza</string>
+    <string name="confirm_add_contact">„Chiar vrei să adaugi”</string>
+    <string name="contact_exists">Contactul există deja!</string>
+    <string name="cant_add_contact">contactul nu poate fi adăugat</string>
+    <string name="save_to_storage">Salvezi în memoria comună?</string>
+    <string name="save_to_storage_explain">Alte aplicații vor avea acces la această imagine, dacă este salvată în memoria comună.</string>
+    <string name="action_my_profile">Profilul meu</string>
+    <string name="action_help">Ajutor</string>
+    <string name="action_about">Despre</string>
+    <string name="change_nickname">Schimbă pseudonimul</string>
+    <string name="new_nickname">Pseudonim nou</string>
+    <string name="confirm">Confirmă</string>
+    <string name="action_license">Licență</string>
+    <string name="license">
+        Mesager Anonim, o soluție de comunicare privată care funcționează prin Tor.\n
+    Copyright © 2021  Sofian M. Benissa\n\n
+
+    Acest program este software liber: îl poți redistribui și/sau modifica
+    în conformitate cu termenii Licenței Publice Generale GNU, așa cum a fost publicată
+    de către Free Software Foundation, fie versiunea 3 a licenței,
+    fie (la alegerea ta) orice versiune ulterioară.\n
+
+    Acest program este distribuit în speranța că va fi util,\n
+    dar FĂRĂ NICIO GARANȚIE; fără nici măcar garanția implicită de
+    COMERCIALIZARE sau APTITUDINEA PENTRU UN SCOP PARTICULAR. A se vedea
+    Licența publică generală GNU pentru mai multe detalii.\n
+
+    Ar fi trebuit să fi primit o copie a Licenței Publice Generale GNU împreună
+     cu acest program. În caz contrar, consultă https://www.gnu.org/licenses.</string>
+    <string name="copied_address">Adresă copiată</string>
+    <string name="empty_nickname_help">Nu poți avea un pseudonim gol</string>
+    <string name="theiraddress">Adresa lor</string>
+    <string name="turn_off_battery">Oprești optimizarea bateriei?</string>
+    <string name="allow_in_background">permiți ca „Mesager Anonim” să rămînă activ dacă este ascuns?</string>
+    <string name="shut_app">Oprești aplicația?</string>
+    <string name="shut_app_explain">Nu vei putea primi mesaje pînă cînd nu descifrezi din nou cu parola ta.</string>
+    <string name="restart_tor">Repornești Tor?</string>
+    <string name="restart_tor_explain">Acest lucru nu ar trebui să fie necesar în condiții normale, cu excepția cazului în care consideri că Tor nu funcționează corect în acest moment.</string>
+    <string name="restarting_service">Se repornește serviciul</string>
+    <string name="connection_restored">Conexiune restabilită</string>
+    <string name="lost_connection">Conexiune pierdută</string>
+    <string name="connection_is_coming">conexiunea ar trebui să revină în curînd</string>
+    <string name="will_receive_messages_soon">ar trebui să poți primi mesaje în 2 minute</string>
+    <string name="waiting_for_connectivity">se așteaptă conectarea</string>
+    <string name="almost_ready">Aproape gata!</string>
+    <string name="starting_tor_first_time">Se pornește Tor și se prepară tot ce avem nevoie pentru a ne conecta!</string>
+    <string name="ready_to_chat">Gata de discutat în siguranță!</string>
+    <string name="you_got_all_you_need">Ai tot ce-ți trebuie pentru a discuta în siguranță cu prietenii tăi!</string>
+    <string name="new_message">Mesaj nou!</string>
+    <string name="you_have_message">ai un nou mesaj secret</string>
+    <string name="wrong_password">Parolă greșită</string>
+    <string name="no_key">cheia de cifrare nu a fost găsită</string>
+    <string name="error">eroare</string>
+    <string name="failed_to_decrypt">DESCIFRAREA MESAJULUI NU A REUȘIT</string>
+    <string name="failed_to_read_after_decrypt">CITIREA MESAJULUI DESCIFRAT NU A REUȘIT</string>
+    <string name="failed_to_get_AEM">IMPOSIBIL DE OBȚINUT „Mesaj cifrat adresat” DIN MESAJ</string>
+    <string name="cant_add_self">Nu te poți adăuga singur!</string>
+    <string name="waiting_for_response">Cheie trimisă. Se așteaptă răspunsul.</string>
+    <string name="decrypting">Se descifrează…</string>
+    <string name="stale_key">Cheie expirată primită (se ignoră)</string>
+    <string name="invalid_key">A fost primită o cheie greșită</string>
+    <string name="untrusted_identity">Cheie primită de la o identitate nesigură</string>
+    <string name="bad_message">Mesaj compromis</string>
+    <string name="decrypt_reminder_title">Descifrează pentru a primi mesaje</string>
+    <string name="decrypt_reminder_message">trebuie să introduci parola pentru ca
+aplicația să funcționeze în ascuns</string>
+    <string name="denied_microphone">Accesul la microfon a fost refuzat</string>
+    <string name="denied_microphone_help">în acest fel nu poți efectua sau primi apeluri</string>
+    <string name="delete_messages">Ștergi toate mesajele?</string>
+    <string name="delete_messages_help">aceasta va șterge chiar și mesajele fixate!</string>
+    <string name="yes">Da</string>
+    <string name="pinned_message">Mesaj fixat</string>
+    <string name="unpinned_message">Mesaj nefixat</string>
+    <string name="copied">Copiat</string>
+    <string name="saved_to_storage">Salvat în memorie</string>
+    <string name="about">Un proiect finanțat de Alton James Steele și realizat de Sofian Mahmoud
+        Benissa
+        pentru a aduce servicii anonime sigure și convenabile
+        pentru voi, deoarece nu eram mulțumiți de ceea ce era disponibil, am decis să
+        să ne creăm propria idee de aplicație de mesagerie și să o împărtășim cu lumea, codul
+        sursă este disponibil, iar proiectul este sub Licența Publică Generală GNU, astfel încît să
+        puteți profita pe deplin de el și să aveți libertatea de a-l modifica, printre alte
+        libertăți</string>
+    <string name="copyright">Drepturi de autor © 2021 Sofian M. Benissa</string>
+    <string name="action_tips">Sfaturi de protecție</string>
+    <string name="hide_notification">dezactivează notificarea service_running</string>
+    <string name="record_audio">înregistrează audio</string>
+    <string name="send_file">trimite un fișier</string>
+    <string name="scroll_down">dă în jos</string>
+    <string name="file">Fișier</string>
+    <string name="unknown_file_name">Nume necunoscut de fișier</string>
+    <string name="unknown_file_size">Mărime necunoscută a fișierului</string>
+    <string name="recording_failed">Nu pot să înregistrez acum. Este un apel în curs?</string>
+    <string name="feature_unready">această caracteristică va fi gata în următoarea actualizare</string>
+    <string-array name="security_tips">
+        <item>@string/security_tips01</item>
+        <item>@string/security_tips02</item>
+        <item>@string/security_tips03</item>
+        <item>@string/security_tips04</item>
+        <item>@string/security_tips05</item>
+        <item>@string/security_tips06</item>
+        <item>@string/security_tips07</item>
+        <item>@string/security_tips08</item>
+        <item>@string/security_tips09</item>
+        <item>@string/security_tips10</item>
+        <item>@string/security_tips11</item>
+        <item>@string/security_tips12</item>
+        <item>@string/security_tips13</item>
+        <item>@string/security_tips14</item>
+        <item>@string/security_tips15</item>
+    </string-array>
+    <string name="security_tips01">Folosește o tastatură care îți respectă libertatea și nu
+        se conectează la internet. Vă recomandăm OpenBoard</string>
+    <string name="security_tips02">Siguranța ta depinde în mare măsură de aplicațiile
+       instalate în aparat, recomandăm să înlocuiești aplicațiile inițiale cu aplicații din
+       depozitul f-droid</string>
+    <string name="security_tips03">Vezi să nu lipești din greșeală adresa prietenului tău în
+navigatorul internet, căci ai pune în pericol anonimatul lui/tău</string>
+    <string name="security_tips04">Dezinstalează „Mesager Anonim” pentru a șterge contul tău și
+        pentru a elimina totul.</string>
+    <string name="security_tips05">Descărcarea de pe serviciul nostru onion este mai sigură decît
+        de pe servere noastre normale.</string>
+    <string name="security_tips06">Cifrarea datelor tale este sigură în funcție de parola ta.
+     Recomandăm o parolă lungă, alcătuită din cuvinte care nu înseamnă nimic pentru tine.</string>
+    <string name="security_tips07">Textul este mai sigur și mai anonim decît orice altceva.</string>
+    <string name="security_tips08">Trimite adresa ta în cel mai sigur mod posibil.</string>
+    <string name="security_tips09">Cifrează memoria telefonului, dacă e posibil.</string>
+    <string name="security_tips10">Dacă vrei să folosești un VPN, asigură-te că programul pe care îl folosești
+       este liber și cu sursă publică, cum ar fi OpenVPN.</string>
+    <string name="security_tips11">Oprind „Mesager Anonim” păstrezi datele cifrate în telefon.</string>
+    <string name="security_tips12">Construiește „Mesager Anonim” de la sursă, dacă este posibil.</string>
+    <string name="security_tips13">Verifică identitățile.</string>
+    <string name="security_tips14">Asigură-te că nu folosești nicio aplicație proprietară pe telefon și
+        că utilizezi un program liber cu sursă publică pentru a-ți accesa siturile de socializare,
+        conturile și, în general, să nu ai nicio aplicație în care să nu ai încredere sau una care
+        necesită mai multe permisiuni decît trebuie să aibă sau care are reclame de la terți
+        prezentate de aplicația însăși.</string>
+    <string name="security_tips15">Pentru a ne ajuta să îmbunătățim acest proiect și a oferi cea mai bună soluție de
+mesagerie anonimă pentru toată lumea, luați în considerare posibilitatea de a face o donație.</string>
+    <string name="opening_socks_listener">Se deschide Socks Listener</string>
+    <string name="socks_listener_listening">Se ascultă Socks Listener</string>
+    <string name="opened_socks_listener">Socks Listener e deschis</string>
+    <string name="opening_control_listener">Se deschide Control Listener</string>
+    <string name="control_listener_listening">Se ascultă Control Listener</string>
+    <string name="opened_control_listener">Control Listener e deschis</string>
+    <string name="action_notepad">Notițe</string>
+    <string name="save">Salvează</string>
+    <string name="enter_note">Salvează notița cifrată</string>
+    <string name="delete_contact_question">Ștergi acest contact?</string>
+    <string name="delete_contact_details">acest lucru nu poate fi anulat și va șterge sesiunea și conversația acestui contact</string>
+    <string name="delete_note_question">Ștergi această notiță?</string>
+    <string name="delete_note_details">acest lucru nu poate fi anulat</string>
+    <string name="delete_note">Șterge</string>
+    <string name="open_link_question">Deschizi această adresă?</string>
+    <string name="open_link_describe">Deschiderea legăturilor în afara aplicațiilor private te poate scoate din anonimat.
+ Fă acest lucru dacă ai încredere în adresa internet sau folosești navigatorul Tor.</string>
+    <string name="scan">Scanează codul QR</string>
+    <string name="contact_added">Contact adăugat</string>
+    <string name="cam_perm_ask_title">Acces la Fotocameră</string>
+    <string name="why_need_cam">Scanarea QR nu va funcționa fără acces la fotocameră</string>
+    <string name="ask_for_cam_btn">Aprobă</string>
+    <string name="invalid_address">Adresă greșită</string>
+    <string name="action_log">Jurnal de protecție</string>
+    <string name="delete_log_question">Ștergi?</string>
+    <string name="delete_log_details">Acest lucru nu poate fi anulat</string>
+    <string name="action_log_notice">Include o notificare</string>
+    <string name="action_clear_log">Șterge jurnalul</string>
+    <string name="include_notice_logs">Include jurnale de notificare</string>
+    <string name="decrypting2">Se descifrează</string>
+    <string name="open_file_question">Deschizi fișierul în altă aplicație?</string>
+    <string name="open_file_describe">Acest lucru va descifra fișierul și va oferi acces unei aplicații terțe care ar putea compromite fișierul</string>
+    <string name="deleted_logs">Jurnalul a fost șters</string>
+    <string name="saving">Se salvează</string>
+    <string name="cancel">Renunță</string>
+    <string name="slide_to_cancel">Trage pentru a șterge</string>
+    <string name="sending_file">Se trimite fișierul</string>
+    <string name="sending_part_one">Se trimite partea 1</string>
+    <string name="screen_filter_body">O altă aplicație e peste „Mesager Anonim”,         ecranul este blocat pentru a-ți proteja intimitatea</string>
+    <string name="screen_filter_title">Suprapunere pe ecran detectată</string>
+    <string name="try_now">Încearcă acum</string>
+    <string name="mic_in_use">Microfonul poate fi utilizat de altă aplicație</string>
+    <string name="back_image">dă înapoi</string>
+    <string name="subtitle">Subtitlu</string>
+    <string name="qr_code_image">Imagine conținînd codul QR</string>
+    <string name="go_to_app">deschide aplicația</string>
+    <string name="use_bridges">Folosește poduri</string>
+    <string name="request_bridge">Cere un pod</string>
+    <string name="done_button">Gata</string>
+    <string name="allow_unknown">Acceptă contacte necunoscute</string>
+    <string name="allow_files">Permite primirea fișierelor</string>
+    <string name="file_limit">Mărimea maximă a fișierului</string>
+    <string name="allow_calls">Permite apeluri</string>
+    <string name="action_settings">Reglări</string>
+    <string name="delete_bridge_question">Ștergi acest pod?</string>
+    <string name="delete_bridge_details">acest lucru nu poate fi anulat</string>
+    <string name="online_check_address">Adresă de verificare a conectării</string>
+    <string name="reset_settings">Restabilește reglările</string>
+    <string name="bridges">Poduri (repornește Tor pentru a avea efect)</string>
+    <string name="other">Altele</string>
+    <string name="reset">Restabilește</string>
+    <string name="security">Protecție</string>
+    <string name="connectivity">Conectare</string>
+    <string name="add_bridge">Adaugă un pod</string>
+    <string name="request_bridge_help">Poți solicita un pod de la proiectul Tor, folosind această adresă: https://bridges.torproject.org/bridges?transport=obfs4 sau poți scrie un e-mail la bridges@torproject.org sau poți folosi propriul tău pod.</string>
+    <string name="button_undo">Anulează</string>
+    <string name="insert_bridge_line">Introdu podul</string>
+    <string name="nickname_explain_title">Utilizarea pseudonimului</string>
+    <string name="nickname_explain">Pseudonimul tău este stocat în aparatul tău și este trimis doar cifrat, împreună cu mesajul tău, direct către contactul tău. Nu te conectezi niciodată la un server atunci cînd folosești această aplicație.</string>
+    <string name="password_explain_title">Utilizarea parolei</string>
+    <string name="online_check_address_explain">Această adresă este utilizată pentru a ne asigura că ești conectat și că totul este configurat corect. Poate fi orice adresă de server web, deoarece verificăm doar capacitatea de acces. Poate fi un serviciu ascuns sau o adresă obișnuită.</string>
+    <string name="running_on">Funcționează pe:</string>
+    <string name="processors">procesoare</string>
+    <string name="and">și</string>
+    <string name="free_memory">memorie liberă</string>
+    <string name="ok">Aprobă</string>
+    <string name="with">cu</string>
+    <string name="welcome_to_anonymous_messenger">Acesta este următorul tău mesager sigur</string>
+    <string name="change_profile_image">Schimbă poza</string>
+    <string name="remove_profile_image">Elimină poza</string>
+    <string name="remove_profile_image_details">Sigur vrei să elimini poza ta de profil?</string>
+    <string name="profile_image_changed">Poză de profil schimbată</string>
+    <string name="profile_image_removed">Poză de profil eliminată</string>
+    <string name="restart_app">Repornește aplicația</string>
+    <string name="unknown_exception">Eroare necunoscută</string>
+    <string name="error_occurred">Ceva n-a mers bine</string>
+    <string name="error_details">Detaliile erorii</string>
+    <string name="retry">Repetă</string>
+    <string name="use_proxy">Folosește un proxy Socks5</string>
+    <string name="proxy_address">Adresa proxy Socks5</string>
+    <string name="proxy_username">Nume de utilizator</string>
+    <string name="proxy_password">Parola</string>
+    <string name="tor_error">Tor nu s-a putut conecta în 300s, poți încerca să folosești poduri sau să te conectezi prin orice proxy socks5 din reglări</string>
+    <string name="tor_error_title">Eroare la pornirea lui Tor</string>
+    <string name="stay_offline">Rămîi neconectat</string>
+    <string name="proxy">Socks5 proxy (repornește Tor pentru a avea efect)</string>
+    <string name="exclude_tor_nodes">Exclude nodurile Tor (repornește Tor pentru a avea efect)</string>
+    <string name="exclude_unknown">Exclude nodurile necunoscute</string>
+    <string name="strict_exclude">Excludere strictă</string>
+    <string name="action_scroll_up">În sus</string>
+    <string name="action_scroll_down">În jos</string>
+    <string name="action_clear_tor_cache">Șterge Cache Tor</string>
+    <string name="clear_tor_cache_explain">Acest lucru poate fi util dacă ID-urile arhivate sînt vechi, dar nu este recomandabil să se facă des asta din motive de performanță și anonimat.</string>
+    <string name="disappearing_messages_default">Șterge mesajele nefixate după 24 de ore</string>
+    <string name="tor_exited">Tor s-a oprit</string>
+    <string name="action_change_app_name">Schimbă numele aplicației</string>
+    <string name="select_app_name">Alege numele aplicației</string>
+    <string name="action_change_theme">Schimbă fondul</string>
+    <string name="dark_theme">Fond negru</string>
+    <string name="light_theme">Fond alb</string>
+    <string name="invalid_bridge">Pod greșit</string>
+    <string name="bridge_added">Pod adăugat</string>
+    <string name="nickname_help_explain">Apasă pentru mai multe informații despre folosirea pseudonimului</string>
+    <string name="no_recent_messages">Niciun mesaj recent!</string>
+    <string name="unpinned_messages_get_deleted">Știai că mesajele nefixate dispar după 24 de ore?</string>
+    <string name="continue_without_password">Nu folosi o parolă</string>
+</resources>
