@@ -327,7 +327,7 @@ public class CallController {
 //    }
 
     public static void callReceiveHandler(Socket sock, DxApplication app) throws Exception {
-        Log.e("SERVER CONNECTION", "its a call");
+        Log.d("SERVER CONNECTION", "its a call");
         DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
         DataInputStream in=new DataInputStream(sock.getInputStream());
         //todo check to see if busy or something
