@@ -43,7 +43,7 @@ Anonymous Messenger encrypts data stored on the user's device with the user's pa
 Anonymous Messenger can be built as an android project (eg. using Android Studio or Gradle).
 We recommend you change the applicationId if you want to install multiple versions on the same device.
 
-### How to build binary dependancies
+### How to build binary dependencies
 Anonymous Messenger depends on Tor and obfs4proxy and they must be included for your device's architecture in the jniLibs directory 'app/src/main/jniLibs/[ARCH]' and they need to be named libtor.ARCH.so and obfs4proxy.ARCH.so
 
 We have forked the tor-android repository to provide a script that builds Tor for our supported architectures (armeabi-v7a,arm64-v8a,x86,x86_64) visit: https://git.anonymousmessenger.ly/dx/tor-android
