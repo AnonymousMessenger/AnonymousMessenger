@@ -344,7 +344,7 @@ public class CallController {
                 listen(codec2,bits,buf);
             }
         } catch (Exception e) {
-            Log.e("receiveData:","receiveData.length: ERROR");
+            Log.e("receiveData:","receiveData: ERROR");
             e.printStackTrace();
             stopCall(true);
         }

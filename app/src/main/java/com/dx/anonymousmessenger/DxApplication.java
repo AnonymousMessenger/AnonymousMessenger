@@ -422,26 +422,26 @@ public class DxApplication extends Application {
                 LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                 builder.setContentText(context.getString(R.string.ringing));
                 builder.setPriority(NotificationCompat.PRIORITY_MIN);
-                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
+                builder.addAction(R.drawable.ic_baseline_call_24, getString(R.string.hangup), hangupPendingIntent);
                 break;
             case CallService.ACTION_START_INCOMING_CALL:
                 gcm_rec.putExtra("action",CallService.ACTION_START_INCOMING_CALL);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                 builder.setContentText(context.getString(R.string.NotificationBarManager__incoming_call));
-                builder.addAction(R.drawable.ic_baseline_call_24, "Answer", answerPendingIntent);
-                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
+                builder.addAction(R.drawable.ic_baseline_call_24, getString(R.string.answer), answerPendingIntent);
+                builder.addAction(R.drawable.ic_baseline_call_24, getString(R.string.hangup), hangupPendingIntent);
                 break;
             case CallService.ACTION_START_OUTGOING_CALL:
                 gcm_rec.putExtra("action",CallService.ACTION_START_OUTGOING_CALL);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                 builder.setContentText(context.getString(R.string.connecting));
-                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
+                builder.addAction(R.drawable.ic_baseline_call_24, getString(R.string.hangup), hangupPendingIntent);
                 break;
             default:
                 gcm_rec.putExtra("action",context.getString(R.string.NotificationBarManager_call_in_progress));
                 LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                 builder.setContentText(context.getString(R.string.NotificationBarManager_call_in_progress));
-                builder.addAction(R.drawable.ic_baseline_call_24, "Hangup", hangupPendingIntent);
+                builder.addAction(R.drawable.ic_baseline_call_24, getString(R.string.hangup), hangupPendingIntent);
                 break;
         }
 

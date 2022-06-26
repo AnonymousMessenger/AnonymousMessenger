@@ -373,4 +373,5 @@
     <string name="no_recent_messages">No Recent Messages!</string>
     <string name="unpinned_messages_get_deleted">Did you know unpinned messages get deleted every 24 hours?</string>
     <string name="continue_without_password">Don\'t Use a Password</string>
+    <string name="hangup">Hangup</string>
 </resources>
