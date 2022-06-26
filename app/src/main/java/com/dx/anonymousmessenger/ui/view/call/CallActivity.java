@@ -68,6 +68,7 @@ public class CallActivity extends DxActivity {
         hangup = findViewById(R.id.hangup_fab);
         hangup.setOnClickListener(v -> {
             Intent serviceIntent = new Intent(this, DxCallService.class);
+            serviceIntent.putExtra("address",address.substring(0,10));
             serviceIntent.setAction("hangup");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(serviceIntent);
@@ -158,7 +159,7 @@ public class CallActivity extends DxActivity {
 
     private void setNameFromAddress(String address) {
         new Thread(()->{
-            String nickname = DbHelper.getContactNickname(address,((DxApplication)getApplication()));
+            String nickname = DbHelper.getContactNickname(DbHelper.getFullAddress(address,((DxApplication)getApplication())),((DxApplication)getApplication()));
             runOnUiThread(()-> name.setText(nickname));
         }).start();
     }

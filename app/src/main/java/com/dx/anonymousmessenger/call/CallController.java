@@ -1,9 +1,11 @@
 package com.dx.anonymousmessenger.call;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
@@ -11,6 +13,8 @@ import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.RingtoneManager;
+import android.media.audiofx.AcousticEchoCanceler;
+import android.media.audiofx.NoiseSuppressor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -24,19 +28,28 @@ import com.dx.anonymousmessenger.tor.TorClient;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
+import codec2.Jcodec2;
+//import com.ustadmobile.codec2.Codec2;
 
 public class CallController {
 
+    final Jcodec2 codec2 = new Jcodec2( Jcodec2.CODEC2_MODE_1300 );
     private AudioTrack at;
     AudioRecord recorder;
-    private final int sampleRate = 16000; // 44100 for music
-    private final int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_MONO;
-    private final int audioFormat = AudioFormat.ENCODING_PCM_8BIT;
+    private final int sampleRate = 8000; // 44100 for music
+    private final int channelConfig = AudioFormat.CHANNEL_IN_MONO;
+    private final int outChannelConfig = AudioFormat.CHANNEL_OUT_MONO;
+    private final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     private final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
+    private final int outMinBufSize = AudioTrack.getMinBufferSize(sampleRate,AudioFormat.CHANNEL_OUT_MONO,AudioFormat.ENCODING_PCM_16BIT);
     private boolean status = true;
     private AudioManager audioManager;
-    private final byte[] receiveData = new byte[minBufSize];
+//    private final byte[] receiveData = new byte[minBufSize];
     private int callTimer = 0;
     private boolean timerOn;
 
@@ -71,12 +84,26 @@ public class CallController {
         audioManager.setSpeakerphoneOn(on);
     }
 
+    @SuppressLint("NewApi")
     public void setAudioDefaults() {
         audioManager = (AudioManager) app.getSystemService(Context.AUDIO_SERVICE);
         audioManager.requestAudioFocus(null, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE);
         audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
         audioManager.setSpeakerphoneOn(false);
-        at = new AudioTrack(AudioManager.STREAM_VOICE_CALL, sampleRate, channelConfig, audioFormat, receiveData.length, AudioTrack.MODE_STREAM);
+        at = new AudioTrack.Builder()
+                .setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build())
+                .setAudioFormat(new AudioFormat.Builder()
+                        .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                        .setSampleRate(sampleRate)
+                        .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                        .build())
+                .setTransferMode(AudioTrack.MODE_STREAM)
+                .setBufferSizeInBytes(10 * outMinBufSize)
+                .build();
+//        at = new AudioTrack(AudioManager.STREAM_VOICE_CALL, sampleRate, outChannelConfig, audioFormat, outMinBufSize, AudioTrack.MODE_STREAM);
     }
 
     //for responses to new outgoing calls
@@ -247,7 +274,7 @@ public class CallController {
     }
 
     public void startStreaming() {
-        byte[] buffer = new byte[minBufSize];
+
         if (ActivityCompat.checkSelfPermission(app, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -256,18 +283,47 @@ public class CallController {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channelConfig, audioFormat, buffer.length);
+        recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channelConfig, audioFormat, 10*minBufSize);
+        if (NoiseSuppressor.isAvailable()) {
+            NoiseSuppressor.create(recorder.getAudioSessionId()).setEnabled(true);
+        }
+        if (AcousticEchoCanceler.isAvailable()) {
+            AcousticEchoCanceler.create(recorder.getAudioSessionId()).setEnabled(true);
+        }
         recorder.startRecording();
+//        MediaRecorder mr = new MediaRecorder();
+//        mr.setAudioSource(MediaRecorder.AudioSource.MIC);
+//        mr.setAudioChannels(1);
+//        mr.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+//        mr.setAudioSamplingRate(sampleRate);
+//        mr.setAudioEncodingBitRate(128000);
+//        mr.start();
         try{
+//            DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(outgoing.getOutputStream());
+
+            final int nsam = codec2.codec2_samples_per_frame();
+            final short[] buf = new short[ nsam ];
+            final int nsam2 = nsam << 1;// java
+            final byte[] bytebuf = new byte[ nsam2 ];
+            final int nbit = codec2.codec2_bits_per_frame();
+            final byte[] bits = new byte[ nbit ];
             while(status) {
                 if(!mute){
+//                    byte[] buffer = new byte[minBufSize];
                     //reading data from MIC into buffer
-                    recorder.read(buffer, 0, buffer.length);
-                    outgoing.getOutputStream().write(buffer,0,buffer.length);
-                    Log.d("ANONYMOUSMESSENGER","sent size: " +buffer.length);
+
+                    recorder.read(bytebuf, 0, nsam2);
+
+                    ByteBuffer.wrap( bytebuf, 0, nsam2 ).order( ByteOrder.LITTLE_ENDIAN ).asShortBuffer().get( buf, 0, nsam );
+                    codec2.codec2_encode(bits,buf);
+
+                    outgoing.getOutputStream().write(bits);
+                    Log.d("ANONYMOUSMESSENGER","sent size: " + bits.length);
                 }
             }
-        }catch (Exception ignored){
+        }catch (Exception e){
+            Log.e("sendData:","ERROR");
+            e.printStackTrace();
             recorder.release();
             stopCall(true);
         }
@@ -275,21 +331,32 @@ public class CallController {
 
     public void startListening(){
         try {
-            incoming.getInputStream().read(receiveData, 0, receiveData.length);
-            toSpeaker(receiveData);
-            Log.d("ANONYMOUSMESSENGER","received size: " +receiveData.length);
+            at.play();
+//            final Jcodec2 codec2 = new Jcodec2( Jcodec2.CODEC2_MODE_1300 );
+            final int nsam = codec2.codec2_samples_per_frame();
+            final short[] buf = new short[ nsam ];
+            final int nbit = codec2.codec2_bits_per_frame();
+            final byte[] bits = new byte[ nbit ];
+
+            listen(codec2,bits,buf);
             new Thread(this::startTiming).start();
             while(status){
-                //noinspection ResultOfMethodCallIgnored
-                incoming.getInputStream().read(receiveData, 0, receiveData.length);
-                toSpeaker(receiveData);
-                Log.d("ANONYMOUSMESSENGER","received size: " +receiveData.length);
+                listen(codec2,bits,buf);
             }
         } catch (Exception e) {
             Log.e("receiveData:","receiveData.length: ERROR");
             e.printStackTrace();
             stopCall(true);
         }
+    }
+
+    private void listen(Jcodec2 codec2, byte[] bits, short[] buf) throws IOException {
+//        byte[] buf = new byte[minBufSize];
+        incoming.getInputStream().read(bits, 0, bits.length);
+        codec2.codec2_decode( buf, bits );
+        toSpeaker(buf);
+//        toSpeaker(buf);
+        Log.d("ANONYMOUSMESSENGER","received size: " +bits.length);
     }
 
     public void startTiming(){
@@ -310,12 +377,12 @@ public class CallController {
         }
     }
 
-    public void toSpeaker(byte[] soundBytes) {
+    public void toSpeaker(short[] soundBytes) {
         try {
-            at.write(soundBytes, 0, soundBytes.length);
+            at.write(soundBytes,0,soundBytes.length);
             at.play();
         } catch (Exception ignored) {
-            //Log.d("ANONYMOUSMESSENGER","Not working in speakers...");
+            Log.d("ANONYMOUSMESSENGER","Not working in speakers...");
             //e.printStackTrace();
         }
     }
