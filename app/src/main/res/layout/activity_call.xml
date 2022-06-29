@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dx.anonymousmessenger.ui.view.call.CallActivity">
-
+    tools:context="com.dx.anonymousmessenger.ui.view.call.CallActivity"
+    android:keepScreenOn="true">
     <include layout="@layout/call_screen"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,7 @@
         <entry key="app/src/main/res/drawable/transition.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/triangle_msg_you.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/unread_circle.xml" value="0.267" />
+        <entry key="app/src/main/res/layout/activity_call.xml" value="0.17864583333333334" />
         <entry key="app/src/main/res/layout/activity_message_list.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/activity_notepad.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/activity_setup_in_process.xml" value="0.23175675675675675" />

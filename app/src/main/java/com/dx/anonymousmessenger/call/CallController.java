@@ -112,7 +112,7 @@ public class CallController {
             //service.tell user about bad address for incoming
             return;
         }
-        app.commandCallService(address, CallService.ACTION_START_OUTGOING_CALL_RESPONSE);
+        app.commandCallService(address, DxCallService.ACTION_START_OUTGOING_CALL_RESPONSE);
         this.incoming = incoming;
         answerCall(true);
     }
@@ -120,8 +120,8 @@ public class CallController {
     //for new outgoing calls
     public CallController(String address, DxApplication app) {
         // start service and notification and get actions ready
-        app.commandCallService(address, CallService.ACTION_START_OUTGOING_CALL);
-        this.outgoing = TorClient.getCallSocket(address, app, CallService.ACTION_START_INCOMING_CALL);
+        app.commandCallService(address, DxCallService.ACTION_START_OUTGOING_CALL);
+        this.outgoing = TorClient.getCallSocket(address, app, DxCallService.ACTION_START_INCOMING_CALL);
         this.address = address;
         this.app = app;
         if (outgoing == null) {
@@ -136,14 +136,14 @@ public class CallController {
     //for new incoming calls
     public CallController(String address, Socket incoming, DxApplication app) {
         app.commandCallService(address, app.getString(R.string.NotificationBarManager_call_in_progress));
-        this.outgoing = TorClient.getCallSocket(address, app, CallService.ACTION_START_OUTGOING_CALL_RESPONSE);
+        this.outgoing = TorClient.getCallSocket(address, app, DxCallService.ACTION_START_OUTGOING_CALL_RESPONSE);
         this.incoming = incoming;
         this.address = address;
         this.app = app;
         if (outgoing == null) {
             stopCall(true);
         }
-        app.commandCallService(address, CallService.ACTION_START_INCOMING_CALL);
+        app.commandCallService(address, DxCallService.ACTION_START_INCOMING_CALL);
 
         //add a ringtone here that plays for 45 seconds then hangs up the call
         audioManager = (AudioManager) app.getSystemService(Context.AUDIO_SERVICE);
@@ -415,7 +415,7 @@ public class CallController {
             outputStream.flush();
             msg = in.readUTF();
             sock.setKeepAlive(true);
-            if(msg.equals(CallService.ACTION_START_OUTGOING_CALL_RESPONSE)){
+            if(msg.equals(DxCallService.ACTION_START_OUTGOING_CALL_RESPONSE)){
                 if(!app.isInCall()){
                     //send hangup
                     outputStream.writeUTF("nuf");
@@ -424,7 +424,7 @@ public class CallController {
                     return;
                 }
                 app.getCc().setIncoming(sock,address);
-            }else if(msg.equals(CallService.ACTION_START_INCOMING_CALL)){
+            }else if(msg.equals(DxCallService.ACTION_START_INCOMING_CALL)){
                 if(app.isInCall()){
                     //send hangup
                     outputStream.writeUTF("nuf");

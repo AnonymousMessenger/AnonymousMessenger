@@ -20,7 +20,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
-import com.dx.anonymousmessenger.call.CallService;
 import com.dx.anonymousmessenger.call.DxCallService;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
@@ -136,9 +135,9 @@ public class CallActivity extends DxActivity {
 
         ((DxApplication)getApplication()).enableStrictMode();
         new Thread(()->{
-            try{
-                Thread.sleep(200);
-            }catch (Exception ignored) {}
+//            try{
+//                Thread.sleep(200);
+//            }catch (Exception ignored) {}
             handleAction(action,getIntent());
         }).start();
 
@@ -170,13 +169,13 @@ public class CallActivity extends DxActivity {
                 case "timer":
                     runOnUiThread(()-> timer.setText(Utils.getMinutesAndSecondsFromSeconds(intent.getIntExtra("time",0))));
                     break;
-                case CallService.ACTION_START_INCOMING_CALL:
+                case DxCallService.ACTION_START_INCOMING_CALL:
                     runOnUiThread(()->{
                         state.setText(R.string.incoming_call);
                         showAnswerButton();
                     });
                     break;
-                case CallService.ACTION_START_OUTGOING_CALL_RESPONSE:
+                case DxCallService.ACTION_START_OUTGOING_CALL_RESPONSE:
                     runOnUiThread(()-> state.setText(R.string.ringing));
                     break;
                 case "hangup":

@@ -28,7 +28,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.dx.anonymousmessenger.account.DxAccount;
 import com.dx.anonymousmessenger.call.CallController;
-import com.dx.anonymousmessenger.call.CallService;
 import com.dx.anonymousmessenger.call.DxCallService;
 import com.dx.anonymousmessenger.crypto.Entity;
 import com.dx.anonymousmessenger.db.DbHelper;
@@ -417,22 +416,22 @@ public class DxApplication extends Application {
         Intent gcm_rec = new Intent("call_action");
 
         switch (type) {
-            case CallService.ACTION_START_OUTGOING_CALL_RESPONSE:
-                gcm_rec.putExtra("action",CallService.ACTION_START_OUTGOING_CALL_RESPONSE);
+            case DxCallService.ACTION_START_OUTGOING_CALL_RESPONSE:
+                gcm_rec.putExtra("action",DxCallService.ACTION_START_OUTGOING_CALL_RESPONSE);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                 builder.setContentText(context.getString(R.string.ringing));
                 builder.setPriority(NotificationCompat.PRIORITY_MIN);
                 builder.addAction(R.drawable.ic_baseline_call_24, getString(R.string.hangup), hangupPendingIntent);
                 break;
-            case CallService.ACTION_START_INCOMING_CALL:
-                gcm_rec.putExtra("action",CallService.ACTION_START_INCOMING_CALL);
+            case DxCallService.ACTION_START_INCOMING_CALL:
+                gcm_rec.putExtra("action",DxCallService.ACTION_START_INCOMING_CALL);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                 builder.setContentText(context.getString(R.string.NotificationBarManager__incoming_call));
                 builder.addAction(R.drawable.ic_baseline_call_24, getString(R.string.answer), answerPendingIntent);
                 builder.addAction(R.drawable.ic_baseline_call_24, getString(R.string.hangup), hangupPendingIntent);
                 break;
-            case CallService.ACTION_START_OUTGOING_CALL:
-                gcm_rec.putExtra("action",CallService.ACTION_START_OUTGOING_CALL);
+            case DxCallService.ACTION_START_OUTGOING_CALL:
+                gcm_rec.putExtra("action",DxCallService.ACTION_START_OUTGOING_CALL);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                 builder.setContentText(context.getString(R.string.connecting));
                 builder.addAction(R.drawable.ic_baseline_call_24, getString(R.string.hangup), hangupPendingIntent);

@@ -147,10 +147,6 @@
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".call.CallService"
-            android:enabled="true"
-            android:exported="false" />
-        <service
             android:name=".call.DxCallService"
             android:enabled="true"
             android:exported="false" />

@@ -69,7 +69,7 @@ Obfs4proxy is being used to connect to some Tor bridges while making the connect
 Used to scan Qr-codes to add addresses in person quicker
 
 ### SQL Cipher
-Used to encrypt all app files in local storage
+Used to encrypt all app data in local storage
 
 ### Gesture-Views
 Used to present pictures in-app dismissible by gestures 

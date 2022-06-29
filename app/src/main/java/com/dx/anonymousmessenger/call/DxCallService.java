@@ -14,6 +14,21 @@ import com.dx.anonymousmessenger.db.DbHelper;
 import java.util.Objects;
 
 public class DxCallService extends Service {
+    public static final String ACTION_RECEIVE_OFFER = "1";
+    public static final String ACTION_RECEIVE_BUSY = "2";
+    public static final String ACTION_OUTGOING_CALL = "3";
+    public static final String ACTION_DENY_CALL = "4";
+    public static final String ACTION_LOCAL_HANGUP = "5";
+    public static final String ACTION_START_OUTGOING_CALL = "6";
+    public static final String ACTION_START_INCOMING_CALL = "7";
+    public static final String ACTION_SET_MUTE_AUDIO = "8";
+    public static final String ACTION_ACCEPT_CALL = "9";
+    public static final String ACTION_LOCAL_RINGING = "10";
+    public static final String ACTION_REMOTE_RINGING = "11";
+    public static final String ACTION_RECEIVE_ANSWER = "12";
+    public static final String ACTION_RECEIVE_HANGUP = "13";
+    public static final String ACTION_ENDED = "14";
+    public static final String ACTION_START_OUTGOING_CALL_RESPONSE = "15";
 //    BroadcastReceiver br;
 
     public DxCallService() {
@@ -71,6 +86,7 @@ public class DxCallService extends Service {
 //        {
 //            e.printStackTrace();
 //        }
+
         super.onCreate();
     }
 
