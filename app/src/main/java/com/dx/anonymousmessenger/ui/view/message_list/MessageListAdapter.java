@@ -93,6 +93,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int VIEW_TYPE_FILE_MESSAGE_SENT = 16;
     private static final int VIEW_TYPE_FILE_MESSAGE_SENT_OK = 17;
     private static final int VIEW_TYPE_FILE_MESSAGE_RECEIVED = 18;
+    private static final int VIEW_TYPE_CALL_INCOMING = 19;
+    private static final int VIEW_TYPE_CALL_OUTGOING = 20;
     private static final int PENDING_REMOVAL_TIMEOUT = 3000;
 
     private final Context mContext;
@@ -152,7 +154,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             DbHelper.deleteMessage(message,app);
             return VIEW_TYPE_MESSAGE_RECEIVED;
         }
+        //if we sent the message
         if (message.getAddress().equals(app.getHostname())) {
+            //if the message was delivered
             if(message.isReceived()){
                 if(message.getType()!=null && message.getType().equals("file")){
                     return VIEW_TYPE_FILE_MESSAGE_SENT_OK;
@@ -162,13 +166,17 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     return VIEW_TYPE_MEDIA_MESSAGE_SENT_OK;
                 }else if(message.getType()!=null && message.getType().equals(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO+"")){
                     return VIEW_TYPE_VIDEO_MESSAGE_SENT_OK;
+                }else if(message.getType()!=null && message.getType().equals("call")){
+                    return VIEW_TYPE_CALL_OUTGOING;
                 }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                     return VIEW_TYPE_MESSAGE_SENT_OK;
                 }else if(message.getQuotedMessage()!=null){
                     return VIEW_TYPE_MESSAGE_SENT_OK_QUOTE;
                 }
                 return VIEW_TYPE_MESSAGE_SENT_OK;
-            }else{
+            }
+            //if the message was not delivered
+            else{
                 if(message.getType()!=null && message.getType().equals("file")) {
                     return VIEW_TYPE_FILE_MESSAGE_SENT;
                 }else if(message.getType()!=null && message.getType().equals("audio")){
@@ -194,6 +202,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 return VIEW_TYPE_MEDIA_MESSAGE_RECEIVED;
             }else if(message.getType()!=null && message.getType().equals(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO+"")){
                 return VIEW_TYPE_VIDEO_MESSAGE_RECEIVED;
+            }else if(message.getType()!=null && message.getType().equals("call")){
+                return VIEW_TYPE_CALL_INCOMING;
             }else if(message.getQuotedMessage()!= null && message.getQuotedMessage().equals("")){
                 return VIEW_TYPE_MESSAGE_RECEIVED;
             }else if(message.getQuotedMessage()!=null){
@@ -283,6 +293,14 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_file_message_sent_ok, parent, false);
             return new FileMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_CALL_INCOMING){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_call_message_received, parent, false);
+            return new CallMessageHolder(view);
+        }else if(viewType == VIEW_TYPE_CALL_OUTGOING){
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_call_message_sent, parent, false);
+            return new CallMessageHolder(view);
         }
         Log.e("finding message type","something went wrong");
         view = LayoutInflater.from(parent.getContext())
@@ -326,6 +344,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case VIEW_TYPE_FILE_MESSAGE_SENT:
             case VIEW_TYPE_FILE_MESSAGE_SENT_OK:
                 ((FileMessageHolder) holder).bind(message,app,permissionCallback);
+                break;
+            case VIEW_TYPE_CALL_INCOMING:
+            case VIEW_TYPE_CALL_OUTGOING:
+                 ((CallMessageHolder) holder).bind(message);
         }
         if (itemsPendingRemoval.contains(message)) {
             // we need to show the "undo" state of the row
@@ -860,6 +882,27 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
             playPauseButton.setOnClickListener(new AudioItemOnClickListener(message,itemView,playPauseButton));
+        }
+    }
+
+    private class CallMessageHolder extends MessageHolder {
+        final TextView nameText;
+        final TextView timeText;
+        final Button undoButton;
+
+        CallMessageHolder(View itemView) {
+            super(itemView);
+            timeText = itemView.findViewById(R.id.text_message_time);
+            undoButton = itemView.findViewById(R.id.undo_button);
+            nameText = itemView.findViewById(R.id.text_message_name);
+        }
+
+        @SuppressLint("ClickableViewAccessibility")
+        void bind(QuotedUserMessage message) {
+            if(nameText!=null){
+                nameText.setText(message.getSender());
+            }
+            timeText.setText(Utils.formatDateTime(message.getCreatedAt()));
         }
     }
 

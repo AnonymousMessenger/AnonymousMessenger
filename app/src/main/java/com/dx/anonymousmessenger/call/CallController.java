@@ -24,6 +24,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.tor.TorClient;
 
 import java.io.DataInputStream;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Date;
 
 import codec2.Jcodec2;
 //import com.ustadmobile.codec2.Codec2;
@@ -425,6 +427,12 @@ public class CallController {
                 }
                 app.getCc().setIncoming(sock,address);
             }else if(msg.equals(DxCallService.ACTION_START_INCOMING_CALL)){
+                // add incoming call to message log
+                DbHelper.saveMessage(new QuotedUserMessage("","", address, "", DbHelper.getContactNickname(address,app), new Date().getTime(), true, app.getHostname(), false, "", "", "call"), app,address,true);
+                //broadcast to message log
+                Intent gcm_rec = new Intent("your_action");
+                gcm_rec.putExtra("address",address.substring(0,10));
+                LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 if(app.isInCall()){
                     //send hangup
                     outputStream.writeUTF("nuf");

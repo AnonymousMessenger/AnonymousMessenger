@@ -1028,6 +1028,21 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                         runOnUiThread(()-> Snackbar.make(send,"Already in a call",Snackbar.LENGTH_SHORT).show());
                         return;
                     }
+                    //create a call message to save the call attempt in the log
+                    final String fullAddress = DbHelper.getFullAddress(getIntent().getStringExtra(
+                                    "address"),
+                            (DxApplication) getApplication());
+                    if(fullAddress == null){
+                        return;
+                    }
+                    address = fullAddress;
+
+                    DbHelper.saveMessage(new QuotedUserMessage("","", ((DxApplication) getApplication()).getHostname(), "", ((DxApplication)getApplication()).getAccount().getNickname(), new Date().getTime(), true, address, false, "", "", "call"), (DxApplication) this.getApplication(),address,true);
+                    //broadcast to message log
+                    Intent gcm_rec = new Intent("your_action");
+                    gcm_rec.putExtra("address",address.substring(0,10));
+                    LocalBroadcastManager.getInstance(((DxApplication)getApplication()).getApplicationContext()).sendBroadcast(gcm_rec);
+
                     Intent callIntent = new Intent(this, CallActivity.class);
                     callIntent.setAction("start_out_call");
                     callIntent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));

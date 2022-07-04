@@ -126,6 +126,8 @@ public class DbHelper {
                         msg = app.getString(R.string.media_message);
                     }else if(message.getType()!=null && message.getType().equals("file")){
                         msg = app.getString(R.string.file);
+                    }else if(message.getType()!=null && message.getType().equals("call")){
+                        msg = app.getString(R.string.dx_call);
                     }else{
                         msg = message.getMessage();
                     }

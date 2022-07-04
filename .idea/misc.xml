@@ -18,6 +18,7 @@
         <entry key="app/src/main/res/layout/activity_notepad.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/activity_setup_in_process.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/activity_verify_identity.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/bridge_rv_item.xml" value="0.33" />
         <entry key="app/src/main/res/layout/call_screen.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_app.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_password_entry.xml" value="0.23175675675675675" />
@@ -26,6 +27,8 @@
         <entry key="app/src/main/res/layout/fragment_setup_username.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/item_audio_message_received.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/item_audio_message_sent_ok.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/item_call_message_received.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/item_call_message_sent.xml" value="1.0" />
         <entry key="app/src/main/res/layout/item_file_message_received.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/item_file_message_sent_ok.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/item_media_message_received.xml" value="0.22" />
@@ -35,6 +38,8 @@
         <entry key="app/src/main/res/layout/item_message_sent_candidate.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/item_message_sent_ok.xml" value="0.33" />
         <entry key="app/src/main/res/layout/item_message_sent_ok_quote.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/media_rv_item.xml" value="0.17864583333333334" />
+        <entry key="app/src/main/res/layout/message_text_view.xml" value="0.33" />
         <entry key="app/src/main/res/layout/my_text_view.xml" value="0.33" />
         <entry key="app/src/main/res/layout/tips_rv_item.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.20277777777777778" />
