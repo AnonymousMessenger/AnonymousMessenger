@@ -31,8 +31,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Date;
 
 import codec2.Jcodec2;
@@ -49,6 +47,7 @@ public class CallController {
     private final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     private final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
     private final int outMinBufSize = AudioTrack.getMinBufferSize(sampleRate,AudioFormat.CHANNEL_OUT_MONO,AudioFormat.ENCODING_PCM_16BIT);
+    short threshold=5000;
     private boolean status = true;
     private AudioManager audioManager;
 //    private final byte[] receiveData = new byte[minBufSize];
@@ -305,22 +304,23 @@ public class CallController {
 
             final int nsam = codec2.codec2_samples_per_frame();
             final short[] buf = new short[ nsam ];
-            final int nsam2 = nsam << 1;// java
-            final byte[] bytebuf = new byte[ nsam2 ];
+//            final int nsam2 = nsam << 1;// java
+//            final byte[] bytebuf = new byte[ nsam2 ];
             final int nbit = codec2.codec2_bits_per_frame();
             final byte[] bits = new byte[ nbit ];
             while(status) {
                 if(!mute){
-//                    byte[] buffer = new byte[minBufSize];
                     //reading data from MIC into buffer
-
-                    recorder.read(bytebuf, 0, nsam2);
-
-                    ByteBuffer.wrap( bytebuf, 0, nsam2 ).order( ByteOrder.LITTLE_ENDIAN ).asShortBuffer().get( buf, 0, nsam );
-                    codec2.codec2_encode(bits,buf);
-
-                    outgoing.getOutputStream().write(bits);
-                    Log.d("ANONYMOUSMESSENGER","sent size: " + bits.length);
+                    recorder.read(buf, 0, nsam);
+                    //converting to short
+//                    ByteBuffer.wrap( bytebuf, 0, nsam2 ).order( ByteOrder.LITTLE_ENDIAN ).asShortBuffer().get( buf, 0, nsam );
+                    int foundPeak=searchThreshold(buf,threshold);
+                    if (foundPeak>-1){ //found signal
+                        //send signal
+                        codec2.codec2_encode(bits,buf);
+                        outgoing.getOutputStream().write(bits);
+                        Log.d("ANONYMOUSMESSENGER","sent size: " + bits.length);
+                    }
                 }
             }
         }catch (Exception e){
@@ -388,6 +388,20 @@ public class CallController {
             //e.printStackTrace();
         }
     }
+
+    public static int searchThreshold(short[]arr,short thr){
+        int peakIndex;
+        int arrLen=arr.length;
+        for (peakIndex=0;peakIndex<arrLen;peakIndex++){
+            if ((arr[peakIndex]>=thr) || (arr[peakIndex]<=-thr)){
+                //se supera la soglia, esci e ritorna peakindex-mezzo kernel.
+
+                return peakIndex;
+            }
+        }
+        return -1; //not found
+    }
+
 
     //experimental
 //    public boolean isCallActive(Context context){
