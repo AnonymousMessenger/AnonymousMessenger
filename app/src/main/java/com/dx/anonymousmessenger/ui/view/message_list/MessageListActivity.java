@@ -866,6 +866,18 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
             openGallery();
         });
+        findViewById(R.id.btn_return_to_call).setOnClickListener(v->{
+            if (((DxApplication) getApplication()).isInCall()){
+                //goto call
+                Intent contentIntent = new Intent(this, CallActivity.class);
+                contentIntent.putExtra("address",address.substring(0,10));
+//                contentIntent.setAction(type);
+                contentIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(contentIntent);
+            }else{
+                findViewById(R.id.frame_return_to_call).setVisibility(View.GONE);
+            }
+        });
         if(mMessageRecycler!=null){
             mMessageRecycler.suppressLayout(false);
         }
@@ -928,6 +940,11 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             updateUi(true,false);
             started = true;
             ping();
+        }
+        if(((DxApplication) getApplication()).isInCall()){
+            findViewById(R.id.frame_return_to_call).setVisibility(View.VISIBLE);
+        }else{
+            findViewById(R.id.frame_return_to_call).setVisibility(View.GONE);
         }
 
         checkMessages();

@@ -375,4 +375,5 @@
     <string name="continue_without_password">Don\'t Use a Password</string>
     <string name="hangup">Hangup</string>
     <string name="outgoing_call">Outgoing Call</string>
+    <string name="return_to_call">Return to call</string>
 </resources>

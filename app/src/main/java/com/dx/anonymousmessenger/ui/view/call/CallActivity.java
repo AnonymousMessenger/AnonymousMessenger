@@ -204,6 +204,11 @@ public class CallActivity extends DxActivity {
                         startService(serviceIntent);
                     }
                     break;
+                case "":
+                    if(((DxApplication)getApplication()).isInActiveCall()){
+                        runOnUiThread(()-> state.setText("connected"));
+                    }
+                    break;
             }
         }
     }

@@ -400,6 +400,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <FrameLayout
+        android:id="@+id/frame_return_to_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frame_online">
+
+        <Button
+            android:id="@+id/btn_return_to_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/return_to_call" />
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--This is the backdrop's content with a BottomSheetBehaviour applied to it-->

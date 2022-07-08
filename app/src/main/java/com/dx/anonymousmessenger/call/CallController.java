@@ -43,7 +43,7 @@ public class CallController {
     AudioRecord recorder;
     private final int sampleRate = 8000; // 44100 for music
     private final int channelConfig = AudioFormat.CHANNEL_IN_MONO;
-    private final int outChannelConfig = AudioFormat.CHANNEL_OUT_MONO;
+//    private final int outChannelConfig = AudioFormat.CHANNEL_OUT_MONO;
     private final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     private final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
     private final int outMinBufSize = AudioTrack.getMinBufferSize(sampleRate,AudioFormat.CHANNEL_OUT_MONO,AudioFormat.ENCODING_PCM_16BIT);
