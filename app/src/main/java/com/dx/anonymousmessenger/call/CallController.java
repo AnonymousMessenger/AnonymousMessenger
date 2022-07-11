@@ -47,7 +47,7 @@ public class CallController {
     private final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     private final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
     private final int outMinBufSize = AudioTrack.getMinBufferSize(sampleRate,AudioFormat.CHANNEL_OUT_MONO,AudioFormat.ENCODING_PCM_16BIT);
-    short threshold=5000;
+    short threshold=500;
     private boolean status = true;
     private AudioManager audioManager;
 //    private final byte[] receiveData = new byte[minBufSize];
@@ -382,6 +382,7 @@ public class CallController {
     public void toSpeaker(short[] soundBytes) {
         try {
             at.write(soundBytes,0,soundBytes.length);
+            at.flush();
             at.play();
         } catch (Exception ignored) {
             Log.d("ANONYMOUSMESSENGER","Not working in speakers...");
