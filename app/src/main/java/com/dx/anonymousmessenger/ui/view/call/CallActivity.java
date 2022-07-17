@@ -177,7 +177,7 @@ public class CallActivity extends DxActivity {
             switch (action){
                 case "upload":
                     if(intent.getLongExtra("upload",0)>0){
-                        runOnUiThread(()-> uploader.setText(intent.getLongExtra("upload",0)+"b"));
+                        runOnUiThread(()-> uploader.setText(Utils.humanReadableByteCountBin(intent.getLongExtra("upload",0))));
                         runOnUiThread(()-> upload.setAlpha((float) 1));
                     }else{
                         runOnUiThread(()-> upload.setAlpha((float) 0.26));
