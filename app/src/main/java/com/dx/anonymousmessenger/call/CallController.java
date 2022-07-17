@@ -302,12 +302,14 @@ public class CallController {
         try{
 //            DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(outgoing.getOutputStream());
 
+            long totalUpload = 0;
             final int nsam = codec2.codec2_samples_per_frame();
             final short[] buf = new short[ nsam ];
 //            final int nsam2 = nsam << 1;// java
 //            final byte[] bytebuf = new byte[ nsam2 ];
             final int nbit = codec2.codec2_bits_per_frame();
             final byte[] bits = new byte[ nbit ];
+            int quietVoice = 7;
             while(status) {
                 if(!mute){
                     //reading data from MIC into buffer
@@ -320,6 +322,32 @@ public class CallController {
                         codec2.codec2_encode(bits,buf);
                         outgoing.getOutputStream().write(bits);
                         Log.d("ANONYMOUSMESSENGER","sent size: " + bits.length);
+                        //send length to ui
+                        totalUpload+=bits.length;
+                        Intent gcm_rec = new Intent("call_action");
+                        gcm_rec.putExtra("action","upload");
+                        gcm_rec.putExtra("upload",totalUpload);
+                        LocalBroadcastManager.getInstance(app).sendBroadcast(gcm_rec);
+                        //send 7 segments of quiet after actual voice was sent to finish off sentences better
+                        quietVoice = 7;
+                    }else if (quietVoice>0){//we've just detected signal recently so let's try to smooth out the ending by adding low volume speech
+                        //send signal
+                        codec2.codec2_encode(bits,buf);
+                        outgoing.getOutputStream().write(bits);
+                        Log.d("ANONYMOUSMESSENGER","sent size: " + bits.length);
+                        //send length to ui
+                        totalUpload+=bits.length;
+                        Intent gcm_rec = new Intent("call_action");
+                        gcm_rec.putExtra("action","upload");
+                        gcm_rec.putExtra("upload",totalUpload);
+                        LocalBroadcastManager.getInstance(app).sendBroadcast(gcm_rec);
+                        quietVoice-=1;
+                    }else{//quietness
+                        //send 0 to ui
+                        Intent gcm_rec = new Intent("call_action");
+                        gcm_rec.putExtra("action","upload");
+                        gcm_rec.putExtra("upload", (long)0);
+                        LocalBroadcastManager.getInstance(app).sendBroadcast(gcm_rec);
                     }
                 }
             }
@@ -359,6 +387,11 @@ public class CallController {
         toSpeaker(buf);
 //        toSpeaker(buf);
         Log.d("ANONYMOUSMESSENGER","received size: " +bits.length);
+//        //send length to ui
+//        Intent gcm_rec = new Intent("call_action");
+//        gcm_rec.putExtra("action","download");
+//        gcm_rec.putExtra("download",bits.length);
+//        LocalBroadcastManager.getInstance(app).sendBroadcast(gcm_rec);
     }
 
     public void startTiming(){

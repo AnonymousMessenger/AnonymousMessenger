@@ -334,5 +334,8 @@
     <string name="no_recent_messages">لا توجد رسائل حديثة</string>
     <string name="unpinned_messages_get_deleted">هل تعلم أن الرسائل غير المثبتة تختفي بعد 24 ساعة؟</string>
     <string name="continue_without_password">لا تستعمل كلمة مرور</string>
-    <string name="verify_identity_how_to">قارن هذه الأرقام على الجهازين, إذا كانا متماثلين إذا التشفير يعمل بشكل صحيح...</string>
+    <string name="verify_identity_how_to">قارن هذه الأرقام على الجهازين, إذا كانا متماثلين إذا التشفير يعمل بشكل صحيح…</string>
+    <string name="hangup">إنهاء</string>
+    <string name="outgoing_call">مكالمه صادره</string>
+    <string name="return_to_call">الرجوع الى المكالمه</string>
 </resources>

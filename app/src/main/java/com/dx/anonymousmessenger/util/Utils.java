@@ -39,6 +39,17 @@ public class Utils {
         return (mins<10?"0"+mins:mins)+":"+(seconds<10?"0"+seconds:seconds);
     }
 
+    public static String secToTime(int sec) {
+        int second = sec % 60;
+        int minute = sec / 60;
+        if (minute >= 60) {
+            int hour = minute / 60;
+            minute %= 60;
+            return (hour<10?"0"+hour:hour) + ":" + (minute < 10 ? "0" + minute : minute) + ":" + (second < 10 ? "0" + second : second);
+        }
+        return (minute<10?"0"+minute:minute) + ":" + (second < 10 ? "0" + second : second);
+    }
+
     public static boolean arrayListEquals(List<String[]> one, List<String[]> two){
         if(one==null){
             return two == null;

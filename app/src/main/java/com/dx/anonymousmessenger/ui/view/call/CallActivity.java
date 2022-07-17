@@ -35,10 +35,14 @@ public class CallActivity extends DxActivity {
     TextView phone;
     TextView state;
     TextView timer;
+    TextView uploader;
+//    TextView downloader;
     FloatingActionButton hangup;
     FloatingActionButton answer;
     FloatingActionButton speaker;
     FloatingActionButton mute;
+    FloatingActionButton upload;
+//    FloatingActionButton download;
 
     String address;
     BroadcastReceiver br;
@@ -132,6 +136,10 @@ public class CallActivity extends DxActivity {
                 e.printStackTrace();
             }
         });
+        upload = findViewById(R.id.fab_upload);
+//        download = findViewById(R.id.fab_download);
+        uploader = findViewById(R.id.txt_upload);
+//        downloader = findViewById(R.id.txt_download);
 
         ((DxApplication)getApplication()).enableStrictMode();
         new Thread(()->{
@@ -163,11 +171,28 @@ public class CallActivity extends DxActivity {
         }).start();
     }
 
+    @SuppressLint("SetTextI18n")
     private void handleAction(String action, Intent intent) {
         if(action!=null){
             switch (action){
+                case "upload":
+                    if(intent.getLongExtra("upload",0)>0){
+                        runOnUiThread(()-> uploader.setText(intent.getLongExtra("upload",0)+"b"));
+                        runOnUiThread(()-> upload.setAlpha((float) 1));
+                    }else{
+                        runOnUiThread(()-> upload.setAlpha((float) 0.26));
+                    }
+                    break;
+//                case "download":
+//                    runOnUiThread(()-> downloader.setText(intent.getIntExtra("download",0)+"b"));
+//                    if(intent.getIntExtra("download",0)>0){
+//                        runOnUiThread(()-> download.setAlpha((float) 1));
+//                    }else{
+//                        runOnUiThread(()-> download.setAlpha((float) 0.26));
+//                    }
+//                    break;
                 case "timer":
-                    runOnUiThread(()-> timer.setText(Utils.getMinutesAndSecondsFromSeconds(intent.getIntExtra("time",0))));
+                    runOnUiThread(()-> timer.setText(Utils.secToTime(intent.getIntExtra("time",0))));
                     break;
                 case DxCallService.ACTION_START_INCOMING_CALL:
                     runOnUiThread(()->{
