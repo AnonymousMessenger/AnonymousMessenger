@@ -95,7 +95,7 @@
             app:layout_constraintBottom_toTopOf="@+id/status_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/online_toolbar"
+            app:layout_constraintTop_toBottomOf="@+id/frame_return_to_call"
             app:srl_direction="both">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -161,6 +161,22 @@
                 android:textSize="32sp"
                 android:textStyle="bold" />
         </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/frame_return_to_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/online_toolbar">
+
+            <Button
+                android:id="@+id/btn_return_to_call"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/return_to_call" />
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

@@ -35,8 +35,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.account.DxAccount;
+import com.dx.anonymousmessenger.call.DxCallService;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.tor.TorClient;
+import com.dx.anonymousmessenger.ui.view.call.CallActivity;
 import com.dx.anonymousmessenger.ui.view.log.LogActivity;
 import com.dx.anonymousmessenger.ui.view.notepad.NotepadActivity;
 import com.dx.anonymousmessenger.ui.view.setup.SetupInProcess;
@@ -149,6 +151,13 @@ public class AppFragment extends Fragment {
         }else{
             updateUi(false);
         }
+
+        if(((DxApplication) requireActivity().getApplication()).isInCall()){
+            rootView.findViewById(R.id.frame_return_to_call).setVisibility(View.VISIBLE);
+        }else{
+            rootView.findViewById(R.id.frame_return_to_call).setVisibility(View.GONE);
+        }
+
         if(!onlineTxt.getText().toString().equals(getString(R.string.online)) && !onlineTxt.getText().toString().equals(getString(R.string.checking))){
             checkConnectivity();
         }
@@ -386,6 +395,26 @@ public class AppFragment extends Fragment {
                     new Handler().postDelayed(() -> ((SwipyRefreshLayout)rootView.findViewById(R.id.refresh)).setRefreshing(false),500);
                 }
         );
+
+        rootView.findViewById(R.id.btn_return_to_call).setOnClickListener(v->{
+            if (((DxApplication) requireActivity().getApplication()).isInCall()){
+                //goto call
+                Intent contentIntent = new Intent(getActivity(), CallActivity.class);
+                if(((DxApplication) requireActivity().getApplication()).getCc()!=null){
+                    contentIntent.putExtra("address",((DxApplication) requireActivity().getApplication()).getCc().getAddress().substring(0,10));
+                    if(!((DxApplication) requireActivity().getApplication()).getCc().isAnswered()){
+                        contentIntent.setAction(DxCallService.ACTION_START_INCOMING_CALL);
+                    }else{
+                        contentIntent.setAction("");
+                    }
+                }
+//                contentIntent.setAction(type);
+                contentIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(contentIntent);
+            }else{
+                rootView.findViewById(R.id.frame_return_to_call).setVisibility(View.GONE);
+            }
+        });
 
 //        if(!((DxApplication) requireActivity().getApplication()).isWeAsked()){
 //            new Thread(()->{

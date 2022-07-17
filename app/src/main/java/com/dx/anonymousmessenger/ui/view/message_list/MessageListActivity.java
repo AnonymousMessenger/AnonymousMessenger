@@ -56,6 +56,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
+import com.dx.anonymousmessenger.call.DxCallService;
 import com.dx.anonymousmessenger.db.DbHelper;
 import com.dx.anonymousmessenger.file.FileHelper;
 import com.dx.anonymousmessenger.media.AudioRecordingService;
@@ -870,7 +871,14 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
             if (((DxApplication) getApplication()).isInCall()){
                 //goto call
                 Intent contentIntent = new Intent(this, CallActivity.class);
-                contentIntent.putExtra("address",address.substring(0,10));
+                if(((DxApplication) getApplication()).getCc()!=null){
+                    contentIntent.putExtra("address",((DxApplication) getApplication()).getCc().getAddress().substring(0,10));
+                    if(!((DxApplication) getApplication()).getCc().isAnswered()){
+                        contentIntent.setAction(DxCallService.ACTION_START_INCOMING_CALL);
+                    }else{
+                        contentIntent.setAction("");
+                    }
+                }
 //                contentIntent.setAction(type);
                 contentIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(contentIntent);
