@@ -462,6 +462,7 @@ public class CallController {
             //check if we want this guy calling us
             if(!DbHelper.contactExists(address,app)){
                 //send hangup
+                DbHelper.saveLog("REFUSED CALL BECAUSE RECEIVING caller is UNKNOWN "+address,new Date().getTime(),"SEVERE",app);
                 outputStream.writeUTF("nuf");
                 outputStream.flush();
                 sock.close();
@@ -480,6 +481,7 @@ public class CallController {
             String address2 = new String(buffer, StandardCharsets.UTF_8);
             if(!address2.equals(address)){
                 //send hangup
+                DbHelper.saveLog("REFUSED CALL BECAUSE RECEIVING ADDRESS DID NOT MATCH ENCRYPTED ONE "+address,new Date().getTime(),"SEVERE",app);
                 outputStream.writeUTF("nuf");
                 outputStream.flush();
                 sock.close();
@@ -492,6 +494,7 @@ public class CallController {
             if(msg.equals(DxCallService.ACTION_START_OUTGOING_CALL_RESPONSE)){
                 if(!app.isInCall()){
                     //send hangup
+                    DbHelper.saveLog("REFUSED CALL BECAUSE RECEIVING END SENT A RESPONSE TO A CALL THAT IS NOT ONGOING "+address,new Date().getTime(),"SEVERE",app);
                     outputStream.writeUTF("nuf");
                     outputStream.flush();
                     sock.close();
@@ -507,6 +510,7 @@ public class CallController {
                 LocalBroadcastManager.getInstance(app.getApplicationContext()).sendBroadcast(gcm_rec);
                 if(app.isInCall()){
                     //send hangup
+                    DbHelper.saveLog("REFUSED CALL BECAUSE WE ARE BUSY ON ANOTHER CALL "+address,new Date().getTime(),"NOTICE",app);
                     outputStream.writeUTF("nuf");
                     outputStream.flush();
                     sock.close();
