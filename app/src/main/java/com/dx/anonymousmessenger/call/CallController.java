@@ -24,13 +24,19 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
 import com.dx.anonymousmessenger.db.DbHelper;
+import com.dx.anonymousmessenger.messages.MessageEncryptor;
 import com.dx.anonymousmessenger.messages.QuotedUserMessage;
 import com.dx.anonymousmessenger.tor.TorClient;
+
+import org.whispersystems.libsignal.SignalProtocolAddress;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import codec2.Jcodec2;
@@ -447,7 +453,7 @@ public class CallController {
         Log.d("SERVER CONNECTION", "its a call");
         DataOutputStream outputStream = new DataOutputStream(sock.getOutputStream());
         DataInputStream in=new DataInputStream(sock.getInputStream());
-        //todo check to see if busy or something
+        //todo check to see if busy or something, //seems to rely on phone state permissions
         outputStream.writeUTF("ok");
         outputStream.flush();
         String msg = in.readUTF();
@@ -455,6 +461,31 @@ public class CallController {
             String address= msg.trim();
             //check if we want this guy calling us
             if(!DbHelper.contactExists(address,app)){
+                //send hangup
+                outputStream.writeUTF("nuf");
+                outputStream.flush();
+                sock.close();
+                return;
+            }
+            System.out.println("CONTACT EXISTS............................................");
+            byte[] chunkSize = new byte[4];
+            in.read(chunkSize,0,chunkSize.length);
+            int casted = ByteBuffer.wrap(chunkSize).order(ByteOrder.LITTLE_ENDIAN).getInt();
+            System.out.println("CHUNK SIZE : "+casted+" ............................................");
+            if(casted==0 || casted>200){
+                return;
+            }
+            byte[] buffer = new byte[casted];
+            in.read(buffer,0,casted);
+            System.out.println("READ BUFFER............................................");
+
+            System.out.println("DECRYPTING............................................");
+            buffer = MessageEncryptor.decrypt(buffer,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
+            System.out.println("DECRYPTED............................................");
+            String address2 = new String(buffer, StandardCharsets.UTF_8);
+            //
+            if(!address2.equals(address)){
+                System.out.println("DOES NOT EQUAL "+address2+" : "+address+"............................................");
                 //send hangup
                 outputStream.writeUTF("nuf");
                 outputStream.flush();

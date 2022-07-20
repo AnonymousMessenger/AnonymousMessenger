@@ -276,6 +276,8 @@ public class ServerSocketViaTor {
                                         }
                                         CallController.callReceiveHandler(sock,app);
                                     } catch (Exception e) {
+                                        refuseSocket(outputStream,sock,sockets);
+                                        DbHelper.saveLog("REFUSED CALL BECAUSE OF ERROR",new Date().getTime(),"NOTICE",app);
                                         e.printStackTrace();
                                     }
                                     return;

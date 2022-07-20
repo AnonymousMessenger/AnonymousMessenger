@@ -22,6 +22,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import javax.crypto.Cipher;
@@ -37,15 +38,18 @@ public class TorClient {
 
     /**
      * for getting a ready socket to call a peer
-     * @param OnionAddress address to get a socket connected to
+     * @param onionAddress address to get a socket connected to
      * @param app an instance of DxApplication
      * @param type type of call socket (constant in call service)
      * @return returns a socket ready to send voice data to
      */
-    public static Socket getCallSocket(String OnionAddress, DxApplication app, String type){
-        Socket socket;
+    public static Socket getCallSocket(String onionAddress, DxApplication app, String type){
+        Socket socket = null;
         try {
-            socket = socks5SocketConnection(OnionAddress, 5780, "127.0.0.1", app.getTorSocket().getOnionProxyManager().getIPv4LocalHostSocksPort());
+            if(!app.getEntity().getStore().containsSession(new SignalProtocolAddress(onionAddress,1))){
+                return null;
+            }
+            socket = socks5SocketConnection(onionAddress, 5780, "127.0.0.1", app.getTorSocket().getOnionProxyManager().getIPv4LocalHostSocksPort());
 
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             DataInputStream in =new DataInputStream(socket.getInputStream());
@@ -56,6 +60,11 @@ public class TorClient {
             msg2 = in.readUTF();
             if(msg2.contains("ok")){
                 outputStream.writeUTF(app.getHostname());
+                System.out.println("ENCRYPTING............................................");
+                byte[] msg = MessageEncryptor.encrypt(app.getHostname().getBytes(StandardCharsets.UTF_8),app.getEntity().getStore(),new SignalProtocolAddress(onionAddress,1));
+                System.out.println("ENCRYPTED............................................");
+                outputStream.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(msg.length).array());
+                outputStream.write(msg);
                 outputStream.flush();
                 msg2 = in.readUTF();
                 if(msg2.contains("ok")){
