@@ -60,9 +60,7 @@ public class TorClient {
             msg2 = in.readUTF();
             if(msg2.contains("ok")){
                 outputStream.writeUTF(app.getHostname());
-                System.out.println("ENCRYPTING............................................");
                 byte[] msg = MessageEncryptor.encrypt(app.getHostname().getBytes(StandardCharsets.UTF_8),app.getEntity().getStore(),new SignalProtocolAddress(onionAddress,1));
-                System.out.println("ENCRYPTED............................................");
                 outputStream.write(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(msg.length).array());
                 outputStream.write(msg);
                 outputStream.flush();

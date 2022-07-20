@@ -467,25 +467,18 @@ public class CallController {
                 sock.close();
                 return;
             }
-            System.out.println("CONTACT EXISTS............................................");
             byte[] chunkSize = new byte[4];
             in.read(chunkSize,0,chunkSize.length);
             int casted = ByteBuffer.wrap(chunkSize).order(ByteOrder.LITTLE_ENDIAN).getInt();
-            System.out.println("CHUNK SIZE : "+casted+" ............................................");
             if(casted==0 || casted>200){
                 return;
             }
             byte[] buffer = new byte[casted];
             in.read(buffer,0,casted);
-            System.out.println("READ BUFFER............................................");
 
-            System.out.println("DECRYPTING............................................");
             buffer = MessageEncryptor.decrypt(buffer,app.getEntity().getStore(),new SignalProtocolAddress(address,1));
-            System.out.println("DECRYPTED............................................");
             String address2 = new String(buffer, StandardCharsets.UTF_8);
-            //
             if(!address2.equals(address)){
-                System.out.println("DOES NOT EQUAL "+address2+" : "+address+"............................................");
                 //send hangup
                 outputStream.writeUTF("nuf");
                 outputStream.flush();
