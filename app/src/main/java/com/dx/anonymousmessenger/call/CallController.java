@@ -330,7 +330,7 @@ public class CallController {
                         LocalBroadcastManager.getInstance(app).sendBroadcast(gcm_rec);
                         //send 7 segments of quiet after actual voice was sent to finish off sentences better
                         quietVoice = 7;
-                    }else if (quietVoice>0){//we've just detected signal recently so let's try to smooth out the ending by adding low volume speech
+                    }else if (quietVoice>0){//we've just detected signal recently so let's try to smooth out the ending by adding segments of low volume speech
                         //send signal
                         codec2.codec2_encode(bits,buf);
                         outgoing.getOutputStream().write(bits);
