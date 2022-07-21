@@ -1,0 +1,7 @@
+Upgraded calls to new version.
+Calls now use codec2 to encode audio to 1300 bits per second to reduce lag.
+Calls now detects when there is speech on the microphone.
+Fixed ANR in starting calls.
+Bigger nickname box at setup.
+Added call events to the security log.
+Added return to call button to use when notifications are off.
