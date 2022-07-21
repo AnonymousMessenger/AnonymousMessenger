@@ -103,62 +103,65 @@ public class DxCallService extends Service {
         //todo maybe put this line somewhere else or directly change text
         createNotification(Objects.requireNonNull(address).substring(0,10),action);
 
-        if (action != null) {
-            switch (action) {
-                case "start_out_call":
-                    if (!((DxApplication) getApplication()).isInCall()) {
-                        ((DxApplication) getApplication()).setCc(new CallController(address, ((DxApplication) getApplication())));
-                    }
-                    break;
-                case "answer":
-                    if (((DxApplication) getApplication()).isInCall()) {
-                        try {
-                            ((DxApplication) getApplication()).getCc().answerCall(false);
-                            Log.d("ANONYMOUSMESSENGER","call answered");
-                            Intent gcm_rec = new Intent("call_action");
-                            gcm_rec.putExtra("action","answer");
-                            LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
-                        } catch (Exception e) {
-                            Log.d("ANONYMOUSMESSENGER","call not answered");
-                            e.printStackTrace();
+        new Thread(()->{
+            if (action != null) {
+                switch (action) {
+                    case "start_out_call":
+                        if (!((DxApplication) getApplication()).isInCall()) {
+                            ((DxApplication) getApplication()).setCc(new CallController(address, ((DxApplication) getApplication())));
+                        }
+                        break;
+                    case "answer":
+                        if (((DxApplication) getApplication()).isInCall()) {
+                            try {
+                                ((DxApplication) getApplication()).getCc().answerCall(false);
+                                Log.d("ANONYMOUSMESSENGER","call answered");
+                                Intent gcm_rec = new Intent("call_action");
+                                gcm_rec.putExtra("action","answer");
+                                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+                            } catch (Exception e) {
+                                Log.d("ANONYMOUSMESSENGER","call not answered");
+                                e.printStackTrace();
+                                Intent gcm_rec = new Intent("call_action");
+                                gcm_rec.putExtra("action","hangup");
+                                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+                                stopSelf();
+                            }
+                        } else {
                             Intent gcm_rec = new Intent("call_action");
                             gcm_rec.putExtra("action","hangup");
                             LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                             stopSelf();
                         }
-                    } else {
-                        Intent gcm_rec = new Intent("call_action");
-                        gcm_rec.putExtra("action","hangup");
-                        LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
-                        stopSelf();
-                    }
-                    break;
-                case "hangup":
-                    if (((DxApplication) getApplication()).isInCall()) {
-                        try {
-                            ((DxApplication) getApplication()).getCc().stopCall();
-                            ((DxApplication) getApplication()).setCc(null);
-                            Intent gcm_rec = new Intent("call_action");
-                            gcm_rec.putExtra("action","hangup");
-                            LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
-                            stopSelf();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            ((DxApplication) getApplication()).setCc(null);
+                        break;
+                    case "hangup":
+                        if (((DxApplication) getApplication()).isInCall()) {
+                            try {
+                                ((DxApplication) getApplication()).getCc().stopCall();
+                                ((DxApplication) getApplication()).setCc(null);
+                                Intent gcm_rec = new Intent("call_action");
+                                gcm_rec.putExtra("action","hangup");
+                                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+                                stopSelf();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                ((DxApplication) getApplication()).setCc(null);
+                                Intent gcm_rec = new Intent("call_action");
+                                gcm_rec.putExtra("action","hangup");
+                                LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
+                                stopSelf();
+                            }
+                        } else {
                             Intent gcm_rec = new Intent("call_action");
                             gcm_rec.putExtra("action","hangup");
                             LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
                             stopSelf();
                         }
-                    } else {
-                        Intent gcm_rec = new Intent("call_action");
-                        gcm_rec.putExtra("action","hangup");
-                        LocalBroadcastManager.getInstance(this).sendBroadcast(gcm_rec);
-                        stopSelf();
-                    }
-                    break;
+                        break;
+                }
             }
-        }
+        }).start();
+
         return START_NOT_STICKY;
     }
 

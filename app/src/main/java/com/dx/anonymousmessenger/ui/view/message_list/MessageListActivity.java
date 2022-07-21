@@ -1068,6 +1068,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                     gcm_rec.putExtra("address",address.substring(0,10));
                     LocalBroadcastManager.getInstance(((DxApplication)getApplication()).getApplicationContext()).sendBroadcast(gcm_rec);
 
+                    //start activity with start_out_call action
                     Intent callIntent = new Intent(this, CallActivity.class);
                     callIntent.setAction("start_out_call");
                     callIntent.putExtra("address", requireNonNull(getIntent().getStringExtra("address")).substring(0,10));

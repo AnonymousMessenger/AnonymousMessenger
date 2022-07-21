@@ -54,7 +54,6 @@ public class CallActivity extends DxActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(R.layout.activity_call);
-        String action = getIntent().getAction();
         address = getIntent().getStringExtra("address");
         name = findViewById(R.id.name);
         if(getIntent().getStringExtra("nickname")!=null){
@@ -142,10 +141,17 @@ public class CallActivity extends DxActivity {
 //        downloader = findViewById(R.id.txt_download);
 
         ((DxApplication)getApplication()).enableStrictMode();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         new Thread(()->{
 //            try{
 //                Thread.sleep(200);
 //            }catch (Exception ignored) {}
+            String action = getIntent().getAction();
             handleAction(action,getIntent());
         }).start();
 
@@ -153,11 +159,24 @@ public class CallActivity extends DxActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action=intent.getStringExtra("action");
-                handleAction(action,intent);
+                new Thread(()->{
+                    handleAction(action,intent);
+                }).start();
             }
         };
         try {
             LocalBroadcastManager.getInstance(this).registerReceiver(br,new IntentFilter("call_action"));
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(br);
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -220,8 +239,7 @@ public class CallActivity extends DxActivity {
                     runOnUiThread(()-> state.setText(R.string.trying));
                     Intent serviceIntent = new Intent(this, DxCallService.class);
                     serviceIntent.setAction("start_out_call");
-                    serviceIntent.putExtra("address",
-                            Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
+                    serviceIntent.putExtra("address",Objects.requireNonNull(getIntent().getStringExtra("address")).substring(0,10));
                     serviceIntent.putExtra("nickname",getIntent().getStringExtra("nickname"));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         startForegroundService(serviceIntent);
