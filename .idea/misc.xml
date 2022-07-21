@@ -19,8 +19,8 @@
         <entry key="app/src/main/res/layout/activity_setup_in_process.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/activity_verify_identity.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/bridge_rv_item.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/call_screen.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/fragment_app.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/call_screen.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_app.xml" value="0.35766423357664234" />
         <entry key="app/src/main/res/layout/fragment_password_entry.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/fragment_setup_password2.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_setup_settings.xml" value="0.23175675675675675" />
