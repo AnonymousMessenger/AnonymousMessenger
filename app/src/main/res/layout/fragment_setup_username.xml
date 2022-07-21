@@ -44,10 +44,9 @@
                 android:id="@+id/txt_caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="25dp"
                 android:hint="@string/nickname"
                 android:imeOptions="flagNoPersonalizedLearning|actionDone"
-                android:minHeight="48dp"
+                android:minHeight="64dp"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -59,12 +58,13 @@
             android:text="@string/nickname_help"
             app:layout_constraintBottom_toBottomOf="@+id/fab_nickname_help"
             app:layout_constraintStart_toEndOf="@+id/fab_nickname_help"
-            app:layout_constraintTop_toBottomOf="@+id/txt_layout_caption" />
+            app:layout_constraintTop_toTopOf="@+id/fab_nickname_help" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_nickname_help"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
             android:clickable="true"
             android:contentDescription="@string/nickname_help_explain"
             android:focusable="true"
