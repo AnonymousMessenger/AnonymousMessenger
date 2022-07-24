@@ -4,6 +4,9 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -429,7 +432,25 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                 if(image == null){
                     return;
                 }
-                MediaStore.Images.Media.insertImage(getContentResolver(), image, getString(R.string.anonymous_messenger)+Utils.formatDateTime(getIntent().getLongExtra("time",new Date().getTime())) , "");
+                String photoUriStr = MediaStore.Images.Media.insertImage(getContentResolver(), image, getString(R.string.anonymous_messenger)+Utils.formatDateTime(getIntent().getLongExtra("time",new Date().getTime())) , "");
+                Uri photoUri = Uri.parse(photoUriStr);
+
+                // add datetime
+                long now = System.currentTimeMillis() / 1000;
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATE_ADDED, now);
+                values.put(MediaStore.Images.Media.DATE_MODIFIED, now);
+                values.put(MediaStore.Images.Media.DATE_TAKEN, now);
+                getContentResolver().update(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        values,
+                        MediaStore.Images.Media._ID + "=?",
+                        new String [] { ContentUris.parseId(photoUri) + "" });
+
+                // call media scanner to refresh gallery
+                Intent scanFileIntent = new Intent(
+                        Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, photoUri);
+                sendBroadcast(scanFileIntent);
                 runOnUiThread(()-> Snackbar.make(findViewById(R.id.img_to_send),R.string.saved_to_storage,Snackbar.LENGTH_LONG).show());
             }
         }catch (Exception e){
