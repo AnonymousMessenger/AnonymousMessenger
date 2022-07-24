@@ -139,8 +139,8 @@ public class TorClient {
                 outputStream.write(buffer,0,buffer.length);
             }
             outputStream.flush();
-            socket.setSoTimeout(1000);
-            if(in.readByte()!=1){
+            int resp = in.readByte();
+            if(resp!=1){
                 //return false
                 try{
                     outputStream.close();
