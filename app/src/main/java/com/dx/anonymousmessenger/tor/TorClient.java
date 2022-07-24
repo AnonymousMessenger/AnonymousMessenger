@@ -139,15 +139,15 @@ public class TorClient {
                 outputStream.write(buffer,0,buffer.length);
             }
             outputStream.flush();
-//            socket.setSoTimeout(1000);
-//            if(in.readByte()!=1){
-//                //return false
-//                try{
-//                    outputStream.close();
-//                    socket.close();
-//                }catch (Exception ignored){}
-//                return false;
-//            }
+            socket.setSoTimeout(1000);
+            if(in.readByte()!=1){
+                //return false
+                try{
+                    outputStream.close();
+                    socket.close();
+                }catch (Exception ignored){}
+                return false;
+            }
             try{
                 outputStream.close();
                 socket.close();
