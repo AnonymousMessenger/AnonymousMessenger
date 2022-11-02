@@ -50,6 +50,9 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".ui.view.single_activity.DonateActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.view.single_activity.SettingsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity android:name=".ui.view.single_activity.CrashActivity" />
@@ -82,44 +85,45 @@
         <activity
             android:name=".ui.view.message_list.MessageListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation"
-            android:duration="@android:integer/config_longAnimTime"/>
+            android:duration="@android:integer/config_longAnimTime" />
         <activity
             android:name=".ui.view.app.AppActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
         <activity
             android:name=".ui.view.setup.CreateUserActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|navigation" />
-
         <activity
             android:name=".ui.view.MainActivity"
-            android:label="@string/anonymous_messenger"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/anonymous_messenger">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity-alias
-            android:label="Securoo"
-            android:name=".ui.view.Securoo"
+            android:name=".ui.view.AM"
             android:enabled="false"
-            android:targetActivity=".ui.view.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="AM"
+            android:targetActivity=".ui.view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-
         <activity-alias
-            android:label="AM"
-            android:name=".ui.view.AM"
+            android:name=".ui.view.Securoo"
             android:enabled="false"
-            android:targetActivity=".ui.view.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="Securoo"
+            android:targetActivity=".ui.view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>

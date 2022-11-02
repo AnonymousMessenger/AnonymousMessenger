@@ -13,9 +13,13 @@
         <entry key="app/src/main/res/drawable/transition.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/triangle_msg_you.xml" value="0.267" />
         <entry key="app/src/main/res/drawable/unread_circle.xml" value="0.267" />
+        <entry key="app/src/main/res/layout/activity_add_contact.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/activity_call.xml" value="0.17864583333333334" />
-        <entry key="app/src/main/res/layout/activity_message_list.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/activity_donate.xml" value="0.22128378378378377" />
+        <entry key="app/src/main/res/layout/activity_license.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/activity_message_list.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_notepad.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/activity_settings.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/activity_setup_in_process.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/activity_verify_identity.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/bridge_rv_item.xml" value="0.33" />
@@ -23,7 +27,7 @@
         <entry key="app/src/main/res/layout/fragment_app.xml" value="0.35766423357664234" />
         <entry key="app/src/main/res/layout/fragment_password_entry.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/fragment_setup_password2.xml" value="0.22" />
-        <entry key="app/src/main/res/layout/fragment_setup_settings.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/layout/fragment_setup_settings.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_setup_username.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/item_audio_message_received.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/item_audio_message_sent_ok.xml" value="0.5" />
@@ -43,7 +47,9 @@
         <entry key="app/src/main/res/layout/my_text_view.xml" value="0.33" />
         <entry key="app/src/main/res/layout/tips_rv_item.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.20277777777777778" />
+        <entry key="app/src/main/res/menu/app_menu.xml" value="0.23175675675675675" />
         <entry key="app/src/main/res/menu/app_menu2.xml" value="0.23175675675675675" />
+        <entry key="app/src/main/res/menu/options_menu.xml" value="0.23175675675675675" />
       </map>
     </option>
   </component>

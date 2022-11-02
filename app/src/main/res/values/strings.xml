@@ -376,4 +376,8 @@
     <string name="hangup">Hangup</string>
     <string name="outgoing_call">Outgoing Call</string>
     <string name="return_to_call">Return to call</string>
+    <string name="action_donate">Donate</string>
+    <string name="donate_text">You can donate to help the project</string>
+    <string name="bitcoin">Bitcoin</string>
+    <string name="monero">Monero</string>
 </resources>

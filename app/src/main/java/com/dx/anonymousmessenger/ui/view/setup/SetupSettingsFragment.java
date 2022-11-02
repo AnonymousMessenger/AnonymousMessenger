@@ -36,6 +36,7 @@ import com.dx.anonymousmessenger.service.DxService;
 import com.dx.anonymousmessenger.ui.view.DxActivity;
 import com.dx.anonymousmessenger.ui.view.MainActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.AboutActivity;
+import com.dx.anonymousmessenger.ui.view.single_activity.DonateActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.LicenseActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.SimpleScannerActivity;
 import com.dx.anonymousmessenger.util.Utils;
@@ -362,6 +363,18 @@ public class SetupSettingsFragment extends Fragment {
                 }
             });
             builder.show();
+        });
+        TextView donate = rootView.findViewById(R.id.btn_donate);
+        donate.setVisibility(View.VISIBLE);
+        donate.setOnClickListener((v)->{
+            try{
+                Intent intent = new Intent(getContext(), DonateActivity.class);
+                if(getContext()!=null){
+                    getContext().startActivity(intent);
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
         });
         TextView license = rootView.findViewById(R.id.btn_license);
         license.setVisibility(View.VISIBLE);

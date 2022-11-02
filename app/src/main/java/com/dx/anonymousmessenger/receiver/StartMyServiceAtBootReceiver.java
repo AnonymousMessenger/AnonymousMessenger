@@ -25,13 +25,22 @@ public class StartMyServiceAtBootReceiver extends BroadcastReceiver {
 //            Intent serviceIntent = new Intent(context, BootReminderService.class);
 //            context.startService(serviceIntent);
 
+            Intent contentIntent = new Intent(context, MainActivity.class);
             String title = context.getString(R.string.decrypt_reminder_title);
             String msg = context.getString(R.string.decrypt_reminder_message);
             String CHANNEL_ID = "status_messages";
             Intent resultIntent = new Intent(context, MainActivity.class);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
             stackBuilder.addNextIntentWithParentStack(resultIntent);
-            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent resultPendingIntent;
+            if (android.os.Build.VERSION.SDK_INT >= 31) {
+                resultPendingIntent = PendingIntent.getActivity(context, 0, contentIntent, PendingIntent.FLAG_MUTABLE);
+            }else
+            {
+                resultPendingIntent = PendingIntent.getActivity
+                        (context, 0, contentIntent, PendingIntent.FLAG_ONE_SHOT);
+            }
+//            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
             Notification notification;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 notification = new Notification.Builder(context,CHANNEL_ID)

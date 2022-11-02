@@ -422,9 +422,26 @@
             android:textSize="16sp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_about" />
+
+        <TextView
+            android:id="@+id/btn_donate"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/rounded_alpha_ripple"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:text="@string/action_donate"
+            android:textSize="16sp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_license" />
 
         <TextView
             android:id="@+id/btn_reset"
@@ -493,7 +510,7 @@
             android:textStyle="bold"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_license" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_donate" />
 
         <TextView
             android:id="@+id/textView16"
