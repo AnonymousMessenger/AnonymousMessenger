@@ -55,7 +55,7 @@ public class CrashActivity extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
             startActivity(intent);
             android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(10);
+            System.exit(0);
         });
 
         FloatingActionButton copy = findViewById(R.id.fab_copy_error);
