@@ -62,7 +62,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 //    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'com.google.android.material:material:1.6.1'
     implementation 'com.google.zxing:core:3.3.3'
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
     implementation 'com.google.protobuf:protobuf-java:3.9.2' //later versions min api 26+
