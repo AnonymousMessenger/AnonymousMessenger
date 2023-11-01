@@ -38,7 +38,7 @@ public class StartMyServiceAtBootReceiver extends BroadcastReceiver {
             }else
             {
                 resultPendingIntent = PendingIntent.getActivity
-                        (context, 0, contentIntent, PendingIntent.FLAG_ONE_SHOT);
+                        (context, 0, contentIntent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
             }
 //            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
             Notification notification;

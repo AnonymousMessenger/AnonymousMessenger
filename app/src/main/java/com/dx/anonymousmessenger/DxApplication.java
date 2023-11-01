@@ -372,7 +372,7 @@ public class DxApplication extends Application {
         }else
         {
              pendingIntent = PendingIntent.getActivity
-                    (context, 0, contentIntent, PendingIntent.FLAG_ONE_SHOT);
+                    (context, 0, contentIntent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         }
 
 
@@ -383,7 +383,7 @@ public class DxApplication extends Application {
         if (Build.VERSION.SDK_INT >= 31) {
             answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, PendingIntent.FLAG_MUTABLE);
         }else{
-            answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, 0);
+            answerPendingIntent = PendingIntent.getService(context, 0, answerIntent, PendingIntent.FLAG_IMMUTABLE);
         }
 
         Intent hangupIntent = new Intent(context, DxCallService.class);
@@ -393,7 +393,7 @@ public class DxApplication extends Application {
         if (Build.VERSION.SDK_INT >= 31) {
             hangupPendingIntent = PendingIntent.getService(context, 0, hangupIntent, PendingIntent.FLAG_MUTABLE);
         }else{
-            hangupPendingIntent = PendingIntent.getService(context, 0, hangupIntent, 0);
+            hangupPendingIntent = PendingIntent.getService(context, 0, hangupIntent, PendingIntent.FLAG_IMMUTABLE);
         }
 
         String CHANNEL_ID = "calls";
