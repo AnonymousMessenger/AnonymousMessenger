@@ -1,11 +1,14 @@
 package com.dx.anonymousmessenger.service;
 
+import static android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING;
+
 import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -33,7 +36,11 @@ public class DxService extends Service {
         }
         super.onCreate();
         Notification ntf = app.getServiceNotification(getString(R.string.still_background), getString(R.string.click_to_hide), SERVICE_NOTIFICATION_CHANNEL);
-        startForeground(3, ntf);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(3, ntf, FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING);
+        }else{
+            startForeground(3, ntf);
+        }
 //        csm.enable(this.getApplication());
         startTor();
         mMyBroadcastReceiver = new BroadcastReceiver() {

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.dx.anonymousmessenger">
 
-    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS" />
+<!--    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS" />-->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
@@ -11,10 +11,19 @@
         android:required="false" /> <!-- <uses-feature -->
     <!-- android:name="android.software.leanback" -->
     <!-- android:required="true" /> -->
+    <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission
         android:name="android.permission.CAMERA"
         android:required="false" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.RECEIVE_BOOT_COMPLETED"
         android:required="false" />
@@ -25,6 +34,7 @@
         android:name="android.permission.RECORD_AUDIO"
         android:required="false" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
@@ -34,7 +44,7 @@
     <uses-permission-sdk-23
         android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
         android:required="false" />
-    <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE" />
+
 
     <application
         android:name=".DxApplication"
@@ -148,10 +158,12 @@
             android:exported="false" />
         <service
             android:name=".service.DxService"
+            android:foregroundServiceType="remoteMessaging"
             android:enabled="true"
             android:exported="false" />
         <service
             android:name=".call.DxCallService"
+            android:foregroundServiceType="phoneCall"
             android:enabled="true"
             android:exported="false" />
 

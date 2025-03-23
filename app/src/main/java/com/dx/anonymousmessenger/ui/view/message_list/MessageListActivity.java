@@ -8,6 +8,7 @@ import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -20,11 +21,13 @@ import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.FileUtils;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -42,6 +45,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -74,11 +78,16 @@ import com.dx.anonymousmessenger.ui.view.single_activity.PictureViewerActivity;
 import com.dx.anonymousmessenger.ui.view.single_activity.VerifyIdentityActivity;
 import com.dx.anonymousmessenger.util.CallBack;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.whispersystems.libsignal.SignalProtocolAddress;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -114,7 +123,37 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
     private boolean started = false;
     private boolean online = false;
     private boolean pinging = false;
+    private BottomSheetBehavior<View> bottomSheetBehavior;
 
+
+    // Registers a photo picker activity launcher in single-select mode.
+    ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                // Callback is invoked after the user selects a media item or closes the
+                // photo picker.
+                if (uri != null) {
+                    Log.d("PhotoPicker", "Selected URI: " + uri);
+//                    int flag = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                    grantUriPermission(getPackageName(),uri,Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                    getApplicationContext().getContentResolver().takePersistableUriPermission(uri, flag);
+                    Log.d("PhotoPicker", "persisted read permissions Selected URI: " + uri);
+                    //get media type
+                    if(checkIsImage(getApplicationContext(),uri)){
+                        Log.d("File checker", "Has been confirmed as an image after careful analysis");
+                        Intent intent = new Intent(this, PictureViewerActivity.class);
+                        intent.putExtra("address",address.substring(0,10));
+                        intent.putExtra("nickname",nickname);
+                        String path = uri.toString();
+                        intent.putExtra("path",path);
+                        intent.putExtra("type",this.getContentResolver().getType(uri));
+                        startActivity(intent);
+                    }else{
+                        Log.d("File checker", "seems not to be an image after rigorous testing");
+                    }
+                } else {
+                    Log.d("PhotoPicker", "No media selected");
+                }
+            });
     private final ActivityResultLauncher<String> mGetContent = registerForActivityResult(new
                     ActivityResultContracts.GetContent(),
             uri -> new Thread(() -> {
@@ -132,6 +171,34 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 //                        e.printStackTrace();
                 }
             }).start());
+
+    public static boolean checkIsImage(Context context, Uri uri) {
+        ContentResolver contentResolver = context.getContentResolver();
+        String type = contentResolver.getType(uri);
+        if (type != null) {
+            return  type.startsWith("image/");
+        } else {
+            // try to decode as image (bounds only)
+            InputStream inputStream = null;
+            try {
+                inputStream = contentResolver.openInputStream(uri);
+                if (inputStream != null) {
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    return options.outWidth > 0 && options.outHeight > 0;
+                }
+            } catch (IOException e) {
+                // ignore
+            } finally {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    FileUtils.closeQuietly(inputStream);
+                }
+            }
+        }
+        // default outcome if image not confirmed
+        return false;
+    }
 
     @SuppressLint({"ClickableViewAccessibility", "ShowToast"})
     @Override
@@ -268,9 +335,78 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
         //run db message checker to delete any old messages then tell us to update ui
 //        checkMessages();
+
+        // Find the Bottom Sheet view
+        View bottomSheet = findViewById(R.id.standard_bottom_sheet);
+
+        // Initialize BottomSheetBehavior
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+        bottomSheetBehavior.setDraggable(true);
+
+        // Set Bottom Sheet properties
+        bottomSheetBehavior.setPeekHeight(200); // Set the peek height (minimum visible height)
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED); // Default state
+
+        // Handle Bottom Sheet state changes
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        // Fully expanded
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        // Collapsed to peek height
+                        break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        // Hidden
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // Handle slide events (optional)
+            }
+        });
     }
 
+    private void launchPhotoPicker() {
+
+        // Include only one of the following calls to launch(), depending on the types
+        // of media that you want to let the user choose from.
+
+        // Launch the photo picker and let the user choose images and videos.
+        pickMedia.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
+    }
     private void openGallery() {
+        boolean pick = ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(getApplicationContext());
+        if(pick){
+            Log.d("Picker", "Pick is available");
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+            View view = getLayoutInflater().inflate(R.layout.bottom_sheet_attachements, null);
+            ExtendedFloatingActionButton sendFile = view.findViewById(R.id.bs_fab_send_file);
+            sendFile.setOnClickListener( v -> {
+                mGetContent.launch("*/*");
+                bottomSheetDialog.cancel();
+            });
+            ExtendedFloatingActionButton sendImage = view.findViewById(R.id.bs_fab_send_image);
+            sendImage.setOnClickListener( v -> {
+                bottomSheetDialog.cancel();
+                launchPhotoPicker();
+            });
+            view.setOnClickListener( v -> {
+                bottomSheetDialog.cancel();
+            });
+            bottomSheetDialog.setContentView(view);
+            bottomSheetDialog.setCancelable(true);
+            bottomSheetDialog.show();
+//            launchPhotoPicker();
+            return;
+        }
 //        View v = this.;
         InputMethodManager imm = requireNonNull(
                 ContextCompat.getSystemService(this, InputMethodManager.class));
@@ -329,7 +465,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
                             String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA));
                             paths.add(path);
                             types.add(type);
-                        }catch (Exception ignored){}
+                        }catch (Exception m){Log.d("error at getting images","ya dude error on getting images"+m);}
                     }while(cursor.moveToNext());
                     cursor.close();
                 }
@@ -860,11 +996,13 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
         });
         file.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("Storage perms","we do not have them");
 //                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_CODE);
                 getReadStoragePerms();
-                return;
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
+                    return;
+                }
             }
-
             openGallery();
         });
         findViewById(R.id.btn_return_to_call).setOnClickListener(v->{
@@ -999,6 +1137,7 @@ public class MessageListActivity extends DxActivity implements ActivityCompat.On
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         if(mediaRecyclerView!=null && mediaRecyclerView.getVisibility()==View.VISIBLE){
             mediaRecyclerView.setVisibility(View.GONE);
             send.setVisibility(View.VISIBLE);

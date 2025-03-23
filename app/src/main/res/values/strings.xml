@@ -380,4 +380,5 @@
     <string name="donate_text">You can donate to help the project</string>
     <string name="bitcoin">Bitcoin</string>
     <string name="monero">Monero</string>
+    <string name="send_image">Send Image</string>
 </resources>

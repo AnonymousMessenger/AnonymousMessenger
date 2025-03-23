@@ -33,7 +33,7 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/dx_dark</item>
         <item name="colorOnSurface">@color/dx_background</item>
@@ -46,6 +46,7 @@
         <item name="colorAccent">@color/dx_white</item>
         <item name="backgroundTint">@color/dx_accent</item>
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
+        <item name="extendedFloatingActionButtonStyle">@style/ExtendedFloatingActionButtonStyle</item>
         <item name="android:textColorLink">@color/dx_white</item>
         <item name="android:windowBackground">@color/dx_background</item>
         <item name="android:navigationBarColor">@color/dx_dark</item>
@@ -70,6 +71,23 @@
         <item name="actionMenuTextColor">@color/dx_white</item>
         <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
         <item name="snackbarButtonStyle">@style/Widget.App.SnackbarButton</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetStyle</item>
+    </style>
+
+    <style name="AppBottomSheetStyle" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="backgroundTint">@color/dx_white</item>
+<!--        <item name="android:background">@color/dx_white</item>-->
+        <item name="android:backgroundTint">@color/dx_white</item>
+<!--        <item name="colorAccent">@color/dx_white</item>-->
+        <item name="colorOnBackground">@color/dx_background</item>
+        <item name="colorOnSurface">@color/dx_background</item>
+
+        <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponento</item>
+    </style>
+
+    <style name="ShapeAppearance.App.LargeComponento" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
     </style>
 
     <style name="TextInputStyle">
@@ -79,6 +97,14 @@
     <style name="FloatingActionButtonStyle" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="backgroundTint">@color/dx_night_940</item>
         <item name="tint">@color/dx_white</item>
+    </style>
+
+    <style name="ExtendedFloatingActionButtonStyle" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
+        <item name="backgroundTint">@color/dx_night_940</item>
+        <item name="tint">@color/dx_white</item>
+        <item name="android:textColor">@color/dx_white</item>
+        <item name="iconTint">@color/dx_white</item>
+<!--        <item name="color"-->
     </style>
 
     <style name="SwitchWhiteText" parent="Widget.AppCompat.CompoundButton.Switch">

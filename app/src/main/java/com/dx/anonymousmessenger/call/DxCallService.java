@@ -1,8 +1,11 @@
 package com.dx.anonymousmessenger.call;
 
+import static android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL;
+
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -181,7 +184,11 @@ public class DxCallService extends Service {
 
     public void createNotification(String address, String type){
         Notification ntf = ((DxApplication)getApplication()).getCallInProgressNotification(this,type,address);
-        startForeground(9, ntf);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            startForeground(9, ntf, FOREGROUND_SERVICE_TYPE_PHONE_CALL);
+        }else{
+            startForeground(9,ntf);
+        }
     }
 
     public void updateNotification(){

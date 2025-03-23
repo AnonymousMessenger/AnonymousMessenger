@@ -1,0 +1,53 @@
+<!-- res/layout/bottom_sheet_layout.xml -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/bs_fab_send_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:animateLayoutChanges="true"
+            android:clickable="true"
+            android:contentDescription="@string/send_file"
+            android:focusable="true"
+            android:text="@string/send_file"
+            app:fabSize="mini"
+            app:icon="@drawable/attach_file_big"
+            app:layout_anchor="@+id/linearLayout2"
+            app:layout_anchorGravity="bottom|center"
+            app:rippleColor="@color/red_500"
+            app:srcCompat="@drawable/attach_file_big"
+            android:layout_weight="1"/>
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/bs_fab_send_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:animateLayoutChanges="true"
+            android:clickable="true"
+            android:contentDescription="@string/send_image"
+            android:focusable="true"
+            android:text="@string/send_image"
+            app:fabSize="mini"
+            app:icon="@drawable/baseline_image_24"
+            app:layout_anchor="@+id/linearLayout2"
+            app:layout_anchorGravity="top|center"
+            app:rippleColor="@color/red_500"
+            app:srcCompat="@drawable/baseline_image_24"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

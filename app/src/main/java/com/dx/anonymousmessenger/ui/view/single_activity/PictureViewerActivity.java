@@ -59,6 +59,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -263,7 +264,8 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
             new Thread(()->{
                 Bitmap image;
                 try{
-                    image = Utils.rotateBitmap(BitmapFactory.decodeFile(getIntent().getStringExtra("path")),getIntent().getStringExtra("path"));
+                    Uri uri = Uri.parse(getIntent().getStringExtra("path"));
+                    image = Utils.rotateBitmap(BitmapFactory.decodeStream(getApplication().getContentResolver().openInputStream(uri)),getApplication().getContentResolver().openInputStream(uri));
                     Display display = getWindowManager().getDefaultDisplay();
                     Point size = new Point();
                     display.getSize(size);
@@ -273,7 +275,7 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                     if(image.getHeight()>height && image.getWidth()>width){
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inSampleSize = 2;
-                        image = Utils.rotateBitmap(BitmapFactory.decodeFile(getIntent().getStringExtra("path"),options),getIntent().getStringExtra("path"));
+                        image = Utils.rotateBitmap(BitmapFactory.decodeStream(getApplication().getContentResolver().openInputStream(uri), null, options),getApplication().getContentResolver().openInputStream(uri));
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -316,7 +318,8 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                     String filename = String.valueOf(time);
                     String path = null;
                     try {
-                        Bitmap image = Utils.rotateBitmap(BitmapFactory.decodeFile(getIntent().getStringExtra("path")),getIntent().getStringExtra("path"));
+                        Uri uri = Uri.parse(getIntent().getStringExtra("path"));
+                        Bitmap image = Utils.rotateBitmap(BitmapFactory.decodeStream(getApplication().getContentResolver().openInputStream(uri)),getApplication().getContentResolver().openInputStream(uri));
                         if(image==null){
                             return;
                         }
@@ -324,7 +327,7 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
                         image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                         byte[] byteArray = stream.toByteArray();
                         path = FileHelper.saveFile(byteArray,app,filename);
-                    } catch (NoSuchAlgorithmException e) {
+                    } catch (NoSuchAlgorithmException | FileNotFoundException e) {
                         e.printStackTrace();
                     }
                     if(path==null){
@@ -407,6 +410,7 @@ public class PictureViewerActivity extends DxActivity implements FlickGestureLis
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
 //        finish();
         finishAfterTransition();
     }
