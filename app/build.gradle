@@ -13,11 +13,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        applicationId "com.dx.anonymousmessenger"
+        applicationId "com.example.anonymousmessenger"
         minSdkVersion 21
-        targetSdkVersion 35
-        versionCode 57
-        versionName "0.9.5"
+        targetSdkVersion 36
+        versionCode 59
+        versionName "0.9.7"
         setProperty("archivesBaseName", applicationId + "-v" + versionCode + "(" + versionName + ")")
         ndk{
             abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'

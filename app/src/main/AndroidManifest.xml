@@ -5,6 +5,7 @@
 
 <!--    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS" />-->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -58,7 +59,8 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup">
+        tools:replace="android:allowBackup"
+        >
         <activity
             android:name=".ui.view.single_activity.DonateActivity"
             android:exported="false" />
