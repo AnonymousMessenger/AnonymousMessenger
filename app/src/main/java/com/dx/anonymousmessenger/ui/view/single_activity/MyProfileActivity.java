@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -42,18 +43,45 @@ public class MyProfileActivity extends DxActivity {
     private static final int STORAGE_CODE = 0;
     private static final int REQUEST_PICK_FILE = 1;
 
-    private final ActivityResultLauncher<String> mGetContent = registerForActivityResult(new
-                    ActivityResultContracts.GetContent(),
-            uri -> new Thread(() -> {
-                try{
+    private final ActivityResultLauncher<String> mGetContent = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri == null) {
+                    Log.d("ANONYMOUSMESSENGER", "No image selected");
+                    return;
+                }
+
+                Log.d("ANONYMOUSMESSENGER", "Selected image URI: " + uri.toString());
+
+                try {
+                    // Create intent for PictureViewerActivity
                     Intent intent = new Intent(MyProfileActivity.this, PictureViewerActivity.class);
-                    intent.putExtra("address","addkih;,hklkjkjljklklkl;l'l;ress".substring(0,10));
-                    intent.putExtra("nickname","nickname");
-                    intent.putExtra("uri",uri.toString());
+
+                    // Pass the actual address instead of hardcoded dummy text
+                    String address = ((DxApplication) getApplication()).getMyAddressOffline();
+                    if (address != null && address.length() >= 10) {
+                        intent.putExtra("address", address.substring(0, 10));
+                    } else {
+                        intent.putExtra("address", "me");
+                    }
+
+                    intent.putExtra("nickname", "Profile Picture");
+                    intent.putExtra("uri", uri.toString());
                     intent.putExtra("type", MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE);
+
+                    // Add flag to indicate this is for profile picture
+                    intent.putExtra("isProfilePicture", true);
+
+                    // Start the activity directly (no need for thread)
                     startActivity(intent);
-                }catch (Exception e){e.printStackTrace();}
-            }).start());
+
+                } catch (Exception e) {
+                    Log.e("ANONYMOUSMESSENGER", "Error starting PictureViewerActivity: " + e.getMessage(), e);
+                    Snackbar.make(findViewById(android.R.id.content),
+                            R.string.error_opening_image, Snackbar.LENGTH_SHORT).show();
+                }
+            }
+    );
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -64,6 +92,7 @@ public class MyProfileActivity extends DxActivity {
     @Override
     public void onBackPressed() {
         finishAfterTransition();
+        super.onBackPressed();
     }
 
     @Override
@@ -176,6 +205,8 @@ public class MyProfileActivity extends DxActivity {
                                         ((DxApplication)getApplication()).getAccount().changeProfileImage("",((DxApplication)getApplication()));
                                         new Handler(Looper.getMainLooper()).post(()->{
                                             //remove pic from imageview
+                                            profileImage.setImageDrawable(null); // This will show the purple background
+                                            profileImage.setOnClickListener(null);
                                             Snackbar.make(v, R.string.profile_image_removed, Snackbar.LENGTH_SHORT).show();
                                         });
                                     }catch (Exception ignored){}
@@ -184,16 +215,38 @@ public class MyProfileActivity extends DxActivity {
                             .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {
                             }).show();
                 } else if(item.getItemId() == R.id.change_pic){
-                    try{
-                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, STORAGE_CODE);
+                    try {
+                        // For API 33+ (Android 13+) - Use READ_MEDIA_IMAGES
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            Log.d("ANONYMOUSMESSENGER", "API 33+ detected, using READ_MEDIA_IMAGES");
+                            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                                Log.d("ANONYMOUSMESSENGER", "Requesting READ_MEDIA_IMAGES permission");
+                                requestPermissions(new String[]{Manifest.permission.READ_MEDIA_IMAGES}, STORAGE_CODE);
+//                                return true;
                             }
-                            return false;
                         }
+                        // For API 23-32 (Android 6.0-12) - Use READ_EXTERNAL_STORAGE
+                        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            Log.d("ANONYMOUSMESSENGER", "API 23-32 detected, using READ_EXTERNAL_STORAGE");
+                            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                Log.d("ANONYMOUSMESSENGER", "Requesting READ_EXTERNAL_STORAGE permission");
+                                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_CODE);
+//                                return true;
+                            }
+                        }
+                        // For API 21-22 (Android 5.0-5.1) - No runtime permissions needed
+                        else {
+                            Log.d("ANONYMOUSMESSENGER", "API 21-22 detected, no runtime permission needed");
+                            // Permission is granted at install time for these APIs
+                        }
+
+                        // If we reach here, permission is granted - launch image picker
                         mGetContent.launch("image/*");
-//                            Snackbar.make(v, R.string.profile_image_changed, Snackbar.LENGTH_SHORT).show();
-                    }catch (Exception ignored) {}
+                        return true;
+                    } catch (Exception e) {
+                        Log.e("ANONYMOUSMESSENGER", "Storage request error: " + e.getMessage(), e);
+                        Snackbar.make(v, R.string.error_accessing_storage, Snackbar.LENGTH_SHORT).show();
+                    }
                 }
                 return false;
             });
