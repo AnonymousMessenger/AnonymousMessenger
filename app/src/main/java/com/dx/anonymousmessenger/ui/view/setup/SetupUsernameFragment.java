@@ -20,6 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
+import android.content.res.ColorStateList; // For Java
 
 public class SetupUsernameFragment extends Fragment {
     private String error;
@@ -92,9 +93,38 @@ public class SetupUsernameFragment extends Fragment {
                 }).start();
             }
         });
+
+        // Add text watcher to update button state
+        TextView txtCaption = rootView.findViewById(R.id.txt_caption);
+        txtCaption.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Button nextButton = getView().findViewById(R.id.next);
+                boolean hasText = s.toString().trim().length() > 0;
+                nextButton.setEnabled(hasText);
+                nextButton.setBackgroundTintList(ColorStateList.valueOf(
+                        hasText ? getResources().getColor(R.color.green_tor) :
+                                getResources().getColor(R.color.dx_night_700)
+                ));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        
         // Inflate the layout for this fragment
         return rootView;
     }
 
+    // Add this method to handle example clicks
+    public void onExampleClick(View view) {
+        TextView example = (TextView) view;
+        TextInputEditText editText = getView().findViewById(R.id.txt_caption);
+        editText.setText(example.getText().toString().replace("• ", ""));
+        editText.requestFocus();
+    }
 
 }
