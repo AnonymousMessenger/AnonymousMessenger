@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.dx.anonymousmessenger.DxApplication;
 import com.dx.anonymousmessenger.R;
@@ -71,6 +72,8 @@ public class MainActivity extends DxActivity {
                             Button next = findViewById(R.id.next);
                             next.setVisibility(View.VISIBLE);
                             next.setEnabled(true);
+                            TextView haveAcc = findViewById(R.id.txt_have_account);
+                            haveAcc.setVisibility(View.VISIBLE);
                         });
                     }
                 }

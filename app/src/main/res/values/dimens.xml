@@ -13,4 +13,6 @@
     <dimen name="mediaalbumviewer_image_height_when_empty">240dp</dimen>
     <dimen name="textsize24">24dp</dimen>
     <dimen name="card_corner_radius">8dp</dimen>
+    <dimen name="dialog_padding">16dp</dimen>
+    <dimen name="dialog_input_height">120dp</dimen>
 </resources>

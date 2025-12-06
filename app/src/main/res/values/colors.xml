@@ -14,6 +14,7 @@
     <color name="transparent">#00000000</color>
     <color name="dialog_background">@color/dx_night_940</color>
     <color name="white_opacity_05">#0CFFFFFF</color>
+    <color name="blue_tor">#3399FF</color>
 
     <color name="dx_button_background_color">@color/dx_night_700</color>
     <color name="dx_button_text">#ffffff</color>

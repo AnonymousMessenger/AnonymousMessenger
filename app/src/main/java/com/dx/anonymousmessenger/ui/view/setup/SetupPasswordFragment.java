@@ -5,6 +5,7 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static com.dx.anonymousmessenger.crypto.PasswordStrengthEstimator.QUITE_WEAK;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
@@ -106,6 +107,10 @@ public class SetupPasswordFragment extends Fragment {
                         password2.length() > 0 && !passwordsMatch);
 
                 nextButton.setEnabled(passwordsMatch);
+                nextButton.setBackgroundTintList(ColorStateList.valueOf(
+                        passwordsMatch ? getResources().getColor(R.color.green_tor) :
+                                getResources().getColor(R.color.dx_night_940)
+                ));
 //                passwordConfirmation.setOnEditorActionListener(enabled ? (TextView.OnEditorActionListener) this : null);
             }
 

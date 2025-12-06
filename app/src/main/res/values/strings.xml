@@ -59,7 +59,7 @@
     <string name="identity_key_fail">Can\'t find your identity key</string>
     <string name="delete_contact">Delete Contact</string>
     <string name="no_contacts">No Contacts Found!</string>
-    <string name="tor_output">Tor output</string>
+    <string name="tor_output">Tor Output</string>
     <string name="anonymous_messenger">Anonymous Messenger</string>
     <string name="by_drxtreme">by DrXtreme</string>
     <string name="welcome_to">welcome to</string>
@@ -81,7 +81,7 @@
     <string name="offline">offline</string>
     <string name="picture_of_contact">picture of contact</string>
     <string name="hold_on">Hold on!</string>
-    <string name="starting_up_tor">starting up Tor</string>
+    <string name="starting_up_tor">Starting Tor</string>
     <string name="doing_stuff">making you anonymous…</string>
     <string name="go_to_contacts">Skip</string>
     <string name="checking">Checking</string>
@@ -383,4 +383,60 @@
     <string name="send_image">Send Image</string>
     <string name="error_accessing_storage">Error when accessing external storage</string>
     <string name="error_opening_image">Error openning image from external storage</string>
+    <string name="step_1_choose_your_nickname">STEP 1: CHOOSE YOUR NICKNAME</string>
+    <string name="what_should_people_call_you">What should people call you?</string>
+    <string name="this_name_will_be_visible_to_other_users_you_can_change_it_later">This name will be visible to other users. You can change it later.</string>
+    <string name="type_your_nickname_here">TYPE YOUR NICKNAME HERE: 👇</string>
+    <string name="enter_nickname">Enter nickname</string>
+    <string name="get_help_with_choosing_a_nickname">Get help with choosing a nickname</string>
+    <string name="tap_for_help">💡 Tap for help</string>
+    <string name="continue_txt">CONTINUE →</string>
+    <string name="step_2_secure_your_account">STEP 2: SECURE YOUR DATA</string>
+    <string name="choose_a_strong_password">Choose a strong password</string>
+    <string name="password_protects_your_messages_you_can_skip_for_now">A password protects your data with encryption</string>
+    <string name="create_your_password">Create your password</string>
+    <string name="get_help_with_passwords">Get help</string>
+    <string name="tap_for_password_tips">Tap for help</string>
+    <string name="private_messaging_reimagined">Speak Freely, Stay Anonymous</string>
+    <string name="private_secure_anonymous"> Privacy • Encryption • Anonymity</string>
+    <string name="start_private_messaging">JOIN NOW</string>
+    <string name="already_have_account">Use BACKUP</string>
+    <string name="tor_network">⚡ Tor Network</string>
+    <string name="peer_2_peer">🌐 Peer 2 Peer</string>
+    <string name="anonymous">🕵️ Anonymous</string>
+    <string name="encrypted">🔒 Encrypted</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="enter_your_password_to_continue">Enter your password to continue</string>
+    <string name="your_data_is_encrypted_and_secure">Your data is encrypted and secure</string>
+    <string name="enter_encryption_password">Enter encryption password</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="incorrect_password_try_again">Wrong password, try again.</string>
+    <string name="get_help_with_password">Get help</string>
+    <string name="tap_for_password_recovery_options">Tap for help</string>
+    <string name="forgot_your_password">There is no way to recover your account without a backup if you forgot your password</string>
+    <string name="this_may_take_a_few_moments">This may take a few moments</string>
+    <string name="initializing_tor_network">Initializing Tor Network</string>
+    <string name="securing_connection">Anonymizing Your Connection</string>
+    <string name="connecting_world">🌐 Connecting</string>
+    <string name="secure">✅ Secure</string>
+    <string name="bootstrapping">🔒 Bootstrapping</string>
+    <string name="appearance_other">APPEARANCE and OTHER</string>
+    <string name="get_help">Get help</string>
+    <string name="reset_to_default">Reset to default</string>
+    <!-- Security Section -->
+    <string name="high_security">HIGH SECURITY</string>
+
+    <!-- Bridge Section -->
+    <string name="bridge_settings">BRIDGE SETTINGS</string>
+    <string name="bridge_help">Get help with bridge configuration</string>
+    <string name="bridge_description">Use bridges to circumvent censorship when Tor is blocked in your network</string>
+    <string name="enable_tor_bridges">Enable Tor Bridges</string>
+    <string name="bridges_active">Bridges are active and configured</string>
+    <string name="configured_bridges">Configured Bridges</string>
+    <string name="add_new_bridge">Add New Bridge</string>
+    <string name="add_manually">Add Bridges</string>
+    <string name="request_automatically">Request New Bridges</string>
+    <string name="scan_qr_code">Scan QR Code</string>
+    <string name="paste_bridge_lines_here">Paste bridge lines here…</string>
+    <string name="bridge_input_help">You can paste multiple bridge lines. Each line should be in the format:\n\nobfs4 1.2.3.4:1234 cert=ABC...\n\nNo need to include the word \"bridge\" at the beginning.</string>
 </resources>

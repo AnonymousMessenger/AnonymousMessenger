@@ -74,6 +74,14 @@
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetStyle</item>
     </style>
 
+    <style name="DXAlertDialog" parent="ThemeOverlay.Material3.Dialog.Alert">
+        <item name="android:windowBackground">@color/dx_night_940</item>
+        <item name="colorBackgroundFloating">@color/dx_night_940</item>
+        <item name="android:textColorPrimary">@color/dx_white</item>
+        <item name="android:textColor">@color/dx_white</item>
+        <item name="colorPrimary">@color/green_tor</item>
+    </style>
+
     <style name="AppBottomSheetStyle" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="backgroundTint">@color/dx_white</item>
 <!--        <item name="android:background">@color/dx_white</item>-->
@@ -147,6 +155,16 @@
     <style name="DXButton" parent="Widget.AppCompat.Button.Colored">
 <!--        <item name="android:theme">@style/ButtonTheme</item>-->
         <item name="android:background">@drawable/button_ripple</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:padding">@dimen/margin_large</item>
+        <item name="android:textColor">@color/dx_button_text</item>
+    </style>
+
+    <style name="DXButtonGreen" parent="Widget.AppCompat.Button.Colored">
+        <!--        <item name="android:theme">@style/ButtonTheme</item>-->
+        <item name="android:background">@drawable/button_ripple_green</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/text_size_medium</item>

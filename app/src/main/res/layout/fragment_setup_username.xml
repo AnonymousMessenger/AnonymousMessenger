@@ -31,7 +31,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="STEP 1: CHOOSE YOUR NICKNAME"
+                android:text="@string/step_1_choose_your_nickname"
                 android:textColor="@color/green_tor"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -42,7 +42,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="What should people call you?"
+                android:text="@string/what_should_people_call_you"
                 android:textColor="@color/dx_white"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -52,7 +52,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="This name will be visible to other users. You can change it later."
+                android:text="@string/this_name_will_be_visible_to_other_users_you_can_change_it_later"
                 android:textColor="@color/dx_white"
                 android:textSize="16sp"
                 android:alpha="0.8"
@@ -94,7 +94,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TYPE YOUR NICKNAME HERE: 👇"
+                        android:text="@string/type_your_nickname_here"
                         android:textColor="@color/dx_white"
                         android:textSize="14sp"
                         android:textStyle="bold"/>
@@ -107,7 +107,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/edit_text_highlight"
-                    android:hint="Enter nickname">
+                    android:hint="@string/enter_nickname">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/txt_caption"
@@ -134,7 +134,7 @@
                         android:id="@+id/fab_nickname_help"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:contentDescription="Get help with choosing a nickname"
+                        android:contentDescription="@string/get_help_with_choosing_a_nickname"
                         android:src="@drawable/ic_baseline_help_24"
                         app:backgroundTint="@color/dx_alert"
                         app:fabSize="mini"
@@ -146,7 +146,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
-                        android:text="💡 Tap for help"
+                        android:text="@string/tap_for_help"
                         android:textColor="@color/dx_white"
                         android:textSize="14sp"/>
                 </LinearLayout>
@@ -185,7 +185,7 @@
             style="@style/DXButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CONTINUE →"
+            android:text="@string/continue_txt"
             android:enabled="false"
             android:layout_marginTop="8dp"
             android:backgroundTint="@color/dx_night_700"

@@ -1,541 +1,788 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.dx.anonymousmessenger.ui.view.setup.SetupSettingsFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="@color/dx_background"
+    android:padding="16dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:paddingStart="@dimen/margin_activity_horizontal"
-        android:paddingLeft="@dimen/margin_activity_horizontal"
-        android:paddingTop="@dimen/margin_activity_vertical"
-        android:paddingEnd="@dimen/margin_activity_horizontal"
-        android:paddingRight="@dimen/margin_activity_horizontal"
-        android:paddingBottom="@dimen/margin_activity_vertical">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:focusable="true"
-            android:padding="5dp"
-            android:text="@string/security"
-            android:textColor="#523967"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/done" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_allow_files"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/allow_files"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_disappearing_messages" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_disappearing_messages"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:checked="true"
-            android:enabled="false"
-            android:focusable="true"
-            android:padding="5dp"
-            android:text="@string/disappearing_messages_default"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.609"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView15" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_allow_unknown"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/allow_unknown"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_layout_file_limit" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_allow_calls"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/allow_calls"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_allow_unknown" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_use_proxy"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/use_proxy"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView9" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/txt_layout_proxy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/transition"
-            android:padding="8dp"
-            android:visibility="gone"
-            app:helperText="Accepted format is : ip:port"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_use_proxy">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txt_proxy_address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/proxy_address"
-                android:imeOptions="flagNoPersonalizedLearning|actionDone"
-                android:singleLine="true"
-                android:textSize="12sp" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/txt_layout_proxy_username"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/transition"
-                android:padding="8dp"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switch_use_proxy">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txt_proxy_username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/proxy_username"
-                    android:imeOptions="flagNoPersonalizedLearning|actionDone"
-                    android:singleLine="true"
-                    android:textSize="12sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/txt_layout_proxy_password"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/transition"
-                android:padding="8dp"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switch_use_proxy">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txt_proxy_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/proxy_password"
-                    android:imeOptions="flagNoPersonalizedLearning|actionDone"
-                    android:singleLine="true"
-                    android:textSize="12sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/txt_layout_exclude"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/transition"
-            android:padding="4dp"
-            android:visibility="visible"
-            app:helperText="Country code : xx,xx..."
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView11">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txt_exclude"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="eg.: CN,US,RU,FR"
-                android:imeOptions="flagNoPersonalizedLearning|actionDone"
-                android:singleLine="true"
-                android:textSize="12sp"
-                tools:ignore="HardcodedText" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_exclude_unknown"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:padding="5dp"
-                android:text="@string/exclude_unknown"
-                android:textSize="14sp"
-                android:visibility="visible" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_strict_exclude"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:padding="5dp"
-                android:text="@string/strict_exclude"
-                android:textSize="14sp"
-                android:visibility="visible" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switch_bridges"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/use_bridges"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView14" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/bridge_settings_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/transition"
-            android:padding="8dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_bridges">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_bridges"
-                android:layout_width="0dp"
-                android:layout_height="200dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/btn_add_bridge"
-                style="@style/DXSendButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/add_bridge"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rv_bridges" />
-
-            <Button
-                android:id="@+id/btn_request_bridge"
-                style="@style/DXSendButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/request_bridge"
-                app:layout_constraintStart_toEndOf="@+id/btn_add_bridge"
-                app:layout_constraintTop_toBottomOf="@+id/rv_bridges" />
-
-            <Button
-                android:id="@+id/btn_scan_bridges"
-                style="@style/DXSendButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/scan"
-                app:layout_constraintStart_toEndOf="@+id/btn_request_bridge"
-                app:layout_constraintTop_toBottomOf="@+id/rv_bridges" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <!-- DONE BUTTON -->
         <Button
             android:id="@+id/done"
-            style="@style/DXButton"
+            style="@style/DXButtonGreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:enabled="true"
-            android:focusable="true"
             android:text="@string/done_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:enabled="true" />
+            android:layout_marginBottom="24dp"/>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/txt_layout_file_limit"
+        <!-- COMPACT SECURITY CARD -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/transition"
-            android:padding="8dp"
-            android:visibility="visible"
-            app:helperText="Accepted format is : 0-999[gb/mb/kb]"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_allow_files">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txt_file_limit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/file_limit"
-                android:imeOptions="flagNoPersonalizedLearning|actionDone"
-                android:singleLine="true"
-                android:textSize="12sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layout_check_address"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/transition"
-            android:padding="4dp"
-            app:boxBackgroundColor="#443657"
-            app:helperText="Connectivity check address (anything that's always online)"
-            app:helperTextEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView16">
+            app:cardBackgroundColor="@color/dx_night_940"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/card_glow_green">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab_check_address_help"
-                    android:layout_width="wrap_content"
+                <!-- Compact Security Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:src="@drawable/ic_baseline_help_24"
-                    app:fabSize="mini"
-                    tools:ignore="ContentDescription" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab_reset_check_address"
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_shield"
+                        app:tint="@color/green_tor"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/security"
+                        android:textColor="@color/green_tor"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/high_security"
+                        android:textColor="@color/green_tor"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:paddingHorizontal="6dp"
+                        android:paddingVertical="2dp"
+                        android:background="@drawable/badge_green_outline"/>
+                </LinearLayout>
+
+                <!-- Security Settings Grid -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:src="@drawable/ic_baseline_undo_24"
-                    app:fabSize="mini"
-                    tools:ignore="ContentDescription" />
+                    android:orientation="vertical">
+
+                    <!-- Row 1 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switch_disappearing_messages"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginBottom="2dp"
+                            android:text="@string/disappearing_messages_default"
+                            android:textColor="@color/dx_white"
+                            android:textSize="13sp"
+                            android:checked="true"
+                            android:enabled="false"
+                            android:layout_marginEnd="4dp"/>
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switch_allow_files"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginBottom="2dp"
+                            android:text="@string/allow_files"
+                            android:textColor="@color/dx_white"
+                            android:textSize="13sp"
+                            android:layout_marginStart="15dp"/>
+                    </LinearLayout>
+
+                    <!-- Row 2 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8px">
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switch_allow_unknown"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginBottom="2dp"
+                            android:text="@string/allow_unknown"
+                            android:textColor="@color/dx_white"
+                            android:textSize="13sp"
+                            android:layout_marginEnd="4dp"/>
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switch_allow_calls"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginBottom="2dp"
+                            android:text="@string/allow_calls"
+                            android:textColor="@color/dx_white"
+                            android:textSize="13sp"
+                            android:layout_marginStart="15dp"/>
+                    </LinearLayout>
+
+                    <!-- File Limit Input -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/txt_layout_file_limit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        app:helperText="Format: 0-999[gb/mb/kb]"
+                        app:helperTextTextColor="@color/dx_white"
+                        style="@style/TextInputStyle">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txt_file_limit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/file_limit"
+                            android:textColor="@color/dx_white"
+                            android:textColorHint="@color/dx_white"
+                            android:textSize="12sp"
+                            android:singleLine="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
             </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txt_check_address"
+        <!-- BRIDGE SETTINGS CARD -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/dx_night_940"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/card_glow_blue">
+
+            <LinearLayout
+                android:id="@+id/txt_other"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/online_check_address"
-                android:selectAllOnFocus="true"
-                android:singleLine="true"
-                android:textSize="12sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="20dp">
 
-        <TextView
-            android:id="@+id/btn_about"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/rounded_alpha_ripple"
-            android:fontFamily="monospace"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:text="@string/action_about"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_change_theme" />
+                <!-- Bridge Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/btn_change_app_name"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/rounded_alpha_ripple"
-            android:fontFamily="monospace"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:text="@string/action_change_app_name"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_other" />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_bridge"
+                        app:tint="@color/blue_tor"/>
 
-        <TextView
-            android:id="@+id/btn_change_theme"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/rounded_alpha_ripple"
-            android:fontFamily="monospace"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:text="@string/action_change_theme"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_change_app_name" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/bridge_settings"
+                        android:textColor="@color/blue_tor"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="8dp"/>
 
-        <TextView
-            android:id="@+id/btn_license"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/rounded_alpha_ripple"
-            android:fontFamily="monospace"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:text="@string/action_license"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_about" />
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/fab_bridge_help"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/bridge_help"
+                        android:src="@drawable/ic_baseline_help_24"
+                        app:backgroundTint="@color/blue_tor"
+                        app:fabSize="mini"
+                        app:tint="@color/dx_white"/>
+                </LinearLayout>
 
-        <TextView
-            android:id="@+id/btn_donate"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/rounded_alpha_ripple"
-            android:fontFamily="monospace"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:text="@string/action_donate"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_license" />
+                <!-- Bridge Description -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bridge_description"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:alpha="0.8"
+                    android:lineSpacingExtra="2dp"
+                    android:layout_marginBottom="16dp"/>
 
-        <TextView
-            android:id="@+id/btn_reset"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/rounded_alpha_ripple"
-            android:fontFamily="monospace"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:text="@string/reset_settings"
-            android:textColor="@color/red_500"
-            android:textSize="16sp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_other2" />
+                <!-- Main Bridge Toggle -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/dx_night_940_glass"
+                    app:cardCornerRadius="8dp"
+                    android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_baseline_vpn_key_24"
+                            app:tint="@color/blue_tor"
+                            android:layout_marginEnd="8dp"/>
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/enable_tor_bridges"
+                            android:textColor="@color/dx_white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switch_bridges"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:trackColor="@color/blue_tor"
+                            app:thumbTint="@color/blue_tor"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Bridge Status Indicator -->
+                <LinearLayout
+                    android:id="@+id/bridge_status_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bridge_status_background"
+                    android:padding="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_baseline_check_circle_24"
+                        app:tint="@color/green_tor"
+                        android:layout_marginEnd="6dp"/>
+
+                    <TextView
+                        android:id="@+id/txt_bridge_status"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/bridges_active"
+                        android:textColor="@color/green_tor"
+                        android:textSize="11sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Expanded Bridge Settings -->
+                <LinearLayout
+                    android:id="@+id/bridge_settings_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Bridge List Header -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/configured_bridges"
+                        android:textColor="@color/dx_white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_bridges"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bridge_list_background"/>
+
+                    <!-- Bridge Action Buttons -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+<!--                        <TextView-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:text="@string/add_new_bridge"-->
+<!--                            android:textColor="@color/dx_white"-->
+<!--                            android:textSize="11sp"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:layout_marginBottom="6dp"/>-->
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <Button
+                                android:id="@+id/btn_add_bridge"
+                                style="@style/DXButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="4dp"
+                                android:text="@string/add_manually"
+                                android:textSize="11sp"/>
+
+                            <Button
+                                android:id="@+id/btn_request_bridge"
+                                style="@style/DXButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="4dp"
+                                android:text="@string/request_automatically"
+                                android:textSize="11sp"
+                                android:backgroundTint="@color/blue_tor"/>
+
+                            <Button
+                                android:id="@+id/btn_scan_bridges"
+                                style="@style/DXButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/scan_qr_code"
+                                android:textSize="11sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- CONNECTIVITY CARD -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_marginStart="164dp"
-            android:padding="5dp"
-            android:text="@string/bridges"
-            android:textColor="#523967"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_check_address" />
+            app:cardBackgroundColor="@color/dx_night_940"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Header -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/connectivity"
+                    android:textColor="@color/green_tor"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"
+                    android:drawableStart="@drawable/ic_wifi"
+                    android:drawableTint="@color/green_tor"
+                    android:drawablePadding="6dp"/>
+
+                <!-- Online Check Address -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layout_check_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:helperText="Connectivity check address"
+                    app:helperTextTextColor="@color/dx_white"
+                    style="@style/TextInputStyle">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txt_check_address"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="@string/online_check_address"
+                            android:textColor="@color/dx_white"
+                            android:textColorHint="@color/dx_white"
+                            android:textSize="12sp"
+                            android:singleLine="true"/>
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/fab_check_address_help"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:contentDescription="@string/get_help"
+                            android:src="@drawable/ic_baseline_help_24"
+                            app:backgroundTint="@color/dx_alert"
+                            app:fabSize="mini"
+                            app:tint="@color/dx_white" />
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/fab_reset_check_address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:contentDescription="@string/reset_to_default"
+                            android:src="@drawable/ic_baseline_undo_24"
+                            app:backgroundTint="@color/dx_night_700"
+                            app:fabSize="mini"
+                            app:tint="@color/dx_white" />
+                    </LinearLayout>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- TOR NETWORK CARD -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/proxy"
-            android:textColor="#523967"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bridge_settings_layout" />
+            app:cardBackgroundColor="@color/dx_night_940"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/txt_other"
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Header -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TOR NETWORK"
+                    android:textColor="@color/green_tor"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"
+                    android:drawableStart="@drawable/ic_tor_logo"
+                    android:drawableTint="@color/green_tor"
+                    android:drawablePadding="6dp"/>
+
+                <!-- PROXY SECTION -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/proxy"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp"/>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_use_proxy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/use_proxy"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="8dp"/>
+
+                <!-- Proxy Inputs (initially hidden) -->
+                <LinearLayout
+                    android:id="@+id/proxy_inputs_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/txt_layout_proxy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        app:helperText="Format: ip:port"
+                        app:helperTextTextColor="@color/dx_white"
+                        style="@style/TextInputStyle">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txt_proxy_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/proxy_address"
+                            android:textColor="@color/dx_white"
+                            android:textColorHint="@color/dx_white"
+                            android:textSize="11sp"
+                            android:singleLine="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/txt_layout_proxy_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        style="@style/TextInputStyle">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txt_proxy_username"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/proxy_username"
+                            android:textColor="@color/dx_white"
+                            android:textColorHint="@color/dx_white"
+                            android:textSize="11sp"
+                            android:singleLine="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/txt_layout_proxy_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/TextInputStyle">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/txt_proxy_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/proxy_password"
+                            android:inputType="textPassword"
+                            android:textColor="@color/dx_white"
+                            android:textColorHint="@color/dx_white"
+                            android:textSize="11sp"
+                            android:singleLine="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- EXCLUDE NODES SECTION -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/exclude_tor_nodes"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginTop="4dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/txt_layout_exclude"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    app:helperText="Country codes: xx,xx..."
+                    app:helperTextTextColor="@color/dx_white"
+                    style="@style/TextInputStyle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/txt_exclude"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="eg.: CN,US,RU,FR"
+                        android:textColor="@color/dx_white"
+                        android:textColorHint="@color/dx_white"
+                        android:textSize="11sp"
+                        android:singleLine="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_exclude_unknown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/exclude_unknown"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="4dp"/>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_strict_exclude"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/strict_exclude"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- APPEARANCE & OTHER CARD -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/other"
-            android:textColor="#523967"
-            android:textStyle="bold"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_layout_exclude" />
+            app:cardBackgroundColor="@color/dx_night_940"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/txt_other2"
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Header -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/appearance_other"
+                    android:textColor="@color/green_tor"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"
+                    android:drawableStart="@drawable/ic_palette"
+                    android:drawableTint="@color/green_tor"
+                    android:drawablePadding="6dp"/>
+
+                <!-- Action Buttons -->
+                <TextView
+                    android:id="@+id/btn_change_app_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/action_change_app_name"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/ic_edit"
+                    android:drawableTint="@color/dx_white"
+                    android:drawablePadding="8dp"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/dx_night_700"
+                    android:layout_marginVertical="2dp"/>
+
+                <TextView
+                    android:id="@+id/btn_change_theme"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/action_change_theme"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/ic_theme"
+                    android:drawableTint="@color/dx_white"
+                    android:drawablePadding="8dp"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/dx_night_700"
+                    android:layout_marginVertical="2dp"/>
+
+                <TextView
+                    android:id="@+id/btn_about"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/action_about"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/ic_info"
+                    android:drawableTint="@color/dx_white"
+                    android:drawablePadding="8dp"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/dx_night_700"
+                    android:layout_marginVertical="2dp"/>
+
+                <TextView
+                    android:id="@+id/btn_license"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/action_license"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/ic_license"
+                    android:drawableTint="@color/dx_white"
+                    android:drawablePadding="8dp"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/dx_night_700"
+                    android:layout_marginVertical="2dp"/>
+
+                <TextView
+                    android:id="@+id/btn_donate"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/action_donate"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/ic_heart"
+                    android:drawableTint="@color/dx_white"
+                    android:drawablePadding="8dp"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- RESET CARD -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/reset"
-            android:textColor="#523967"
-            android:textStyle="bold"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_donate" />
+            app:cardBackgroundColor="@color/dx_night_940"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
-        <TextView
-            android:id="@+id/textView16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/connectivity"
-            android:textColor="#523967"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/switch_allow_calls" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:text="@string/exclude_tor_nodes"
-            android:textColor="#523967"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txt_layout_proxy" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+                <TextView
+                    android:id="@+id/btn_reset"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="@string/reset_settings"
+                    android:textColor="@color/red_500"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:drawableStart="@drawable/ic_reset"
+                    android:drawableTint="@color/red_500"
+                    android:drawablePadding="8dp"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
 </ScrollView>

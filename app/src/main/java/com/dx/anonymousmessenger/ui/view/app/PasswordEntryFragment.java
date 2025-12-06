@@ -1,6 +1,7 @@
 package com.dx.anonymousmessenger.ui.view.app;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -98,6 +99,16 @@ public class PasswordEntryFragment extends Fragment {
                 if(s.length()>6){
                     try{
                         btn_next.setEnabled(true);
+                        btn_next.setBackgroundTintList(ColorStateList.valueOf(
+                                getResources().getColor(R.color.green_tor)
+                        ));
+                    }catch (Exception ignored) {}
+                }else{
+                    try{
+                        btn_next.setEnabled(false);
+                        btn_next.setBackgroundTintList(ColorStateList.valueOf(
+                                getResources().getColor(R.color.dx_night_940)
+                        ));
                     }catch (Exception ignored) {}
                 }
             }

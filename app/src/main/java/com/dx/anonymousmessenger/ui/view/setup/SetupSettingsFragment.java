@@ -3,9 +3,11 @@ package com.dx.anonymousmessenger.ui.view.setup;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -45,6 +48,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -125,7 +129,7 @@ public class SetupSettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_setup_settings, container, false);
 
-        final ConstraintLayout bridgesLayout = rootView.findViewById(R.id.bridge_settings_layout);
+        final LinearLayout bridgesLayout = rootView.findViewById(R.id.bridge_settings_layout);
         final Button done = rootView.findViewById(R.id.done);
         final SwitchMaterial bridgesSwitch = rootView.findViewById(R.id.switch_bridges);
         final SwitchMaterial unknownContactsSwitch = rootView.findViewById(R.id.switch_allow_unknown);
@@ -229,6 +233,12 @@ public class SetupSettingsFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+
+        //make next button green
+        done.setEnabled(true);
+        done.setBackgroundTintList(ColorStateList.valueOf(
+                getResources().getColor(R.color.green_tor)
+        ));
 
         //set about & license text view buttons to be visible
         rootView.findViewById(R.id.txt_other).setVisibility(View.VISIBLE);
@@ -591,37 +601,114 @@ public class SetupSettingsFragment extends Fragment {
         });
 
         addBridge.setOnClickListener(v -> {
-            //todo: add explain. u can paste multiline and no need for the word bridge and it's meek_lite not meek
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.DXAlertDialog);
             builder.setTitle(R.string.insert_bridge_line);
 
-            // Set up the input
-            final EditText input = new EditText(v.getContext());
-            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-            builder.setView(input);
+            // Create a proper input layout
+            TextInputLayout inputLayout = new TextInputLayout(requireContext());
+            inputLayout.setPadding(32, 0, 32, 0);
 
-            // Set up the buttons
-            builder.setPositiveButton(R.string.ok, (dialog, which) -> {
-                ((InputMethodManager) requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(requireView().getWindowToken(), 0);
-                //split input into bridge lines separated by \n
-                String[] lines = input.getText().toString().split(System.lineSeparator());
-                if(isInSetup){
-                    List<String> list = ((CreateUserActivity) requireActivity()).getBridgeList();
-                    list.addAll(Arrays.asList(lines));
-                    ((CreateUserActivity) requireActivity()).setBridgeList(list);
-                }else{
-                    for (String line : lines) {
-                        DbHelper.saveBridge(line, (DxApplication) requireActivity().getApplication());
-                    }
+            final TextInputEditText input = new TextInputEditText(requireContext());
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+//            input.setHint(R.string.paste_bridge_lines_here);
+            input.setMinHeight(500); // Increased height
+            input.setSingleLine(false);
+            input.setLines(5);
+            input.setMaxLines(8);
+            input.setTextSize(16); // Larger text
+            input.setTextColor(ContextCompat.getColor(requireContext(), R.color.dx_white));
+            input.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.dx_white));
+            input.setBackgroundResource(R.drawable.edit_text_highlight);
+
+            inputLayout.addView(input);
+            builder.setView(inputLayout);
+
+            // Add helpful message with larger text
+            builder.setMessage(R.string.bridge_input_help);
+
+            // Set up the buttons with proper styling
+            builder.setPositiveButton(R.string.ok, null); // Set to null first to override auto-dismiss
+            builder.setNegativeButton(R.string.cancel, null);
+
+            AlertDialog dialog = builder.create();
+            dialog.setOnShowListener(dialogInterface -> {
+                Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                if (positiveButton != null) {
+                    positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.green_tor));
+                    positiveButton.setTextSize(16); // Larger button text
+                    positiveButton.setAllCaps(false); // Remove ALL CAPS
+                    positiveButton.setPadding(32, 16, 32, 16); // Larger touch area
+
+                    positiveButton.setOnClickListener(view -> {
+                        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(requireView().getWindowToken(), 0);
+
+                        // PERFECT MULTILINE PASTE HANDLING
+                        String text = input.getText().toString().trim();
+                        String[] lines = text.split("\\r?\\n|\\r");
+                        List<String> validLines = new ArrayList<>();
+
+                        for (String line : lines) {
+                            String trimmedLine = line.trim();
+                            if (!trimmedLine.isEmpty()) {
+                                if (trimmedLine.toLowerCase().startsWith("bridge ")) {
+                                    trimmedLine = trimmedLine.substring(7).trim();
+                                }
+                                validLines.add(trimmedLine);
+                            }
+                        }
+
+                        if (isInSetup) {
+                            List<String> list = ((CreateUserActivity) requireActivity()).getBridgeList();
+                            list.addAll(validLines);
+                            ((CreateUserActivity) requireActivity()).setBridgeList(list);
+                        } else {
+                            for (String line : validLines) {
+                                DbHelper.saveBridge(line, (DxApplication) requireActivity().getApplication());
+                            }
+                        }
+                        updateBridgeList();
+                        dialog.dismiss();
+                    });
                 }
-                updateBridgeList();
+
+                if (negativeButton != null) {
+                    negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.dx_white));
+                    negativeButton.setTextSize(16); // Larger button text
+                    negativeButton.setAllCaps(false); // Remove ALL CAPS
+                    negativeButton.setPadding(32, 16, 32, 16); // Larger touch area
+
+                    negativeButton.setOnClickListener(view -> {
+                        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(requireView().getWindowToken(), 0);
+                        dialog.cancel();
+                    });
+                }
+
+                // Make message text larger
+                TextView messageText = dialog.findViewById(android.R.id.message);
+                if (messageText != null) {
+                    messageText.setTextSize(14); // Larger message text
+                    messageText.setTextColor(ContextCompat.getColor(requireContext(), R.color.dx_white));
+                    messageText.setLineSpacing(1.2f, 1.2f); // Better line spacing
+                }
+
+                // Make title text larger
+                TextView titleText = dialog.findViewById(android.R.id.title);
+                if (titleText != null) {
+                    titleText.setTextSize(18); // Larger title
+                    titleText.setTextColor(ContextCompat.getColor(requireContext(), R.color.green_tor));
+                }
             });
-            builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
-                ((InputMethodManager) requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(requireView().getWindowToken(), 0);
-                dialog.cancel();
-            });
-            builder.show();
+
+            dialog.show();
+
+            // Show keyboard automatically
+            input.requestFocus();
+            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
         });
 
         //other switches

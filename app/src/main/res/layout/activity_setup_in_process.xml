@@ -1,110 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dx.anonymousmessenger.ui.view.setup.SetupInProcess">
+    android:background="@color/dx_background"
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:fontFamily="monospace"
-        android:padding="4dp"
-        android:text="@string/hold_on"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:gravity="center">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:fontFamily="monospace"
-        android:padding="4dp"
-        android:text="@string/starting_up_tor"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/progressBar2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <!-- Animated Tor Logo -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingTop="80dp"
+            android:paddingBottom="40dp">
 
-    <ProgressBar
-        android:id="@+id/progressBar2"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:indeterminate="true"
-        android:padding="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <!-- Tor Logo with potential for animation -->
+            <ImageView
+                android:id="@+id/tor_logo"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/guy_fawkes_mask"
+                android:layout_marginBottom="24dp"
+                android:elevation="16dp"/>
 
-    <TextView
-        android:id="@+id/status_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:gravity="center"
-        android:maxLines="4"
-        android:padding="4dp"
-        android:paddingBottom="0dp"
-        android:shadowColor="@color/dx_button_background_color"
-        android:text="@string/doing_stuff"
-        android:textColor="@color/green_tor"
-        android:textColorHint="@color/dx_button_text"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar2" />
+            <!-- Pulsating glow effect -->
+            <View
+                android:id="@+id/glow_effect"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:background="@drawable/tor_glow"
+                android:layout_marginTop="-130dp"
+                android:alpha="0.3"/>
 
-    <Button
-        android:id="@+id/btn_goto_contacts"
-        style="@style/DXButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="true"
-        android:text="@string/go_to_contacts"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar2"
-        tools:enabled="true" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/securing_connection"
+                android:textColor="@color/green_tor"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp"/>
 
-    <Button
-        android:id="@+id/btn_restart_tor"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_alpha_ripple"
-        android:enabled="true"
-        android:text="@string/action_restart_tor"
-        android:textColor="@color/red_500"
-        android:textSize="12sp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/status_text"
-        tools:enabled="true" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/initializing_tor_network"
+                android:textColor="@color/dx_white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="32dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:fabSize="mini"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_settings_24" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/this_may_take_a_few_moments"
+                android:textColor="@color/dx_white"
+                android:textSize="16sp"
+                android:alpha="0.8"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"/>
+        </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Progress Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingBottom="40dp">
+
+            <!-- Animated Progress Bar -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/progressBar2"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginBottom="24dp"
+                android:indeterminate="true"
+                app:indicatorColor="@color/green_tor"
+                app:trackColor="@color/dx_night_700"
+                app:trackThickness="8dp"/>
+
+            <!-- Progress Steps -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="32dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bootstrapping"
+                    android:textColor="@color/green_tor"
+                    android:textSize="12sp"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:background="@drawable/progress_step_active"
+                    android:layout_marginEnd="8dp"/>
+
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/connecting_world"-->
+<!--                    android:textColor="@color/dx_white"-->
+<!--                    android:textSize="12sp"-->
+<!--                    android:alpha="0.5"-->
+<!--                    android:paddingHorizontal="8dp"-->
+<!--                    android:paddingVertical="4dp"-->
+<!--                    android:background="@drawable/progress_step_inactive"-->
+<!--                    android:layout_marginEnd="8dp"/>-->
+
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/secure"-->
+<!--                    android:textColor="@color/dx_white"-->
+<!--                    android:textSize="12sp"-->
+<!--                    android:alpha="0.5"-->
+<!--                    android:paddingHorizontal="8dp"-->
+<!--                    android:paddingVertical="4dp"-->
+<!--                    android:background="@drawable/progress_step_inactive"/>-->
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Status Box - For longer text display -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/dx_night_940"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tor_output"
+                    android:textColor="@color/dx_white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"
+                    android:drawableTint="@color/green_tor"
+                    android:drawablePadding="8dp"
+                    app:drawableStartCompat="@drawable/ic_info" />
+
+                <TextView
+                    android:id="@+id/status_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/starting_up_tor"
+                    android:textColor="@color/dx_white"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="4dp"
+                    android:maxLines="8"
+                    android:scrollbars="vertical"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn_goto_contacts"
+                style="@style/DXButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/go_to_contacts"
+                android:visibility="gone"
+                android:layout_marginBottom="12dp"
+                android:elevation="8dp"/>
+
+            <Button
+                android:id="@+id/btn_restart_tor"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/restart_tor"
+                android:textColor="@color/dx_white"
+                android:textSize="14sp"
+                android:alpha="0.7"
+                android:visibility="visible"
+                android:layout_marginBottom="24dp"/>
+        </LinearLayout>
+
+        <!-- Settings FAB -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:src="@drawable/ic_baseline_settings_24"
+            app:backgroundTint="@color/dx_night_700"
+            app:tint="@color/dx_white"
+            app:fabSize="mini"/>
+    </LinearLayout>
+</ScrollView>
