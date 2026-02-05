@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
@@ -290,6 +291,25 @@ public class FileHelper {
             progressListener.onProgress(100);
         }
         return null;
+    }
+
+    public static String saveBackup(InputStream in, String filename, byte[] backupKey, int length)
+            throws IOException, GeneralSecurityException {
+
+        // 1. Create backup file in shared storage
+        File backupDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        File backupFile = new File(backupDir, filename + ".backup");
+
+        // 2. Use same encryption logic but with backupKey
+        String eFilename = Hex.toStringCondensed(encrypt(backupKey, filename.getBytes()));
+        FileOutputStream fos = new FileOutputStream(backupFile);
+
+        // 3. Your EXACT same encryption logic, just changing two lines:
+        //    - Use backupKey instead of app.getSha256()
+        //    - Use FileOutputStream instead of app.openFileOutput()
+
+        // 4. Return the backup file path
+        return backupFile.getAbsolutePath();
     }
 
     /**

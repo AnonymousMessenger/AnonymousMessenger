@@ -53,6 +53,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+
+import android.app.ProgressDialog;
+import android.os.PowerManager;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.Toast;
+import android.text.InputType;
+import com.dx.anonymousmessenger.DxApplication;
+import com.dx.anonymousmessenger.file.FileHelper;
+
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link SetupSettingsFragment#newInstance} factory method to
@@ -158,6 +169,161 @@ public class SetupSettingsFragment extends Fragment {
 
         rootView.findViewById(R.id.btn_request_bridge).setOnClickListener(v -> Utils.showHelpAlert(requireContext(),getString(R.string.request_bridge_help), getString(R.string.request_bridge)));
 
+//        rootView.findViewById(R.id.btn_backup).setOnClickListener(v -> {
+//            new android.app.AlertDialog.Builder(getContext(), R.style.AppAlertDialog)
+//                    .setTitle(R.string.action_backup)
+//                    .setMessage(R.string.back_up_alert_message)
+//                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+//                        // Password input
+//                        final EditText passwordInput = new EditText(getContext());
+//                        passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+//
+//                        new android.app.AlertDialog.Builder(getContext(), R.style.AppAlertDialog)
+//                                .setTitle("Backup Password")
+//                                .setMessage("Enter password to encrypt backup:")
+//                                .setView(passwordInput)
+//                                .setPositiveButton("Start", (dialog2, which2) -> {
+//                                    String password = passwordInput.getText().toString().trim();
+//                                    if (password.length() < 4) {
+//                                        Toast.makeText(getContext(), "Password must be at least 4 characters", Toast.LENGTH_SHORT).show();
+//                                        return;
+//                                    }
+//
+//                                    // Progress dialog
+//                                    ProgressDialog progress = new ProgressDialog(getContext(), R.style.AppProgressDialog);
+//                                    progress.setTitle("Creating Backup");
+//                                    progress.setMessage("Please wait...");
+//                                    progress.setCancelable(false);
+//                                    progress.show();
+//
+//                                    // Keep screen on
+//                                    getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//
+//                                    new Thread(() -> {
+//                                        try {
+//                                            DxApplication app = (DxApplication) getActivity().getApplication();
+//
+//                                            // Create key from password
+//                                            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+//                                            byte[] encryptionKey = digest.digest(password.getBytes());
+//
+//                                            // Backup location
+//                                            java.io.File backupDir;
+//                                            if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+//                                                backupDir = new java.io.File(android.os.Environment.getExternalStorageDirectory(), "AnonymousMessenger/Backups");
+//                                            } else {
+//                                                backupDir = new java.io.File(getContext().getFilesDir(), "Backups");
+//                                            }
+//                                            if (!backupDir.exists()) backupDir.mkdirs();
+//
+//                                            // Create filename
+//                                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.US);
+//                                            String timestamp = sdf.format(new java.util.Date());
+//                                            String backupName = "anon_backup_" + timestamp + ".abk";
+//                                            java.io.File backupFile = new java.io.File(backupDir, backupName);
+//
+//                                            // Create temporary ZIP
+//                                            java.io.File tempZip = new java.io.File(getContext().getCacheDir(), "temp_backup_" + timestamp + ".zip");
+//
+//                                            // Create ZIP of app data - INLINE VERSION
+//                                            java.util.zip.ZipOutputStream zos = new java.util.zip.ZipOutputStream(new java.io.FileOutputStream(tempZip));
+//                                            java.io.File appDir = new java.io.File("/data/data/com.dx.anonymousmessenger");
+//
+//                                            // Recursive function inside lambda (has to be like this)
+//                                            java.util.function.BiConsumer<java.io.File, String> addToZip = new java.util.function.BiConsumer<java.io.File, String>() {
+//                                                @Override
+//                                                public void accept(java.io.File dir, String basePath) {
+//                                                    java.io.File[] files = dir.listFiles();
+//                                                    if (files == null) return;
+//                                                    for (java.io.File file : files) {
+//                                                        // Skip cache
+//                                                        if (file.getName().equals("cache") && file.isDirectory()) continue;
+//
+//                                                        String entryName = basePath + file.getName();
+//                                                        try {
+//                                                            if (file.isDirectory()) {
+//                                                                entryName += "/";
+//                                                                zos.putNextEntry(new java.util.zip.ZipEntry(entryName));
+//                                                                zos.closeEntry();
+//                                                                accept(file, entryName); // Recursive call
+//                                                            } else {
+//                                                                java.util.zip.ZipEntry entry = new java.util.zip.ZipEntry(entryName);
+//                                                                zos.putNextEntry(entry);
+//                                                                try (java.io.FileInputStream fis = new java.io.FileInputStream(file)) {
+//                                                                    byte[] buffer = new byte[8192];
+//                                                                    int length;
+//                                                                    while ((length = fis.read(buffer)) > 0) {
+//                                                                        zos.write(buffer, 0, length);
+//                                                                    }
+//                                                                }
+//                                                                zos.closeEntry();
+//                                                            }
+//                                                        } catch (Exception e) {
+//                                                            // Continue with other files
+//                                                        }
+//                                                    }
+//                                                }
+//                                            };
+//
+//                                            // Start backup
+//                                            accept(appDir, "");
+//                                            zos.close();
+//
+//                                            // Encrypt the backup
+//                                            try (java.io.FileInputStream fis = new java.io.FileInputStream(tempZip);
+//                                                 java.io.FileOutputStream fos = new java.io.FileOutputStream(backupFile)) {
+//
+//                                                byte[] fileData = new byte[(int) tempZip.length()];
+//                                                int bytesRead = fis.read(fileData);
+//
+//                                                if (bytesRead == tempZip.length()) {
+//                                                    byte[] encryptedData = FileHelper.encrypt(encryptionKey, fileData);
+//                                                    fos.write(encryptedData);
+//                                                }
+//                                            }
+//
+//                                            // Clean up temp file
+//                                            tempZip.delete();
+//
+//                                            // Success
+//                                            getActivity().runOnUiThread(() -> {
+//                                                progress.dismiss();
+//                                                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//
+//                                                // Show file info
+//                                                long size = backupFile.length();
+//                                                String sizeText;
+//                                                if (size < 1024) sizeText = size + " B";
+//                                                else if (size < 1024 * 1024) sizeText = String.format("%.1f KB", size / 1024.0);
+//                                                else sizeText = String.format("%.1f MB", size / (1024.0 * 1024.0));
+//
+//                                                new android.app.AlertDialog.Builder(getContext(), R.style.AppAlertDialog)
+//                                                        .setTitle("✅ Backup Complete")
+//                                                        .setMessage("Backup saved!\n\n" +
+//                                                                "Size: " + sizeText + "\n" +
+//                                                                "Location: " + backupDir.getAbsolutePath())
+//                                                        .setPositiveButton("OK", null)
+//                                                        .show();
+//                                            });
+//
+//                                        } catch (Exception e) {
+//                                            e.printStackTrace();
+//                                            getActivity().runOnUiThread(() -> {
+//                                                progress.dismiss();
+//                                                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//                                                Toast.makeText(getContext(), "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//                                            });
+//                                        }
+//                                    }).start();
+//                                })
+//                                .setNegativeButton("Cancel", null)
+//                                .show();
+//                    })
+//                    .setNegativeButton(android.R.string.no, null)
+//                    .show();
+//        });
+
         reset.setOnClickListener(v -> {
             try{
                 DbHelper.deleteSettings((DxApplication)requireActivity().getApplication());
@@ -243,103 +409,103 @@ public class SetupSettingsFragment extends Fragment {
         //set about & license text view buttons to be visible
         rootView.findViewById(R.id.txt_other).setVisibility(View.VISIBLE);
         TextView changeAppName = rootView.findViewById(R.id.btn_change_app_name);
-        changeAppName.setVisibility(View.VISIBLE);
-        changeAppName.setOnClickListener(v -> {
-            CharSequence[] names = new CharSequence[]{"Anonymous Messenger", "Securoo", "AM"};
-
-            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext(),R.style.AppAlertDialog);
-            builder.setTitle(R.string.select_app_name);
-            builder.setItems(names, (dialog, which) -> {
-                switch (which) {
-                    case 0:
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                        prefs.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity").apply();
-                        requireActivity().getPackageManager().setComponentEnabledSetting(
-                                new ComponentName(requireActivity(), MainActivity.class),
-                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-                        requireActivity().getPackageManager().setComponentEnabledSetting(
-                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.AM"),
-                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                        requireActivity().getPackageManager().setComponentEnabledSetting(
-                                new ComponentName(requireActivity(),  "com.dx.anonymousmessenger.ui.view.Securoo"),
-                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                        Intent intent = new Intent();
-                        String packageName = requireContext().getPackageName();
-                        String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
-                        ComponentName componentName = new ComponentName(packageName,
-                                Objects.requireNonNull(alias));
-                        intent.setComponent(componentName);
-                        requireActivity().finishAndRemoveTask();
-                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        startActivity(intent);
-                        break;
-                    case 1:
-                        SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                        prefs2.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.Securoo").apply();
-                        requireActivity().getPackageManager().setComponentEnabledSetting(
-                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.Securoo"),
-                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-                        requireActivity().getPackageManager().setComponentEnabledSetting(
-                                new ComponentName(requireActivity(), MainActivity.class),
-                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                        requireActivity().getPackageManager().setComponentEnabledSetting(
-                                new ComponentName(requireActivity(),  "com.dx.anonymousmessenger.ui.view.AM"),
-                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                        intent = new Intent();
-                        packageName = requireContext().getPackageName();
-                        alias = prefs2.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
-                        componentName = new ComponentName(packageName,
-                                Objects.requireNonNull(alias));
-                        intent.setComponent(componentName);
-                        requireActivity().finishAndRemoveTask();
-                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        startActivity(intent);
-                        break;
-                    case 2:
-                        SharedPreferences prefs3 = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                        prefs3.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.AM").apply();
-                        requireActivity().getPackageManager().setComponentEnabledSetting(
-                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.AM"),
-                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-                        requireActivity().getPackageManager().setComponentEnabledSetting(
-                                new ComponentName(requireActivity(), MainActivity.class),
-                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                        requireActivity().getPackageManager().setComponentEnabledSetting(
-                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.Securoo"),
-                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-                        intent = new Intent();
-                        packageName = requireContext().getPackageName();
-                        alias = prefs3.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
-                        componentName = new ComponentName(packageName,
-                                Objects.requireNonNull(alias));
-                        intent.setComponent(componentName);
-                        requireActivity().finishAndRemoveTask();
-                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        startActivity(intent);
-                        break;
-                }
-                // refresh service notification
-                if(DxApplication.isServiceRunningInForeground(requireContext(), DxService.class)){
-                    ((DxApplication)requireActivity().getApplication()).updateServiceNotification();
-                }
-            });
-            builder.show();
-        });
+//        changeAppName.setVisibility(View.VISIBLE);
+//        changeAppName.setOnClickListener(v -> {
+//            CharSequence[] names = new CharSequence[]{"Anonymous Messenger", "Securoo", "AM"};
+//
+//            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext(),R.style.AppAlertDialog);
+//            builder.setTitle(R.string.select_app_name);
+//            builder.setItems(names, (dialog, which) -> {
+//                switch (which) {
+//                    case 0:
+//                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+//                        prefs.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity").apply();
+//                        requireActivity().getPackageManager().setComponentEnabledSetting(
+//                                new ComponentName(requireActivity(), MainActivity.class),
+//                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+//                        requireActivity().getPackageManager().setComponentEnabledSetting(
+//                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.AM"),
+//                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+//                        requireActivity().getPackageManager().setComponentEnabledSetting(
+//                                new ComponentName(requireActivity(),  "com.dx.anonymousmessenger.ui.view.Securoo"),
+//                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+//                        Intent intent = new Intent();
+//                        String packageName = requireContext().getPackageName();
+//                        String alias = prefs.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+//                        ComponentName componentName = new ComponentName(packageName,
+//                                Objects.requireNonNull(alias));
+//                        intent.setComponent(componentName);
+//                        requireActivity().finishAndRemoveTask();
+//                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+//                        try {
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        startActivity(intent);
+//                        break;
+//                    case 1:
+//                        SharedPreferences prefs2 = PreferenceManager.getDefaultSharedPreferences(requireContext());
+//                        prefs2.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.Securoo").apply();
+//                        requireActivity().getPackageManager().setComponentEnabledSetting(
+//                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.Securoo"),
+//                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+//                        requireActivity().getPackageManager().setComponentEnabledSetting(
+//                                new ComponentName(requireActivity(), MainActivity.class),
+//                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+//                        requireActivity().getPackageManager().setComponentEnabledSetting(
+//                                new ComponentName(requireActivity(),  "com.dx.anonymousmessenger.ui.view.AM"),
+//                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+//                        intent = new Intent();
+//                        packageName = requireContext().getPackageName();
+//                        alias = prefs2.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+//                        componentName = new ComponentName(packageName,
+//                                Objects.requireNonNull(alias));
+//                        intent.setComponent(componentName);
+//                        requireActivity().finishAndRemoveTask();
+//                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+//                        try {
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        startActivity(intent);
+//                        break;
+//                    case 2:
+//                        SharedPreferences prefs3 = PreferenceManager.getDefaultSharedPreferences(requireContext());
+//                        prefs3.edit().putString("app-name","com.dx.anonymousmessenger.ui.view.AM").apply();
+//                        requireActivity().getPackageManager().setComponentEnabledSetting(
+//                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.AM"),
+//                                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+//                        requireActivity().getPackageManager().setComponentEnabledSetting(
+//                                new ComponentName(requireActivity(), MainActivity.class),
+//                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+//                        requireActivity().getPackageManager().setComponentEnabledSetting(
+//                                new ComponentName(requireActivity(), "com.dx.anonymousmessenger.ui.view.Securoo"),
+//                                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+//                        intent = new Intent();
+//                        packageName = requireContext().getPackageName();
+//                        alias = prefs3.getString("app-name","com.dx.anonymousmessenger.ui.view.MainActivity");
+//                        componentName = new ComponentName(packageName,
+//                                Objects.requireNonNull(alias));
+//                        intent.setComponent(componentName);
+//                        requireActivity().finishAndRemoveTask();
+//                        requireActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+//                        try {
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                        startActivity(intent);
+//                        break;
+//                }
+//                // refresh service notification
+//                if(DxApplication.isServiceRunningInForeground(requireContext(), DxService.class)){
+//                    ((DxApplication)requireActivity().getApplication()).updateServiceNotification();
+//                }
+//            });
+//            builder.show();
+//        });
         TextView changeTheme = rootView.findViewById(R.id.btn_change_theme);
         changeTheme.setVisibility(View.VISIBLE);
         changeTheme.setOnClickListener(v -> {

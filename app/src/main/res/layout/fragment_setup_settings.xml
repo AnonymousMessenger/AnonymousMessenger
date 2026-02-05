@@ -695,6 +695,27 @@
                     android:layout_marginVertical="2dp"/>
 
                 <TextView
+                    android:id="@+id/btn_backup"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/action_backup"
+                    android:textColor="@color/dx_white"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/ic_baseline_save_24"
+                    android:drawableTint="@color/dx_white"
+                    android:drawablePadding="8dp"
+                    android:background="?selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/dx_night_700"
+                    android:layout_marginVertical="2dp"/>
+
+                <TextView
                     android:id="@+id/btn_about"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"

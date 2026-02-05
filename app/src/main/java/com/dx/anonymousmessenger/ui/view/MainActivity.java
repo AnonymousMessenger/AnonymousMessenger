@@ -72,7 +72,7 @@ public class MainActivity extends DxActivity {
                             Button next = findViewById(R.id.next);
                             next.setVisibility(View.VISIBLE);
                             next.setEnabled(true);
-                            TextView haveAcc = findViewById(R.id.txt_have_account);
+                            TextView haveAcc = findViewById(R.id.txt_use_backup);
                             haveAcc.setVisibility(View.VISIBLE);
                         });
                     }

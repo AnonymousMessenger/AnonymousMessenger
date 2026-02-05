@@ -142,7 +142,7 @@
 
         <!-- Secondary Option -->
         <TextView
-            android:id="@+id/txt_have_account"
+            android:id="@+id/txt_use_backup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/already_have_account"

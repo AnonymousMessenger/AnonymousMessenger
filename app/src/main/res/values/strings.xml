@@ -439,4 +439,6 @@
     <string name="scan_qr_code">Scan QR Code</string>
     <string name="paste_bridge_lines_here">Paste bridge lines here…</string>
     <string name="bridge_input_help">You can paste multiple bridge lines. Each line should be in the format:\n\nobfs4 1.2.3.4:1234 cert=ABC...\n\nNo need to include the word \"bridge\" at the beginning.</string>
+    <string name="action_backup">Backup</string>
+    <string name="back_up_alert_message">Are you sure you want to backup your data? this will backup your onion service account and your encryption keys and all your messages</string>
 </resources>
